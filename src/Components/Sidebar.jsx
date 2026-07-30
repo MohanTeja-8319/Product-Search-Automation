@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   FaHome,
   FaSearch,
@@ -14,9 +15,12 @@ import {
 } from "react-icons/fa";
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const menuItems = [
-    { icon: <FaHome />, text: "Home", active: true },
-    { icon: <FaSearch />, text: "Search Products" },
+    { icon: <FaHome />, text: "Home", path: "/home" },
+    { icon: <FaSearch />, text: "Search Products", path: "/search" },
     { icon: <FaThLarge />, text: "Categories" },
     { icon: <FaBell />, text: "Price Alerts" },
     { icon: <FaHeart />, text: "Wishlist" },
@@ -24,7 +28,7 @@ const Sidebar = () => {
     { icon: <FaHistory />, text: "History" },
     { icon: <FaCog />, text: "Settings" },
     { icon: <FaQuestionCircle />, text: "Help & Support" },
-    { icon: <FaSignOutAlt />, text: "Logout" },
+    { icon: <FaSignOutAlt />, text: "Logout", path: "/" },
   ];
 
   return (
@@ -53,22 +57,30 @@ const Sidebar = () => {
 
         <div className="mt-5 px-4">
 
-          {menuItems.map((item, index) => (
-            <button
-              key={index}
-              className={`flex items-center gap-4 w-full p-4 rounded-xl mb-2 transition duration-300
+          {menuItems.map((item, index) => {
+            const isActive = item.path ? (location.pathname.toLowerCase() === item.path.toLowerCase()) : false;
+            return (
+              <button
+                key={index}
+                onClick={() => {
+                  if (item.path) {
+                    navigate(item.path);
+                  }
+                }}
+                className={`flex items-center gap-4 w-full p-4 rounded-xl mb-2 transition duration-300
 
-              ${
-                item.active
-                  ? "bg-gradient-to-r from-indigo-600 to-purple-500 text-white shadow-lg"
-                  : "hover:bg-gray-100 text-gray-700"
-              }`}
-            >
-              <span className="text-xl">{item.icon}</span>
+                ${
+                  isActive
+                    ? "bg-gradient-to-r from-indigo-600 to-purple-500 text-white shadow-lg"
+                    : "hover:bg-gray-100 text-gray-700"
+                }`}
+              >
+                <span className="text-xl">{item.icon}</span>
 
-              <span className="font-medium">{item.text}</span>
-            </button>
-          ))}
+                <span className="font-medium">{item.text}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 

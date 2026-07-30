@@ -6,7 +6,7 @@ import Profile from "./Profile";
 const Navbar = () => {
   return (
     <nav
-      className="ml-72 h-20 bg-white
+      className="h-20 bg-white
       flex items-center justify-between
       px-8 shadow"
     >
