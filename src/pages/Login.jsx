@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
+import A from "../assets/ab.png";
+
+
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -30,9 +33,10 @@ function Login() {
           </p>
 
           <img
-            src="https://cdn-icons-png.flaticon.com/512/891/891462.png"
+            src={A}
+            
             alt="Shopping"
-            className="w-48 mt-10"
+            className="w-95 mt-10"
           />
         </div>
 
