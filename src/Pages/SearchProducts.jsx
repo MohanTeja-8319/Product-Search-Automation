@@ -36,7 +36,11 @@ const SearchProducts = ({ products = [] }) => {
           <div key={product.id} className="grid grid-cols-[3fr_1fr_1.2fr_1.2fr_1fr] items-center px-6 py-5 border-b hover:bg-gray-50">
             <div className="flex items-center gap-4">
               <img
-                src={product.image || "https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15.jpg"}
+                src={product.image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&q=80"}
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&q=80";
+                }}
                 className="w-14 h-14 object-contain rounded-lg border p-1"
                 alt={product.name}
               />
