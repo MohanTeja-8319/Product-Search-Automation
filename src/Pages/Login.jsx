@@ -2,19 +2,20 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaGoogle } from "react-icons/fa";
 import A from "../assets/ab.png";
-
+import { useNavigate } from "react-router-dom";
 
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Login Successful!");
+    navigate("/Home");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-700 p-5">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-700 via-indigo-600 to-purple-700 p-5">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-5xl w-full grid md:grid-cols-2">
 
         {/* Left Section */}
@@ -137,8 +138,7 @@ function Login() {
 
           <button className="w-full border rounded-xl py-4 flex items-center justify-center gap-3 hover:bg-gray-100 transition">
 
-            <FaGoogle className="text-red-500 text-xl" />
-
+            <FaGoogle className="text-[#4285F4] text-xl" />
             Continue with Google
 
           </button>

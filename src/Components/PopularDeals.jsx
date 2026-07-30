@@ -1,0 +1,1 @@
+export default function PopularDeals(){return <div className="p-6"><h2 className="text-3xl font-bold mb-6">Popular Deals</h2></div>}
