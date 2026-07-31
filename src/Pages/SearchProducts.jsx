@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const SearchProducts = ({ products = [] }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 8;
 
   if (products.length === 0) {
     return (
@@ -41,7 +41,7 @@ const SearchProducts = ({ products = [] }) => {
                   e.target.onerror = null;
                   e.target.src = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&q=80";
                 }}
-                className="w-14 h-14 object-contain rounded-lg border p-1"
+                className="w-14 h-14  p-1"
                 alt={product.name}
               />
               <div>
@@ -81,45 +81,60 @@ const SearchProducts = ({ products = [] }) => {
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-6">
-          <p className="text-sm text-gray-500">
-            Showing {startIndex + 1}–{Math.min(endIndex, products.length)} of {products.length} results
-          </p>
+     {/* Pagination */}
+{totalPages > 1 && (
+  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-6">
 
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-3 py-2 border rounded-lg text-sm hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
+    <p className="text-sm text-gray-500">
+      Showing {startIndex + 1}–
+      {Math.min(endIndex, products.length)} of {products.length} results
+    </p>
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`w-10 h-10 rounded-lg text-sm font-medium transition ${
-                  currentPage === page
-                    ? "bg-purple-600 text-white shadow-md"
-                    : "border hover:bg-gray-100"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
+    <div className="flex items-center gap-2">
 
-            <button
-              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-3 py-2 border rounded-lg text-sm hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Previous */}
+      <button
+        onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+        disabled={currentPage === 1}
+        className="px-4 py-2 border rounded-lg text-sm hover:bg-gray-100 disabled:opacity-50"
+      >
+        Previous
+      </button>
+
+      {/* Scrollable Page Numbers */}
+      <div className="flex items-center gap-2 overflow-x-auto max-w-[420px] scrollbar-hide px-1">
+
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+          <button
+            key={page}
+            onClick={() => setCurrentPage(page)}
+            className={`min-w-[40px] h-10 rounded-lg text-sm font-medium flex-shrink-0 transition ${
+              currentPage === page
+                ? "bg-purple-600 text-white"
+                : "border hover:bg-gray-100"
+            }`}
+          >
+            {page}
+          </button>
+        ))}
+
+      </div>
+
+      {/* Next */}
+      <button
+        onClick={() =>
+          setCurrentPage((p) => Math.min(p + 1, totalPages))
+        }
+        disabled={currentPage === totalPages}
+        className="px-4 py-2 border rounded-lg text-sm hover:bg-gray-100 disabled:opacity-50"
+      >
+        Next
+      </button>
+
+    </div>
+
+  </div>
+)}
     </>
   );
 };

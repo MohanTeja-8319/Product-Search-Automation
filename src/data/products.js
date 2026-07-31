@@ -1,4 +1,5 @@
-const  dummyProducts=[{
+const dummyProducts = [
+{
   id: 1,
   name: "Apple iPhone 16",
   brand: "Apple",
@@ -10,7 +11,7 @@ const  dummyProducts=[{
   reviews: 15420,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=iPhone+16",
+  image: "/images/apple-iphone-15.jpg",
   url: "#"
 },
 {
@@ -25,7 +26,7 @@ const  dummyProducts=[{
   reviews: 11235,
   store: "Flipkart",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=iPhone+16+Plus",
+  image: "/images/apple-iphone-15-plus-.jpg",
   url: "#"
 },
 {
@@ -38,9 +39,9 @@ const  dummyProducts=[{
   discount: "8% OFF",
   rating: 4.7,
   reviews: 9876,
-  store: "Amazon",
+  store: "Myntra",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Galaxy+S24",
+  image: "/images/s24plus.jpg",
   url: "#"
 },
 {
@@ -53,9 +54,9 @@ const  dummyProducts=[{
   discount: "10% OFF",
   rating: 4.5,
   reviews: 7645,
-  store: "Croma",
+  store: "Ajio",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Galaxy+A55",
+  image: "/images/s24plus.jpg",
   url: "#"
 },
 {
@@ -70,7 +71,7 @@ const  dummyProducts=[{
   reviews: 8452,
   store: "Amazon",
   availability: "Limited Stock",
-  image: "https://via.placeholder.com/200?text=OnePlus+13",
+  image: "/images/oneplus13.webp",
   url: "#"
 },
 {
@@ -85,7 +86,7 @@ const  dummyProducts=[{
   reviews: 6321,
   store: "Flipkart",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Nord+4",
+  image: "/images/oneplus13.webp",
   url: "#"
 },
 {
@@ -100,7 +101,7 @@ const  dummyProducts=[{
   reviews: 5420,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Xiaomi+14",
+  image: "/images/xiaomi-14-ultra.jpg",
   url: "#"
 },
 {
@@ -115,7 +116,7 @@ const  dummyProducts=[{
   reviews: 9320,
   store: "Reliance Digital",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Redmi+Note+14+Pro",
+  image: "/images/redmi-note-13-5g.jpg",
   url: "#"
 },
 {
@@ -130,7 +131,7 @@ const  dummyProducts=[{
   reviews: 4832,
   store: "Flipkart",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Pixel+9",
+  image: "/images/pixel-8.jpg",
   url: "#"
 },
 {
@@ -145,7 +146,7 @@ const  dummyProducts=[{
   reviews: 5120,
   store: "Croma",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Nothing+Phone+3",
+  image: "/images/nothing-phone-2a.jpg",
   url: "#"
 },
 {
@@ -160,7 +161,7 @@ const  dummyProducts=[{
   reviews: 6521,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Realme+GT+7",
+  image: "/images/realme-gt-neo6-se.jpg",
   url: "#"
 },
 {
@@ -175,7 +176,7 @@ const  dummyProducts=[{
   reviews: 5428,
   store: "Flipkart",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Realme+14+Pro+",
+  image: "/images/realme-gt-neo6-se.jpg",
   url: "#"
 },
 {
@@ -190,7 +191,7 @@ const  dummyProducts=[{
   reviews: 4235,
   store: "Croma",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Vivo+X200",
+  image: "/images/vivo-x200-pro.jpg",
   url: "#"
 },
 {
@@ -205,7 +206,7 @@ const  dummyProducts=[{
   reviews: 4987,
   store: "Amazon",
   availability: "Limited Stock",
-  image: "https://via.placeholder.com/200?text=Vivo+V50",
+  image: "/images/vivo-v50.jpg",
   url: "#"
 },
 {
@@ -220,7 +221,7 @@ const  dummyProducts=[{
   reviews: 3842,
   store: "Flipkart",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Oppo+Find+X8",
+  image: "/images/oppo-find-x8-ultra.jpg",
   url: "#"
 },
 {
@@ -235,7 +236,7 @@ const  dummyProducts=[{
   reviews: 4718,
   store: "Reliance Digital",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Oppo+Reno+13",
+  image: "/images/oppo-reno12-f.jpg",
   url: "#"
 },
 {
@@ -250,7 +251,7 @@ const  dummyProducts=[{
   reviews: 3652,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Motorola+Edge+60",
+  image: "/images/motorola-edge-50-fusion.jpg",
   url: "#"
 },
 {
@@ -265,7 +266,7 @@ const  dummyProducts=[{
   reviews: 8254,
   store: "Flipkart",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Moto+G85",
+  image: "/images/motorola-edge-50-fusion.jpg",
   url: "#"
 },
 {
@@ -280,7 +281,7 @@ const  dummyProducts=[{
   reviews: 4132,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=iQOO+13",
+  image: "/images/zte-nubia-flip2-.jpg",
   url: "#"
 },
 {
@@ -295,10 +296,9 @@ const  dummyProducts=[{
   reviews: 5643,
   store: "Croma",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=iQOO+Neo+10",
+  image: "/images/zte-nubia-flip2-.jpg",
   url: "#"
 },
-
 {
   id: 21,
   name: "POCO F7",
@@ -311,7 +311,7 @@ const  dummyProducts=[{
   reviews: 4521,
   store: "Flipkart",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=POCO+F7",
+  image: "/images/redmi-note-13-5g.jpg",
   url: "#"
 },
 {
@@ -326,7 +326,7 @@ const  dummyProducts=[{
   reviews: 6932,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=POCO+X7+Pro",
+  image: "/images/redmi-note-13-5g.jpg",
   url: "#"
 },
 {
@@ -341,7 +341,7 @@ const  dummyProducts=[{
   reviews: 2784,
   store: "Croma",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Galaxy+Z+Flip+6",
+  image: "/images/s24ultra.jpg",
   url: "#"
 },
 {
@@ -356,7 +356,7 @@ const  dummyProducts=[{
   reviews: 8423,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Galaxy+M55",
+  image: "/images/s24plus.jpg",
   url: "#"
 },
 {
@@ -371,7 +371,7 @@ const  dummyProducts=[{
   reviews: 9735,
   store: "Flipkart",
   availability: "Limited Stock",
-  image: "https://via.placeholder.com/200?text=iPhone+15+Pro",
+  image: "/images/apple-iphone-15-pro.jpg",
   url: "#"
 },
 {
@@ -386,7 +386,7 @@ const  dummyProducts=[{
   reviews: 3254,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=iPhone+SE+2025",
+  image: "/images/apple-iphone-15.jpg",
   url: "#"
 },
 {
@@ -401,7 +401,7 @@ const  dummyProducts=[{
   reviews: 4387,
   store: "Flipkart",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Pixel+8a",
+  image: "/images/pixel-8-pro.jpg",
   url: "#"
 },
 {
@@ -416,7 +416,7 @@ const  dummyProducts=[{
   reviews: 7824,
   store: "Croma",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Nothing+Phone+2a",
+  image: "/images/nothing-phone-2a.jpg",
   url: "#"
 },
 {
@@ -431,7 +431,7 @@ const  dummyProducts=[{
   reviews: 10456,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Redmi+13+5G",
+  image: "/images/xiaomi-14-ultra.jpg",
   url: "#"
 },
 {
@@ -441,12 +441,12 @@ const  dummyProducts=[{
   category: "Smartphones",
   price: 24999,
   originalPrice: 27999,
- discount: "11% OFF",
+  discount: "11% OFF",
   rating: 4.5,
   reviews: 8543,
   store: "Reliance Digital",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Nord+CE+4",
+  image: "/images/oneplus13.webp",
   url: "#"
 },
 {
@@ -461,7 +461,7 @@ const  dummyProducts=[{
   reviews: 6542,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Narzo+80+Pro",
+  image: "/images/realme-gt-neo6-se.jpg",
   url: "#"
 },
 {
@@ -476,7 +476,7 @@ const  dummyProducts=[{
   reviews: 5124,
   store: "Flipkart",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Realme+P3+Pro",
+  image: "/images/realme-gt-neo6-se.jpg",
   url: "#"
 },
 {
@@ -491,7 +491,7 @@ const  dummyProducts=[{
   reviews: 4832,
   store: "Croma",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Vivo+T4+5G",
+  image: "/images/vivo-v50.jpg",
   url: "#"
 },
 {
@@ -506,7 +506,7 @@ const  dummyProducts=[{
   reviews: 7215,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Vivo+Y300",
+  image: "/images/vivo-v50.jpg",
   url: "#"
 },
 {
@@ -521,7 +521,7 @@ const  dummyProducts=[{
   reviews: 3952,
   store: "Flipkart",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Oppo+F29+Pro",
+  image: "/images/oppo-reno12-f.jpg",
   url: "#"
 },
 {
@@ -536,7 +536,7 @@ const  dummyProducts=[{
   reviews: 8541,
   store: "Reliance Digital",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Oppo+A5+Pro",
+  image: "/images/oppo-reno12-f.jpg",
   url: "#"
 },
 {
@@ -551,7 +551,7 @@ const  dummyProducts=[{
   reviews: 6128,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Edge+50+Fusion",
+  image: "/images/motorola-edge-50-fusion.jpg",
   url: "#"
 },
 {
@@ -566,7 +566,7 @@ const  dummyProducts=[{
   reviews: 9536,
   store: "Flipkart",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=Moto+G64+5G",
+  image: "/images/motorola-edge-50-fusion.jpg",
   url: "#"
 },
 {
@@ -581,7 +581,7 @@ const  dummyProducts=[{
   reviews: 5341,
   store: "Amazon",
   availability: "In Stock",
-  image: "https://via.placeholder.com/200?text=iQOO+Z10",
+  image: "/images/zte-nubia-flip2-.jpg",
   url: "#"
 },
 {
@@ -596,9 +596,760 @@ const  dummyProducts=[{
   reviews: 4589,
   store: "Croma",
   availability: "Limited Stock",
-  image: "https://via.placeholder.com/200?text=iQOO+Z9+Turbo",
+  image: "/images/zte-nubia-flip2-.jpg",
   url: "#"
-}
+},
+{
+  id: 41,
+  name: "Gold Hoop Earrings",
+  brand: "Yellow Chimes",
+  category: "Accessories",
+  price: 1499,
+  originalPrice: 1999,
+  discount: "25% OFF",
+  rating: 4.6,
+  reviews: 5821,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/shopping.webp",
+  url: "#"
+},
+{
+  id: 42,
+  name: "Silver Stud Earrings",
+  brand: "GIVA",
+  category: "Accessories",
+  price: 999,
+  originalPrice: 1299,
+  discount: "23% OFF",
+  rating: 4.5,
+  reviews: 4267,
+  store: "Flipkart",
+  availability: "In Stock",
+  image: "/images/silver-stud-earrings.jpeg",
+  url: "#"
+},
+{
+  id: 43,
+  name: "Rose Gold Bracelet",
+  brand: "Voylla",
+  category: "Accessories",
+  price: 1899,
+  originalPrice: 2499,
+  discount: "24% OFF",
+  rating: 4.7,
+  reviews: 3184,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/rose-gold-bracelet.webp",
+  url: "#"
+},
+{
+  id: 44,
+  name: "Pearl Necklace",
+  brand: "Zaveri Pearls",
+  category: "Accessories",
+  price: 2299,
+  originalPrice: 2999,
+  discount: "23% OFF",
+  rating: 4.8,
+  reviews: 3920,
+  store: "Myntra",
+  availability: "In Stock",
+  image: "/images/pearl-necklace.jpeg",
+  url: "#"
+},
+{
+  id: 45,
+  name: "Diamond Drop Earrings",
+  brand: "Swarovski",
+  category: "Accessories",
+  price: 4999,
+  originalPrice: 5999,
+  discount: "17% OFF",
+  rating: 4.9,
+  reviews: 2416,
+  store: "Amazon",
+  availability: "Limited Stock",
+  image: "/images/diamond-drop-earrings.webp",
+  url: "#"
+},
+{
+  id: 46,
+  name: "Charm Bracelet",
+  brand: "Pipa Bella",
+  category: "Accessories",
+  price: 1799,
+  originalPrice: 2399,
+  discount: "25% OFF",
+  rating: 4.5,
+  reviews: 3145,
+  store: "Flipkart",
+  availability: "In Stock",
+  image: "/images/charm-bracelet.jpeg",
+  url: "#"
+},
+{
+  id: 47,
+  name: "Layered Chain Necklace",
+  brand: "Rubans",
+  category: "Accessories",
+  price: 1399,
+  originalPrice: 1899,
+  discount: "26% OFF",
+  rating: 4.4,
+  reviews: 5189,
+  store: "Myntra",
+  availability: "In Stock",
+  image: "/images/layered-chain-necklace.jpeg",
+  url: "#"
+},
+{
+  id: 48,
+  name: "Adjustable Ring Set",
+  brand: "Shaya",
+  category: "Accessories",
+  price: 899,
+  originalPrice: 1199,
+  discount: "25% OFF",
+  rating: 4.5,
+  reviews: 2843,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/adjustable.jpeg",
+  url: "#"
+},
+{
+  id: 49,
+  name: "Sterling Silver Anklet",
+  brand: "GIVA",
+  category: "Accessories",
+  price: 1299,
+  originalPrice: 1699,
+  discount: "24% OFF",
+  rating: 4.6,
+  reviews: 2381,
+  store: "Flipkart",
+  availability: "In Stock",
+  image: "/images/sterling-silver-anklet.webp",
+  url: "#"
+},
+{
+  id: 50,
+  name: "Crystal Pendant Necklace",
+  brand: "Swarovski",
+  category: "Accessories",
+  price: 3499,
+  originalPrice: 4299,
+  discount: "19% OFF",
+  rating: 4.8,
+  reviews: 1672,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/crystal-pendant-necklace.jpeg",
+  url: "#"
+},
+{
+  id: 51,
+  name: "Apple MacBook Air M4",
+  brand: "Apple",
+  category: "Laptops",
+  price: 114999,
+  originalPrice: 119999,
+  discount: "4% OFF",
+  rating: 4.9,
+  reviews: 9542,
+  store: "Apple Store",
+  availability: "In Stock",
+  image: "/images/macbook-air-m4.jpg",
+  url: "#"
+},
+{
+  id: 52,
+  name: "Dell XPS 13",
+  brand: "Dell",
+  category: "Laptops",
+  price: 129999,
+  originalPrice: 137999,
+  discount: "6% OFF",
+  rating: 4.8,
+  reviews: 6845,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/dell-xps-13.webp",
+  url: "#"
+},
+{
+  id: 53,
+  name: "HP Spectre x360",
+  brand: "HP",
+  category: "Laptops",
+  price: 124999,
+  originalPrice: 132999,
+  discount: "6% OFF",
+  rating: 4.7,
+  reviews: 5236,
+  store: "Reliance Digital",
+  availability: "In Stock",
+  image: "/images/hp-spectre-x360.jpeg",
+  url: "#"
+},
+{
+  id: 54,
+  name: "Lenovo Yoga Slim 7",
+  brand: "Lenovo",
+  category: "Laptops",
+  price: 89999,
+  originalPrice: 96999,
+  discount: "7% OFF",
+  rating: 4.7,
+  reviews: 4382,
+  store: "Flipkart",
+  availability: "In Stock",
+  image: "/images/lenovo-yoga-slim7.jpeg",
+  url: "#"
+},
+{
+  id: 55,
+  name: "ASUS ROG Zephyrus G16",
+  brand: "ASUS",
+  category: "Laptops",
+  price: 169999,
+  originalPrice: 179999,
+  discount: "6% OFF",
+  rating: 4.9,
+  reviews: 3184,
+  store: "Amazon",
+  availability: "Limited Stock",
+  image: "/images/asus-rog-zephyrus.jpeg",
+  url: "#"
+},
+{
+  id: 56,
+  name: "Acer Swift Go 14",
+  brand: "Acer",
+  category: "Laptops",
+  price: 72999,
+  originalPrice: 78999,
+  discount: "8% OFF",
+  rating: 4.5,
+  reviews: 4187,
+  store: "Croma",
+  availability: "In Stock",
+  image: "/images/acer-swift-go14.webp",
+  url: "#"
+},
+{
+  id: 57,
+  name: "MSI Prestige 14",
+  brand: "MSI",
+  category: "Laptops",
+  price: 104999,
+  originalPrice: 111999,
+  discount: "6% OFF",
+  rating: 4.6,
+  reviews: 2976,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/msi_prestige14.jpeg",
+  url: "#"
+},
+{
+  id: 58,
+  name: "Lenovo LOQ Gaming",
+  brand: "Lenovo",
+  category: "Laptops",
+  price: 81999,
+  originalPrice: 87999,
+  discount: "7% OFF",
+  rating: 4.6,
+  reviews: 4894,
+  store: "Flipkart",
+  availability: "In Stock",
+  image: "/images/lenovo-loq.jpeg",
+  url: "#"
+},
+{
+  id: 59,
+  name: "HP Victus 15",
+  brand: "HP",
+  category: "Laptops",
+  price: 74999,
+  originalPrice: 80999,
+  discount: "7% OFF",
+  rating: 4.5,
+  reviews: 5631,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/hp-spectre-x360.jpeg",
+  url: "#"
+},
+{
+  id: 60,
+  name: "ASUS Vivobook S15 OLED",
+  brand: "ASUS",
+  category: "Laptops",
+  price: 84999,
+  originalPrice: 90999,
+  discount: "7% OFF",
+  rating: 4.7,
+  reviews: 3764,
+  store: "Reliance Digital",
+  availability: "In Stock",
+  image: "/images/asus-vivobook-s15.jpeg",
+  url: "#"
+},
+{
+  id: 61,
+  name: "Sony WH-1000XM6",
+  brand: "Sony",
+  category: "Headphones",
+  price: 34999,
+  originalPrice: 37999,
+  discount: "8% OFF",
+  rating: 4.9,
+  reviews: 12854,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/sony-wh1000xm6.jpeg",
+  url: "#"
+},
+{
+  id: 62,
+  name: "Apple AirPods Pro 2",
+  brand: "Apple",
+  category: "Headphones",
+  price: 22999,
+  originalPrice: 24999,
+  discount: "8% OFF",
+  rating: 4.9,
+  reviews: 18542,
+  store: "Apple Store",
+  availability: "In Stock",
+  image: "/images/apple-airpods-pro2.jpeg",
+  url: "#"
+},
+{
+  id: 63,
+  name: "JBL Tune 770NC",
+  brand: "JBL",
+  category: "Headphones",
+  price: 8999,
+  originalPrice: 10999,
+  discount: "18% OFF",
+  rating: 4.6,
+  reviews: 7852,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/jbl-tune770nc.webp",
+  url: "#"
+},
+{
+  id: 64,
+  name: "boAt Rockerz 550",
+  brand: "boAt",
+  category: "Headphones",
+  price: 2499,
+  originalPrice: 3499,
+  discount: "29% OFF",
+  rating: 4.4,
+  reviews: 21548,
+  store: "Flipkart",
+  availability: "In Stock",
+  image: "/images/boat-rockerz550.webp",
+  url: "#"
+},
+{
+  id: 65,
+  name: "Noise Three Earbuds",
+  brand: "Noise",
+  category: "Headphones",
+  price: 3999,
+  originalPrice: 4999,
+  discount: "20% OFF",
+  rating: 4.5,
+  reviews: 6548,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/noise-three-earbuds.webp",
+  url: "#"
+},
+{
+  id: 66,
+  name: "OnePlus Buds Pro 3",
+  brand: "OnePlus",
+  category: "Headphones",
+  price: 9999,
+  originalPrice: 11999,
+  discount: "17% OFF",
+  rating: 4.7,
+  reviews: 5231,
+  store: "OnePlus Store",
+  availability: "In Stock",
+  image: "/images/oneplus-bids-pro3.jpeg",
+  url: "#"
+},
+{
+  id: 67,
+  name: "Samsung Galaxy Buds3 Pro",
+  brand: "Samsung",
+  category: "Headphones",
+  price: 15999,
+  originalPrice: 17999,
+  discount: "11% OFF",
+  rating: 4.8,
+  reviews: 4987,
+  store: "Samsung Store",
+  availability: "In Stock",
+  image: "/images/samsungbuds.jpg",
+  url: "#"
+},
+{
+  id: 68,
+  name: "Realme Buds Air 7 Pro",
+  brand: "Realme",
+  category: "Headphones",
+  price: 5499,
+  originalPrice: 6499,
+  discount: "15% OFF",
+  rating: 4.5,
+  reviews: 7421,
+  store: "Flipkart",
+  availability: "In Stock",
+  image: "/images/realme.jpeg",
+  url: "#"
+},
+{
+  id: 69,
+  name: "Bose QuietComfort Ultra",
+  brand: "Bose",
+  category: "Headphones",
+  price: 38999,
+  originalPrice: 41999,
+  discount: "7% OFF",
+  rating: 4.9,
+  reviews: 3268,
+  store: "Amazon",
+  availability: "Limited Stock",
+  image: "/images/bose-qc-ultra.jpeg",
+  url: "#"
+},
+{
+  id: 70,
+  name: "Sennheiser Momentum 4",
+  brand: "Sennheiser",
+  category: "Headphones",
+  price: 29999,
+  originalPrice: 32999,
+  discount: "9% OFF",
+  rating: 4.8,
+  reviews: 4582,
+  store: "Reliance Digital",
+  availability: "In Stock",
+  image: "/images/sennheiser-momentum4.jpeg",
+  url: "#"
+},
+{
+  id: 71,
+  name: "Nike Sports T-Shirt",
+  brand: "Nike",
+  category: "Men's Clothing",
+  price: 1499,
+  originalPrice: 1999,
+  discount: "25% OFF",
+  rating: 4.7,
+  reviews: 9521,
+  store: "Nike",
+  availability: "In Stock",
+  image: "/images/nike-sports-tshirt.jpeg",
+  url: "#"
+},
+{
+  id: 72,
+  name: "Adidas Essentials Hoodie",
+  brand: "Adidas",
+  category: "Men's Clothing",
+  price: 2999,
+  originalPrice: 3999,
+  discount: "25% OFF",
+  rating: 4.8,
+  reviews: 7823,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/adidas-hoodie.jpeg",
+  url: "#"
+},
+{
+  id: 73,
+  name: "Puma Slim Fit Polo",
+  brand: "Puma",
+  category: "Men's Clothing",
+  price: 1799,
+  originalPrice: 2399,
+  discount: "25% OFF",
+  rating: 4.6,
+  reviews: 6452,
+  store: "Flipkart",
+  availability: "In Stock",
+  image: "/images/puma-polo.webp",
+  url: "#"
+},
+{
+  id: 74,
+  name: "Levi's 511 Slim Jeans",
+  brand: "Levi's",
+  category: "Men's Clothing",
+  price: 2999,
+  originalPrice: 3799,
+  discount: "21% OFF",
+  rating: 4.8,
+  reviews: 11345,
+  store: "Myntra",
+  availability: "In Stock",
+  image: "/images/levis-511-jeans.jpeg",
+  url: "#"
+},
+{
+  id: 75,
+  name: "Allen Solly Formal Shirt",
+  brand: "Allen Solly",
+  category: "Men's Clothing",
+  price: 1899,
+  originalPrice: 2499,
+  discount: "24% OFF",
+  rating: 4.6,
+  reviews: 5234,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/allen-solly.webp",
+  url: "#"
+},
+{
+  id: 76,
+  name: "U.S. Polo Casual Shirt",
+  brand: "U.S. Polo Assn.",
+  category: "Men's Clothing",
+  price: 2299,
+  originalPrice: 2999,
+  discount: "23% OFF",
+  rating: 4.7,
+  reviews: 6489,
+  store: "Myntra",
+  availability: "In Stock",
+  image: "/images/us-polo-casual-shirt.jpeg",
+  url: "#"
+},
+{
+  id: 77,
+  name: "H&M Cotton Sweatshirt",
+  brand: "H&M",
+  category: "Men's Clothing",
+  price: 1999,
+  originalPrice: 2499,
+  discount: "20% OFF",
+  rating: 4.5,
+  reviews: 4321,
+  store: "H&M",
+  availability: "In Stock",
+  image: "/images/hm-sweatshirt.jpeg",
+  url: "#"
+},
+{
+  id: 78,
+  name: "Jack & Jones Denim Jacket",
+  brand: "Jack & Jones",
+  category: "Men's Clothing",
+  price: 3499,
+  originalPrice: 4499,
+  discount: "22% OFF",
+  rating: 4.7,
+  reviews: 3782,
+  store: "Flipkart",
+  availability: "In Stock",
+  image: "/images/jack-jones.webp",
+  url: "#"
+},
+{
+  id: 79,
+  name: "Tommy Hilfiger Chinos",
+  brand: "Tommy Hilfiger",
+  category: "Men's Clothing",
+  price: 3999,
+  originalPrice: 4999,
+  discount: "20% OFF",
+  rating: 4.8,
+  reviews: 4258,
+  store: "Amazon",
+  availability: "Limited Stock",
+  image: "/images/tommy-hilfiger-chinos.jpeg",
+  url: "#"
+},
+{
+  id: 80,
+  name: "Van Heusen Blazer",
+  brand: "Van Heusen",
+  category: "Men's Clothing",
+  price: 5999,
+  originalPrice: 7499,
+  discount: "20% OFF",
+  rating: 4.9,
+  reviews: 2156,
+  store: "Myntra",
+  availability: "In Stock",
+  image: "/images/van-hesen-blazer.jpeg",
+  url: "#"
+},
+{
+  id: 81,
+  name: "Zara Floral Maxi Dress",
+  brand: "Zara",
+  category: "Women's Clothing",
+  price: 3499,
+  originalPrice: 4299,
+  discount: "19% OFF",
+  rating: 4.8,
+  reviews: 5842,
+  store: "Zara",
+  availability: "In Stock",
+  image: "/images/zara-floral-maxi-dress.jpeg",
+  url: "#"
+},
+{
+  id: 82,
+  name: "H&M Oversized Shirt",
+  brand: "H&M",
+  category: "Women's Clothing",
+  price: 1799,
+  originalPrice: 2299,
+  discount: "22% OFF",
+  rating: 4.6,
+  reviews: 4526,
+  store: "H&M",
+  availability: "In Stock",
+  image: "/images/hm-oversized-shirt.wepb",
+  url: "#"
+},
+{
+  id: 83,
+  name: "Biba Printed Kurta",
+  brand: "Biba",
+  category: "Women's Clothing",
+  price: 1999,
+  originalPrice: 2599,
+  discount: "23% OFF",
+  rating: 4.7,
+  reviews: 6845,
+  store: "Myntra",
+  availability: "In Stock",
+  image: "/images/biba-printed-kurta.jpeg",
+  url: "#"
+},
+{
+  id: 84,
+  name: "W for Woman Anarkali Kurta",
+  brand: "W for Woman",
+  category: "Women's Clothing",
+  price: 2799,
+  originalPrice: 3499,
+  discount: "20% OFF",
+  rating: 4.8,
+  reviews: 5218,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/w-anarkali-kurta.jpeg",
+  url: "#"
+},
+{
+  id: 85,
+  name: "ONLY High Rise Jeans",
+  brand: "ONLY",
+  category: "Women's Clothing",
+  price: 2499,
+  originalPrice: 3199,
+  discount: "22% OFF",
+  rating: 4.6,
+  reviews: 4125,
+  store: "Flipkart",
+  availability: "In Stock",
+  image: "/images/only-high-rise-jeans.jpeg",
+  url: "#"
+},
+{
+  id: 86,
+  name: "Vero Moda Casual Top",
+  brand: "Vero Moda",
+  category: "Women's Clothing",
+  price: 1599,
+  originalPrice: 1999,
+  discount: "20% OFF",
+  rating: 4.5,
+  reviews: 3654,
+  store: "Myntra",
+  availability: "In Stock",
+  image: "/images/vero.jpeg",
+  url: "#"
+},
+{
+  id: 87,
+  name: "Allen Solly Women's Blazer",
+  brand: "Allen Solly",
+  category: "Women's Clothing",
+  price: 3999,
+  originalPrice: 4999,
+  discount: "20% OFF",
+  rating: 4.7,
+  reviews: 2847,
+  store: "Amazon",
+  availability: "In Stock",
+  image: "/images/allen-solly-women-blazer.jpeg",
+  url: "#"
+},
+{
+  id: 88,
+  name: "Levi's Women's Denim Jacket",
+  brand: "Levi's",
+  category: "Women's Clothing",
+  price: 4599,
+  originalPrice: 5499,
+  discount: "16% OFF",
+  rating: 4.8,
+  reviews: 3215,
+  store: "Flipkart",
+  availability: "Limited Stock",
+  image: "/images/levis-women-denim-jacket.webp",
+  url: "#"
+},
+{
+  id: 89,
+  name: "FabIndia Cotton Saree",
+  brand: "FabIndia",
+  category: "Women's Clothing",
+  price: 2999,
+  originalPrice: 3699,
+  discount: "19% OFF",
+  rating: 4.8,
+  reviews: 4763,
+  store: "FabIndia",
+  availability: "In Stock",
+  image: "/images/fabindia-cotton-saree.webp",
+  url: "#"
+},
+{
+  id: 90,
+  name: "Global Desi Printed Palazzo Set",
+  brand: "Global Desi",
+  category: "Women's Clothing",
+  price: 3299,
+  originalPrice: 3999,
+  discount: "18% OFF",
+  rating: 4.7,
+  reviews: 2974,
+  store: "Myntra",
+  availability: "In Stock",
+  image: "/images/global-desi-palazzo-set.jpeg",
+  url: "#"
+},
 ];
+
 
 export default dummyProducts;
