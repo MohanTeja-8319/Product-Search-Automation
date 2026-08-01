@@ -5,6 +5,9 @@ import Register from "./Pages/Register";
 import ForgotPassword from "./Pages/ForgotPassword";
 import Home from "./Pages/Home";
 import SearchPage from "./Pages/SearchPage";
+import Wishlist from "./Pages/Wishlist";
+import Comparison from "./Pages/Comparison";
+import Logout from "./Pages/Logout";
 
 function App() {
   return (
@@ -15,6 +18,9 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/home" element={<Home />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/comparison" element={<Comparison />} />
+        <Route path="/logout" element={<Logout />} />
       </Routes>
     </BrowserRouter>
   );

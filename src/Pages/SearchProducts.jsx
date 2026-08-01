@@ -35,15 +35,17 @@ const SearchProducts = ({ products = [] }) => {
         {currentProducts.map((product) => (
           <div key={product.id} className="grid grid-cols-[3fr_1fr_1.2fr_1.2fr_1fr] items-center px-6 py-5 border-b hover:bg-gray-50">
             <div className="flex items-center gap-4">
-              <img
-                src={product.image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&q=80"}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200&q=80";
-                }}
-                className="w-14 h-14 object-contain rounded-lg border p-1"
-                alt={product.name}
-              />
+              <div className="w-20 h-20 bg-gray-50 flex items-center justify-center shrink-0 rounded-xl border border-gray-100 p-1.5 shadow-sm">
+                <img
+                  src={product.image}
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=200&q=80";
+                  }}
+                  className="max-w-full max-h-full object-contain rounded-lg"
+                  alt={product.name}
+                />
+              </div>
               <div>
                 <h3 className="font-semibold text-sm text-gray-900">
                   {product.name}

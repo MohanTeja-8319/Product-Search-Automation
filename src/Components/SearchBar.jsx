@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaSearch, FaMicrophone } from "react-icons/fa";
+import { FiSearch } from "react-icons/fi";
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
@@ -14,36 +14,22 @@ const SearchBar = () => {
   };
 
   return (
-    <form onSubmit={handleSearch} className="flex-1 max-w-3xl mx-8">
-      <div className="relative">
-
-        <FaSearch className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
-
+    <form onSubmit={handleSearch} className="w-full flex-1">
+      <div className="relative flex items-center">
+        <FiSearch className="absolute left-5 text-gray-400 text-lg" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for mobiles, laptops, headphones..."
-          className="w-full h-14 pl-14 pr-32 rounded-full border border-gray-300 shadow-sm bg-white
-          focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+          placeholder="Search for products, brands and more..."
+          className="w-full h-12 pl-12 pr-28 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-sm"
         />
-
         <button
           type="submit"
-          className="absolute right-16 top-2 bg-indigo-600 hover:bg-indigo-700
-          text-white px-5 py-2 rounded-full transition"
+          className="absolute right-1.5 h-9 bg-indigo-600 hover:bg-indigo-700 text-white px-5 rounded-lg text-xs font-semibold tracking-wide transition shadow-sm"
         >
           Search
         </button>
-
-        <button
-          type="button"
-          className="absolute right-2 top-2 w-10 h-10 rounded-full
-          bg-gray-100 hover:bg-indigo-100 flex justify-center items-center"
-        >
-          <FaMicrophone className="text-indigo-600" />
-        </button>
-
       </div>
     </form>
   );

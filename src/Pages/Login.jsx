@@ -15,11 +15,11 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-700 via-indigo-600 to-purple-700 p-5">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 p-5">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-5xl w-full grid md:grid-cols-2">
 
         {/* Left Section */}
-        <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-br from-blue-700 to-indigo-900 text-white p-12">
+        <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-br from-purple-700 to-indigo-900 text-white p-12">
           <h1 className="text-5xl font-bold mb-5">
             Product Search
           </h1>

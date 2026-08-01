@@ -1,27 +1,24 @@
 import React from "react";
-import { FaBell } from "react-icons/fa";
+import { FiBell } from "react-icons/fi";
 
 const Notification = () => {
   return (
     <div className="relative cursor-pointer">
-
       <div
-        className="w-12 h-12 rounded-full bg-white shadow-md
-        hover:bg-indigo-50 flex items-center justify-center transition"
+        className="w-10 h-10 rounded-full bg-white border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition shadow-sm"
       >
-        <FaBell className="text-xl text-gray-700" />
+        <FiBell className="text-lg text-gray-700" />
       </div>
 
       <span
         className="absolute -top-1 -right-1
-        bg-red-500 text-white
-        text-xs font-semibold
-        w-5 h-5 rounded-full
-        flex justify-center items-center"
+        bg-pink-500 text-white
+        text-[10px] font-bold
+        w-4 h-4 rounded-full
+        flex justify-center items-center shadow-sm"
       >
         3
       </span>
-
     </div>
   );
 };

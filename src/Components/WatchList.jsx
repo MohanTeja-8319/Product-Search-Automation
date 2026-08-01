@@ -1,100 +1,83 @@
 import React from "react";
-import {
-  FaHeart,
-  FaShoppingCart,
-  FaTrash,
-} from "react-icons/fa";
-
-const products = [
-  {
-    id: 1,
-    name: "Samsung Galaxy S25",
-    price: "₹72,999",
-    image:
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400",
-  },
-  {
-    id: 2,
-    name: "Dell XPS 15",
-    price: "₹1,35,000",
-    image:
-      "https://images.unsplash.com/photo-1517336714739-489689fd1ca8?w=400",
-  },
-  {
-    id: 3,
-    name: "Boat Airdopes",
-    price: "₹2,499",
-    image:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
-  },
-];
+import { FiBell } from "react-icons/fi";
 
 const WatchList = () => {
+  const watchlist = [
+    {
+      id: 1,
+      name: "Apple iPhone 16 Plus",
+      currentPrice: "₹89,999",
+      targetPrice: "Target: ₹85,000",
+      image: "https://images.unsplash.com/photo-1616348436168-de43ad0db179?w=100&q=80",
+    },
+    {
+      id: 2,
+      name: "Samsung Galaxy S24",
+      currentPrice: "₹68,999",
+      targetPrice: "Target: ₹64,000",
+      image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=100&q=80",
+    },
+    {
+      id: 3,
+      name: "Google Pixel 9 Pro",
+      currentPrice: "₹1,09,999",
+      targetPrice: "Target: ₹99,000",
+      image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=100&q=80",
+    },
+  ];
+
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6">
-
-      <div className="flex justify-between items-center mb-5">
-
-        <h2 className="text-2xl font-bold flex items-center gap-3">
-          <FaHeart className="text-red-500" />
-          My Watchlist
-        </h2>
-
-        <button className="text-indigo-600 font-semibold">
+    <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-sm font-extrabold text-gray-950">Your Watchlist</h2>
+        <button className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition">
           View All
         </button>
-
       </div>
 
-      <div className="space-y-5">
-
-        {products.map((item) => (
-
+      <div className="space-y-3">
+        {watchlist.map((item) => (
           <div
             key={item.id}
-            className="flex items-center justify-between border rounded-xl p-4 hover:shadow-lg transition"
+            className="flex items-center gap-3 border border-gray-50/50 rounded-xl p-2.5 hover:bg-gray-50/50 transition"
           >
-
-            <div className="flex items-center gap-4">
-
+            {/* Image */}
+            <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center p-1.5 shrink-0 select-none">
               <img
                 src={item.image}
                 alt={item.name}
-                className="w-20 h-20 rounded-xl object-cover"
+                className="max-h-full max-w-full object-contain"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=100";
+                }}
               />
+            </div>
 
-              <div>
-
-                <h3 className="font-bold">
-                  {item.name}
-                </h3>
-
-                <p className="text-green-600 font-semibold mt-2">
-                  {item.price}
-                </p>
-
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+              <h4 className="text-xs font-bold text-gray-900 truncate leading-tight">
+                {item.name}
+              </h4>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-xs font-extrabold text-gray-950 leading-none">
+                  {item.currentPrice}
+                </span>
+                <span className="text-[10px] text-gray-400 font-semibold leading-none">
+                  {item.targetPrice}
+                </span>
               </div>
-
             </div>
 
-            <div className="flex gap-3">
-
-              <button className="bg-green-600 text-white p-3 rounded-xl hover:bg-green-700">
-                <FaShoppingCart />
-              </button>
-
-              <button className="bg-red-500 text-white p-3 rounded-xl hover:bg-red-600">
-                <FaTrash />
-              </button>
-
+            {/* Alert Bell */}
+            <div className="shrink-0">
+              <div className="w-6 h-6 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100/80">
+                <FiBell className="text-xs text-gray-400" />
+              </div>
             </div>
-
           </div>
-
         ))}
-
       </div>
-
     </div>
   );
 };

@@ -1,35 +1,18 @@
 import React from "react";
-import { FaChevronDown } from "react-icons/fa";
+import { FiChevronDown } from "react-icons/fi";
 
 const Profile = () => {
   return (
-    <div
-      className="flex items-center gap-4
-      bg-white shadow-md px-4 py-2
-      rounded-full cursor-pointer
-      hover:shadow-lg transition"
-    >
-
+    <div className="flex items-center gap-2 cursor-pointer hover:opacity-85 transition">
       <img
-        src="https://i.pravatar.cc/150?img=12"
-        alt="profile"
-        className="w-12 h-12 rounded-full border-2 border-indigo-600"
+        src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix"
+        alt="User profile"
+        className="w-10 h-10 rounded-full border border-gray-100 object-cover bg-sky-100"
       />
-
-      <div className="hidden md:block">
-
-        <h3 className="font-semibold text-gray-800">
-          Mohan Teja
-        </h3>
-
-        <p className="text-sm text-gray-500">
-          Premium User
-        </p>
-
-      </div>
-
-      <FaChevronDown className="text-gray-500" />
-
+      <span className="font-semibold text-sm text-gray-800 hidden sm:inline-block">
+        Hello, User
+      </span>
+      <FiChevronDown className="text-gray-500 text-sm" />
     </div>
   );
 };
