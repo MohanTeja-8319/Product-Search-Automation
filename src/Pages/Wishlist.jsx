@@ -1,93 +1,109 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FiShare2, FiTrash2, FiHeart, FiCheck, FiArrowRight } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 
 const Wishlist = () => {
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      name: "iPhone 15 (128GB)",
-      category: "Smartphone",
-      price: 69900,
-      targetPrice: 60000,
-      drop: "5.41%",
-      image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&q=80",
-      store: "Amazon",
-      logoText: "a",
-      logoBg: "bg-black text-white font-serif",
-      lastUpdated: "2m ago"
-    },
-    {
-      id: 2,
-      name: "MacBook Air M2",
-      category: "Laptop",
-      price: 99990,
-      targetPrice: 90000,
-      drop: "4.10%",
-      image: "https://images.unsplash.com/photo-1517336714739-489689fd1ca8?w=300&q=80",
-      store: "Flipkart",
-      logoText: "f",
-      logoBg: "bg-blue-600 text-yellow-400 font-extrabold",
-      lastUpdated: "1h ago"
-    },
-    {
-      id: 3,
-      name: "Sony WH-1000XM5",
-      category: "Headphones",
-      price: 29990,
-      targetPrice: 28000,
-      drop: "6.25%",
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&q=80",
-      store: "Amazon",
-      logoText: "a",
-      logoBg: "bg-black text-white font-serif",
-      lastUpdated: "3h ago"
-    },
-    {
-      id: 4,
-      name: "Samsung Galaxy S24",
-      category: "Smartphone",
-      price: 74999,
-      targetPrice: 70000,
-      drop: "3.20%",
-      image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=300&q=80",
-      store: "Amazon",
-      logoText: "a",
-      logoBg: "bg-black text-white font-serif",
-      lastUpdated: "5h ago"
-    },
-    {
-      id: 5,
-      name: "OnePlus Nord 4",
-      category: "Smartphone",
-      price: 29999,
-      targetPrice: 28000,
-      drop: "4.48%",
-      image: "https://images.unsplash.com/photo-1565849328678-9275afe5d766?w=300&q=80",
-      store: "Flipkart",
-      logoText: "f",
-      logoBg: "bg-blue-600 text-yellow-400 font-extrabold",
-      lastUpdated: "1d ago"
-    },
-    {
-      id: 6,
-      name: "boAt Airdopes 131",
-      category: "Earbuds",
-      price: 999,
-      targetPrice: 850,
-      drop: "2.80%",
-      image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=300&q=80",
-      store: "Croma",
-      logoText: "croma",
-      logoBg: "bg-teal-700 text-white text-[10px] font-sans tracking-tighter uppercase px-1 py-0.5 rounded",
-      lastUpdated: "2d ago"
+  const [items, setItems] = useState(() => {
+    const stored = localStorage.getItem("wishlistItems");
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        // Fallback
+      }
     }
-  ]);
+    const defaultItems = [
+      {
+        id: 1,
+        name: "iPhone 15 (128GB)",
+        category: "Smartphone",
+        price: 69900,
+        targetPrice: 60000,
+        drop: "5.41%",
+        image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&q=80",
+        store: "Amazon",
+        logoText: "a",
+        logoBg: "bg-black text-white font-serif",
+        lastUpdated: "2m ago"
+      },
+      {
+        id: 2,
+        name: "MacBook Air M2",
+        category: "Laptop",
+        price: 99990,
+        targetPrice: 90000,
+        drop: "4.10%",
+        image: "https://images.unsplash.com/photo-1517336714739-489689fd1ca8?w=300&q=80",
+        store: "Flipkart",
+        logoText: "f",
+        logoBg: "bg-blue-600 text-yellow-400 font-extrabold",
+        lastUpdated: "1h ago"
+      },
+      {
+        id: 3,
+        name: "Sony WH-1000XM5",
+        category: "Headphones",
+        price: 29990,
+        targetPrice: 28000,
+        drop: "6.25%",
+        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&q=80",
+        store: "Amazon",
+        logoText: "a",
+        logoBg: "bg-black text-white font-serif",
+        lastUpdated: "3h ago"
+      },
+      {
+        id: 4,
+        name: "Samsung Galaxy S24",
+        category: "Smartphone",
+        price: 74999,
+        targetPrice: 70000,
+        drop: "3.20%",
+        image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=300&q=80",
+        store: "Amazon",
+        logoText: "a",
+        logoBg: "bg-black text-white font-serif",
+        lastUpdated: "5h ago"
+      },
+      {
+        id: 5,
+        name: "OnePlus Nord 4",
+        category: "Smartphone",
+        price: 29999,
+        targetPrice: 28000,
+        drop: "4.48%",
+        image: "https://images.unsplash.com/photo-1565849328678-9275afe5d766?w=300&q=80",
+        store: "Flipkart",
+        logoText: "f",
+        logoBg: "bg-blue-600 text-yellow-400 font-extrabold",
+        lastUpdated: "1d ago"
+      },
+      {
+        id: 6,
+        name: "boAt Airdopes 131",
+        category: "Earbuds",
+        price: 999,
+        targetPrice: 850,
+        drop: "2.80%",
+        image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=300&q=80",
+        store: "Croma",
+        logoText: "croma",
+        logoBg: "bg-teal-700 text-white text-[10px] font-sans tracking-tighter uppercase px-1 py-0.5 rounded",
+        lastUpdated: "2d ago"
+      }
+    ];
+    localStorage.setItem("wishlistItems", JSON.stringify(defaultItems));
+    return defaultItems;
+  });
 
   const [selectedIds, setSelectedIds] = useState([]);
   const [toastMessage, setToastMessage] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem("wishlistItems", JSON.stringify(items));
+  }, [items]);
 
   const triggerToast = (msg) => {
     setToastMessage(msg);

@@ -1,15 +1,23 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
 
 const SearchBar = () => {
-  const [query, setQuery] = useState("");
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const urlQuery = searchParams.get("q") || "";
+  const [query, setQuery] = useState(urlQuery);
+
+  useEffect(() => {
+    setQuery(urlQuery);
+  }, [urlQuery]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (query.trim()) {
       navigate(`/search?q=${encodeURIComponent(query.trim())}`);
+    } else {
+      navigate("/search");
     }
   };
 
@@ -26,7 +34,7 @@ const SearchBar = () => {
         />
         <button
           type="submit"
-          className="absolute right-1.5 h-9 bg-indigo-600 hover:bg-indigo-700 text-white px-5 rounded-lg text-xs font-semibold tracking-wide transition shadow-sm"
+          className="absolute right-1.5 h-9 bg-indigo-600 hover:bg-indigo-700 text-white px-5 rounded-lg text-xs font-semibold tracking-wide transition shadow-sm cursor-pointer"
         >
           Search
         </button>

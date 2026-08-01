@@ -9,92 +9,108 @@ import dummyProducts from "../data/products.js";
 const Comparison = () => {
   // Pre-load the 4 default products shown in the screenshot layout
   // (replacing the boAt Wave Sigma 3 smartwatch with OnePlus Nord 4 to keep it watch-free)
-  const [compareList, setCompareList] = useState([
-    {
-      id: 101,
-      name: "iPhone 15 (128GB)",
-      brand: "Apple",
-      price: 69900,
-      mrp: 73900,
-      drop: "5.41%",
-      image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&q=80",
-      store: "Amazon",
-      logoText: "a",
-      logoBg: "bg-black text-white font-serif",
-      display: "6.1 inch Super Retina XDR",
-      processor: "A16 Bionic chip",
-      ram: "-",
-      storage: "128GB",
-      battery: "3349 mAh",
-      camera: "48MP + 12MP",
-      rating: 4.6,
-      reviews: 2340,
-      addedOn: "2 May 2024"
-    },
-    {
-      id: 102,
-      name: "Dell Inspiron 15",
-      brand: "Dell",
-      price: 45990,
-      mrp: 47999,
-      drop: "3.16%",
-      image: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=300&q=80",
-      store: "Flipkart",
-      logoText: "f",
-      logoBg: "bg-blue-600 text-yellow-400 font-extrabold",
-      display: "15.6 inch FHD",
-      processor: "12th Gen Intel Core i5",
-      ram: "8GB",
-      storage: "512GB SSD",
-      battery: "41Wh",
-      camera: "-",
-      rating: 4.3,
-      reviews: 1230,
-      addedOn: "1 May 2024"
-    },
-    {
-      id: 103,
-      name: "Sony WH-1000XM5",
-      brand: "Sony",
-      price: 29990,
-      mrp: 31999,
-      drop: "6.25%",
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&q=80",
-      store: "Amazon",
-      logoText: "a",
-      logoBg: "bg-black text-white font-serif",
-      display: "-",
-      processor: "-",
-      ram: "-",
-      storage: "-",
-      battery: "30 Hours",
-      camera: "-",
-      rating: 4.5,
-      reviews: 3421,
-      addedOn: "3 May 2024"
-    },
-    {
-      id: 104,
-      name: "OnePlus Nord 4",
-      brand: "OnePlus",
-      price: 29999,
-      mrp: 31999,
-      drop: "4.48%",
-      image: "https://images.unsplash.com/photo-1565849328678-9275afe5d766?w=300&q=80",
-      store: "Flipkart",
-      logoText: "f",
-      logoBg: "bg-blue-600 text-yellow-400 font-extrabold",
-      display: "6.74 inch 1.5K AMOLED",
-      processor: "Snapdragon 7+ Gen 3",
-      ram: "12GB",
-      storage: "256GB",
-      battery: "5500 mAh",
-      camera: "50MP + 8MP",
-      rating: 4.4,
-      reviews: 890,
-      addedOn: "4 May 2024"
+  const [compareList, setCompareList] = useState(() => {
+    const stored = localStorage.getItem("compareListItems");
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        // Fallback
+      }
     }
-  ]);
+    const defaultList = [
+      {
+        id: 101,
+        name: "iPhone 15 (128GB)",
+        brand: "Apple",
+        price: 69900,
+        mrp: 73900,
+        drop: "5.41%",
+        image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&q=80",
+        store: "Amazon",
+        logoText: "a",
+        logoBg: "bg-black text-white font-serif",
+        display: "6.1 inch Super Retina XDR",
+        processor: "A16 Bionic chip",
+        ram: "-",
+        storage: "128GB",
+        battery: "3349 mAh",
+        camera: "48MP + 12MP",
+        rating: 4.6,
+        reviews: 2340,
+        addedOn: "2 May 2024"
+      },
+      {
+        id: 102,
+        name: "Dell Inspiron 15",
+        brand: "Dell",
+        price: 45990,
+        mrp: 47999,
+        drop: "3.16%",
+        image: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=300&q=80",
+        store: "Flipkart",
+        logoText: "f",
+        logoBg: "bg-blue-600 text-yellow-400 font-extrabold",
+        display: "15.6 inch FHD",
+        processor: "12th Gen Intel Core i5",
+        ram: "8GB",
+        storage: "512GB SSD",
+        battery: "41Wh",
+        camera: "-",
+        rating: 4.3,
+        reviews: 1230,
+        addedOn: "1 May 2024"
+      },
+      {
+        id: 103,
+        name: "Sony WH-1000XM5",
+        brand: "Sony",
+        price: 29990,
+        mrp: 31999,
+        drop: "6.25%",
+        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&q=80",
+        store: "Amazon",
+        logoText: "a",
+        logoBg: "bg-black text-white font-serif",
+        display: "-",
+        processor: "-",
+        ram: "-",
+        storage: "-",
+        battery: "30 Hours",
+        camera: "-",
+        rating: 4.5,
+        reviews: 3421,
+        addedOn: "3 May 2024"
+      },
+      {
+        id: 104,
+        name: "OnePlus Nord 4",
+        brand: "OnePlus",
+        price: 29999,
+        mrp: 31999,
+        drop: "4.48%",
+        image: "https://images.unsplash.com/photo-1565849328678-9275afe5d766?w=300&q=80",
+        store: "Flipkart",
+        logoText: "f",
+        logoBg: "bg-blue-600 text-yellow-400 font-extrabold",
+        display: "6.74 inch 1.5K AMOLED",
+        processor: "Snapdragon 7+ Gen 3",
+        ram: "12GB",
+        storage: "256GB",
+        battery: "5500 mAh",
+        camera: "50MP + 8MP",
+        rating: 4.4,
+        reviews: 890,
+        addedOn: "4 May 2024"
+      }
+    ];
+    localStorage.setItem("compareListItems", JSON.stringify(defaultList));
+    return defaultList;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("compareListItems", JSON.stringify(compareList));
+  }, [compareList]);
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");

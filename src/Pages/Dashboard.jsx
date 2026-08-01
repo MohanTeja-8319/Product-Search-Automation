@@ -1,38 +1,38 @@
 import { useState } from "react";
 import ProductsSection from "../Components/ProductsSection";
-import Sidebar from "../Components/RightNavbar";
-import Navbar from "../Components/Navbar1";
+import Sidebar from "../Components/Sidebar";
+import Navbar from "../Components/Navbar";
 import CategorySection from "../Components/CategorySection";
-import RightSidebar from "../Components/RightSidebar";
 
 function Dashboard() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [wishlist, setWishlist] = useState([]);
-  console.log(selectedCategory);
-  return (
-    <div className="flex min-h-screen bg-gray-100">
-      <div className="w-64 border-r bg-white">
-         <Sidebar />
-      </div>
 
-      <div className="flex-1 bg-gray-50 overflow-y-auto">
+  return (
+    <div className="bg-[#f8fafc] min-h-screen text-gray-800">
+      {/* Sidebar */}
+      <Sidebar />
+
+      {/* Main Content Area */}
+      <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
+        {/* Navbar */}
         <Navbar />
 
-        <div className="p-6">
-<CategorySection
-  selectedCategory={selectedCategory}
-  setSelectedCategory={setSelectedCategory}
-/>
-<ProductsSection
-  selectedCategory={selectedCategory}
-  wishlist={wishlist}
-  setWishlist={setWishlist}
-/>
-
-        </div>
+        {/* Page Content */}
+        <main className="p-6 flex-1">
+          <div className="space-y-6">
+            <CategorySection
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+            />
+            <ProductsSection
+              selectedCategory={selectedCategory}
+              wishlist={wishlist}
+              setWishlist={setWishlist}
+            />
+          </div>
+        </main>
       </div>
-
-      <RightSidebar />
     </div>
   );
 }

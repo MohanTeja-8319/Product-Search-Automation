@@ -33,13 +33,13 @@ const Sidebar = () => {
   const menuItems = [
     { icon: <FiHome />, text: "Home", path: "/home" },
     { icon: <FiSearch />, text: "Search Products", path: "/search" },
-    { icon: <FiGrid />, text: "Categories" },
-    { icon: <FiBell />, text: "Price Alerts" },
+    { icon: <FiGrid />, text: "Categories", path: "/categories" },
+    { icon: <FiBell />, text: "Price Alerts", path: "/home" },
     { icon: <FiHeart />, text: "Wishlist", path: "/wishlist" },
     { icon: <FiRefreshCw />, text: "Comparison", path: "/comparison" },
-    { icon: <FiClock />, text: "History" },
-    { icon: <FiSettings />, text: "Settings" },
-    { icon: <FiHelpCircle />, text: "Help & Support" },
+    { icon: <FiClock />, text: "History", path: "/search" },
+    { icon: <FiSettings />, text: "Settings", path: "/home" },
+    { icon: <FiHelpCircle />, text: "Help & Support", path: "/home" },
     { icon: <FiLogOut />, text: "Logout", path: "/logout" },
   ];
 

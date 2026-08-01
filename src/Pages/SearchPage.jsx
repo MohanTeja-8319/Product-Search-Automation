@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 
 import dummyProducts from "../data/products.js";
@@ -22,6 +22,15 @@ const SearchPage = () => {
 
   const [maxPrice, setMaxPrice] = useState(150000);
   const [sortBy, setSortBy] = useState("relevance");
+
+  useEffect(() => {
+    const initialCategory = searchParams.get("category");
+    if (initialCategory) {
+      setSelectedCategories([initialCategory]);
+    } else {
+      setSelectedCategories([]);
+    }
+  }, [searchParams]);
 
   const clearAllFilters = () => {
     setSelectedBrands([]);

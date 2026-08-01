@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const HeroBanner = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="w-full bg-gradient-to-r from-[#ecdfff] via-[#e5ebff] to-[#d6f0ff] rounded-3xl p-8 md:p-10 shadow-sm border border-indigo-100/20 overflow-hidden relative">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -14,7 +17,10 @@ const HeroBanner = () => {
           <p className="text-gray-600 mt-4 max-w-sm text-sm md:text-base leading-relaxed">
             Compare product prices from top websites and get notified on price drops.
           </p>
-          <button className="bg-gradient-to-r from-indigo-600 to-purple-500 hover:from-indigo-700 hover:to-purple-600 text-white font-semibold py-3 px-6 rounded-xl mt-6 shadow-md shadow-indigo-100 hover:shadow-lg transition duration-300">
+          <button
+            onClick={() => navigate("/search")}
+            className="bg-gradient-to-r from-indigo-600 to-purple-500 hover:from-indigo-700 hover:to-purple-600 text-white font-semibold py-3 px-6 rounded-xl mt-6 shadow-md shadow-indigo-100 hover:shadow-lg transition duration-300"
+          >
             Start Comparing
           </button>
         </div>

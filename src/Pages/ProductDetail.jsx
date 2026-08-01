@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import Sidebar from "../Components/Sidebar";
@@ -16,10 +16,12 @@ import RelatedProducts from "./RelatedProducts";
 
 import dummyProducts from "../data/products";
 import comparisonProducts from "../data/comparisionProducts";
+import { toggleWishlistItem, isProductInWishlist } from "../utils/wishlistHelper";
 
 const ProductDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [inWishlist, setInWishlist] = useState(false);
 
   const product = dummyProducts.find(
     (item) => item.id === Number(id)
@@ -37,6 +39,7 @@ const ProductDetails = () => {
         ...recent.filter((p) => p.id !== product.id),
       ].slice(0, 8);
       localStorage.setItem("recentProducts", JSON.stringify(updated));
+      setInWishlist(isProductInWishlist(product.name));
     }
   }, [product]);
 
@@ -144,11 +147,24 @@ const ProductDetails = () => {
                   </div>
 
                   <div className="flex gap-4 mt-8">
-                    <button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg">
+                    <button
+                      onClick={() => window.open(product.url || "https://amazon.in", "_blank")}
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg cursor-pointer"
+                    >
                       Buy Now
                     </button>
-                    <button className="border border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white px-8 py-3 rounded-lg">
-                      Add to Wishlist
+                    <button
+                      onClick={() => {
+                        const { added } = toggleWishlistItem(product);
+                        setInWishlist(added);
+                      }}
+                      className={`px-8 py-3 rounded-lg cursor-pointer font-semibold transition ${
+                        inWishlist
+                          ? "bg-red-500 text-white hover:bg-red-600 border border-red-500"
+                          : "border border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white"
+                      }`}
+                    >
+                      {inWishlist ? "❤️ Saved" : "♡ Add to Wishlist"}
                     </button>
                   </div>
                 </div>
