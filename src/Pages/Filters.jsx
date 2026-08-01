@@ -1,258 +1,270 @@
-import React from "react";
 
-const Filters = () => {
+
+import React, { useState } from "react";
+
+const Filters = ({
+  // Data
+  brands = [],
+  categories = [],
+  stores = [],
+  ratings = [],
+
+  // Selected Values
+  selectedBrands = [],
+  selectedCategories = [],
+  selectedStores = [],
+  selectedRatings = [],
+
+  // Handlers
+  handleBrandChange,
+  handleCategoryChange,
+  handleStoreChange,
+  handleRatingChange,
+
+  // Price
+  maxPrice,
+  setMaxPrice,
+  clearAllFilters,
+
+  brandCounts,
+  categoryCounts,
+  storeCounts,
+}) => {
+        const [showAllCategories, setShowAllCategories] = useState(false);
+        const [showAllBrands, setShowAllBrands] = useState(false);
+        const [showAllStores, setShowAllStores] = useState(false);
+
   return (
-    <div className="w-[240px] bg-white rounded-xl border border-gray-200 p-4">
+    <div className="w-[250px] bg-[#FCFCFD] rounded-xl border border-gray-200 p-5 shadow-sm">
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-semibold text-gray-800">
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-lg font-semibold text-gray-800">
           Filters
         </h2>
 
-        <button className="text-xs font-medium text-purple-600 hover:underline">
+        <button
+            onClick={clearAllFilters}
+            className="text-xs font-medium text-[#6C4CF1] hover:underline"
+          >
           Clear All
         </button>
       </div>
 
-      {/* Categories */}
-      <div className="mb-5">
-        <h3 className="text-sm font-semibold text-gray-800 mb-2">
+      {/* ================= Categories ================= */}
+
+      <div className="mb-6">
+
+        <h3 className="text-sm font-semibold text-gray-800 mb-3">
           Categories
         </h3>
 
-        <div className="space-y-2 text-[13px]">
+        <div
+            className={`space-y-2 text-[13px] ${
+              showAllCategories ? "max-h-40 overflow-y-auto pr-1" : ""
+            }`}
+          >
 
-          <label className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
+          {(showAllCategories ? categories : categories.slice(0, 4)).map(
+          (category) => (
+            <label
+              key={category}
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <input
                 type="checkbox"
-                defaultChecked
-                className="accent-purple-600 w-3.5 h-3.5"
+                checked={selectedCategories.includes(category)}
+                onChange={() => handleCategoryChange(category)}
+                className="accent-[#6C4CF1] w-4 h-4"
               />
-              Smartphones
-            </div>
-            <span className="text-[11px] text-gray-400">(25)</span>
-          </label>
 
-          <label className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="accent-purple-600 w-3.5 h-3.5"
-              />
-              Accessories
-            </div>
-            <span className="text-[11px] text-gray-400">(250)</span>
-          </label>
+              <span>
+                  {category}
+                  <span className="text-gray-400 ml-1">
+                      ({categoryCounts[category]})
+                  </span>
+              </span>
+            </label>
+          ))}
 
-          <label className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="accent-purple-600 w-3.5 h-3.5"
-              />
-              Tablets
-            </div>
-            <span className="text-[11px] text-gray-400">(80)</span>
-          </label>
 
-          <label className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="accent-purple-600 w-3.5 h-3.5"
-              />
-              Laptops
-            </div>
-            <span className="text-[11px] text-gray-400">(40)</span>
-          </label>
-
-          <button className="text-xs text-purple-600 font-medium">
-            + Show more
+          {categories.length > 4 && (
+          <button
+            onClick={() =>
+              setShowAllCategories(!showAllCategories)
+            }
+            className="mt-2 text-xs text-[#6C4CF1] font-medium"
+          >
+            {showAllCategories ? "Show Less" : "+ Show More"}
           </button>
+)}
 
         </div>
+
       </div>
 
-      {/* Brands */}
-      <div className="mb-5">
-        <h3 className="text-sm font-semibold text-gray-800 mb-2">
+      {/* ================= Brands ================= */}
+
+      <div className="mb-6">
+
+        <h3 className="text-sm font-semibold text-gray-800 mb-3">
           Brands
         </h3>
 
-        <div className="space-y-2 text-[13px]">
+          <div
+              className={`space-y-2 text-[13px] ${
+                showAllBrands ? "max-h-40 overflow-y-auto pr-1" : ""
+              }`}
+            >
 
-          <label className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
+          {(showAllBrands ? brands : brands.slice(0, 4)).map(
+          (brand) => (
+            <label
+              key={brand}
+              className="flex items-center gap-2 cursor-pointer"
+            >
               <input
                 type="checkbox"
-                className="accent-purple-600 w-3.5 h-3.5"
+                checked={selectedBrands.includes(brand)}
+                onChange={() => handleBrandChange(brand)}
+                className="accent-[#6C4CF1] w-4 h-4"
               />
-              Apple
-            </div>
-            <span className="text-[11px] text-gray-400">(120)</span>
-          </label>
 
-          <label className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="accent-purple-600 w-3.5 h-3.5"
-              />
-              Samsung
-            </div>
-            <span className="text-[11px] text-gray-400">(95)</span>
-          </label>
+            <span>
+                {brand}
+                <span className="text-gray-400 ml-1">
+                    ({brandCounts[brand]})
+                </span>
+            </span>
+            </label>
+          ))}
 
-          <label className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="accent-purple-600 w-3.5 h-3.5"
-              />
-              OnePlus
-            </div>
-            <span className="text-[11px] text-gray-400">(40)</span>
-          </label>
 
-          <label className="flex justify-between items-center">
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                className="accent-purple-600 w-3.5 h-3.5"
-              />
-              Nothing
-            </div>
-            <span className="text-[11px] text-gray-400">(25)</span>
-          </label>
-
-          <button className="text-xs text-purple-600 font-medium">
-            + Show more
-          </button>
+           {brands.length > 4 && (
+            <button
+              onClick={() =>
+                setShowAllBrands(!showAllBrands)
+              }
+              className="mt-2 text-xs text-[#6C4CF1] font-medium"
+            >
+              {showAllBrands ? "Show Less" : "+ Show More"}
+            </button>
+)}
 
         </div>
+
       </div>
 
-      {/* Price Range */}
-      <div className="mb-5">
-        <h3 className="text-sm font-semibold text-gray-800 mb-2">
+      {/* ================= Price ================= */}
+
+      <div className="mb-6">
+
+        <h3 className="text-sm font-semibold text-gray-800 mb-3">
           Price Range
         </h3>
 
         <input
           type="range"
-          min="20000"
+          min="10000"
           max="150000"
-          defaultValue="120000"
-          className="w-full accent-purple-600"
+          step="1000"
+          value={maxPrice}
+          onChange={(e) => setMaxPrice(Number(e.target.value))}
+          className="w-full accent-[#6C4CF1] cursor-pointer"
         />
 
-        <div className="flex justify-between text-[11px] text-gray-500 mt-1">
-          <span>₹20,000</span>
-          <span>₹1,50,000+</span>
+        <div className="flex justify-between mt-2 text-xs text-gray-500">
+
+          <span>₹10,000</span>
+
+          <span className="font-semibold text-[#6C4CF1]">
+            ₹{maxPrice.toLocaleString()}
+          </span>
+
         </div>
+
       </div>
 
-      {/* Stores */}
-      <div className="mb-5">
-        <h3 className="text-sm font-semibold text-gray-800 mb-2">
+      {/* ================= Stores ================= */}
+
+      <div className="mb-6">
+
+        <h3 className="text-sm font-semibold text-gray-800 mb-3">
           Stores
         </h3>
 
-        <div className="space-y-2 text-[13px]">
+        <div
+  className={`space-y-2 text-[13px] ${
+    showAllStores ? "max-h-40 overflow-y-auto pr-1" : ""
+  }`}
+>
 
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              defaultChecked
-              className="accent-purple-600 w-3.5 h-3.5"
-            />
-            Amazon
-          </label>
+          {(showAllStores ? stores : stores.slice(0, 4)).map(
+  (store) => (
+            <label
+              key={store}
+              className="flex items-center gap-2 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                checked={selectedStores.includes(store)}
+                onChange={() => handleStoreChange(store)}
+                className="accent-[#6C4CF1] w-4 h-4"
+              />
 
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              defaultChecked
-              className="accent-purple-600 w-3.5 h-3.5"
-            />
-            Flipkart
-          </label>
+              <span>
+                    {store}
+                    <span className="text-gray-400 ml-1">
+                        ({storeCounts[store]})
+                    </span>
+                </span>
+            </label>
+          ))}
 
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              className="accent-purple-600 w-3.5 h-3.5"
-            />
-            Croma
-          </label>
 
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              className="accent-purple-600 w-3.5 h-3.5"
-            />
-            Reliance Digital
-          </label>
-
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              className="accent-purple-600 w-3.5 h-3.5"
-            />
-            Vijay Sales
-          </label>
-
-          <button className="text-xs text-purple-600 font-medium">
-            + Show more
-          </button>
+          {stores.length > 4 && (
+  <button
+    onClick={() =>
+      setShowAllStores(!showAllStores)
+    }
+    className="mt-2 text-xs text-[#6C4CF1] font-medium"
+  >
+    {showAllStores ? "Show Less" : "+ Show More"}
+  </button>
+)}
 
         </div>
+
       </div>
 
-      {/* Ratings */}
+      {/* ================= Ratings ================= */}
+
       <div>
-        <h3 className="text-sm font-semibold text-gray-800 mb-2">
+
+        <h3 className="text-sm font-semibold text-gray-800 mb-3">
           Ratings
         </h3>
 
         <div className="space-y-2 text-[13px]">
 
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              defaultChecked
-              className="accent-purple-600 w-3.5 h-3.5"
-            />
-            4 ★ & above
-          </label>
+          {ratings.map((rating) => (
+            <label
+              key={rating}
+              className="flex items-center gap-2 cursor-pointer"
+            >
+              <input
+                type="checkbox"
+                checked={selectedRatings.includes(rating)}
+                onChange={() => handleRatingChange(rating)}
+                className="accent-[#6C4CF1] w-4 h-4"
+              />
 
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              className="accent-purple-600 w-3.5 h-3.5"
-            />
-            3 ★ & above
-          </label>
-
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              className="accent-purple-600 w-3.5 h-3.5"
-            />
-            2 ★ & above
-          </label>
-
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              className="accent-purple-600 w-3.5 h-3.5"
-            />
-            1 ★ & above
-          </label>
+              <span>{rating}★ & Above</span>
+            </label>
+          ))}
 
         </div>
+
       </div>
 
     </div>
