@@ -8,16 +8,18 @@ const PriceAlert = ({ currentPrice }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Determine mode:
-  // 1. comparisonMode: currentPrice prop is passed
-  // 2. widgetMode: rendered on home page
-  // 3. pageMode: rendered as standalone page
   const isComparisonMode = currentPrice !== undefined;
   const isWidgetMode = !isComparisonMode && location.pathname.toLowerCase() === "/home";
 
   const [email, setEmail] = useState("");
-  const [targetPrice, setTargetPrice] = useState(currentPrice || 50000);
+  const [targetPrice, setTargetPrice] = useState(currentPrice || 0);
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (currentPrice !== undefined) {
+      setTargetPrice(currentPrice);
+    }
+  }, [currentPrice]);
 
   const [alerts, setAlerts] = useState(() => {
     const stored = localStorage.getItem("priceAlertsList");
@@ -28,7 +30,7 @@ const PriceAlert = ({ currentPrice }) => {
         // Fallback
       }
     }
-    const defaultAlerts = [
+    return [
       {
         id: 1,
         name: "Apple iPhone 16 Pro",
@@ -63,8 +65,6 @@ const PriceAlert = ({ currentPrice }) => {
         store: "Croma",
       }
     ];
-    localStorage.setItem("priceAlertsList", JSON.stringify(defaultAlerts));
-    return defaultAlerts;
   });
 
   const [toastMessage, setToastMessage] = useState("");
@@ -73,22 +73,13 @@ const PriceAlert = ({ currentPrice }) => {
     localStorage.setItem("priceAlertsList", JSON.stringify(alerts));
   }, [alerts]);
 
-  // Sync targetPrice state when currentPrice prop changes
-  useEffect(() => {
-    if (currentPrice !== undefined) {
-      setTargetPrice(currentPrice);
-    }
-  }, [currentPrice]);
-
   const handleSubmit = () => {
     if (!email.trim()) return;
-
     setSubmitted(true);
-
     setTimeout(() => {
       setSubmitted(false);
       setEmail("");
-      setTargetPrice(currentPrice || 50000);
+      setTargetPrice(currentPrice || 0);
     }, 3000);
   };
 
@@ -100,6 +91,7 @@ const PriceAlert = ({ currentPrice }) => {
 
   // 1. COMPARISON MODE: Rendered inline in comparison / detail sections
   if (isComparisonMode) {
+    const displayPrice = currentPrice !== undefined && currentPrice !== null ? currentPrice : 0;
     return (
       <div className="bg-white border border-gray-200 rounded-xl mt-6">
         <div className="px-6 py-5 border-b border-gray-200">
@@ -112,7 +104,7 @@ const PriceAlert = ({ currentPrice }) => {
             <div>
               <p className="text-gray-600 mb-5">Current Lowest Price</p>
               <h2 className="text-5xl font-bold text-purple-600">
-                ₹{(currentPrice || 0).toLocaleString()}
+                ₹{displayPrice.toLocaleString()}
               </h2>
               <p className="text-gray-500 mt-4">We'll notify you whenever the price reaches your target.</p>
             </div>
@@ -178,7 +170,6 @@ const PriceAlert = ({ currentPrice }) => {
               key={item.id}
               className="flex items-center gap-3 border border-gray-100/50 rounded-xl p-3 hover:bg-gray-50/40 transition"
             >
-              {/* Image */}
               <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center p-1.5 shrink-0 select-none">
                 <img
                   src={item.image}
@@ -191,7 +182,6 @@ const PriceAlert = ({ currentPrice }) => {
                 />
               </div>
 
-              {/* Info */}
               <div className="flex-1 min-w-0">
                 <h4 className="text-xs font-black text-slate-900 truncate mb-1">
                   {item.name}
@@ -211,7 +201,6 @@ const PriceAlert = ({ currentPrice }) => {
                 </div>
               </div>
 
-              {/* Time & Bell */}
               <div className="flex flex-col items-end gap-2 shrink-0">
                 <span className="text-[9px] font-semibold text-gray-400 leading-none">
                   {item.time || "2m ago"}
@@ -306,10 +295,10 @@ const PriceAlert = ({ currentPrice }) => {
                             </div>
                           </td>
                           <td className="py-4 px-4 font-black text-xs text-gray-900">
-                            ₹{alert.currentPrice.toLocaleString()}
+                            ₹{(alert.currentPrice || 0).toLocaleString()}
                           </td>
                           <td className="py-4 px-4 font-bold text-xs text-indigo-600">
-                            ₹{alert.targetPrice.toLocaleString()}
+                            ₹{(alert.targetPrice || 0).toLocaleString()}
                           </td>
                           <td className="py-4 px-4">
                             <span className="bg-red-50 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full">
