@@ -6,6 +6,8 @@ import ForgotPassword from "./Pages/ForgotPassword";
 import Home from "./Pages/Home";
 import SearchPage from "./Pages/SearchPage";
 import Dashboard from "./Pages/Dashboard";
+import ProductDetails from "./Pages/ProductDetail";
+import ComparisonPage from "./Pages/ComparisionPage";
 function App() {
   return (
     <BrowserRouter>
@@ -16,6 +18,9 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/categories"  element={<Dashboard/>}  />
+         <Route path="/product/:id" element={<ProductDetails />} />
+          <Route path="/comparison/:productName" element={<ComparisonPage />}
+/>
       </Routes>
     </BrowserRouter>
   );

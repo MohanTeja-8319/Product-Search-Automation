@@ -12,7 +12,7 @@ import {
   FaShoppingBag,
 } from "react-icons/fa";
 import { useNavigate, useLocation } from "react-router-dom";
-
+import "../App.css";
 const menuItems = [
   { icon: <FaHome />, text: "Home", path: "/home" },
   { icon: <FaSearch />, text: "Search Products", path: "/search" },
