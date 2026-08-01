@@ -5,7 +5,7 @@ import Register from "./Pages/Register";
 import ForgotPassword from "./Pages/ForgotPassword";
 import Home from "./Pages/Home";
 import SearchPage from "./Pages/SearchPage";
-
+import Dashboard from "./Pages/Dashboard";
 function App() {
   return (
     <BrowserRouter>
@@ -15,6 +15,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/home" element={<Home />} />
         <Route path="/search" element={<SearchPage />} />
+        <Route path="/categories"  element={<Dashboard/>}  />
       </Routes>
     </BrowserRouter>
   );
