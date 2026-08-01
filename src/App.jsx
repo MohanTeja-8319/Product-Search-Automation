@@ -11,6 +11,10 @@ import Logout from "./Pages/Logout";
 import Dashboard from "./Pages/Dashboard";
 import ProductDetails from "./Pages/ProductDetail";
 import ComparisonPage from "./Pages/ComparisionPage";
+import PriceAlertsPage from "./Pages/PriceAlertsPage";
+import SettingsPage from "./Pages/SettingsPage";
+import HelpSupportPage from "./Pages/HelpSupportPage";
+import HistoryPage from "./Pages/HistoryPage";
 
 function App() {
   return (
@@ -25,6 +29,10 @@ function App() {
         <Route path="/comparison" element={<Comparison />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/categories" element={<Dashboard />} />
+        <Route path="/price-alerts" element={<PriceAlertsPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/help" element={<HelpSupportPage />} />
+        <Route path="/history" element={<HistoryPage />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/comparison/:productName" element={<ComparisonPage />} />
       </Routes>

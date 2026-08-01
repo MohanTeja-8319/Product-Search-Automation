@@ -34,12 +34,12 @@ const Sidebar = () => {
     { icon: <FiHome />, text: "Home", path: "/home" },
     { icon: <FiSearch />, text: "Search Products", path: "/search" },
     { icon: <FiGrid />, text: "Categories", path: "/categories" },
-    { icon: <FiBell />, text: "Price Alerts", path: "/home" },
+    { icon: <FiBell />, text: "Price Alerts", path: "/price-alerts" },
     { icon: <FiHeart />, text: "Wishlist", path: "/wishlist" },
     { icon: <FiRefreshCw />, text: "Comparison", path: "/comparison" },
-    { icon: <FiClock />, text: "History", path: "/search" },
-    { icon: <FiSettings />, text: "Settings", path: "/home" },
-    { icon: <FiHelpCircle />, text: "Help & Support", path: "/home" },
+    { icon: <FiClock />, text: "History", path: "/history" },
+    { icon: <FiSettings />, text: "Settings", path: "/settings" },
+    { icon: <FiHelpCircle />, text: "Help & Support", path: "/help" },
     { icon: <FiLogOut />, text: "Logout", path: "/logout" },
   ];
 
@@ -105,6 +105,7 @@ const Sidebar = () => {
                   onClick={() => {
                     if (item.path) {
                       navigate(item.path);
+                      setIsOpen(false);
                     }
                   }}
                   className={`flex items-center gap-3.5 w-full px-3.5 py-2.5 rounded-xl transition duration-200 font-semibold text-xs ${
