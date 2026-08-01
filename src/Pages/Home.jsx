@@ -5,7 +5,7 @@ import Navbar from "../Components/Navbar";
 import HeroBanner from "../Components/HeroBanner";
 import StatsCards from "../Components/StatsCards";
 import PopularDeals from "../Components/PopularDeals";
-import PriceAlert from "../Components/PriceAlert";
+import PriceAlert from "./PriceAlert";
 import WatchList from "../Components/WatchList";
 import Categories from "../Components/Categories";
 import FeaturesBar from "../Components/FeaturesBar";

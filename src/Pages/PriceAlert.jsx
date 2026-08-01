@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { FiBell, FiTrash2, FiPlus, FiArrowRight, FiCheck } from "react-icons/fi";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 
 const PriceAlert = ({ currentPrice }) => {
   const navigate = useNavigate();
-  const isPage = currentPrice === undefined;
+  const location = useLocation();
+
+  // Determine mode:
+  // 1. comparisonMode: currentPrice prop is passed
+  // 2. widgetMode: rendered on home page
+  // 3. pageMode: rendered as standalone page
+  const isComparisonMode = currentPrice !== undefined;
+  const isWidgetMode = !isComparisonMode && location.pathname.toLowerCase() === "/home";
 
   const [email, setEmail] = useState("");
   const [targetPrice, setTargetPrice] = useState(currentPrice || 50000);
@@ -24,48 +31,47 @@ const PriceAlert = ({ currentPrice }) => {
     const defaultAlerts = [
       {
         id: 1,
-        name: "iPhone 15 (128GB)",
+        name: "Apple iPhone 16 Pro",
         category: "Smartphone",
-        currentPrice: 69900,
-        targetPrice: 65000,
-        drop: "↓ ₹4,900",
-        image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&q=80",
+        currentPrice: 114900,
+        targetPrice: 110000,
+        drop: "↓ ₹5,000 (4.17%)",
+        time: "2m ago",
+        image: "https://images.unsplash.com/photo-1727371515990-24db52ced00a?w=100&q=80",
         store: "Amazon",
       },
       {
         id: 2,
-        name: "Dell Inspiron 15",
-        category: "Laptop",
-        currentPrice: 45990,
-        targetPrice: 43000,
-        drop: "↓ ₹1,990",
-        image: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=300&q=80",
+        name: "Samsung Galaxy S24 Ultra",
+        category: "Smartphone",
+        currentPrice: 121999,
+        targetPrice: 115000,
+        drop: "↓ ₹8,000 (6.15%)",
+        time: "1h ago",
+        image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=100&q=80",
         store: "Flipkart",
       },
       {
         id: 3,
-        name: "Sony WH-1000XM5",
-        category: "Headphones",
-        currentPrice: 29990,
-        targetPrice: 27000,
-        drop: "↓ ₹2,990",
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&q=80",
-        store: "Amazon",
+        name: "OnePlus 12 (256GB)",
+        category: "Smartphone",
+        currentPrice: 61999,
+        targetPrice: 58000,
+        drop: "↓ ₹3,000 (4.62%)",
+        time: "3h ago",
+        image: "https://images.unsplash.com/photo-1565849328678-9275afe5d766?w=100&q=80",
+        store: "Croma",
       }
     ];
-    if (isPage) {
-      localStorage.setItem("priceAlertsList", JSON.stringify(defaultAlerts));
-    }
+    localStorage.setItem("priceAlertsList", JSON.stringify(defaultAlerts));
     return defaultAlerts;
   });
 
   const [toastMessage, setToastMessage] = useState("");
 
   useEffect(() => {
-    if (isPage) {
-      localStorage.setItem("priceAlertsList", JSON.stringify(alerts));
-    }
-  }, [alerts, isPage]);
+    localStorage.setItem("priceAlertsList", JSON.stringify(alerts));
+  }, [alerts]);
 
   // Sync targetPrice state when currentPrice prop changes
   useEffect(() => {
@@ -79,8 +85,6 @@ const PriceAlert = ({ currentPrice }) => {
 
     setSubmitted(true);
 
-    // If inline, simulate submit
-    // If page, we could add to list. For this task, keep it aligned with original code simulation
     setTimeout(() => {
       setSubmitted(false);
       setEmail("");
@@ -94,70 +98,136 @@ const PriceAlert = ({ currentPrice }) => {
     setTimeout(() => setToastMessage(""), 3000);
   };
 
-  const renderInlineContent = () => (
-    <div className="bg-white border border-gray-200 rounded-xl mt-6">
-      <div className="px-6 py-5 border-b border-gray-200">
-        <h2 className="text-2xl font-bold">🔔 Price Alert</h2>
-        <p className="text-gray-500 mt-1">Get notified when this product becomes cheaper.</p>
-      </div>
+  // 1. COMPARISON MODE: Rendered inline in comparison / detail sections
+  if (isComparisonMode) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-xl mt-6">
+        <div className="px-6 py-5 border-b border-gray-200">
+          <h2 className="text-2xl font-bold">🔔 Price Alert</h2>
+          <p className="text-gray-500 mt-1">Get notified when this product becomes cheaper.</p>
+        </div>
 
-      <div className="p-6">
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Left */}
-          <div>
-            <p className="text-gray-600 mb-5">Current Lowest Price</p>
-            <h2 className="text-5xl font-bold text-purple-600">
-              ₹{(currentPrice || 0).toLocaleString()}
-            </h2>
-            <p className="text-gray-500 mt-4">We'll notify you whenever the price reaches your target.</p>
-          </div>
-
-          {/* Right */}
-          <div className="space-y-5">
+        <div className="p-6">
+          <div className="grid lg:grid-cols-2 gap-8">
             <div>
-              <label className="block mb-2 font-medium">Email Address</label>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500"
-              />
+              <p className="text-gray-600 mb-5">Current Lowest Price</p>
+              <h2 className="text-5xl font-bold text-purple-600">
+                ₹{(currentPrice || 0).toLocaleString()}
+              </h2>
+              <p className="text-gray-500 mt-4">We'll notify you whenever the price reaches your target.</p>
             </div>
 
-            <div>
-              <label className="block mb-2 font-medium">Notify Me At Price</label>
-              <input
-                type="number"
-                value={targetPrice}
-                onChange={(e) => setTargetPrice(Number(e.target.value))}
-                className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-
-            <button
-              onClick={handleSubmit}
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg transition cursor-pointer"
-            >
-              Set Price Alert
-            </button>
-
-            {submitted && (
-              <div className="bg-green-100 border border-green-300 text-green-700 rounded-lg p-4">
-                ✅ Price alert created successfully!
+            <div className="space-y-5">
+              <div>
+                <label className="block mb-2 font-medium">Email Address</label>
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500"
+                />
               </div>
-            )}
+
+              <div>
+                <label className="block mb-2 font-medium">Notify Me At Price</label>
+                <input
+                  type="number"
+                  value={targetPrice}
+                  onChange={(e) => setTargetPrice(Number(e.target.value))}
+                  className="w-full border rounded-lg px-4 py-3 outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+
+              <button
+                onClick={handleSubmit}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg transition cursor-pointer"
+              >
+                Set Price Alert
+              </button>
+
+              {submitted && (
+                <div className="bg-green-100 border border-green-300 text-green-700 rounded-lg p-4">
+                  ✅ Price alert created successfully!
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-
-  if (!isPage) {
-    return renderInlineContent();
+    );
   }
 
-  // Standalone Page Render
+  // 2. WIDGET MODE: Rendered on the Home Page sidebar/right-column
+  if (isWidgetMode) {
+    return (
+      <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-sm font-extrabold text-gray-950">Price Drop Alerts</h2>
+          <button
+            onClick={() => navigate("/price-alerts")}
+            className="text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition cursor-pointer"
+          >
+            View All
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {alerts.slice(0, 3).map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center gap-3 border border-gray-100/50 rounded-xl p-3 hover:bg-gray-50/40 transition"
+            >
+              {/* Image */}
+              <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center p-1.5 shrink-0 select-none">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="max-h-full max-w-full object-contain"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=100";
+                  }}
+                />
+              </div>
+
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                <h4 className="text-xs font-black text-slate-900 truncate mb-1">
+                  {item.name}
+                </h4>
+                <div className="flex items-center gap-1 mt-0.5">
+                  <span className="text-[10px] text-red-600 font-extrabold bg-red-50/80 px-2 py-0.5 rounded leading-none">
+                    Price Drop: {item.drop}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-xs font-black text-slate-800">
+                    Now ₹{(item.currentPrice || 0).toLocaleString()}
+                  </span>
+                  <span className="text-[9px] font-black text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded leading-none uppercase">
+                    {item.store}
+                  </span>
+                </div>
+              </div>
+
+              {/* Time & Bell */}
+              <div className="flex flex-col items-end gap-2 shrink-0">
+                <span className="text-[9px] font-semibold text-gray-400 leading-none">
+                  {item.time || "2m ago"}
+                </span>
+                <div className="w-6 h-6 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100/50">
+                  <FiBell className="text-xs text-emerald-500" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // 3. PAGE MODE: Dedicated alert manager page (/price-alerts route)
   return (
     <div className="bg-[#f8fafc] min-h-screen text-gray-800">
       <Sidebar />
