@@ -8,8 +8,6 @@ import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import Filters from "./Filters";
 import SearchProducts from "./SearchProducts";
-import PriceAlert from "../Components/PriceAlert";
-import WatchList from "../Components/WatchList";
 
 import groupProducts from "../utils/groupProducts";
 
@@ -162,44 +160,33 @@ const SearchPage = () => {
               </div>
             </div>
 
-            {/* Page Layout Grid */}
-            <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
-              {/* Left Main Column (75%) */}
-              <div className="xl:col-span-3">
-                <div className="flex gap-6 items-start">
-                  <Filters
-                    brands={brands}
-                    categories={categories}
-                    stores={stores}
-                    ratings={ratings}
-                    selectedBrands={selectedBrands}
-                    selectedCategories={selectedCategories}
-                    selectedStores={selectedStores}
-                    selectedRatings={selectedRatings}
-                    handleBrandChange={handleBrandChange}
-                    handleCategoryChange={handleCategoryChange}
-                    handleStoreChange={handleStoreChange}
-                    handleRatingChange={handleRatingChange}
-                    maxPrice={maxPrice}
-                    setMaxPrice={setMaxPrice}
-                    clearAllFilters={clearAllFilters}
-                    brandCounts={brandCounts}
-                    categoryCounts={categoryCounts}
-                    storeCounts={storeCounts}
-                  />
-                  <div className="flex-1">
-                    <SearchProducts
-                      products={filteredProducts}
-                      comparisonProducts={comparisonProducts}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column (25%) */}
-              <div className="xl:col-span-1 space-y-6">
-                <PriceAlert />
-                <WatchList />
+            {/* Page Layout */}
+            <div className="flex gap-6 items-start">
+              <Filters
+                brands={brands}
+                categories={categories}
+                stores={stores}
+                ratings={ratings}
+                selectedBrands={selectedBrands}
+                selectedCategories={selectedCategories}
+                selectedStores={selectedStores}
+                selectedRatings={selectedRatings}
+                handleBrandChange={handleBrandChange}
+                handleCategoryChange={handleCategoryChange}
+                handleStoreChange={handleStoreChange}
+                handleRatingChange={handleRatingChange}
+                maxPrice={maxPrice}
+                setMaxPrice={setMaxPrice}
+                clearAllFilters={clearAllFilters}
+                brandCounts={brandCounts}
+                categoryCounts={categoryCounts}
+                storeCounts={storeCounts}
+              />
+              <div className="flex-1">
+                <SearchProducts
+                  products={filteredProducts}
+                  comparisonProducts={comparisonProducts}
+                />
               </div>
             </div>
           </div>

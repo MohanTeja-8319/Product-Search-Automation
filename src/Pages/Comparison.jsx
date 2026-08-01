@@ -4,8 +4,6 @@ import { FaStar } from "react-icons/fa";
 import { BiGitCompare } from "react-icons/bi";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
-import PriceAlert from "../Components/PriceAlert";
-import WatchList from "../Components/WatchList";
 import dummyProducts from "../data/products.js";
 
 const Comparison = () => {
@@ -247,9 +245,7 @@ const Comparison = () => {
 
         {/* Page Content */}
         <main className="p-6 flex-1">
-          <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
-            {/* Left Column (75%) */}
-            <div className="xl:col-span-3 space-y-6">
+          <div className="space-y-6">
               {/* Header card */}
               <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -534,13 +530,6 @@ const Comparison = () => {
                 </a>
               </div>
             </div>
-
-            {/* Right Column (25%) */}
-            <div className="xl:col-span-1 space-y-6">
-              <PriceAlert />
-              <WatchList />
-            </div>
-          </div>
         </main>
       </div>
 

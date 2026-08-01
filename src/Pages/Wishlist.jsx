@@ -3,8 +3,6 @@ import { FiShare2, FiTrash2, FiHeart, FiCheck, FiArrowRight } from "react-icons/
 import { FaHeart } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
-import PriceAlert from "../Components/PriceAlert";
-import WatchList from "../Components/WatchList";
 
 const Wishlist = () => {
   const [items, setItems] = useState([
@@ -151,9 +149,7 @@ const Wishlist = () => {
 
         {/* Page Content */}
         <main className="p-6 flex-1">
-          <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
-            {/* Left Column (75%) */}
-            <div className="xl:col-span-3 space-y-6">
+          <div className="space-y-6">
               {/* Header card */}
               <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
@@ -351,13 +347,6 @@ const Wishlist = () => {
                 </a>
               </div>
             </div>
-
-            {/* Right Column (25%) */}
-            <div className="xl:col-span-1 space-y-6">
-              <PriceAlert />
-              <WatchList />
-            </div>
-          </div>
         </main>
       </div>
 
