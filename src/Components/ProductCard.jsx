@@ -26,7 +26,7 @@ function ProductCard({ product, onWishlistToggle }) {
 
   return (
     <div
-      onClick={() => navigate(`/comparison/${encodeURIComponent(product.name)}`)}
+      onClick={() => window.open(`/comparison/${encodeURIComponent(product.name)}`, "_blank")}
       className="bg-white border border-gray-100 rounded-2xl p-4 flex flex-col justify-between shadow-sm relative group cursor-pointer hover:border-indigo-300 hover:shadow-md transition-all duration-300"
     >
       {/* Heart Icon */}

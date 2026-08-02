@@ -38,8 +38,8 @@ const Sidebar = () => {
     { icon: <FiHeart />, text: "Wishlist", path: "/wishlist" },
     { icon: <FiRefreshCw />, text: "Comparison", path: "/comparison" },
     { icon: <FiClock />, text: "History", path: "/history" },
-    { icon: <FiSettings />, text: "Settings", path: "/settings" },
-    { icon: <FiHelpCircle />, text: "Help & Support", path: "/help" },
+    { icon: <FiSettings />, text: "Settings", path: null },
+    { icon: <FiHelpCircle />, text: "Help & Support", path: null },
     { icon: <FiLogOut />, text: "Logout", path: "/logout" },
   ];
 

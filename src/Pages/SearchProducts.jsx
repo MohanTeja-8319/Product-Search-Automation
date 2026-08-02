@@ -130,18 +130,21 @@ const SearchProducts = ({
                 {hasComparison ? (
                   <button
                     onClick={() =>
-                      navigate(
-                        `/comparison/${encodeURIComponent(product.name)}`
+                      window.open(
+                        `/comparison/${encodeURIComponent(product.name)}`,
+                        "_blank"
                       )
                     }
-                    className="border border-purple-600 text-purple-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-600 hover:text-white transition"
+                    className="border border-purple-600 text-purple-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-600 hover:text-white transition cursor-pointer"
                   >
                     View Deal
                   </button>
                 ) : (
                   <button
-                    onClick={() => navigate(`/product/${product.id}`)}
-                    className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 hover:text-white transition"
+                    onClick={() =>
+                      window.open(`/product/${product.id}`, "_blank")
+                    }
+                    className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 hover:text-white transition cursor-pointer"
                   >
                     View Details
                   </button>
