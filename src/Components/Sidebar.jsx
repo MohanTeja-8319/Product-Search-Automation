@@ -34,7 +34,7 @@ const Sidebar = () => {
     { icon: <FiHome />, text: "Home", path: "/home" },
     { icon: <FiSearch />, text: "Search Products", path: "/search" },
     { icon: <FiGrid />, text: "Categories", path: "/categories" },
-    { icon: <FiBell />, text: "Price Alerts", path: "/price-alerts" },
+    { icon: <FiBell />, text: "Price Alerts", path: "/pricealerts" },
     { icon: <FiHeart />, text: "Wishlist", path: "/wishlist" },
     { icon: <FiRefreshCw />, text: "Comparison", path: "/comparison" },
     { icon: <FiClock />, text: "History", path: "/history" },
@@ -155,7 +155,8 @@ const Sidebar = () => {
                 Get notified instantly when prices drop on your favorite products.
               </p>
 
-              <button className="w-full bg-gradient-to-r from-indigo-600 to-purple-500 hover:from-indigo-700 hover:to-purple-600 text-white text-[10px] font-bold py-2 px-3 rounded-lg mt-3 shadow-sm hover:shadow transition duration-200">
+              <button className="w-full bg-gradient-to-r from-indigo-600 to-purple-500 hover:from-indigo-700 hover:to-purple-600 text-white text-[10px] font-bold py-2 px-3 rounded-lg mt-3 shadow-sm hover:shadow transition duration-200"
+              onClick={()=>navigate("/createalerts")}>
                 Create Alert
               </button>
             </div>

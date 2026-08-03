@@ -13,6 +13,8 @@ import ProductDetails from "./Pages/ProductDetail";
 import ComparisonPage from "./Pages/ComparisionPage";
 import PriceAlert from "./Pages/PriceAlert";
 import HistoryPage from "./Pages/HistoryPage";
+import CreateAlert from "./Components/CreateAlerts";
+import PriceAlerts from "./Components/PriceAlertsMain";
 
 function App() {
   return (
@@ -27,10 +29,12 @@ function App() {
         <Route path="/comparison" element={<Comparison />} />
         <Route path="/logout" element={<Logout />} />
         <Route path="/categories" element={<Dashboard />} />
-        <Route path="/price-alerts" element={<PriceAlert />} />
+     
         <Route path="/history" element={<HistoryPage />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/comparison/:productName" element={<ComparisonPage />} />
+        <Route path="/createalerts" element={<CreateAlert />} />
+        <Route path="/pricealerts" element={<PriceAlerts/>} />
       </Routes>
     </BrowserRouter>
   );
