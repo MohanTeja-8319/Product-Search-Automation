@@ -1,14 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import Login from "./Pages/Login";
-import Register from "./Pages/Register";
-import ForgotPassword from "./Pages/ForgotPassword";
-import Home from "./Pages/Home";
+import { Login, Register, ForgotPassword, Logout } from "./Pages/Login";
+import Home, { Dashboard } from "./Pages/Home";
 import SearchPage from "./Pages/SearchPage";
 import Wishlist from "./Pages/Wishlist";
 import Comparison from "./Pages/Comparison";
-import Logout from "./Pages/Logout";
-import Dashboard from "./Pages/Dashboard";
 import ProductDetails from "./Pages/ProductDetail";
 import ComparisonPage from "./Pages/ComparisionPage";
 import PriceAlert from "./Pages/PriceAlert";

@@ -10,7 +10,7 @@ import ReviewsSection from "./ReviewSection";
 import FAQ from "./FAQ";
 import RecentlyViewed from "./RecentlyViewed";
 import ShareProduct from "./ShareProduct";
-import Wishlist from "./AddWishlist";
+import { AddWishlistWidget as Wishlist } from "./Wishlist";
 import StickyBuyBar from "./StickyBuyBar";
 import RelatedProducts from "./RelatedProducts";
 

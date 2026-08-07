@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
-import Wishlist from "./AddWishlist";
+import { AddWishlistWidget as Wishlist } from "./Wishlist";
 
 import ProductInfo from "./ProductInfo";
 import Specifications from "./Specifications";
