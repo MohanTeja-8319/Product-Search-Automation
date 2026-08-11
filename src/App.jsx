@@ -9,6 +9,8 @@ import ProductDetails from "./Pages/ProductDetail";
 import ComparisonPage from "./Pages/ComparisionPage";
 import PriceAlert from "./Pages/PriceAlert";
 import HistoryPage from "./Pages/HistoryPage";
+import Settings from "./Pages/Settings";
+import HelpSupport from "./Pages/HelpSupport";
 import CreateAlert from "./Components/CreateAlerts";
 import PriceAlerts from "./Components/PriceAlertsMain";
 
@@ -27,6 +29,8 @@ function App() {
         <Route path="/categories" element={<Dashboard />} />
      
         <Route path="/history" element={<HistoryPage />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/support" element={<HelpSupport />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/comparison/:productName" element={<ComparisonPage />} />
         <Route path="/createalerts" element={<CreateAlert />} />

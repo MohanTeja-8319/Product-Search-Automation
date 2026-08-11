@@ -1,9 +1,15 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { FiChevronDown } from "react-icons/fi";
 
 const Profile = () => {
+  const navigate = useNavigate();
+
   return (
-    <div className="flex items-center gap-2 cursor-pointer hover:opacity-85 transition">
+    <div 
+      onClick={() => navigate("/settings")}
+      className="flex items-center gap-2 cursor-pointer hover:opacity-85 transition"
+    >
       <img
         src="https://api.dicebear.com/7.x/adventurer/svg?seed=Felix"
         alt="User profile"
