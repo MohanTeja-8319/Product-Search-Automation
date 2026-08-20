@@ -34,7 +34,7 @@ export const Filters = ({
   const [showAllStores, setShowAllStores] = useState(false);
 
   return (
-    <div className="w-[250px] bg-[#FCFCFD] rounded-xl border border-gray-200 p-5 shadow-sm">
+    <div className="w-full lg:w-[250px] shrink-0 bg-[#FCFCFD] rounded-xl border border-gray-200 p-5 shadow-sm">
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-lg font-semibold text-gray-800">Filters</h2>
         <button
@@ -173,7 +173,7 @@ export const SearchProducts = ({ products = [], comparisonProducts = {} }) => {
 
   if (products.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-gray-200 p-12 text-center shadow-sm">
+      <div className="bg-white rounded-xl border border-gray-200 p-8 sm:p-12 text-center shadow-sm">
         <div className="text-5xl mb-4">🔍</div>
         <h3 className="text-lg font-bold text-gray-950 mb-2">No Products Found</h3>
         <p className="text-gray-500 text-sm">
@@ -191,7 +191,7 @@ export const SearchProducts = ({ products = [], comparisonProducts = {} }) => {
   return (
     <>
       <div className="flex-1 bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-        <div className="grid grid-cols-[3fr_1fr_1.2fr_1.2fr_1fr] bg-gray-50 border-b border-gray-200 px-6 py-4 text-xs font-semibold uppercase text-gray-500">
+        <div className="hidden md:grid grid-cols-[3fr_1fr_1.2fr_1.2fr_1fr] bg-gray-50 border-b border-gray-200 px-6 py-4 text-xs font-semibold uppercase text-gray-500">
           <div>Product</div>
           <div>Price</div>
           <div>Store</div>
@@ -206,7 +206,7 @@ export const SearchProducts = ({ products = [], comparisonProducts = {} }) => {
           return (
             <div
               key={product.id}
-              className="grid grid-cols-[3fr_1fr_1.2fr_1.2fr_1fr] items-center px-6 py-5 border-b hover:bg-gray-50"
+              className="flex flex-col gap-4 md:grid md:grid-cols-[3fr_1fr_1.2fr_1.2fr_1fr] md:items-center px-4 sm:px-6 py-5 border-b hover:bg-gray-50"
             >
               <div className="flex items-center gap-4">
                 <div className="w-20 h-20 bg-gray-50 flex items-center justify-center shrink-0 rounded-xl border border-gray-100 p-1.5 shadow-sm">
@@ -233,32 +233,39 @@ export const SearchProducts = ({ products = [], comparisonProducts = {} }) => {
                 </div>
               </div>
 
-              <div className="font-semibold text-sm text-gray-900">
-                ₹{product.price.toLocaleString()}
+              <div className="flex items-center justify-between md:block">
+                <span className="text-xs font-semibold uppercase text-gray-400 md:hidden">Price</span>
+                <span className="font-semibold text-sm text-gray-900">
+                  ₹{product.price.toLocaleString()}
+                </span>
               </div>
 
-              <div className="text-sm text-gray-600">{product.store}</div>
+              <div className="flex items-center justify-between md:block">
+                <span className="text-xs font-semibold uppercase text-gray-400 md:hidden">Store</span>
+                <span className="text-sm text-gray-600">{product.store}</span>
+              </div>
 
-              <div>
+              <div className="flex items-center justify-between md:block">
+                <span className="text-xs font-semibold uppercase text-gray-400 md:hidden">Discount</span>
                 <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold">
                   ↓ {product.discount}
                 </span>
               </div>
 
-              <div className="flex justify-center">
+              <div className="flex md:justify-center">
                 {hasComparison ? (
                   <button
                     onClick={() =>
                       window.open(`/comparison/${encodeURIComponent(product.name)}`, "_blank")
                     }
-                    className="border border-purple-600 text-purple-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-600 hover:text-white transition cursor-pointer"
+                    className="w-full md:w-auto border border-purple-600 text-purple-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-600 hover:text-white transition cursor-pointer"
                   >
                     View Deal
                   </button>
                 ) : (
                   <button
                     onClick={() => window.open(`/product/${product.id}`, "_blank")}
-                    className="border border-blue-600 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 hover:text-white transition cursor-pointer"
+                    className="w-full md:w-auto border border-blue-600 text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 hover:text-white transition cursor-pointer"
                   >
                     View Details
                   </button>
@@ -284,7 +291,7 @@ export const SearchProducts = ({ products = [], comparisonProducts = {} }) => {
               Previous
             </button>
 
-            <div className="flex items-center gap-2 overflow-x-auto max-w-[420px] scrollbar-hide px-1">
+            <div className="flex items-center gap-2 overflow-x-auto max-w-[280px] sm:max-w-[420px] scrollbar-hide px-1">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                 <button
                   key={page}
@@ -427,11 +434,11 @@ const SearchPage = () => {
       <Sidebar />
       <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
         <Navbar />
-        <main className="p-6 flex-1">
+        <main className="p-4 sm:p-6 flex-1">
           <div className="mb-8">
-            <div className="flex items-start justify-between mt-4 mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mt-4 mb-6">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">
                   {query ? (
                     <>
                       Search Results for <span className="text-purple-600">"{query}"</span>
@@ -461,7 +468,7 @@ const SearchPage = () => {
               </div>
             </div>
 
-            <div className="flex gap-6 items-start">
+            <div className="flex flex-col lg:flex-row gap-6 items-start">
               <Filters
                 brands={brands}
                 categories={categories}
@@ -482,7 +489,7 @@ const SearchPage = () => {
                 categoryCounts={categoryCounts}
                 storeCounts={storeCounts}
               />
-              <div className="flex-1">
+              <div className="flex-1 w-full">
                 <SearchProducts
                   products={filteredProducts}
                   comparisonProducts={comparisonProducts}

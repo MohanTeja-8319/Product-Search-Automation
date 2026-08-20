@@ -45,8 +45,8 @@ const ProductDetails = () => {
 
   if (!product) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <h1 className="text-3xl font-bold">Product Not Found</h1>
+      <div className="flex items-center justify-center h-screen px-4 text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold">Product Not Found</h1>
       </div>
     );
   }
@@ -71,19 +71,19 @@ const ProductDetails = () => {
 
         {/* Page Content */}
         <div className="flex-1 pb-28">
-          <div className="max-w-7xl mx-auto px-8 py-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
             {/* Back */}
             <button
               onClick={() => navigate(-1)}
-              className="text-purple-600 font-semibold mb-6 hover:underline"
+              className="text-purple-600 font-semibold mb-4 sm:mb-6 hover:underline text-sm sm:text-base"
             >
               ← Back
             </button>
 
             {!hasComparison && (
-              <div className="mb-6 bg-yellow-50 border border-yellow-300 rounded-xl p-4 flex items-center justify-between">
+              <div className="mb-6 bg-yellow-50 border border-yellow-300 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
-                  <h2 className="font-bold text-yellow-800">
+                  <h2 className="font-bold text-yellow-800 text-sm sm:text-base">
                     ⚠ No Comparison Available
                   </h2>
                   <p className="text-sm text-yellow-700 mt-1">
@@ -95,43 +95,43 @@ const ProductDetails = () => {
             )}
 
             {/* Product Card */}
-            <div className="bg-white border border-gray-200 rounded-xl mt-6 p-8">
-              <div className="grid lg:grid-cols-2 gap-10">
+            <div className="bg-white border border-gray-200 rounded-xl mt-6 p-4 sm:p-6 lg:p-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
                 {/* Left */}
                 <div className="flex justify-center items-center">
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-96 object-contain"
+                    className="w-full max-w-xs sm:max-w-sm lg:w-96 object-contain"
                   />
                 </div>
 
                 {/* Right */}
                 <div>
-                  <h1 className="text-3xl font-bold">{product.name}</h1>
-                  <p className="text-gray-500 mt-2">{product.brand}</p>
-                  <div className="flex items-center gap-3 mt-5">
-                    <span className="bg-green-500 text-white px-3 py-1 rounded-full">
+                  <h1 className="text-2xl sm:text-3xl font-bold">{product.name}</h1>
+                  <p className="text-gray-500 mt-2 text-sm sm:text-base">{product.brand}</p>
+                  <div className="flex flex-wrap items-center gap-3 mt-4 sm:mt-5">
+                    <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm sm:text-base">
                       ⭐ {product.rating}
                     </span>
-                    <span className="text-gray-500">
+                    <span className="text-gray-500 text-sm sm:text-base">
                       ({product.reviews} Reviews)
                     </span>
                   </div>
 
-                  <h2 className="text-4xl font-bold text-purple-700 mt-6">
+                  <h2 className="text-3xl sm:text-4xl font-bold text-purple-700 mt-4 sm:mt-6">
                     ₹{product.price.toLocaleString()}
                   </h2>
 
-                  <p className="text-gray-400 line-through mt-2">
+                  <p className="text-gray-400 line-through mt-2 text-sm sm:text-base">
                     ₹{product.originalPrice.toLocaleString()}
                   </p>
 
-                  <span className="text-green-600 font-semibold">
+                  <span className="text-green-600 font-semibold text-sm sm:text-base">
                     {product.discount}
                   </span>
 
-                  <div className="mt-8 space-y-3">
+                  <div className="mt-6 sm:mt-8 space-y-2 sm:space-y-3 text-sm sm:text-base">
                     <p>
                       <strong>Brand:</strong> {product.brand}
                     </p>
@@ -146,10 +146,10 @@ const ProductDetails = () => {
                     </p>
                   </div>
 
-                  <div className="flex gap-4 mt-8">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8">
                     <button
                       onClick={() => window.open(product.url || "https://amazon.in", "_blank")}
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg cursor-pointer"
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-6 sm:px-8 py-3 rounded-lg cursor-pointer text-sm sm:text-base"
                     >
                       Buy Now
                     </button>
@@ -158,7 +158,7 @@ const ProductDetails = () => {
                         const { added } = toggleWishlistItem(product);
                         setInWishlist(added);
                       }}
-                      className={`px-8 py-3 rounded-lg cursor-pointer font-semibold transition ${
+                      className={`px-6 sm:px-8 py-3 rounded-lg cursor-pointer font-semibold transition text-sm sm:text-base ${
                         inWishlist
                           ? "bg-red-500 text-white hover:bg-red-600 border border-red-500"
                           : "border border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white"
@@ -197,21 +197,21 @@ const ProductDetails = () => {
 
             {/* Footer */}
             <footer className="mt-12 bg-white border border-gray-200 rounded-xl">
-              <div className="px-8 py-10">
-                <div className="grid md:grid-cols-4 gap-8">
-                  <div>
-                    <h2 className="text-2xl font-bold text-purple-700">
+              <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+                  <div className="sm:col-span-2 md:col-span-1">
+                    <h2 className="text-xl sm:text-2xl font-bold text-purple-700">
                       Product Search
                     </h2>
-                    <p className="text-gray-500 mt-4">
+                    <p className="text-gray-500 mt-4 text-sm sm:text-base">
                       Compare prices from trusted stores, view product details,
                       specifications, offers and make smarter buying decisions.
                     </p>
                   </div>
 
                   <div>
-                    <h3 className="font-bold mb-4">Quick Links</h3>
-                    <ul className="space-y-2 text-gray-500">
+                    <h3 className="font-bold mb-4 text-sm sm:text-base">Quick Links</h3>
+                    <ul className="space-y-2 text-gray-500 text-sm sm:text-base">
                       <li className="hover:text-purple-600 cursor-pointer">
                         Home
                       </li>
@@ -228,8 +228,8 @@ const ProductDetails = () => {
                   </div>
 
                   <div>
-                    <h3 className="font-bold mb-4">Support</h3>
-                    <ul className="space-y-2 text-gray-500">
+                    <h3 className="font-bold mb-4 text-sm sm:text-base">Support</h3>
+                    <ul className="space-y-2 text-gray-500 text-sm sm:text-base">
                       <li className="hover:text-purple-600 cursor-pointer">
                         Help Center
                       </li>
@@ -246,14 +246,14 @@ const ProductDetails = () => {
                   </div>
 
                   <div>
-                    <h3 className="font-bold mb-4">Follow Us</h3>
-                    <div className="flex gap-4 text-2xl">
+                    <h3 className="font-bold mb-4 text-sm sm:text-base">Follow Us</h3>
+                    <div className="flex gap-4 text-xl sm:text-2xl">
                       📘 📸 🐦 💼
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t mt-8 pt-6 text-center text-gray-500">
+                <div className="border-t mt-8 pt-6 text-center text-gray-500 text-xs sm:text-sm">
                   © 2026 Product Search Automation. All Rights Reserved.
                 </div>
               </div>
