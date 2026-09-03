@@ -58,8 +58,8 @@ const ComparisonPage = () => {
 
   if (!comparison) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <h1 className="text-3xl font-bold">No Comparison Available</h1>
+      <div className="min-h-screen flex justify-center items-center px-4 text-center">
+        <h1 className="text-2xl sm:text-3xl font-bold">No Comparison Available</h1>
       </div>
     );
   }
@@ -87,7 +87,7 @@ const ComparisonPage = () => {
 
         {/* Page Content */}
         <div className="flex-1 pb-28">
-          <div className="max-w-7xl mx-auto px-8 py-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             {/* Back */}
             <button
               onClick={() => navigate(-1)}
@@ -166,12 +166,12 @@ const ComparisonPage = () => {
               <h3 className="font-bold text-lg text-gray-800">
                 Product Search Automation
               </h3>
-              <p className="text-gray-500 mt-2">
+              <p className="text-gray-500 mt-2 px-4">
                 Compare prices from multiple trusted stores and choose the best
                 deal.
               </p>
 
-              <div className="flex justify-center gap-8 mt-6 text-sm text-gray-500">
+              <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 sm:gap-x-8 mt-6 px-4 text-sm text-gray-500">
                 <button className="hover:text-purple-600">Privacy Policy</button>
                 <button className="hover:text-purple-600">
                   Terms & Conditions

@@ -17,17 +17,17 @@ const ProductInfo = ({
   image,
   bestStore,
   rating,
-  lowestPrice,
-  highestPrice,
-  averagePrice,
-  savings,
+  lowestPrice = 0,
+  highestPrice = 0,
+  averagePrice = 0,
+  savings = 0,
 }) => {
   const storeBadgeStyle =
     STORE_STYLES[bestStore] || "bg-indigo-600 text-white font-bold";
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200/80 p-6 lg:p-8 mt-4 shadow-sm">
-      <div className="flex flex-col lg:flex-row gap-8 items-center">
+    <div className="bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 lg:p-8 mt-4 sm:mt-6 shadow-sm">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center">
         {/* Product Image */}
         <div className="lg:w-1/3 w-full flex justify-center items-center bg-slate-50/80 border border-slate-100 rounded-3xl p-6 relative group overflow-hidden">
           <span className="absolute top-3 left-3 bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1">
@@ -36,7 +36,7 @@ const ProductInfo = ({
           <img
             src={image}
             alt={productName}
-            className="h-64 object-contain group-hover:scale-105 transition duration-300 select-none"
+            className="h-48 sm:h-64 object-contain group-hover:scale-105 transition duration-300 select-none"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src =
@@ -46,7 +46,7 @@ const ProductInfo = ({
         </div>
 
         {/* Product Details */}
-        <div className="flex-1 w-full space-y-6">
+        <div className="flex-1 w-full space-y-5 sm:space-y-6">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <span className={`text-[10px] px-2.5 py-1 rounded-lg uppercase ${storeBadgeStyle}`}>
@@ -60,77 +60,77 @@ const ProductInfo = ({
               </span>
             </div>
 
-            <h1 className="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               {productName}
             </h1>
           </div>
 
           {/* Pricing Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5">
-            <div className="p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-3.5">
+            <div className="p-3 sm:p-3.5 rounded-2xl bg-emerald-50/70 border border-emerald-200">
               <span className="text-[10px] text-emerald-700 font-bold uppercase tracking-wider block">
                 Lowest Available
               </span>
-              <h3 className="text-xl font-black text-emerald-700 mt-0.5">
+              <h3 className="text-lg sm:text-xl font-black text-emerald-700 mt-0.5">
                 ₹{lowestPrice.toLocaleString()}
               </h3>
-              <span className="text-[10px] text-emerald-600 font-semibold">
+              <span className="text-[10px] text-emerald-600 font-semibold truncate block">
                 on {bestStore}
               </span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+            <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
                 Highest Store Price
               </span>
-              <h3 className="text-xl font-black text-rose-500 mt-0.5">
+              <h3 className="text-lg sm:text-xl font-black text-rose-500 mt-0.5">
                 ₹{highestPrice.toLocaleString()}
               </h3>
-              <span className="text-[10px] text-slate-400 font-medium">other stores</span>
+              <span className="text-[10px] text-slate-400 font-medium block">other stores</span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-200">
+            <div className="p-3 sm:p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-200 col-span-2 sm:col-span-1">
               <span className="text-[10px] text-indigo-700 font-bold uppercase tracking-wider block">
                 Total Max Savings
               </span>
-              <h3 className="text-xl font-black text-indigo-700 mt-0.5 flex items-center gap-1">
+              <h3 className="text-lg sm:text-xl font-black text-indigo-700 mt-0.5 flex items-center gap-1">
                 <FiTrendingDown className="text-base" />
                 ₹{savings.toLocaleString()}
               </h3>
-              <span className="text-[10px] text-indigo-500 font-semibold">
+              <span className="text-[10px] text-indigo-500 font-semibold block">
                 Instant Price Advantage
               </span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+            <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
                 Average Market Price
               </span>
-              <h3 className="text-base font-extrabold text-slate-800 mt-0.5">
+              <h3 className="text-sm sm:text-base font-extrabold text-slate-800 mt-0.5">
                 ₹{averagePrice.toLocaleString()}
               </h3>
-              <span className="text-[10px] text-slate-400 font-medium">Across all sellers</span>
+              <span className="text-[10px] text-slate-400 font-medium block">Across all sellers</span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+            <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
                 Stock Status
               </span>
-              <h3 className="text-base font-extrabold text-emerald-600 mt-0.5 flex items-center gap-1">
+              <h3 className="text-sm sm:text-base font-extrabold text-emerald-600 mt-0.5 flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 In Stock & Ready
               </h3>
-              <span className="text-[10px] text-slate-400 font-medium">Fast Dispatch</span>
+              <span className="text-[10px] text-slate-400 font-medium block">Fast Dispatch</span>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+            <div className="p-3 sm:p-3.5 rounded-2xl bg-slate-50 border border-slate-200 col-span-2 sm:col-span-1">
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
                 Warranty & Return
               </span>
-              <h3 className="text-base font-extrabold text-slate-800 mt-0.5">
+              <h3 className="text-sm sm:text-base font-extrabold text-slate-800 mt-0.5">
                 1 Year Brand
               </h3>
-              <span className="text-[10px] text-slate-400 font-medium">7-day replacement</span>
+              <span className="text-[10px] text-slate-400 font-medium block">7-day replacement</span>
             </div>
           </div>
         </div>

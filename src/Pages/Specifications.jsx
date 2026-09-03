@@ -50,7 +50,7 @@ const Specifications = ({ product }) => {
         : "Up to 30 hours continuous playback",
     },
     { label: "Customer Rating", value: `⭐ ${product.rating || "4.8"} / 5.0` },
-    { label: "Store Availability", value: "In Stock (Verified Authorized Seller)" },
+    { label: "Store Availability", value: product.availability || "In Stock (Verified Authorized Seller)" },
     {
       label: "Retail Price",
       value: `₹${product.price.toLocaleString()} (Best Deal)`,
@@ -62,27 +62,27 @@ const Specifications = ({ product }) => {
 
   return (
     <div className="bg-white border border-slate-200/80 rounded-3xl mt-6 overflow-hidden shadow-sm">
-      <div className="px-6 py-5 border-b border-slate-100 bg-slate-50/50">
-        <h2 className="text-xl font-extrabold text-slate-900">
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100 bg-slate-50/50">
+        <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
           Key Technical Specifications
         </h2>
-        <p className="text-slate-400 text-xs font-semibold mt-0.5">
+        <p className="text-slate-400 text-xs sm:text-sm font-semibold mt-0.5">
           Detailed hardware, performance, and seller specifications
         </p>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <tbody className="divide-y divide-slate-100 text-xs font-semibold">
+        <table className="w-full min-w-[360px] text-left border-collapse">
+          <tbody className="divide-y divide-slate-100 text-xs sm:text-sm font-semibold">
             {specs.map((item, index) => (
               <tr
                 key={index}
                 className={index % 2 === 0 ? "bg-white hover:bg-slate-50/60 transition" : "bg-slate-50/30 hover:bg-slate-50/60 transition"}
               >
-                <td className="w-1/3 px-6 py-3.5 text-slate-400 font-bold uppercase tracking-wider text-[11px]">
+                <td className="w-1/3 px-4 sm:px-6 py-3 sm:py-3.5 text-slate-400 font-bold uppercase tracking-wider text-[10px] sm:text-[11px]">
                   {item.label}
                 </td>
-                <td className="px-6 py-3.5 text-slate-800 font-medium">
+                <td className="px-4 sm:px-6 py-3 sm:py-3.5 text-slate-800 font-medium">
                   {item.value}
                 </td>
               </tr>
