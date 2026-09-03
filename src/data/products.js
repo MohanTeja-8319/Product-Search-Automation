@@ -1001,7 +1001,7 @@ const dummyProducts = [
   reviews: 4987,
   store: "Samsung Store",
   availability: "In Stock",
-  image: "/images/samsungbuds.jpg",
+  image: "/images/samsungbuds.jpeg",
   url: "#"
 },
 {
@@ -1226,7 +1226,7 @@ const dummyProducts = [
   reviews: 4526,
   store: "H&M",
   availability: "In Stock",
-  image: "/images/hm-oversized-shirt.wepb",
+  image: "/images/hm-oversized-shirt.webp",
   url: "#"
 },
 {

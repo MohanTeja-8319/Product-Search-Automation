@@ -263,7 +263,7 @@ const comparisonProducts = {
       price: 2299,
       rating: 4.5,
       discount: "20% OFF",
-      image: "/images/zara-floarl-maxi-dress.jpeg",
+      image: "/images/zara-floral-maxi-dress.jpeg",
       url: "#",
     },
     {
@@ -272,7 +272,7 @@ const comparisonProducts = {
       price: 2149,
       rating: 4.8,
       discount: "25% OFF",
-      image: "/images/zara-floarl-maxi-dress.jpeg",
+      image: "/images/zara-floral-maxi-dress.jpeg",
       url: "#",
     },
     {
@@ -281,7 +281,7 @@ const comparisonProducts = {
       price: 2199,
       rating: 4.6,
       discount: "22% OFF",
-      image: "/images/zara-floarl-maxi-dress.jpeg",
+      image: "/images/zara-floral-maxi-dress.jpeg",
       url: "#",
     },
   ],

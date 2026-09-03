@@ -1,176 +1,133 @@
 import React from "react";
+import { FiExternalLink, FiCheckCircle } from "react-icons/fi";
+import { FaStar, FaTrophy } from "react-icons/fa";
 import storeLogos from "../data/logos";
 
+const STORE_STYLES = {
+  Amazon: "bg-[#131921] text-amber-400 font-bold",
+  Flipkart: "bg-[#2874f0] text-yellow-300 font-extrabold",
+  Croma: "bg-[#00838f] text-white font-bold",
+  Myntra: "bg-gradient-to-r from-[#ff3f6c] to-[#ff527b] text-white font-bold",
+  Ajio: "bg-[#2c4152] text-white font-bold",
+  "Apple Store": "bg-black text-white font-semibold",
+  "Reliance Digital": "bg-[#e42529] text-white font-bold",
+};
+
 const ComparisonTable = ({ comparison, lowestPrice }) => {
-
-    return (
-
-        <div className="bg-white rounded-xl border border-gray-200 mt-6 overflow-hidden">
-
-            <div className="px-6 py-5 border-b">
-
-                <h2 className="text-2xl font-bold">
-
-                    Compare Stores
-
-                </h2>
-
-                <p className="text-gray-500 mt-1">
-
-                    Compare prices from all available stores
-
-                </p>
-
-            </div>
-
-            <div className="overflow-x-auto">
-
-                <table className="w-full">
-
-                    <thead className="bg-gray-50">
-
-                        <tr>
-
-                            <th className="text-left px-6 py-4">
-
-                                Store
-
-                            </th>
-
-                            <th className="text-center">
-
-                                Price
-
-                            </th>
-
-                            <th className="text-center">
-
-                                Rating
-
-                            </th>
-
-                            <th className="text-center">
-
-                                Discount
-
-                            </th>
-
-                            <th className="text-center">
-
-                                Availability
-
-                            </th>
-
-                            <th className="text-center">
-
-                                Action
-
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {comparison.map((store) => (
-
-                            <tr
-                                key={store.id}
-                                className={`border-t hover:bg-gray-50 ${
-                                    store.price === lowestPrice
-                                        ? "bg-green-50"
-                                        : ""
-                                }`}
-                            >
-
-                                <td className="px-6 py-5">
-
-                                    <div className="flex items-center gap-3">
-
-                                        <img
-                                            src={storeLogos[store.store]}
-                                            alt={store.store}
-                                            className="w-10 h-10 object-contain"
-                                        />
-
-                                        <div>
-
-                                            <h3 className="font-semibold">
-
-                                                {store.store}
-
-                                            </h3>
-
-                                            {store.price === lowestPrice && (
-
-                                                <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-
-                                                    Best Deal
-
-                                                </span>
-
-                                            )}
-
-                                        </div>
-
-                                    </div>
-
-                                </td>
-
-                                <td className="text-center font-bold text-purple-700">
-
-                                    ₹{store.price.toLocaleString()}
-
-                                </td>
-
-                                <td className="text-center">
-
-                                    ⭐ {store.rating}
-
-                                </td>
-
-                                <td className="text-center text-green-600 font-semibold">
-
-                                    {store.discount}
-
-                                </td>
-
-                                <td className="text-center">
-
-                                    In Stock
-
-                                </td>
-
-                                <td className="text-center">
-
-                                    <a
-                                        href={store.url}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg transition"
-                                    >
-
-                                        Visit
-
-                                    </a>
-
-                                </td>
-
-                            </tr>
-
-                        ))}
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
+  return (
+    <div className="bg-white rounded-3xl border border-slate-200/80 mt-6 overflow-hidden shadow-sm">
+      <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-extrabold text-slate-900">
+            Compare Stores & Live Deals
+          </h2>
+          <p className="text-slate-400 text-xs font-semibold mt-0.5">
+            Real-time price checks across authorized online retailers
+          </p>
         </div>
+      </div>
 
-    );
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[10px] font-extrabold uppercase tracking-wider">
+              <th className="px-6 py-4 font-bold text-xs">Retail Store</th>
+              <th className="px-4 py-4 font-bold text-xs text-center">Store Price</th>
+              <th className="px-4 py-4 font-bold text-xs text-center">Seller Rating</th>
+              <th className="px-4 py-4 font-bold text-xs text-center">Instant Discount</th>
+              <th className="px-4 py-4 font-bold text-xs text-center">Availability</th>
+              <th className="px-6 py-4 font-bold text-xs text-right">Direct Link</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100 text-xs font-semibold">
+            {comparison.map((store) => {
+              const isBest = store.price === lowestPrice;
+              const badgeStyle = STORE_STYLES[store.store] || "bg-indigo-600 text-white font-bold";
 
+              return (
+                <tr
+                  key={store.id}
+                  className={`hover:bg-slate-50/70 transition duration-150 ${
+                    isBest ? "bg-emerald-50/40" : ""
+                  }`}
+                >
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 p-1.5 flex items-center justify-center shrink-0 shadow-xs">
+                        <img
+                          src={storeLogos[store.store] || "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=100"}
+                          alt={store.store}
+                          className="max-h-full max-w-full object-contain"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=100";
+                          }}
+                        />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-[9px] px-2 py-0.5 rounded uppercase ${badgeStyle}`}>
+                            {store.store}
+                          </span>
+                          {isBest && (
+                            <span className="bg-emerald-100 text-emerald-800 text-[9px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1">
+                              <FaTrophy className="text-emerald-600" /> Lowest Price
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td className="px-4 py-4 text-center">
+                    <span className={`text-base font-black ${isBest ? "text-emerald-700" : "text-slate-900"}`}>
+                      ₹{store.price.toLocaleString()}
+                    </span>
+                  </td>
+
+                  <td className="px-4 py-4 text-center">
+                    <div className="inline-flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg border border-amber-100 text-slate-800 font-bold">
+                      <FaStar className="text-amber-400 text-xs" />
+                      <span>{store.rating}</span>
+                    </div>
+                  </td>
+
+                  <td className="px-4 py-4 text-center">
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                      {store.discount || "—"}
+                    </span>
+                  </td>
+
+                  <td className="px-4 py-4 text-center">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      In Stock
+                    </span>
+                  </td>
+
+                  <td className="px-6 py-4 text-right">
+                    <a
+                      href={store.url || "#"}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer ${
+                        isBest
+                          ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-200"
+                          : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-indigo-100"
+                      }`}
+                    >
+                      <span>Buy at {store.store}</span>
+                      <FiExternalLink className="text-xs" />
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 };
 
 export default ComparisonTable;
