@@ -18,6 +18,7 @@ import ParticleBackground from "../Components/ParticleBackground";
 import GoogleAuthModal from "../Components/GoogleAuthModal";
 import ResetPassword from "./ResetPassword";
 import A from "../assets/ab.png";
+import { loginUser, registerUser, saveAuth } from "../utils/api";
 
 // ==========================================
 // 1. LOGIN COMPONENT
@@ -29,27 +30,22 @@ export function Login() {
   const [rememberMe, setRememberMe] = useState(true);
   const [googleModalOpen, setGoogleModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleManualLogin = (e) => {
+  const handleManualLogin = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
-
-    setTimeout(() => {
-      const nameFromEmail = email.split("@")[0].replace(/[._]/g, " ").replace(/\b\w/g, c => c.toUpperCase());
-      const userPayload = {
-        name: nameFromEmail || "Mohan Teja",
-        email: email || "mohan.teja@gmail.com",
-        avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(nameFromEmail || "Mohan")}`,
-        provider: "email",
-        loggedInAt: new Date().toISOString(),
-      };
-
-      localStorage.setItem("user", JSON.stringify(userPayload));
-      localStorage.setItem("token", `session-${Date.now()}`);
-      setLoading(false);
+    try {
+      const data = await loginUser({ email, password });
+      saveAuth(data);
       navigate("/home");
-    }, 600);
+    } catch (err) {
+      setError(err.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleQuickDemoLogin = (demoName, demoEmail) => {
@@ -142,6 +138,12 @@ export function Login() {
               Mohan Teja (Demo)
             </button>
           </div>
+
+          {error && (
+            <div className="mb-4 p-3 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-300 text-xs font-medium">
+              {error}
+            </div>
+          )}
 
           {/* Email / Password Sign In Form */}
           <form onSubmit={handleManualLogin} className="space-y-4">
@@ -290,6 +292,7 @@ export function Register() {
     agreedToTerms: false,
   });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -300,38 +303,39 @@ export function Register() {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
-      alert("Please fill all required fields.");
-      return;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
-    if (!formData.agreedToTerms) {
-      alert("Please agree to the Terms & Conditions.");
-      return;
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
+    setError("Please fill all required fields.");
+    return;
+  }
+  if (formData.password !== formData.confirmPassword) {
+    setError("Passwords do not match.");
+    return;
+  }
+  if (!formData.agreedToTerms) {
+    setError("Please agree to the Terms & Conditions.");
+    return;
+  }
 
-    setLoading(true);
-    setTimeout(() => {
-      const userPayload = {
-        name: formData.fullName,
-        email: formData.email,
-        avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(formData.fullName)}`,
-        provider: "email",
-        loggedInAt: new Date().toISOString(),
-      };
-
-      localStorage.setItem("user", JSON.stringify(userPayload));
-      localStorage.setItem("token", `session-${Date.now()}`);
-      setLoading(false);
-      navigate("/home");
-    }, 700);
-  };
-
+  setLoading(true);
+  try {
+    await registerUser(formData);
+    setFormData({
+      fullName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      agreedToTerms: false,
+    });
+    navigate("/", { state: { registered: true, email: formData.email } });
+  } catch (err) {
+    setError(err.message || "Registration failed. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
       {/* Particle Background */}
@@ -381,6 +385,12 @@ export function Register() {
               Sign up in seconds to start tracking deals
             </p>
           </div>
+
+          {error && (
+            <div className="mb-4 p-3 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-300 text-xs font-medium">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

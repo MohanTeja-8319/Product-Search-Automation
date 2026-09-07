@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useSearchParams, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaLock, FaEye, FaEyeSlash, FaArrowLeft, FaCheckCircle, FaShieldAlt } from "react-icons/fa";
 import { FiCheck, FiX, FiAlertCircle } from "react-icons/fi";
 import ParticleBackground from "../Components/ParticleBackground";
+import { resetPassword } from "../utils/api";
 
 export default function ResetPassword() {
-  const [searchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const email = searchParams.get("email") || location.state?.email || "user@example.com";
+  const email = location.state?.email || "";
+  const resetToken = location.state?.resetToken || "";
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -39,7 +40,7 @@ export default function ResetPassword() {
   const strengthLabels = ["Weak", "Fair", "Good", "Strong"];
   const strengthColors = ["bg-red-500", "bg-amber-500", "bg-blue-500", "bg-emerald-500"];
 
-  const handleResetPassword = (e) => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
     if (!hasMinLength) {
       setErrorMessage("Password must be at least 8 characters long.");
@@ -49,14 +50,26 @@ export default function ResetPassword() {
       setErrorMessage("Passwords do not match. Please verify.");
       return;
     }
+    if (!resetToken) {
+      setErrorMessage("Your reset session has expired. Please start over.");
+      return;
+    }
 
     setErrorMessage("");
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      await resetPassword({
+        resetToken,
+        newPassword: password,
+        confirmPassword,
+      });
       setIsSuccess(true);
-    }, 800);
+    } catch (err) {
+      setErrorMessage(err.message || "Could not reset password. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -76,7 +89,7 @@ export default function ResetPassword() {
             <h1 className="text-3xl font-extrabold tracking-tight">Product Search</h1>
             <h2 className="text-xl font-medium text-purple-200 mt-1">Automation Security</h2>
             <p className="mt-4 text-sm text-purple-100/80 leading-relaxed">
-              Create a new secure password for <span className="text-white font-bold">{email}</span>.
+              Create a new secure password{email ? <> for <span className="text-white font-bold">{email}</span></> : ""}.
             </p>
           </div>
 
@@ -93,7 +106,7 @@ export default function ResetPassword() {
               <div className="w-7 h-7 rounded-full flex items-center justify-center bg-emerald-500 border-emerald-400 text-white">
                 <FiCheck className="text-sm stroke-[3]" />
               </div>
-              <span>2. Verify 6-Digit OTP</span>
+              <span>2. Verify 4-Digit OTP</span>
             </div>
 
             <div className="flex items-center gap-3 text-xs font-bold text-white">
@@ -115,7 +128,8 @@ export default function ResetPassword() {
           {!isSuccess && (
             <div className="mb-4">
               <Link
-                to={`/verify-otp?email=${encodeURIComponent(email)}`}
+                to="/verify-otp"
+                state={{ email }}
                 className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 transition cursor-pointer"
               >
                 <FaArrowLeft className="text-[10px]" /> Back to Verification
@@ -138,7 +152,7 @@ export default function ResetPassword() {
                   Set New Password 🔑
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                  Create a strong, unique password for <span className="font-semibold text-indigo-600 dark:text-indigo-400">{email}</span>.
+                  Create a strong, unique password{email ? <> for <span className="font-semibold text-indigo-600 dark:text-indigo-400">{email}</span></> : ""}.
                 </p>
               </div>
 

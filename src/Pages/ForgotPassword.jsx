@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaEnvelope, FaArrowLeft, FaShieldAlt } from "react-icons/fa";
 import { FiAlertCircle } from "react-icons/fi";
 import ParticleBackground from "../Components/ParticleBackground";
+import { requestPasswordReset } from "../utils/api";
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !email.includes("@")) {
       setErrorMessage("Please enter a valid registered email address.");
@@ -19,13 +20,16 @@ export default function ForgotPassword() {
     setErrorMessage("");
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-      // Navigate to the dedicated OTP entry page with the email parameter
-      navigate(`/verify-otp?email=${encodeURIComponent(email.trim())}`, {
+    try {
+      await requestPasswordReset(email.trim());
+      navigate("/verify-otp", {
         state: { email: email.trim() },
       });
-    }, 700);
+    } catch (err) {
+      setErrorMessage(err.message || "Could not send verification code. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -45,7 +49,7 @@ export default function ForgotPassword() {
             <h1 className="text-3xl font-extrabold tracking-tight">Product Search</h1>
             <h2 className="text-xl font-medium text-purple-200 mt-1">Automation Security</h2>
             <p className="mt-4 text-sm text-purple-100/80 leading-relaxed">
-              Enter your email to receive a secure 6-digit one-time verification code and regain access to your account.
+              Enter your email to receive a secure 4-digit one-time verification code and regain access to your account.
             </p>
           </div>
 
@@ -62,7 +66,8 @@ export default function ForgotPassword() {
               <div className="w-7 h-7 rounded-full flex items-center justify-center border border-white/30 text-white/40">
                 2
               </div>
-              <span>2. Verify 6-Digit OTP</span>
+              <span>2. Verify 
+                4-Digit OTP</span>
             </div>
 
             <div className="flex items-center gap-3 text-xs font-semibold text-white/40">
@@ -104,7 +109,7 @@ export default function ForgotPassword() {
                 Forgot Password? 🔒
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                Enter your registered email address and we'll send you a 6-digit verification code on the next page.
+                Enter your registered email address and we'll send you a 4-digit verification code on the next page.
               </p>
             </div>
 
@@ -142,7 +147,7 @@ export default function ForgotPassword() {
             <div className="p-4 bg-indigo-50/60 dark:bg-indigo-950/40 rounded-2xl border border-indigo-100 dark:border-indigo-900/50 text-xs text-indigo-900 dark:text-indigo-200 flex items-start gap-2.5">
               <FaShieldAlt className="text-indigo-600 dark:text-indigo-400 text-base shrink-0 mt-0.5" />
               <span>
-                For security, verification codes expire after 10 minutes. Click the button above to proceed to the verification code entry page.
+                For security, verification codes expire after 2 minutes. Click the button above to proceed to the verification code entry page.
               </span>
             </div>
           </div>
