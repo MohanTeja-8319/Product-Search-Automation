@@ -81,7 +81,7 @@ export function Login() {
         onSuccess={() => navigate("/home")}
       />
 
-      <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-y-auto max-w-5xl w-full max-h-[calc(100dvh-2rem)] grid md:grid-cols-2">
+      <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden max-w-5xl w-full grid md:grid-cols-2">
         {/* Left Hero Graphic Section */}
         <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 text-white p-6 lg:p-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -348,7 +348,7 @@ const handleSubmit = async (e) => {
         onSuccess={() => navigate("/home")}
       />
 
-      <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-y-auto max-w-5xl w-full max-h-[calc(100dvh-2rem)] grid md:grid-cols-2">
+      <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden max-w-5xl w-full grid md:grid-cols-2">
         {/* Left Informative Panel */}
         <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 text-white p-6 lg:p-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />

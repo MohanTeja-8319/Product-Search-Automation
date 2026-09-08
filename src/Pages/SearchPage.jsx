@@ -1776,7 +1776,7 @@ const SearchPage = () => {
               {/* In-Header Search Refine Bar */}
               <form
                 onSubmit={handleSearchSubmit}
-                className="flex items-center bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/20 rounded-2xl p-1.5 max-w-md w-full"
+                className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-1.5 max-w-md w-full"
               >
                 <FiSearch className="text-indigo-300 ml-3 text-base" />
                 <input

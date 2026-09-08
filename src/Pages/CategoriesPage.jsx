@@ -264,7 +264,7 @@ const CategoriesPage = () => {
               </div>
 
               {/* Instant Search in Categories */}
-              <div className="flex items-center bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/20 rounded-2xl p-2 max-w-md w-full shadow-inner">
+              <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-2 max-w-md w-full shadow-inner">
                 <FiSearch className="text-indigo-300 ml-3 text-base" />
                 <input
                   type="text"
