@@ -247,7 +247,7 @@ const Wishlist = () => {
   };
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen text-slate-800 flex flex-col font-sans">
+    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-200 flex flex-col font-sans">
       <Sidebar />
 
       <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
@@ -256,11 +256,11 @@ const Wishlist = () => {
         <main className="p-4 lg:p-8 flex-1 max-w-7xl w-full mx-auto pb-24">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs text-slate-400 mb-3">
-            <Link to="/home" className="hover:text-indigo-600 transition">
+            <Link to="/home" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
               Home
             </Link>
             <FiChevronRight className="text-[10px]" />
-            <span className="text-indigo-600 font-semibold">My Wishlist</span>
+            <span className="text-indigo-600 dark:text-indigo-400 font-semibold">My Wishlist</span>
           </nav>
 
           {/* Hero Banner with Stats */}
@@ -288,7 +288,7 @@ const Wishlist = () => {
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   onClick={shareWishlist}
-                  className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold rounded-xl transition cursor-pointer flex items-center gap-1.5 backdrop-blur-md"
+                  className="px-4 py-2.5 bg-white/10 dark:bg-slate-900/10 hover:bg-white/20 dark:hover:bg-slate-900/20 dark:bg-slate-900 border border-white/20 text-white text-xs font-bold rounded-xl transition cursor-pointer flex items-center gap-1.5 backdrop-blur-md"
                 >
                   <FiShare2 className="text-sm" />
                   <span>Share List</span>
@@ -353,7 +353,7 @@ const Wishlist = () => {
           </div>
 
           {/* Control Bar: Categories Filter, Search & View Switcher */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-4 mb-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-4 mb-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
             {/* Category Pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide py-1">
               {categories.map((cat) => {
@@ -365,7 +365,7 @@ const Wishlist = () => {
                     className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer shrink-0 ${
                       isSelected
                         ? "bg-indigo-600 text-white shadow-sm"
-                        : "bg-slate-100 hover:bg-slate-200 text-slate-700"
+                        : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300"
                     }`}
                   >
                     {cat}
@@ -384,19 +384,19 @@ const Wishlist = () => {
                   placeholder="Search wishlist..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="bg-slate-50 text-xs pl-8 pr-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-400 text-slate-800 w-full sm:w-48"
+                  className="bg-slate-50 dark:bg-slate-950 text-xs pl-8 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 focus:outline-none focus:border-indigo-400 text-slate-800 dark:text-slate-100 w-full sm:w-48"
                 />
               </div>
 
               {/* View Switcher */}
-              <div className="flex items-center bg-slate-100 p-1 rounded-xl">
+              <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
                 <button
                   onClick={() => setViewMode("grid")}
                   title="Grid View"
                   className={`p-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                     viewMode === "grid"
-                      ? "bg-white text-indigo-600 shadow-sm"
-                      : "text-slate-500 hover:text-slate-900"
+                      ? "bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   }`}
                 >
                   <FiGrid className="text-base" />
@@ -406,8 +406,8 @@ const Wishlist = () => {
                   title="Table View"
                   className={`p-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
                     viewMode === "table"
-                      ? "bg-white text-indigo-600 shadow-sm"
-                      : "text-slate-500 hover:text-slate-900"
+                      ? "bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                   }`}
                 >
                   <FiList className="text-base" />
@@ -426,7 +426,7 @@ const Wishlist = () => {
                   </button>
                   <button
                     onClick={deleteSelected}
-                    className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs rounded-xl transition flex items-center gap-1 cursor-pointer"
+                    className="px-3 py-1.5 bg-rose-50 dark:bg-rose-950 hover:bg-rose-100 text-rose-600 font-bold text-xs rounded-xl transition flex items-center gap-1 cursor-pointer"
                   >
                     <FiTrash2 />
                     <span>Delete</span>
@@ -448,11 +448,11 @@ const Wishlist = () => {
 
           {/* Wishlist Items Content */}
           {filteredItems.length === 0 ? (
-            <div className="bg-white rounded-3xl border border-slate-200 p-16 text-center shadow-sm">
-              <div className="w-20 h-20 bg-pink-50 text-pink-500 rounded-3xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-16 text-center shadow-sm">
+              <div className="w-20 h-20 bg-pink-50 dark:bg-pink-950 text-pink-500 rounded-3xl flex items-center justify-center mx-auto mb-4 text-3xl shadow-inner">
                 ❤️
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-1">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
                 {searchQuery || categoryFilter !== "All"
                   ? "No Matching Wishlist Items"
                   : "Your Wishlist is Empty"}
@@ -481,10 +481,10 @@ const Wishlist = () => {
                 return (
                   <div
                     key={item.id}
-                    className={`group bg-white rounded-3xl border transition-all duration-300 p-5 flex flex-col justify-between relative hover:shadow-xl hover:-translate-y-1 ${
+                    className={`group bg-white dark:bg-slate-900 rounded-3xl border transition-all duration-300 p-5 flex flex-col justify-between relative hover:shadow-xl hover:-translate-y-1 ${
                       isSelected
                         ? "border-indigo-500 ring-2 ring-indigo-500/20 shadow-md"
-                        : "border-slate-200/80 hover:border-indigo-300 shadow-sm"
+                        : "border-slate-200/80 dark:border-slate-800/80 hover:border-indigo-300 shadow-sm"
                     }`}
                   >
                     {/* Top Floating Controls */}
@@ -510,7 +510,7 @@ const Wishlist = () => {
                             navigate(`/createalerts`);
                           }}
                           title="Set Price Alert"
-                          className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition"
+                          className="p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-lg transition"
                         >
                           <FiBell className="text-xs" />
                         </button>
@@ -518,7 +518,7 @@ const Wishlist = () => {
                         <button
                           onClick={() => deleteItem(item.id)}
                           title="Remove from Wishlist"
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950 rounded-lg transition"
                         >
                           <FiTrash2 className="text-xs" />
                         </button>
@@ -534,7 +534,7 @@ const Wishlist = () => {
                           navigate(`/search?q=${encodeURIComponent(item.name)}`);
                         }
                       }}
-                      className="w-full h-44 bg-slate-50/70 rounded-2xl p-4 flex items-center justify-center mb-4 border border-slate-100 overflow-hidden cursor-pointer select-none"
+                      className="w-full h-44 bg-slate-50/70 dark:bg-slate-950/70 dark:bg-slate-950 rounded-2xl p-4 flex items-center justify-center mb-4 border border-slate-100 dark:border-slate-800 overflow-hidden cursor-pointer select-none"
                     >
                       <img
                         src={item.image}
@@ -569,15 +569,15 @@ const Wishlist = () => {
                             navigate(`/search?q=${encodeURIComponent(item.name)}`);
                           }
                         }}
-                        className="font-bold text-sm text-slate-900 leading-snug truncate group-hover:text-indigo-600 transition cursor-pointer"
+                        className="font-bold text-sm text-slate-900 dark:text-white leading-snug truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition cursor-pointer"
                       >
                         {item.name}
                       </h3>
 
                       {/* Price Section */}
-                      <div className="mt-3 pt-3 border-t border-slate-100 flex items-baseline justify-between">
+                      <div className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-baseline justify-between">
                         <div>
-                          <span className="text-lg font-black text-slate-900">
+                          <span className="text-lg font-black text-slate-900 dark:text-white">
                             ₹{item.price.toLocaleString()}
                           </span>
                           <span className="text-[11px] text-slate-400 block font-semibold">
@@ -586,7 +586,7 @@ const Wishlist = () => {
                         </div>
 
                         {saving > 0 && (
-                          <span className="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">
+                          <span className="text-[10px] font-extrabold text-emerald-600 bg-emerald-50 dark:bg-emerald-950 px-2 py-1 rounded-lg">
                             Save ₹{saving.toLocaleString()}
                           </span>
                         )}
@@ -613,11 +613,11 @@ const Wishlist = () => {
             </div>
           ) : (
             /* Table View */
-            <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden animate-fadeIn">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 shadow-sm overflow-hidden animate-fadeIn">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[10px] font-extrabold uppercase tracking-wider">
+                    <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-extrabold uppercase tracking-wider">
                       <th className="py-4 px-6 w-12 text-center">
                         <input
                           type="checkbox"
@@ -646,8 +646,8 @@ const Wishlist = () => {
                       return (
                         <tr
                           key={item.id}
-                          className={`hover:bg-slate-50/70 transition duration-150 ${
-                            isRowSelected ? "bg-indigo-50/30" : ""
+                          className={`hover:bg-slate-50/70 dark:hover:bg-slate-950/70 transition duration-150 ${
+                            isRowSelected ? "bg-indigo-50/30 dark:bg-indigo-950/30" : ""
                           }`}
                         >
                           {/* Checkbox */}
@@ -663,7 +663,7 @@ const Wishlist = () => {
                           {/* Product Info */}
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3.5">
-                              <div className="w-12 h-12 bg-slate-50 border border-slate-100 rounded-xl p-1 flex items-center justify-center shrink-0">
+                              <div className="w-12 h-12 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-xl p-1 flex items-center justify-center shrink-0">
                                 <img
                                   src={item.image}
                                   alt={item.name}
@@ -682,7 +682,7 @@ const Wishlist = () => {
                                       `/comparison/${encodeURIComponent(item.name)}`
                                     )
                                   }
-                                  className="font-bold text-xs text-slate-900 hover:text-indigo-600 transition cursor-pointer"
+                                  className="font-bold text-xs text-slate-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition cursor-pointer"
                                 >
                                   {item.name}
                                 </h4>
@@ -695,18 +695,18 @@ const Wishlist = () => {
 
                           {/* Current Price */}
                           <td className="py-4 px-4">
-                            <div className="font-black text-xs text-slate-900">
+                            <div className="font-black text-xs text-slate-900 dark:text-white">
                               ₹{item.price.toLocaleString()}
                             </div>
                             {item.drop && (
-                              <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
+                              <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950 px-1.5 py-0.5 rounded">
                                 ↓ {item.drop}
                               </span>
                             )}
                           </td>
 
                           {/* Target Price */}
-                          <td className="py-4 px-4 text-xs font-semibold text-slate-500">
+                          <td className="py-4 px-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
                             ₹{targetPrice.toLocaleString()}
                           </td>
 
@@ -739,7 +739,7 @@ const Wishlist = () => {
                               </button>
                               <button
                                 onClick={() => deleteItem(item.id)}
-                                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
+                                className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950 rounded-lg transition cursor-pointer"
                               >
                                 <FiTrash2 className="text-xs" />
                               </button>
@@ -755,16 +755,16 @@ const Wishlist = () => {
           )}
 
           {/* Bottom Feature Promo banner */}
-          <div className="mt-8 bg-gradient-to-r from-indigo-50/60 via-purple-50/40 to-blue-50/60 border border-indigo-100/60 rounded-3xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+          <div className="mt-8 bg-gradient-to-r from-indigo-50/60 via-purple-50/40 to-blue-50/60 dark:from-indigo-950/60 dark:via-purple-950/40 dark:to-blue-950/60 border border-indigo-100/60 dark:border-indigo-900/60 rounded-3xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200 shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200 dark:shadow-indigo-900/50 shrink-0">
                 <FiHeart className="text-xl fill-current" />
               </div>
               <div>
-                <h4 className="font-extrabold text-sm text-slate-900 leading-snug">
+                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white leading-snug">
                   Automated Price Tracking is Active on Wishlist Items
                 </h4>
-                <p className="text-xs font-semibold text-slate-500 mt-0.5">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
                   We check verified platforms every hour so you always purchase at the true lowest market price.
                 </p>
               </div>
@@ -772,7 +772,7 @@ const Wishlist = () => {
 
             <button
               onClick={() => navigate("/pricealerts")}
-              className="px-4 py-2 bg-white border border-indigo-200 hover:border-indigo-400 text-indigo-600 font-bold text-xs rounded-xl shadow-xs transition shrink-0 cursor-pointer flex items-center gap-1.5"
+              className="px-4 py-2 bg-white dark:bg-slate-900 border border-indigo-200 hover:border-indigo-400 text-indigo-600 dark:text-indigo-400 font-bold text-xs rounded-xl shadow-xs transition shrink-0 cursor-pointer flex items-center gap-1.5"
             >
               <span>Manage Alerts</span>
               <FiArrowRight className="text-xs" />
@@ -811,10 +811,10 @@ export const AddWishlistWidget = ({ productName }) => {
   };
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-2xl mt-6 p-6 shadow-sm flex items-center justify-between">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 rounded-2xl mt-6 p-6 shadow-sm flex items-center justify-between">
       <div>
-        <h2 className="text-lg font-extrabold text-slate-900">Add to Wishlist</h2>
-        <p className="text-xs text-slate-500 mt-0.5">Save this item to track price drops.</p>
+        <h2 className="text-lg font-extrabold text-slate-900 dark:text-white">Add to Wishlist</h2>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Save this item to track price drops.</p>
       </div>
 
       <button
@@ -822,7 +822,7 @@ export const AddWishlistWidget = ({ productName }) => {
         className={`px-5 py-2.5 rounded-xl font-bold text-xs transition cursor-pointer flex items-center gap-1.5 shadow-sm ${
           saved
             ? "bg-rose-500 text-white hover:bg-rose-600"
-            : "border border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white"
+            : "border border-indigo-600 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-600 hover:text-white"
         }`}
       >
         {saved ? (

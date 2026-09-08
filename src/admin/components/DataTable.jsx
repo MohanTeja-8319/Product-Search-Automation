@@ -115,9 +115,9 @@ export function DataTable({
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800/90 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
       {/* Top Toolbar */}
-      <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/40">
+      <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/40 dark:bg-slate-950/40 dark:bg-slate-950">
         {/* Search Bar */}
         <div className="relative w-full sm:w-80">
           <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm" />
@@ -126,12 +126,12 @@ export function DataTable({
             value={searchTerm}
             onChange={handleSearchChange}
             placeholder={searchPlaceholder}
-            className="w-full pl-9 pr-8 py-2 text-xs md:text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-400"
+            className="w-full pl-9 pr-8 py-2 text-xs md:text-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-400"
           />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm("")}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-400 dark:text-slate-400 p-1"
             >
               <FiX className="text-xs" />
             </button>
@@ -145,7 +145,7 @@ export function DataTable({
               <select
                 value={selectedFilter}
                 onChange={handleFilterChange}
-                className="pl-3 pr-8 py-2 text-xs md:text-sm font-medium bg-white border border-slate-200 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer appearance-none"
+                className="pl-3 pr-8 py-2 text-xs md:text-sm font-medium bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all cursor-pointer appearance-none"
               >
                 <option value="all">All {filterOptions.label}</option>
                 {filterOptions.options.map((opt) => (
@@ -176,7 +176,7 @@ export function DataTable({
         ) : (
           <table className="w-full text-left text-xs md:text-sm border-collapse">
             <thead>
-              <tr className="border-b border-slate-200/80 bg-slate-50/75 text-slate-500 text-[11px] uppercase tracking-wider font-semibold">
+              <tr className="border-b border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-950/75 dark:bg-slate-950 text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider font-semibold">
                 {columns.map((col, idx) => {
                   const isSortable = !!col.sortKey;
                   const isCurrentSort = sortKey === col.sortKey;
@@ -185,7 +185,7 @@ export function DataTable({
                       key={idx}
                       onClick={() => isSortable && handleSort(col.sortKey)}
                       className={`px-4 py-3.5 ${col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left"} ${
-                        isSortable ? "cursor-pointer select-none hover:text-slate-900 transition-colors" : ""
+                        isSortable ? "cursor-pointer select-none hover:text-slate-900 dark:hover:text-white transition-colors" : ""
                       } ${col.width || ""}`}
                     >
                       <div
@@ -198,9 +198,9 @@ export function DataTable({
                           <span className="text-slate-400">
                             {isCurrentSort ? (
                               sortDir === "asc" ? (
-                                <FiChevronUp className="text-indigo-600 font-bold" />
+                                <FiChevronUp className="text-indigo-600 dark:text-indigo-400 font-bold" />
                               ) : (
-                                <FiChevronDown className="text-indigo-600 font-bold" />
+                                <FiChevronDown className="text-indigo-600 dark:text-indigo-400 font-bold" />
                               )
                             ) : (
                               <FiChevronUp className="opacity-0 group-hover:opacity-100" />
@@ -213,11 +213,11 @@ export function DataTable({
                 })}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-slate-700">
+            <tbody className="divide-y divide-slate-100 text-slate-700 dark:text-slate-300">
               {paginatedData.map((item, rowIdx) => (
                 <tr
                   key={item.id || item.jobId || item.logId || rowIdx}
-                  className="hover:bg-indigo-50/20 transition-colors"
+                  className="hover:bg-indigo-50/20 dark:hover:bg-indigo-950/20 transition-colors"
                 >
                   {columns.map((col, colIdx) => (
                     <td
@@ -238,20 +238,20 @@ export function DataTable({
 
       {/* Pagination Footer */}
       {sortedData.length > 0 && (
-        <div className="p-4 border-t border-slate-100 bg-slate-50/40 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+        <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-950/40 dark:bg-slate-950 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 dark:text-slate-400">
           <div>
-            Showing <span className="font-semibold text-slate-700">{(currentPage - 1) * pageSize + 1}</span> to{" "}
-            <span className="font-semibold text-slate-700">
+            Showing <span className="font-semibold text-slate-700 dark:text-slate-300">{(currentPage - 1) * pageSize + 1}</span> to{" "}
+            <span className="font-semibold text-slate-700 dark:text-slate-300">
               {Math.min(currentPage * pageSize, sortedData.length)}
             </span>{" "}
-            of <span className="font-semibold text-slate-700">{sortedData.length}</span> results
+            of <span className="font-semibold text-slate-700 dark:text-slate-300">{sortedData.length}</span> results
           </div>
 
           <div className="flex items-center gap-1.5">
             <button
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               disabled={currentPage === 1}
-              className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               aria-label="Previous page"
             >
               <FiChevronLeft className="text-sm" />
@@ -266,7 +266,7 @@ export function DataTable({
                   className={`min-w-[28px] h-7 px-2 text-xs font-semibold rounded-lg transition-all ${
                     currentPage === page
                       ? "bg-slate-900 text-white shadow-xs"
-                      : "text-slate-600 hover:bg-slate-100"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"
                   }`}
                 >
                   {page}
@@ -276,7 +276,7 @@ export function DataTable({
             <button
               onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               aria-label="Next page"
             >
               <FiChevronRight className="text-sm" />

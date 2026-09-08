@@ -114,7 +114,7 @@ export function AdminLogin() {
                 Admin Email
               </label>
               <div className="relative">
-                <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm" />
+                <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm" />
                 <input
                   type="email"
                   value={email}
@@ -141,7 +141,7 @@ export function AdminLogin() {
                 </button>
               </div>
               <div className="relative">
-                <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm" />
+                <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 text-sm" />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
@@ -153,7 +153,7 @@ export function AdminLogin() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400 hover:text-slate-300 transition-colors"
                   aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? <FiEyeOff className="text-sm" /> : <FiEye className="text-sm" />}
@@ -168,7 +168,7 @@ export function AdminLogin() {
                   type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-slate-700 bg-slate-950 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                  className="w-4 h-4 rounded border-slate-700 bg-slate-950 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 cursor-pointer"
                 />
                 Remember this device
               </label>
@@ -206,7 +206,7 @@ export function AdminLogin() {
           </form>
 
           {/* Quick Demo Credentials Info */}
-          <div className="mt-6 pt-5 border-t border-slate-800 text-[11px] text-slate-500 space-y-1">
+          <div className="mt-6 pt-5 border-t border-slate-800 text-[11px] text-slate-500 dark:text-slate-400 space-y-1">
             <div className="flex justify-between">
               <span>Demo Account:</span>
               <span className="font-mono text-slate-300">admin@productautomation.io</span>
@@ -222,7 +222,7 @@ export function AdminLogin() {
         <div className="text-center mt-6">
           <a
             href="/home"
-            className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+            className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-300 transition-colors"
           >
             ← Return to Product Search User Storefront
           </a>

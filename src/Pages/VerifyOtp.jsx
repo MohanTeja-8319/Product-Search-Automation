@@ -292,12 +292,12 @@ export default function VerifyOtp() {
   // =========================================================
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
+    <div className="h-[100dvh] w-full relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
 
       {/* Particle Background */}
       <ParticleBackground />
 
-      <div className="relative z-10 w-full max-w-4xl bg-white/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden grid md:grid-cols-12 transition-all">
+      <div className="relative z-10 w-full max-w-4xl bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden grid md:grid-cols-12 transition-all">
 
         {/* =====================================================
             LEFT COLUMN
@@ -311,7 +311,7 @@ export default function VerifyOtp() {
 
             {/* Security Badge */}
 
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-6">
 
               <FaShieldAlt className="text-purple-300" />
 
@@ -360,7 +360,7 @@ export default function VerifyOtp() {
 
             <div className="flex items-center gap-3 text-xs font-bold text-white">
 
-              <div className="w-7 h-7 rounded-full flex items-center justify-center bg-white/20 border-2 border-white ring-2 ring-purple-300/50">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center bg-white/20 dark:bg-slate-900/20 dark:bg-slate-900 border-2 border-white ring-2 ring-purple-300/50">
 
                 2
 
@@ -412,7 +412,7 @@ export default function VerifyOtp() {
 
             <Link
               to="/forgot-password"
-              className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 transition cursor-pointer"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-400 transition cursor-pointer"
             >
 
               <FaArrowLeft className="text-[10px]" />
@@ -423,7 +423,7 @@ export default function VerifyOtp() {
 
             <Link
               to="/"
-              className="text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-600 transition"
+              className="text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
             >
               Back to Login
             </Link>
@@ -456,7 +456,7 @@ export default function VerifyOtp() {
                 Enter Verification Code 📩
               </h2>
 
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+              <p className="text-sm text-gray-500 dark:text-slate-400 dark:text-gray-400 mt-2">
 
                 We've sent a 4-digit code to{" "}
 
@@ -522,7 +522,7 @@ export default function VerifyOtp() {
                         handleOtpKeyDown(index, e)
                       }
 
-                      className="w-14 h-16 text-center text-2xl font-bold rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition shadow-inner"
+                      className="w-14 h-16 text-center text-2xl font-bold rounded-xl border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition shadow-inner"
 
                     />
 
@@ -560,7 +560,7 @@ export default function VerifyOtp() {
                 RESEND SECTION
             ================================================== */}
 
-            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between text-xs text-gray-500 dark:text-slate-400 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-gray-800">
 
               {/* Change Email */}
 

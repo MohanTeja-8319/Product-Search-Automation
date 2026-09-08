@@ -14,11 +14,11 @@ const Recommendation = ({ comparison }) => {
     ).toFixed(1);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl mt-6">
+    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl mt-6">
 
       {/* Header */}
 
-      <div className="border-b border-gray-200 px-6 py-5">
+      <div className="border-b border-gray-200 dark:border-slate-800 px-6 py-5">
 
         <h2 className="text-2xl font-bold">
 
@@ -26,7 +26,7 @@ const Recommendation = ({ comparison }) => {
 
         </h2>
 
-        <p className="text-gray-500 mt-1">
+        <p className="text-gray-500 dark:text-slate-400 mt-1">
 
           Our recommendation based on price and ratings.
 
@@ -38,7 +38,7 @@ const Recommendation = ({ comparison }) => {
 
       <div className="p-6">
 
-        <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+        <div className="bg-green-50 dark:bg-green-950 border border-green-200 rounded-xl p-5">
 
           <div className="flex items-center gap-3">
 
@@ -75,7 +75,7 @@ const Recommendation = ({ comparison }) => {
 
           {/* Pros */}
 
-          <div className="border border-green-200 rounded-xl p-5 bg-green-50">
+          <div className="border border-green-200 rounded-xl p-5 bg-green-50 dark:bg-green-950">
 
             <h3 className="text-lg font-bold text-green-700 mb-4">
 
@@ -101,7 +101,7 @@ const Recommendation = ({ comparison }) => {
 
           {/* Cons */}
 
-          <div className="border border-red-200 rounded-xl p-5 bg-red-50">
+          <div className="border border-red-200 rounded-xl p-5 bg-red-50 dark:bg-red-950">
 
             <h3 className="text-lg font-bold text-red-700 mb-4">
 
@@ -129,7 +129,7 @@ const Recommendation = ({ comparison }) => {
 
         {/* Recommendation */}
 
-        <div className="mt-8 bg-purple-50 border border-purple-200 rounded-xl p-6">
+        <div className="mt-8 bg-purple-50 dark:bg-purple-950 border border-purple-200 rounded-xl p-6">
 
           <h3 className="text-xl font-bold text-purple-700">
 

@@ -55,7 +55,7 @@ const Sidebar = () => {
       )}
 
       <aside
-        className={`w-72 h-screen bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800 flex flex-col justify-between fixed left-0 top-0 z-40 transition-all duration-300 lg:translate-x-0 ${
+        className={`w-72 h-screen bg-white dark:bg-slate-900 border-r border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 flex flex-col justify-between fixed left-0 top-0 z-40 transition-all duration-300 lg:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -80,7 +80,7 @@ const Sidebar = () => {
                 <h1 className="text-xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-0.5">
                   Price<span className="text-indigo-600 dark:text-indigo-400">Scout</span>
                 </h1>
-                <p className="text-slate-400 dark:text-slate-500 text-[10px] font-extrabold tracking-wider uppercase">
+                <p className="text-slate-400 dark:text-slate-500 dark:text-slate-400 text-[10px] font-extrabold tracking-wider uppercase">
                   Compare. Save.
                 </p>
               </div>
@@ -89,7 +89,7 @@ const Sidebar = () => {
             {/* Close Button on Mobile */}
             <button
               onClick={() => setIsOpen(false)}
-              className="lg:hidden p-2 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
+              className="lg:hidden p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 dark:text-slate-300 dark:hover:text-white rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition cursor-pointer"
             >
               <FiX className="text-lg" />
             </button>
@@ -122,7 +122,7 @@ const Sidebar = () => {
                   </span>
                   <span className="truncate">{item.text}</span>
                   {isActive && (
-                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>
+                    <span className="ml-auto w-1.5 h-1.5 rounded-full bg-white dark:bg-slate-900 animate-pulse"></span>
                   )}
                 </button>
               );
@@ -136,7 +136,7 @@ const Sidebar = () => {
             <div className="rounded-3xl bg-gradient-to-b from-indigo-50 to-indigo-100/50 dark:from-indigo-950/40 dark:to-slate-900/90 p-4 text-center border border-indigo-100 dark:border-indigo-500/20 relative overflow-hidden shadow-xs">
               <button
                 onClick={handleRemovePromo}
-                className="absolute top-2.5 right-2.5 p-1 text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-lg transition cursor-pointer"
+                className="absolute top-2.5 right-2.5 p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 dark:text-slate-300 dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-slate-800 rounded-lg transition cursor-pointer"
                 title="Dismiss promotion"
               >
                 <FiX className="text-xs stroke-[2.5]" />

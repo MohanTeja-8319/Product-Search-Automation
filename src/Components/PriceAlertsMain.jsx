@@ -222,7 +222,7 @@ const PriceAlerts = () => {
   }, [alerts, activeTab, searchQuery]);
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen text-slate-800 flex flex-col font-sans">
+    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 flex flex-col font-sans">
       <Sidebar />
 
       <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
@@ -231,11 +231,11 @@ const PriceAlerts = () => {
         <main className="p-4 lg:p-8 flex-1 max-w-7xl w-full mx-auto pb-24">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs text-slate-400 mb-3">
-            <Link to="/home" className="hover:text-indigo-600 transition">
+            <Link to="/home" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
               Home
             </Link>
             <FiChevronRight className="text-[10px]" />
-            <span className="text-indigo-600 font-semibold">Price Alerts</span>
+            <span className="text-indigo-600 dark:text-indigo-400 font-semibold">Price Alerts</span>
           </nav>
 
           {/* Hero Banner with Stats */}
@@ -263,7 +263,7 @@ const PriceAlerts = () => {
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   onClick={simulatePriceDrop}
-                  className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold rounded-xl transition cursor-pointer flex items-center gap-1.5 backdrop-blur-md"
+                  className="px-4 py-2.5 bg-white/10 dark:bg-slate-900/10 hover:bg-white/20 dark:hover:bg-slate-900/20 dark:bg-slate-900 border border-white/20 text-white text-xs font-bold rounded-xl transition cursor-pointer flex items-center gap-1.5 backdrop-blur-md"
                   title="Simulate a real-time price drop trigger"
                 >
                   <FiZap className="text-amber-400 fill-amber-400" />
@@ -327,15 +327,15 @@ const PriceAlerts = () => {
           </div>
 
           {/* Control Bar: Tabs & Search Filter */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-4 mb-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-4 mb-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             {/* Tabs */}
-            <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-xl">
+            <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
               <button
                 onClick={() => setActiveTab("all")}
                 className={`px-4 py-2 rounded-lg text-xs font-bold transition cursor-pointer ${
                   activeTab === "all"
-                    ? "bg-white text-indigo-600 shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 All Alerts ({alerts.length})
@@ -344,8 +344,8 @@ const PriceAlerts = () => {
                 onClick={() => setActiveTab("active")}
                 className={`px-4 py-2 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "active"
-                    ? "bg-white text-indigo-600 shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-sm"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
@@ -355,8 +355,8 @@ const PriceAlerts = () => {
                 onClick={() => setActiveTab("triggered")}
                 className={`px-4 py-2 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
                   activeTab === "triggered"
-                    ? "bg-white text-emerald-600 shadow-sm"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "bg-white dark:bg-slate-900 text-emerald-600 shadow-sm"
+                    : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                 }`}
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -372,7 +372,7 @@ const PriceAlerts = () => {
                 placeholder="Search alerts by product or store..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-50 text-xs pl-8 pr-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-400 text-slate-800"
+                className="w-full bg-slate-50 dark:bg-slate-950 text-xs pl-8 pr-3 py-2 rounded-xl border border-slate-200 dark:border-slate-800 focus:outline-none focus:border-indigo-400 text-slate-800 dark:text-slate-100"
               />
             </div>
           </div>
@@ -380,14 +380,14 @@ const PriceAlerts = () => {
           {/* Alerts List */}
           <div className="space-y-4 mb-10">
             {displayedAlerts.length === 0 ? (
-              <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center shadow-sm">
-                <div className="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto mb-4 text-2xl">
+              <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-12 text-center shadow-sm">
+                <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4 text-2xl">
                   <FiBell />
                 </div>
-                <h3 className="text-base font-bold text-slate-900 mb-1">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1">
                   No {activeTab !== "all" ? activeTab : ""} Price Alerts Found
                 </h3>
-                <p className="text-xs text-slate-500 max-w-sm mx-auto mb-5">
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-5">
                   {searchQuery
                     ? `No alerts match your search for "${searchQuery}".`
                     : "Create a price alert on any product to get notified the second the price drops."}
@@ -421,15 +421,15 @@ const PriceAlerts = () => {
                 return (
                   <div
                     key={alert.id}
-                    className={`bg-white rounded-2xl border transition-all duration-300 p-5 shadow-sm hover:shadow-md flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 relative ${
+                    className={`bg-white dark:bg-slate-900 rounded-2xl border transition-all duration-300 p-5 shadow-sm hover:shadow-md flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 relative ${
                       isTargetReached
-                        ? "border-emerald-300 ring-2 ring-emerald-100 bg-gradient-to-r from-white via-emerald-50/20 to-white"
-                        : "border-slate-200/80 hover:border-indigo-200"
+                        ? "border-emerald-300 dark:border-emerald-800 ring-2 ring-emerald-100 dark:ring-emerald-900/50 bg-gradient-to-r from-white via-emerald-50/20 to-white dark:from-slate-900 dark:via-emerald-950/30 dark:to-slate-900"
+                        : "border-slate-200/80 dark:border-slate-800/80 hover:border-indigo-200"
                     }`}
                   >
                     {/* Left: Product Details */}
                     <div className="flex items-center gap-4 min-w-0 flex-1">
-                      <div className="w-16 h-16 rounded-xl bg-slate-50 border border-slate-100 p-1.5 flex items-center justify-center shrink-0">
+                      <div className="w-16 h-16 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 p-1.5 flex items-center justify-center shrink-0">
                         <img
                           src={alert.image}
                           alt={alert.productName}
@@ -454,17 +454,17 @@ const PriceAlerts = () => {
                           </span>
 
                           {isTargetReached ? (
-                            <span className="bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1 animate-pulse">
+                            <span className="bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-400 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1 animate-pulse">
                               <FiCheckCircle /> Target Price Reached!
                             </span>
                           ) : (
-                            <span className="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            <span className="bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
                               ● Tracking Live
                             </span>
                           )}
                         </div>
 
-                        <h3 className="font-bold text-sm text-slate-900 truncate">
+                        <h3 className="font-bold text-sm text-slate-900 dark:text-white truncate">
                           {alert.productName}
                         </h3>
 
@@ -477,12 +477,12 @@ const PriceAlerts = () => {
                     </div>
 
                     {/* Middle: Pricing Breakdown */}
-                    <div className="flex items-center justify-between sm:justify-start gap-6 border-t lg:border-t-0 lg:border-l border-slate-100 pt-3 lg:pt-0 lg:pl-6 w-full lg:w-auto shrink-0">
+                    <div className="flex items-center justify-between sm:justify-start gap-6 border-t lg:border-t-0 lg:border-l border-slate-100 dark:border-slate-800 pt-3 lg:pt-0 lg:pl-6 w-full lg:w-auto shrink-0">
                       <div>
                         <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">
                           Current Price
                         </span>
-                        <span className="text-base font-black text-slate-900">
+                        <span className="text-base font-black text-slate-900 dark:text-white">
                           ₹{alert.currentPrice.toLocaleString()}
                         </span>
                       </div>
@@ -491,7 +491,7 @@ const PriceAlerts = () => {
                         <span className="text-[10px] text-indigo-500 uppercase font-bold tracking-wider block">
                           Target Price
                         </span>
-                        <span className="text-base font-black text-indigo-700">
+                        <span className="text-base font-black text-indigo-700 dark:text-indigo-400">
                           ₹{alert.targetPrice.toLocaleString()}
                         </span>
                       </div>
@@ -500,14 +500,14 @@ const PriceAlerts = () => {
                         <span className="text-[10px] text-emerald-600 uppercase font-bold tracking-wider block">
                           Potential Drop
                         </span>
-                        <span className="inline-flex items-center gap-0.5 text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md">
+                        <span className="inline-flex items-center gap-0.5 text-xs font-bold text-emerald-700 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-md">
                           <FiTrendingDown /> ↓ {dropPercent}%
                         </span>
                       </div>
                     </div>
 
                     {/* Right: Toggle, Buy Deal & Delete */}
-                    <div className="flex items-center justify-between sm:justify-end gap-3 border-t lg:border-t-0 lg:border-l border-slate-100 pt-3 lg:pt-0 lg:pl-6 w-full lg:w-auto shrink-0">
+                    <div className="flex items-center justify-between sm:justify-end gap-3 border-t lg:border-t-0 lg:border-l border-slate-100 dark:border-slate-800 pt-3 lg:pt-0 lg:pl-6 w-full lg:w-auto shrink-0">
                       {/* Active Status Switch */}
                       <div className="flex items-center gap-2">
                         <label className="relative inline-flex items-center cursor-pointer">
@@ -517,9 +517,9 @@ const PriceAlerts = () => {
                             onChange={() => toggleAlertStatus(alert.id)}
                             className="sr-only peer"
                           />
-                          <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                          <div className="relative w-10 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                         </label>
-                        <span className="text-[11px] font-bold text-slate-500">
+                        <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400">
                           {alert.active ? "Active" : "Paused"}
                         </span>
                       </div>
@@ -547,7 +547,7 @@ const PriceAlerts = () => {
                       <button
                         onClick={() => deleteAlert(alert.id)}
                         title="Delete Alert"
-                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition cursor-pointer"
+                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950 rounded-xl transition cursor-pointer"
                       >
                         <FiTrash2 className="text-base" />
                       </button>
@@ -561,30 +561,30 @@ const PriceAlerts = () => {
           {/* Informational Cards Strip */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* How it works */}
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl shrink-0 font-bold">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-6 shadow-sm flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl shrink-0 font-bold">
                 <FiZap />
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-slate-900">
+                <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
                   How Price Alerts Tracking Operates
                 </h3>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                   Our crawler checks major stores every hour. When the price hits or drops below your target price, we immediately trigger a notification with the direct checkout deal link.
                 </p>
               </div>
             </div>
 
             {/* Smart target tip */}
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm flex items-start gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shrink-0 font-bold">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-6 shadow-sm flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950 text-amber-600 flex items-center justify-center text-xl shrink-0 font-bold">
                 <FiTarget />
               </div>
               <div>
-                <h3 className="font-extrabold text-sm text-slate-900">
+                <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
                   Pro-Tip for Maximum Savings
                 </h3>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                   Setting target prices 8% to 12% lower than the current price yields the fastest trigger rate during festival sales and weekly lightning drops.
                 </p>
               </div>

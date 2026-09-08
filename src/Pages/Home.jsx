@@ -249,7 +249,7 @@ const Home = () => {
 
                 {/* Integrated Search Box */}
                 <div className="mt-6 max-w-xl">
-                  <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-1.5 shadow-inner">
+                  <div className="flex items-center bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/20 rounded-2xl p-1.5 shadow-inner">
                     <span className="text-base ml-3 mr-2 text-indigo-200">🔍</span>
                     <input
                       type="text"
@@ -279,7 +279,7 @@ const Home = () => {
                           setSearch(item);
                           handleSearch(item);
                         }}
-                        className="px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-medium text-slate-200 transition cursor-pointer"
+                        className="px-2.5 py-1 rounded-lg bg-white/10 dark:bg-slate-900/10 hover:bg-white/20 dark:hover:bg-slate-900/20 dark:bg-slate-900 border border-white/15 text-xs font-medium text-slate-200 transition cursor-pointer"
                       >
                         {item}
                       </button>
@@ -290,19 +290,19 @@ const Home = () => {
 
               {/* Quick Metrics Badge Column */}
               <div className="lg:col-span-4 hidden lg:grid grid-cols-2 gap-3 text-xs">
-                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+                <div className="bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md rounded-2xl p-4 border border-white/10">
                   <div className="text-2xl font-black text-white">15,000+</div>
                   <div className="text-[11px] text-slate-300 mt-0.5 font-medium">Products Tracked</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+                <div className="bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md rounded-2xl p-4 border border-white/10">
                   <div className="text-2xl font-black text-white">7+ Stores</div>
                   <div className="text-[11px] text-slate-300 mt-0.5 font-medium">Verified Retailers</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+                <div className="bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md rounded-2xl p-4 border border-white/10">
                   <div className="text-2xl font-black text-amber-400">Live Deals</div>
                   <div className="text-[11px] text-slate-300 mt-0.5 font-medium">Auto-Aggregated</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
+                <div className="bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md rounded-2xl p-4 border border-white/10">
                   <div className="text-2xl font-black text-emerald-400">Up to 35%</div>
                   <div className="text-[11px] text-slate-300 mt-0.5 font-medium">Money Saved</div>
                 </div>
@@ -342,7 +342,7 @@ const Home = () => {
                   onClick={() =>
                     navigate(`/search?category=${encodeURIComponent(cat.searchKey)}`)
                   }
-                  className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-500 rounded-2xl p-3.5 flex flex-col items-center text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+                  className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-500 rounded-2xl p-3.5 flex flex-col items-center text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
                 >
                   <div
                     className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cat.gradient} text-white flex items-center justify-center text-2xl mb-2.5 shadow-sm group-hover:scale-105 transition-transform`}
@@ -354,7 +354,7 @@ const Home = () => {
                     {cat.name}
                   </h3>
 
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold mt-1">
+                  <span className="text-[10px] text-slate-400 dark:text-slate-500 dark:text-slate-400 font-semibold mt-1">
                     {cat.count}
                   </span>
                 </button>
@@ -404,19 +404,19 @@ const Home = () => {
                         navigate(`/product/${product.id}`);
                       }
                     }}
-                    className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-600 rounded-3xl p-4 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 hover:shadow-lg relative cursor-pointer"
+                    className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-600 rounded-3xl p-4 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 hover:shadow-lg relative cursor-pointer"
                   >
                     <div>
                       {/* Top Badges & Wishlist */}
                       <div className="flex items-center justify-between mb-2.5">
-                        <span className="text-[10px] font-extrabold bg-indigo-50 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                        <span className="text-[10px] font-extrabold bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 dark:text-indigo-300 px-2 py-0.5 rounded-md uppercase tracking-wider">
                           {product.category}
                         </span>
 
                         <button
                           onClick={(e) => handleWishlistClick(e, product)}
                           title={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-                          className="w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/50 flex items-center justify-center text-slate-400 hover:text-rose-600 transition cursor-pointer"
+                          className="w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-950 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/50 flex items-center justify-center text-slate-400 hover:text-rose-600 transition cursor-pointer"
                         >
                           {inWishlist ? (
                             <FaHeart className="text-rose-600 text-xs" />
@@ -427,7 +427,7 @@ const Home = () => {
                       </div>
 
                       {/* Product Image */}
-                      <div className="w-full h-40 bg-slate-50/70 dark:bg-slate-950/60 rounded-2xl p-3 flex items-center justify-center mb-3.5 border border-slate-100 dark:border-slate-800 overflow-hidden">
+                      <div className="w-full h-40 bg-slate-50/70 dark:bg-slate-950/70 dark:bg-slate-950/60 rounded-2xl p-3 flex items-center justify-center mb-3.5 border border-slate-100 dark:border-slate-800 overflow-hidden">
                         <img
                           src={product.image}
                           alt={product.name}
@@ -447,7 +447,7 @@ const Home = () => {
                         </span>
 
                         {product.rating && (
-                          <div className="flex items-center gap-1 text-[11px] font-bold text-amber-500 bg-amber-50 dark:bg-amber-400/10 px-1.5 py-0.5 rounded">
+                          <div className="flex items-center gap-1 text-[11px] font-bold text-amber-500 bg-amber-50 dark:bg-amber-950 dark:bg-amber-400/10 px-1.5 py-0.5 rounded">
                             <FaStar className="text-[10px]" />
                             <span>{product.rating}</span>
                           </div>
@@ -546,7 +546,7 @@ const Home = () => {
                         navigate(`/product/${deal.id}`);
                       }
                     }}
-                    className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-600 rounded-3xl p-4 flex flex-col justify-between shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer"
+                    className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-600 rounded-3xl p-4 flex flex-col justify-between shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer"
                   >
                     <div>
                       {/* Top Save Tag */}
@@ -562,7 +562,7 @@ const Home = () => {
                       </div>
 
                       {/* Image */}
-                      <div className="w-full h-36 bg-slate-50/70 dark:bg-slate-950/60 rounded-2xl p-3 flex items-center justify-center mb-3 border border-slate-100 dark:border-slate-800">
+                      <div className="w-full h-36 bg-slate-50/70 dark:bg-slate-950/70 dark:bg-slate-950/60 rounded-2xl p-3 flex items-center justify-center mb-3 border border-slate-100 dark:border-slate-800">
                         <img
                           src={deal.image}
                           alt={deal.name}
@@ -620,14 +620,14 @@ const Home = () => {
               5. SMART RECOMMENDATION SECTION
               ===================================================================== */}
           <section className="mb-10">
-            <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 p-6 lg:p-8 shadow-sm">
+            <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-6 lg:p-8 shadow-sm">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-3xl shrink-0 font-bold">
+                  <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-3xl shrink-0 font-bold">
                     🤖
                   </div>
                   <div>
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/20 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-500/20 px-2 py-0.5 rounded-md">
                       Smart Assistant
                     </span>
                     <h2 className="text-lg lg:text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
@@ -657,8 +657,8 @@ const Home = () => {
 
           {/* Bottom App Metrics Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-2xl font-bold">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-2xl font-bold">
                 📦
               </div>
               <div>
@@ -667,8 +667,8 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-2xl font-bold">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-2xl font-bold">
                 🏪
               </div>
               <div>
@@ -677,8 +677,8 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl font-bold">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl font-bold">
                 🔔
               </div>
               <div>
@@ -687,8 +687,8 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl font-bold">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl font-bold">
                 💰
               </div>
               <div>
@@ -702,7 +702,7 @@ const Home = () => {
         {/* =====================================================================
             SIMPLE FOOTER (HOME PAGE ONLY)
             ===================================================================== */}
-        <footer className="mt-auto border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 py-8 px-4 lg:px-8 transition-colors">
+        <footer className="mt-auto border-t border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 py-8 px-4 lg:px-8 transition-colors">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
             {/* Left Brand */}
             <div className="flex items-center gap-2.5">
@@ -713,7 +713,7 @@ const Home = () => {
                 <span className="font-bold text-slate-900 dark:text-white text-sm">
                   Price<span className="text-indigo-600 dark:text-indigo-400">Scout</span>
                 </span>
-                <span className="text-[11px] text-slate-400 dark:text-slate-500 ml-2 hidden sm:inline">
+                <span className="text-[11px] text-slate-400 dark:text-slate-500 dark:text-slate-400 ml-2 hidden sm:inline">
                   Search Once. Compare Everywhere.
                 </span>
               </div>
@@ -754,13 +754,13 @@ const Home = () => {
             <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
               <button
                 onClick={() => setShowRecommendationModal(false)}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-white flex items-center justify-center transition cursor-pointer"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 dark:text-slate-300 dark:hover:text-white flex items-center justify-center transition cursor-pointer"
               >
                 <FiX className="text-base" />
               </button>
 
               <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl font-bold">
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl font-bold">
                   🤖
                 </div>
                 <div>
@@ -792,7 +792,7 @@ const Home = () => {
                           className={`py-2 px-2.5 rounded-xl font-bold transition border cursor-pointer text-xs ${
                             recCategory === cat
                               ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
-                              : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-300"
+                              : "bg-slate-50 dark:bg-slate-950 dark:bg-slate-800 border-slate-200 dark:border-slate-800 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-300"
                           }`}
                         >
                           {cat}
@@ -823,7 +823,7 @@ const Home = () => {
                         className={`py-2 px-2.5 rounded-xl font-bold transition border cursor-pointer text-xs ${
                           recBudget === b.id
                             ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
-                            : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-300"
+                            : "bg-slate-50 dark:bg-slate-950 dark:bg-slate-800 border-slate-200 dark:border-slate-800 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-300"
                         }`}
                       >
                         {b.label}
@@ -852,7 +852,7 @@ const Home = () => {
                         className={`py-2 px-2.5 rounded-xl font-bold transition border cursor-pointer text-xs ${
                           recPriority === p.id
                             ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
-                            : "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-300"
+                            : "bg-slate-50 dark:bg-slate-950 dark:bg-slate-800 border-slate-200 dark:border-slate-800 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-300"
                         }`}
                       >
                         {p.label}
@@ -864,7 +864,7 @@ const Home = () => {
 
               {/* Recommended Top Pick Result */}
               {recResult && (
-                <div className="mt-5 p-4 rounded-2xl bg-indigo-50/80 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/30">
+                <div className="mt-5 p-4 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/80 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/30">
                   <div className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
                     Top Recommended Match
                   </div>

@@ -5,49 +5,49 @@ const offers = [
 id: 1,
 title: "10% Instant Discount",
 subtitle: "HDFC Bank Credit Card",
-color: "bg-purple-50",
+color: "bg-purple-50 dark:bg-purple-950",
 icon: "💳",
   },
   {
 id: 2,
 title: "₹1000 Cashback",
 subtitle: "Pay using UPI",
-color: "bg-green-50",
+color: "bg-green-50 dark:bg-green-950",
 icon: "💰",
   },
   {
 id: 3,
 title: "No Cost EMI",
 subtitle: "Up to 12 Months",
-color: "bg-blue-50",
+color: "bg-blue-50 dark:bg-blue-950",
 icon: "📅",
   },
   {
 id: 4,
 title: "Exchange Bonus",
 subtitle: "Up to ₹5000 Off",
-color: "bg-yellow-50",
+color: "bg-yellow-50 dark:bg-yellow-950",
 icon: "🔄",
   },
   {
 id: 5,
 title: "Free Delivery",
 subtitle: "Delivered in 2 Days",
-color: "bg-pink-50",
+color: "bg-pink-50 dark:bg-pink-950",
 icon: "🚚",
   },
   {
 id: 6,
 title: "Flat ₹1500 Coupon",
 subtitle: "Code: SAVE1500",
-color: "bg-indigo-50",
+color: "bg-indigo-50 dark:bg-indigo-950",
 icon: "🏷️",
   },
 ];
 
 const BankOffers = () => {
 return (
-<div className="bg-white border border-gray-200 rounded-xl mt-6">
+<div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl mt-6">
 
 <div className="px-4 sm:px-6 py-5 border-b">
 
@@ -57,7 +57,7 @@ return (
 
 </h2>
 
-<p className="text-gray-500 mt-1">
+<p className="text-gray-500 dark:text-slate-400 mt-1">
 
           Save more with exclusive payment offers.
 

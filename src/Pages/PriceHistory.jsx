@@ -8,10 +8,10 @@ const PriceHistory = ({ comparison }) => {
   const lowest = Math.min(...prices);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl mt-6 p-4 sm:p-6">
+    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl mt-6 p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-6">
         <h2 className="text-xl sm:text-2xl font-bold">Price Analysis</h2>
-        <span className="text-sm text-gray-500">Store Price Comparison</span>
+        <span className="text-sm text-gray-500 dark:text-slate-400">Store Price Comparison</span>
       </div>
 
       {/* Graph */}
@@ -45,22 +45,22 @@ const PriceHistory = ({ comparison }) => {
 
       {/* Legend */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mt-8">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-gray-500 text-sm">Lowest Price</p>
+        <div className="bg-green-50 dark:bg-green-950 border border-green-200 rounded-lg p-4">
+          <p className="text-gray-500 dark:text-slate-400 text-sm">Lowest Price</p>
           <h2 className="text-xl sm:text-2xl font-bold text-green-600 mt-2">
             ₹{lowest.toLocaleString()}
           </h2>
         </div>
 
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-gray-500 text-sm">Highest Price</p>
+        <div className="bg-red-50 dark:bg-red-950 border border-red-200 rounded-lg p-4">
+          <p className="text-gray-500 dark:text-slate-400 text-sm">Highest Price</p>
           <h2 className="text-xl sm:text-2xl font-bold text-red-600 mt-2">
             ₹{highest.toLocaleString()}
           </h2>
         </div>
 
-        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-          <p className="text-gray-500 text-sm">Difference</p>
+        <div className="bg-purple-50 dark:bg-purple-950 border border-purple-200 rounded-lg p-4">
+          <p className="text-gray-500 dark:text-slate-400 text-sm">Difference</p>
           <h2 className="text-xl sm:text-2xl font-bold text-purple-700 mt-2">
             ₹{(highest - lowest).toLocaleString()}
           </h2>

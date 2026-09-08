@@ -29,7 +29,7 @@ export default function ThemeToggle({ className = "", compact = false }) {
       className={`relative inline-flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl border transition-all duration-200 cursor-pointer font-bold text-xs shadow-xs shrink-0 ${
         isDark
           ? "bg-slate-800 hover:bg-slate-700 text-amber-300 border-slate-700 hover:border-slate-600"
-          : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-300"
+          : "bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
       } ${className}`}
       title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
       aria-label="Toggle theme mode"
@@ -41,7 +41,7 @@ export default function ThemeToggle({ className = "", compact = false }) {
         </>
       ) : (
         <>
-          <FiMoon className="text-indigo-600 text-sm shrink-0" />
+          <FiMoon className="text-indigo-600 dark:text-indigo-400 text-sm shrink-0" />
           {!compact && <span className="hidden sm:inline">Dark Mode</span>}
         </>
       )}

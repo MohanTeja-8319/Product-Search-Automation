@@ -70,7 +70,7 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
+    <div className="h-[100dvh] w-full relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
       {/* Dynamic Animated Particles Background */}
       <ParticleBackground />
 
@@ -81,14 +81,14 @@ export function Login() {
         onSuccess={() => navigate("/home")}
       />
 
-      <div className="relative z-10 bg-white/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden max-w-5xl w-full grid md:grid-cols-2">
+      <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-y-auto max-w-5xl w-full max-h-[calc(100dvh-2rem)] grid md:grid-cols-2">
         {/* Left Hero Graphic Section */}
-        <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 text-white p-10 lg:p-12 relative overflow-hidden">
+        <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 text-white p-8 lg:p-10 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
           
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-6">
               <FaShoppingBag className="text-purple-300" /> Smart Price Intelligence
             </div>
             <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight">Product Search</h1>
@@ -114,19 +114,19 @@ export function Login() {
         </div>
 
         {/* Right Authentication Form Section */}
-        <div className="p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
+        <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
           <div className="text-center md:text-left mb-6">
             <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
               Welcome Back 👋
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-sm text-gray-500 dark:text-slate-400 dark:text-gray-400 mt-1">
               Sign in to manage price alerts and smart comparisons
             </p>
           </div>
 
           {/* Quick Demo Helper */}
-          <div className="mb-5 p-3 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-2 text-indigo-900 dark:text-indigo-200 font-medium">
+          <div className="mb-5 p-3 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/80 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-2 text-indigo-900 dark:text-indigo-400 dark:text-indigo-200 font-medium">
               <FaBolt className="text-amber-500" />
               <span>Quick Test Access:</span>
             </div>
@@ -159,7 +159,7 @@ export function Login() {
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full text-sm border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
                 />
               </div>
             </div>
@@ -176,7 +176,7 @@ export function Login() {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full text-sm border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-12 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-12 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
                 />
                 <button
                   type="button"
@@ -195,13 +195,13 @@ export function Login() {
                   type="checkbox" 
                   checked={rememberMe} 
                   onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4" 
+                  className="rounded border-gray-300 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 w-4 h-4" 
                 />
                 Remember me
               </label>
               <Link 
                 to="/forgot-password" 
-                className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 font-semibold hover:underline"
+                className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-400 font-semibold hover:underline"
               >
                 Forgot Password?
               </Link>
@@ -223,16 +223,16 @@ export function Login() {
 
           {/* Divider directly down of the Sign In button */}
           <div className="flex items-center my-5">
-            <div className="flex-1 border-t border-gray-200 dark:border-gray-700"></div>
+            <div className="flex-1 border-t border-gray-200 dark:border-slate-800 dark:border-gray-700"></div>
             <span className="px-3 text-xs uppercase font-bold text-gray-400">OR CONTINUE WITH</span>
-            <div className="flex-1 border-t border-gray-200 dark:border-gray-700"></div>
+            <div className="flex-1 border-t border-gray-200 dark:border-slate-800 dark:border-gray-700"></div>
           </div>
 
           {/* Google Authentication Button placed DOWN of the button */}
           <button
             type="button"
             onClick={() => setGoogleModalOpen(true)}
-            className="w-full border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-800 bg-white dark:bg-slate-800/60 text-gray-700 dark:text-gray-200 py-3.5 px-4 rounded-2xl flex items-center justify-center gap-3 font-semibold text-sm transition-all duration-200 shadow-sm cursor-pointer hover:border-indigo-200 group"
+            className="w-full border border-gray-200 dark:border-slate-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 bg-white dark:bg-slate-800/60 text-gray-700 dark:text-gray-200 py-3.5 px-4 rounded-2xl flex items-center justify-center gap-3 font-semibold text-sm transition-all duration-200 shadow-sm cursor-pointer hover:border-indigo-200 group"
           >
             <svg className="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
               <path
@@ -337,7 +337,7 @@ const handleSubmit = async (e) => {
   }
 };
   return (
-    <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
+    <div className="h-[100dvh] w-full relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
       {/* Particle Background */}
       <ParticleBackground />
 
@@ -348,11 +348,14 @@ const handleSubmit = async (e) => {
         onSuccess={() => navigate("/home")}
       />
 
-      <div className="relative z-10 bg-white/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden max-w-5xl w-full grid md:grid-cols-2">
+      <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-y-auto max-w-5xl w-full max-h-[calc(100dvh-2rem)] grid md:grid-cols-2">
         {/* Left Informative Panel */}
-        <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-indigo-700 via-purple-800 to-slate-900 text-white p-10 lg:p-12 relative overflow-hidden">
+        <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 text-white p-8 lg:p-10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
+          
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-6">
               🚀 Start Saving Money
             </div>
             <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight">Join Us Today</h1>
@@ -376,12 +379,12 @@ const handleSubmit = async (e) => {
         </div>
 
         {/* Right Form Section */}
-        <div className="p-6 sm:p-10 lg:p-12 flex flex-col justify-center">
+        <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
           <div className="text-center md:text-left mb-6">
             <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
               Create Account ✨
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            <p className="text-sm text-gray-500 dark:text-slate-400 dark:text-gray-400 mt-1">
               Sign up in seconds to start tracking deals
             </p>
           </div>
@@ -406,7 +409,7 @@ const handleSubmit = async (e) => {
                   placeholder="e.g. Mohan Teja"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="w-full text-sm border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
                 />
               </div>
             </div>
@@ -424,7 +427,7 @@ const handleSubmit = async (e) => {
                   placeholder="name@example.com"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full text-sm border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
                 />
               </div>
             </div>
@@ -443,7 +446,7 @@ const handleSubmit = async (e) => {
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full text-xs border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-9 pr-9 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                    className="w-full text-xs border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-9 pr-9 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
                   />
                   <button
                     type="button"
@@ -468,7 +471,7 @@ const handleSubmit = async (e) => {
                     placeholder="Confirm"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full text-xs border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-9 pr-9 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                    className="w-full text-xs border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-9 pr-9 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
                   />
                   <button
                     type="button"
@@ -488,7 +491,7 @@ const handleSubmit = async (e) => {
                 checked={formData.agreedToTerms}
                 onChange={handleChange}
                 required
-                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 w-4 h-4"
+                className="rounded border-gray-300 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 w-4 h-4"
               />
               <span>I agree to the Terms of Service & Privacy Policy</span>
             </label>
@@ -509,16 +512,16 @@ const handleSubmit = async (e) => {
 
           {/* Divider directly down of the Sign Up button */}
           <div className="flex items-center my-5">
-            <div className="flex-1 border-t border-gray-200 dark:border-gray-700"></div>
+            <div className="flex-1 border-t border-gray-200 dark:border-slate-800 dark:border-gray-700"></div>
             <span className="px-3 text-xs uppercase font-bold text-gray-400">OR REGISTER WITH</span>
-            <div className="flex-1 border-t border-gray-200 dark:border-gray-700"></div>
+            <div className="flex-1 border-t border-gray-200 dark:border-slate-800 dark:border-gray-700"></div>
           </div>
 
           {/* Google Authentication Button placed DOWN of the Sign Up button */}
           <button
             type="button"
             onClick={() => setGoogleModalOpen(true)}
-            className="w-full border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-800 bg-white dark:bg-slate-800/60 text-gray-700 dark:text-gray-200 py-3.5 px-4 rounded-2xl flex items-center justify-center gap-3 font-semibold text-sm transition-all duration-200 shadow-sm cursor-pointer hover:border-indigo-200 group"
+            className="w-full border border-gray-200 dark:border-slate-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 bg-white dark:bg-slate-800/60 text-gray-700 dark:text-gray-200 py-3.5 px-4 rounded-2xl flex items-center justify-center gap-3 font-semibold text-sm transition-all duration-200 shadow-sm cursor-pointer hover:border-indigo-200 group"
           >
             <svg className="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
               <path
@@ -580,11 +583,11 @@ export function Logout() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
+    <div className="h-[100dvh] w-full relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
       {/* Particle Background */}
       <ParticleBackground />
 
-      <div className="relative z-10 bg-white/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden max-w-md w-full p-8 text-center">
+      <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden max-w-md w-full p-8 text-center">
         {logoutState === "confirm" && (
           <div className="space-y-6 py-2 animate-fadeIn">
             <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-800 rounded-full mx-auto flex items-center justify-center shadow-md">
@@ -594,7 +597,7 @@ export function Logout() {
               <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
                 Confirm Sign Out
               </h2>
-              <p className="text-gray-500 dark:text-gray-400 text-sm mt-2 leading-relaxed">
+              <p className="text-gray-500 dark:text-slate-400 dark:text-gray-400 text-sm mt-2 leading-relaxed">
                 Are you sure you want to end your active session?
               </p>
             </div>
@@ -602,7 +605,7 @@ export function Logout() {
               <button
                 type="button"
                 onClick={() => navigate("/home")}
-                className="w-1/2 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300 font-bold py-3.5 rounded-2xl text-sm transition cursor-pointer"
+                className="w-1/2 border border-gray-200 dark:border-slate-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300 font-bold py-3.5 rounded-2xl text-sm transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -640,7 +643,7 @@ export function Logout() {
               <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
                 Signed Out Successfully
               </h2>
-              <p className="text-gray-500 dark:text-gray-400 text-xs mt-2">
+              <p className="text-gray-500 dark:text-slate-400 dark:text-gray-400 text-xs mt-2">
                 You have been safely disconnected from your account.
               </p>
             </div>

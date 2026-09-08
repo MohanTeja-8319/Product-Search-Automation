@@ -76,7 +76,7 @@ const ComparisonPage = () => {
   const savings = highestPrice - lowestPrice;
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen text-gray-800 relative">
+    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen text-gray-800 dark:text-slate-100 transition-colors duration-200 relative">
       {/* Sidebar */}
       <Sidebar />
 
@@ -162,16 +162,16 @@ const ComparisonPage = () => {
             <Wishlist productName={decodedName} />
 
             {/* Footer */}
-            <div className="mt-10 border-t border-gray-200 pt-8 pb-8 text-center">
+            <div className="mt-10 border-t border-gray-200 dark:border-slate-800 pt-8 pb-8 text-center">
               <h3 className="font-bold text-lg text-gray-800">
                 Product Search Automation
               </h3>
-              <p className="text-gray-500 mt-2 px-4">
+              <p className="text-gray-500 dark:text-slate-400 mt-2 px-4">
                 Compare prices from multiple trusted stores and choose the best
                 deal.
               </p>
 
-              <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 sm:gap-x-8 mt-6 px-4 text-sm text-gray-500">
+              <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 sm:gap-x-8 mt-6 px-4 text-sm text-gray-500 dark:text-slate-400">
                 <button className="hover:text-purple-600">Privacy Policy</button>
                 <button className="hover:text-purple-600">
                   Terms & Conditions

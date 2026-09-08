@@ -30,7 +30,7 @@ const SearchBar = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search products, stores..."
-          className="w-full h-10 sm:h-11 pl-9 sm:pl-11 pr-16 sm:pr-24 rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm text-gray-800 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-xs transition"
+          className="w-full h-10 sm:h-11 pl-9 sm:pl-11 pr-16 sm:pr-24 rounded-xl border border-gray-200 dark:border-slate-800 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs sm:text-sm text-gray-800 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-xs transition"
         />
         <button
           type="submit"

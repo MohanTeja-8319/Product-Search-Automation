@@ -153,8 +153,8 @@ const Notification = () => {
         onClick={() => setIsOpen(!isOpen)}
         className={`w-10 h-10 rounded-full flex items-center justify-center transition shadow-xs relative cursor-pointer border ${
           isOpen
-            ? "bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-slate-700"
-            : "bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border-slate-200/90 dark:border-slate-800"
+            ? "bg-indigo-50 dark:bg-indigo-950 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-slate-700"
+            : "bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 dark:text-slate-200 border-slate-200/90 dark:border-slate-800/90 dark:border-slate-800"
         }`}
         title={`Notifications (${unreadCount} unread)`}
         aria-expanded={isOpen}
@@ -171,7 +171,7 @@ const Notification = () => {
 
       {/* Interactive Dropdown Panel */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/90 dark:border-slate-800 py-3 z-50 animate-fadeIn">
+        <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/90 dark:border-slate-800/90 dark:border-slate-800 py-3 z-50 animate-fadeIn">
           {/* Header */}
           <div className="px-4 pb-3 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -179,7 +179,7 @@ const Notification = () => {
                 Notifications
               </h3>
               {unreadCount > 0 && (
-                <span className="px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 text-[10px] font-bold">
                   {unreadCount} new
                 </span>
               )}
@@ -211,7 +211,7 @@ const Notification = () => {
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white flex items-center justify-center transition cursor-pointer ml-1"
+                className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white dark:text-white dark:text-slate-400 dark:hover:text-white flex items-center justify-center transition cursor-pointer ml-1"
                 title="Close notifications"
               >
                 <FiX className="text-sm" />
@@ -260,9 +260,9 @@ const Notification = () => {
                 <div
                   key={item.id}
                   onClick={() => handleNotificationClick(item)}
-                  className={`p-3.5 flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition cursor-pointer relative group ${
+                  className={`p-3.5 flex items-start gap-3 hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800/60 transition cursor-pointer relative group ${
                     !item.read
-                      ? "bg-indigo-50/40 dark:bg-indigo-500/5"
+                      ? "bg-indigo-50/40 dark:bg-indigo-950/40 dark:bg-indigo-500/5"
                       : "opacity-80"
                   }`}
                 >
@@ -296,7 +296,7 @@ const Notification = () => {
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-snug">
+                    <p className="text-xs text-slate-600 dark:text-slate-400 dark:text-slate-300 mt-1 leading-snug">
                       {item.message}
                     </p>
 
@@ -334,7 +334,7 @@ const Notification = () => {
                 <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-2xl mx-auto mb-2 text-slate-400">
                   🎉
                 </div>
-                <h4 className="font-bold text-xs text-slate-800 dark:text-slate-200">
+                <h4 className="font-bold text-xs text-slate-800 dark:text-slate-100 dark:text-slate-200">
                   All caught up!
                 </h4>
                 <p className="text-[11px] text-slate-400 mt-0.5">

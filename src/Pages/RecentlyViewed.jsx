@@ -41,7 +41,7 @@ const RecentlyViewed = () => {
 
     return (
 
-        <div className="bg-white rounded-xl border border-gray-200 mt-8 p-6">
+        <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-800 mt-8 p-6">
 
             <div className="flex justify-between items-center mb-6">
 

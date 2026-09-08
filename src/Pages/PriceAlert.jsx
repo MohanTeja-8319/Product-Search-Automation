@@ -57,13 +57,13 @@ const PriceAlert = ({
   const cardContent = (
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* Price Alert Main Card */}
-      <div className="bg-white border border-gray-200/80 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
         {/* Header */}
         <div className="px-6 py-5 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <span>🔔</span> Price Alert
           </h2>
-          <p className="text-xs text-gray-500 mt-1 font-medium">
+          <p className="text-xs text-gray-500 dark:text-slate-400 mt-1 font-medium">
             Get notified when this product becomes cheaper.
           </p>
         </div>
@@ -73,7 +73,7 @@ const PriceAlert = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             {/* Left Column */}
             <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+              <p className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide mb-2">
                 Current Lowest Price
               </p>
               <h2 className="text-4xl md:text-5xl font-extrabold text-[#6c5ce7] tracking-tight">
@@ -120,7 +120,7 @@ const PriceAlert = ({
               </button>
 
               {submitted && (
-                <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs rounded-xl p-3 font-semibold flex items-center gap-2">
+                <div className="bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 text-emerald-700 text-xs rounded-xl p-3 font-semibold flex items-center gap-2">
                   ✅ Price alert created successfully!
                 </div>
               )}
@@ -130,15 +130,15 @@ const PriceAlert = ({
       </div>
 
       {/* Bottom Customer Reviews Section */}
-      <div className="bg-white border border-gray-200/80 rounded-2xl p-6 shadow-sm">
-        <h3 className="text-base font-bold text-gray-900 mb-4">
+      <div className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800/80 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
+        <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4">
           Customer Reviews
         </h3>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border border-gray-100 rounded-xl bg-gray-50/50 hover:bg-gray-50 transition">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border border-gray-100 rounded-xl bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 transition">
           {/* Product Thumbnail & Title */}
           <div className="flex items-center gap-4 w-full sm:w-auto">
-            <div className="w-14 h-14 bg-white rounded-lg p-1.5 border border-gray-100 flex items-center justify-center shrink-0">
+            <div className="w-14 h-14 bg-white dark:bg-slate-900 rounded-lg p-1.5 border border-gray-100 flex items-center justify-center shrink-0">
               <img
                 src={image}
                 alt={productName}
@@ -150,7 +150,7 @@ const PriceAlert = ({
               />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-gray-900 leading-tight">
+              <h4 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">
                 {productName}
               </h4>
               <p className="text-xs font-semibold text-gray-400 mt-0.5">
@@ -179,7 +179,7 @@ const PriceAlert = ({
               </button>
               <button
                 onClick={handleWishlistToggle}
-                className="p-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-400 hover:text-red-500 transition cursor-pointer"
+                className="p-2.5 rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 text-gray-400 hover:text-red-500 transition cursor-pointer"
                 title="Add to Wishlist"
               >
                 {inWishlist ? (
@@ -200,7 +200,7 @@ const PriceAlert = ({
   }
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen text-gray-800">
+    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen text-gray-800 dark:text-slate-100 transition-colors duration-200">
       <Sidebar />
       <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
         <Navbar />

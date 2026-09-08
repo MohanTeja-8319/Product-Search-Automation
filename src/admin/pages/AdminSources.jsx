@@ -27,11 +27,11 @@ export function AdminSources() {
       sortKey: "name",
       render: (item) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-xs border border-indigo-100">
+          <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 flex items-center justify-center font-bold text-xs border border-indigo-100">
             {item.name.substring(0, 2).toUpperCase()}
           </div>
           <div>
-            <span className="font-bold text-slate-900 block text-xs sm:text-sm">
+            <span className="font-bold text-slate-900 dark:text-white block text-xs sm:text-sm">
               {item.name}
             </span>
             <span className="text-[11px] text-slate-400 font-mono">{item.id}</span>
@@ -48,7 +48,7 @@ export function AdminSources() {
           href={item.websiteUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:underline font-mono"
+          className="inline-flex items-center gap-1 text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-mono"
         >
           <span>{item.websiteUrl}</span>
           <FiExternalLink className="text-[10px]" />
@@ -66,7 +66,7 @@ export function AdminSources() {
       key: "lastSuccessfulRun",
       sortKey: "lastSuccessfulRun",
       render: (item) => (
-        <span className="text-slate-500 text-xs whitespace-nowrap">
+        <span className="text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">
           {item.lastSuccessfulRun}
         </span>
       )
@@ -77,7 +77,7 @@ export function AdminSources() {
       sortKey: "productsCollected",
       align: "right",
       render: (item) => (
-        <span className="font-bold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-lg text-xs">
+        <span className="font-bold text-slate-800 dark:text-slate-100 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg text-xs">
           {item.productsCollected.toLocaleString()}
         </span>
       )
@@ -93,8 +93,8 @@ export function AdminSources() {
             onClick={() => toggleSourceStatus(item.id)}
             className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold border transition-all ${
               item.status === "Enabled"
-                ? "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
-                : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                ? "bg-slate-50 dark:bg-slate-950 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
+                : "bg-emerald-50 dark:bg-emerald-950 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
             }`}
             title={item.status === "Enabled" ? "Disable Connector" : "Enable Connector"}
           >
@@ -115,7 +115,7 @@ export function AdminSources() {
           <button
             type="button"
             onClick={() => setSelectedSourceModal(item)}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950 transition-colors"
             title="View Source Status"
           >
             <FiInfo className="text-base" />
@@ -130,16 +130,16 @@ export function AdminSources() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
             Source Connectors
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             Supported e-commerce platforms and automated scraper integration endpoints
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-xs">
+          <div className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300 shadow-xs">
             Operational Sources:{" "}
             <span className="text-emerald-600 font-bold">
               {sources.filter((s) => s.status === "Enabled").length} / {sources.length} Active
@@ -177,14 +177,14 @@ export function AdminSources() {
             className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
             onClick={() => setSelectedSourceModal(null)}
           />
-          <div className="relative bg-white rounded-2xl max-w-md w-full p-6 z-10 shadow-2xl border border-slate-200 animate-scaleUp">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="relative bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 z-10 shadow-2xl border border-slate-200 dark:border-slate-800 animate-scaleUp">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
+                <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-sm">
                   <FiGlobe />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900">
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
                     {selectedSourceModal.name} Connector
                   </h3>
                   <span className="text-[11px] text-slate-400 font-mono">
@@ -194,42 +194,42 @@ export function AdminSources() {
               </div>
               <button
                 onClick={() => setSelectedSourceModal(null)}
-                className="text-slate-400 hover:text-slate-600 p-1"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-400 dark:text-slate-400 p-1"
               >
                 <FiX className="text-lg" />
               </button>
             </div>
 
             <div className="mt-4 space-y-3 text-xs">
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Connector Status:</span>
+              <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                <span className="text-slate-500 dark:text-slate-400">Connector Status:</span>
                 <StatusBadge status={selectedSourceModal.status} size="sm" />
               </div>
 
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Connector Engine:</span>
-                <span className="font-mono font-semibold text-slate-800">
+              <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                <span className="text-slate-500 dark:text-slate-400">Connector Engine:</span>
+                <span className="font-mono font-semibold text-slate-800 dark:text-slate-100">
                   {selectedSourceModal.connectorVersion || "v3.0.0"}
                 </span>
               </div>
 
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Average Scrape Latency:</span>
-                <span className="font-bold text-slate-800">
+              <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                <span className="text-slate-500 dark:text-slate-400">Average Scrape Latency:</span>
+                <span className="font-bold text-slate-800 dark:text-slate-100">
                   {selectedSourceModal.avgLatency || "1.2s"}
                 </span>
               </div>
 
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Health Reliability:</span>
+              <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                <span className="text-slate-500 dark:text-slate-400">Health Reliability:</span>
                 <span className="font-bold text-emerald-600">
                   {selectedSourceModal.healthRate || "99.0%"}
                 </span>
               </div>
 
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
-                <span className="text-slate-500">Total Products Indexed:</span>
-                <span className="font-bold text-slate-800">
+              <div className="flex justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
+                <span className="text-slate-500 dark:text-slate-400">Total Products Indexed:</span>
+                <span className="font-bold text-slate-800 dark:text-slate-100">
                   {selectedSourceModal.productsCollected.toLocaleString()}
                 </span>
               </div>
@@ -239,14 +239,14 @@ export function AdminSources() {
                   <span className="text-rose-600 font-semibold block mb-1">
                     Connector Error:
                   </span>
-                  <div className="p-2.5 bg-rose-50 border border-rose-100 text-rose-800 rounded-xl text-[11px]">
+                  <div className="p-2.5 bg-rose-50 dark:bg-rose-950 border border-rose-100 text-rose-800 rounded-xl text-[11px]">
                     {selectedSourceModal.errorDetail}
                   </div>
                 </div>
               )}
             </div>
 
-            <div className="mt-6 flex justify-between items-center pt-3 border-t border-slate-100">
+            <div className="mt-6 flex justify-between items-center pt-3 border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => {
@@ -256,7 +256,7 @@ export function AdminSources() {
                     status: prev.status === "Enabled" ? "Disabled" : "Enabled"
                   }));
                 }}
-                className="px-3.5 py-1.5 text-xs font-semibold rounded-xl border border-slate-200 hover:bg-slate-50"
+                className="px-3.5 py-1.5 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800"
               >
                 {selectedSourceModal.status === "Enabled" ? "Disable Connector" : "Enable Connector"}
               </button>

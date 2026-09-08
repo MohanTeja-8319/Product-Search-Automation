@@ -60,7 +60,7 @@ const ProductDetails = () => {
     .slice(0, 4);
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen text-gray-800">
+    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen text-gray-800 dark:text-slate-100 transition-colors duration-200">
       {/* Sidebar */}
       <Sidebar />
 
@@ -81,7 +81,7 @@ const ProductDetails = () => {
             </button>
 
             {!hasComparison && (
-              <div className="mb-6 bg-yellow-50 border border-yellow-300 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div className="mb-6 bg-yellow-50 dark:bg-yellow-950 border border-yellow-300 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
                   <h2 className="font-bold text-yellow-800 text-sm sm:text-base">
                     ⚠ No Comparison Available
@@ -95,7 +95,7 @@ const ProductDetails = () => {
             )}
 
             {/* Product Card */}
-            <div className="bg-white border border-gray-200 rounded-xl mt-6 p-4 sm:p-6 lg:p-8">
+            <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl mt-6 p-4 sm:p-6 lg:p-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
                 {/* Left */}
                 <div className="flex justify-center items-center">
@@ -109,12 +109,12 @@ const ProductDetails = () => {
                 {/* Right */}
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-bold">{product.name}</h1>
-                  <p className="text-gray-500 mt-2 text-sm sm:text-base">{product.brand}</p>
+                  <p className="text-gray-500 dark:text-slate-400 mt-2 text-sm sm:text-base">{product.brand}</p>
                   <div className="flex flex-wrap items-center gap-3 mt-4 sm:mt-5">
                     <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm sm:text-base">
                       ⭐ {product.rating}
                     </span>
-                    <span className="text-gray-500 text-sm sm:text-base">
+                    <span className="text-gray-500 dark:text-slate-400 text-sm sm:text-base">
                       ({product.reviews} Reviews)
                     </span>
                   </div>
@@ -196,14 +196,14 @@ const ProductDetails = () => {
             <Wishlist productName={product.name} />
 
             {/* Footer */}
-            <footer className="mt-12 bg-white border border-gray-200 rounded-xl">
+            <footer className="mt-12 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl">
               <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
                   <div className="sm:col-span-2 md:col-span-1">
                     <h2 className="text-xl sm:text-2xl font-bold text-purple-700">
                       Product Search
                     </h2>
-                    <p className="text-gray-500 mt-4 text-sm sm:text-base">
+                    <p className="text-gray-500 dark:text-slate-400 mt-4 text-sm sm:text-base">
                       Compare prices from trusted stores, view product details,
                       specifications, offers and make smarter buying decisions.
                     </p>
@@ -211,7 +211,7 @@ const ProductDetails = () => {
 
                   <div>
                     <h3 className="font-bold mb-4 text-sm sm:text-base">Quick Links</h3>
-                    <ul className="space-y-2 text-gray-500 text-sm sm:text-base">
+                    <ul className="space-y-2 text-gray-500 dark:text-slate-400 text-sm sm:text-base">
                       <li className="hover:text-purple-600 cursor-pointer">
                         Home
                       </li>
@@ -229,7 +229,7 @@ const ProductDetails = () => {
 
                   <div>
                     <h3 className="font-bold mb-4 text-sm sm:text-base">Support</h3>
-                    <ul className="space-y-2 text-gray-500 text-sm sm:text-base">
+                    <ul className="space-y-2 text-gray-500 dark:text-slate-400 text-sm sm:text-base">
                       <li className="hover:text-purple-600 cursor-pointer">
                         Help Center
                       </li>
@@ -253,7 +253,7 @@ const ProductDetails = () => {
                   </div>
                 </div>
 
-                <div className="border-t mt-8 pt-6 text-center text-gray-500 text-xs sm:text-sm">
+                <div className="border-t mt-8 pt-6 text-center text-gray-500 dark:text-slate-400 text-xs sm:text-sm">
                   © 2026 Product Search Automation. All Rights Reserved.
                 </div>
               </div>

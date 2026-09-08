@@ -49,25 +49,25 @@ export function SearchesPerDayChart({ data }) {
   const yTicks = [0, Math.round(yMax * 0.25), Math.round(yMax * 0.5), Math.round(yMax * 0.75), yMax];
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex flex-col justify-between">
+    <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800">
         <div>
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-semibold text-slate-900">Searches Per Day</h3>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-white">Searches Per Day</h3>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400">
               <FiTrendingUp className="text-xs" /> +18.6%
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-0.5">Daily search volume and automation activity</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Daily search volume and automation activity</p>
         </div>
 
         {/* Range Toggle */}
-        <div className="inline-flex rounded-lg bg-slate-100 p-1 text-xs font-medium text-slate-600 self-start sm:self-auto">
+        <div className="inline-flex rounded-lg bg-slate-100 dark:bg-slate-800 p-1 text-xs font-medium text-slate-600 dark:text-slate-400 self-start sm:self-auto">
           <button
             onClick={() => setRange("7d")}
             className={`px-2.5 py-1 rounded-md transition-all ${
-              range === "7d" ? "bg-white text-slate-900 shadow-sm" : "hover:text-slate-900"
+              range === "7d" ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm" : "hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             Last 7 Days
@@ -75,7 +75,7 @@ export function SearchesPerDayChart({ data }) {
           <button
             onClick={() => setRange("14d")}
             className={`px-2.5 py-1 rounded-md transition-all ${
-              range === "14d" ? "bg-white text-slate-900 shadow-sm" : "hover:text-slate-900"
+              range === "14d" ? "bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-sm" : "hover:text-slate-900 dark:hover:text-white"
             }`}
           >
             Last 14 Days
@@ -213,7 +213,7 @@ export function SearchesPerDayChart({ data }) {
       </div>
 
       {/* Legend info */}
-      <div className="mt-3 flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100">
+      <div className="mt-3 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2 border-t border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>

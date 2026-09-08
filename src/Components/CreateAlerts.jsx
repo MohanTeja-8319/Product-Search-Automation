@@ -183,7 +183,7 @@ const CreateAlert = () => {
     current > 0 && saving > 0 ? ((saving / current) * 100).toFixed(1) : "0.0";
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen text-slate-800 flex flex-col font-sans">
+    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 flex flex-col font-sans">
       <Sidebar />
 
       <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
@@ -192,21 +192,21 @@ const CreateAlert = () => {
         <main className="p-4 lg:p-8 flex-1 max-w-5xl w-full mx-auto pb-24">
           {/* Breadcrumbs */}
           <nav className="flex items-center gap-2 text-xs text-slate-400 mb-3">
-            <Link to="/home" className="hover:text-indigo-600 transition">
+            <Link to="/home" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
               Home
             </Link>
             <FiChevronRight className="text-[10px]" />
-            <Link to="/pricealerts" className="hover:text-indigo-600 transition">
+            <Link to="/pricealerts" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
               Price Alerts
             </Link>
             <FiChevronRight className="text-[10px]" />
-            <span className="text-indigo-600 font-semibold">Create Alert</span>
+            <span className="text-indigo-600 dark:text-indigo-400 font-semibold">Create Alert</span>
           </nav>
 
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-              <span className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm">
+            <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+              <span className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm">
                 <FiBell />
               </span>
               Create Price Drop Alert
@@ -217,7 +217,7 @@ const CreateAlert = () => {
           </div>
 
           {/* Stepper Wizard Bar */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 mb-8">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 shadow-sm p-4 mb-8">
             <div className="flex items-center justify-between">
               {/* Step 1 */}
               <div className="flex items-center gap-3">
@@ -231,12 +231,12 @@ const CreateAlert = () => {
                   {selectedProduct ? <FiCheck className="stroke-[3]" /> : "1"}
                 </div>
                 <div className="hidden sm:block">
-                  <div className="text-xs font-bold text-slate-900">Product Selection</div>
+                  <div className="text-xs font-bold text-slate-900 dark:text-white">Product Selection</div>
                   <div className="text-[10px] text-slate-400">Choose item to monitor</div>
                 </div>
               </div>
 
-              <div className="flex-1 h-0.5 mx-3 bg-slate-100 rounded">
+              <div className="flex-1 h-0.5 mx-3 bg-slate-100 dark:bg-slate-800 rounded">
                 <div
                   className={`h-full bg-indigo-600 transition-all duration-300 ${
                     selectedProduct ? "w-full" : "w-1/2"
@@ -250,18 +250,18 @@ const CreateAlert = () => {
                   className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-xs ${
                     targetPrice > 0
                       ? "bg-indigo-600 text-white"
-                      : "bg-slate-100 text-slate-400"
+                      : "bg-slate-100 dark:bg-slate-800 text-slate-400"
                   }`}
                 >
                   2
                 </div>
                 <div className="hidden sm:block">
-                  <div className="text-xs font-bold text-slate-900">Target Price</div>
+                  <div className="text-xs font-bold text-slate-900 dark:text-white">Target Price</div>
                   <div className="text-[10px] text-slate-400">Set discount limit</div>
                 </div>
               </div>
 
-              <div className="flex-1 h-0.5 mx-3 bg-slate-100 rounded">
+              <div className="flex-1 h-0.5 mx-3 bg-slate-100 dark:bg-slate-800 rounded">
                 <div
                   className={`h-full bg-indigo-600 transition-all duration-300 ${
                     targetPrice > 0 ? "w-full" : "w-0"
@@ -271,11 +271,11 @@ const CreateAlert = () => {
 
               {/* Step 3 */}
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center font-black text-xs">
+                <div className="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center font-black text-xs">
                   3
                 </div>
                 <div className="hidden sm:block">
-                  <div className="text-xs font-bold text-slate-900">Preferences</div>
+                  <div className="text-xs font-bold text-slate-900 dark:text-white">Preferences</div>
                   <div className="text-[10px] text-slate-400">Notification channels</div>
                 </div>
               </div>
@@ -284,11 +284,11 @@ const CreateAlert = () => {
 
           <form onSubmit={handleCreateAlert} className="space-y-8">
             {/* ================= 1. Select Product Section ================= */}
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-6 shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                  <h2 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs">
                       1
                     </span>
                     Select Product to Track
@@ -313,25 +313,25 @@ const CreateAlert = () => {
                       }}
                       onFocus={() => setShowSuggestions(true)}
                       placeholder="Type product name or brand (e.g. iPhone 16, MacBook, Samsung)..."
-                      className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition"
+                      className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 transition"
                     />
 
                     {/* Suggestions dropdown */}
                     {showSuggestions && filteredProducts.length > 0 && (
-                      <div className="absolute z-30 mt-2 w-full bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden max-h-72 overflow-y-auto animate-scaleUp">
+                      <div className="absolute z-30 mt-2 w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl overflow-hidden max-h-72 overflow-y-auto animate-scaleUp">
                         {filteredProducts.map((product) => (
                           <div
                             key={product.id}
                             onClick={() => handleSelectProduct(product)}
-                            className="flex items-center gap-4 px-4 py-3 cursor-pointer hover:bg-indigo-50/50 border-b border-slate-100 last:border-b-0 transition"
+                            className="flex items-center gap-4 px-4 py-3 cursor-pointer hover:bg-indigo-50/50 dark:hover:bg-indigo-950/50 border-b border-slate-100 dark:border-slate-800 last:border-b-0 transition"
                           >
                             <img
                               src={product.image}
                               alt={product.name}
-                              className="w-10 h-10 object-contain p-0.5 bg-slate-50 rounded-lg border border-slate-100"
+                              className="w-10 h-10 object-contain p-0.5 bg-slate-50 dark:bg-slate-950 rounded-lg border border-slate-100 dark:border-slate-800"
                             />
                             <div className="flex-1 min-w-0">
-                              <p className="font-bold text-xs text-slate-900 truncate">
+                              <p className="font-bold text-xs text-slate-900 dark:text-white truncate">
                                 {product.name}
                               </p>
                               <p className="text-[10px] text-slate-400 font-semibold">
@@ -339,7 +339,7 @@ const CreateAlert = () => {
                               </p>
                             </div>
                             <div className="text-right">
-                              <span className="text-xs font-black text-slate-900">
+                              <span className="text-xs font-black text-slate-900 dark:text-white">
                                 ₹{product.price.toLocaleString()}
                               </span>
                               <span className="text-[10px] text-slate-400 block">
@@ -365,7 +365,7 @@ const CreateAlert = () => {
                           );
                           if (match) handleSelectProduct(match);
                         }}
-                        className="px-3 py-1.5 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-700 font-semibold text-xs rounded-xl transition cursor-pointer flex items-center gap-1.5"
+                        className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-950 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-700 dark:text-slate-300 font-semibold text-xs rounded-xl transition cursor-pointer flex items-center gap-1.5"
                       >
                         <span>{item.icon}</span>
                         <span>{item.name}</span>
@@ -375,9 +375,9 @@ const CreateAlert = () => {
                 </div>
               ) : (
                 /* Selected Product Card */
-                <div className="border border-indigo-200 bg-indigo-50/30 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 animate-scaleUp">
+                <div className="border border-indigo-200 bg-indigo-50/30 dark:bg-indigo-950/30 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 animate-scaleUp">
                   <div className="flex items-center gap-4 min-w-0 w-full sm:w-auto">
-                    <div className="w-16 h-16 rounded-xl bg-white p-1.5 border border-indigo-100 flex items-center justify-center shrink-0 shadow-xs">
+                    <div className="w-16 h-16 rounded-xl bg-white dark:bg-slate-900 p-1.5 border border-indigo-100 flex items-center justify-center shrink-0 shadow-xs">
                       <img
                         src={selectedProduct.image}
                         alt={selectedProduct.name}
@@ -385,15 +385,15 @@ const CreateAlert = () => {
                       />
                     </div>
                     <div className="min-w-0">
-                      <span className="text-[10px] font-extrabold uppercase text-indigo-600 bg-indigo-100/70 px-2 py-0.5 rounded">
+                      <span className="text-[10px] font-extrabold uppercase text-indigo-600 dark:text-indigo-400 bg-indigo-100/70 px-2 py-0.5 rounded">
                         {selectedProduct.brand}
                       </span>
-                      <h3 className="font-bold text-sm text-slate-900 truncate mt-1">
+                      <h3 className="font-bold text-sm text-slate-900 dark:text-white truncate mt-1">
                         {selectedProduct.name}
                       </h3>
-                      <p className="text-xs text-slate-500 font-semibold">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
                         Current Lowest:{" "}
-                        <strong className="text-slate-900">
+                        <strong className="text-slate-900 dark:text-white">
                           ₹{selectedProduct.price.toLocaleString()}
                         </strong>
                       </p>
@@ -402,12 +402,12 @@ const CreateAlert = () => {
 
                   {/* Store Selector & Change Product */}
                   <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-                    <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-xl px-3 py-2 shadow-xs">
-                      <span className="text-xs font-semibold text-slate-500">Store:</span>
+                    <div className="flex items-center gap-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 shadow-xs">
+                      <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">Store:</span>
                       <select
                         value={store}
                         onChange={(e) => setStore(e.target.value)}
-                        className="bg-transparent text-xs font-bold text-slate-800 outline-none cursor-pointer"
+                        className="bg-transparent text-xs font-bold text-slate-800 dark:text-slate-100 outline-none cursor-pointer"
                       >
                         {storeOptions.map((s, idx) => (
                           <option key={idx} value={s.store}>
@@ -420,7 +420,7 @@ const CreateAlert = () => {
                     <button
                       type="button"
                       onClick={handleRemoveProduct}
-                      className="text-xs font-bold text-slate-400 hover:text-rose-600 bg-white border border-slate-200 hover:border-rose-200 px-3 py-2 rounded-xl transition cursor-pointer shadow-xs"
+                      className="text-xs font-bold text-slate-400 hover:text-rose-600 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-rose-200 px-3 py-2 rounded-xl transition cursor-pointer shadow-xs"
                     >
                       Change
                     </button>
@@ -430,10 +430,10 @@ const CreateAlert = () => {
             </div>
 
             {/* ================= 2. Set Target Price Section ================= */}
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-6 shadow-sm">
               <div className="mb-4">
-                <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                <h2 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs">
                     2
                   </span>
                   Set Your Target Price
@@ -445,7 +445,7 @@ const CreateAlert = () => {
 
               {/* Discount Preset Chips */}
               <div className="mb-5">
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
                   Quick Discount Presets:
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -465,7 +465,7 @@ const CreateAlert = () => {
                         className={`py-2.5 px-3 rounded-xl text-xs font-bold transition cursor-pointer border text-center disabled:opacity-40 disabled:cursor-not-allowed ${
                           isSelected
                             ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100"
-                            : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200"
+                            : "bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800"
                         }`}
                       >
                         {p.label}
@@ -476,13 +476,13 @@ const CreateAlert = () => {
               </div>
 
               {/* Price Calculation Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border border-slate-200/80 rounded-2xl p-4 bg-slate-50/50">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 rounded-2xl p-4 bg-slate-50/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-950">
                 {/* Current Price */}
-                <div className="bg-white rounded-xl p-4 border border-slate-200/60 shadow-xs">
+                <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-200/60 dark:border-slate-800/60 dark:border-slate-800 shadow-xs">
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
                     Current Retail Price
                   </span>
-                  <span className="text-xl font-black text-slate-900">
+                  <span className="text-xl font-black text-slate-900 dark:text-white">
                     {selectedProduct ? `₹${selectedProduct.price.toLocaleString()}` : "—"}
                   </span>
                   <span className="text-[11px] text-slate-400 font-semibold block mt-1">
@@ -491,8 +491,8 @@ const CreateAlert = () => {
                 </div>
 
                 {/* Target Price Input */}
-                <div className="bg-white rounded-xl p-4 border border-indigo-300 shadow-xs ring-2 ring-indigo-50">
-                  <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider block mb-1">
+                <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-indigo-300 shadow-xs ring-2 ring-indigo-50">
+                  <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block mb-1">
                     Target Alert Price
                   </span>
                   <div className="flex items-center gap-1">
@@ -506,7 +506,7 @@ const CreateAlert = () => {
                         setSelectedDiscountPreset(null);
                       }}
                       disabled={!selectedProduct}
-                      className="w-full text-xl font-black text-indigo-700 outline-none bg-transparent"
+                      className="w-full text-xl font-black text-indigo-700 dark:text-indigo-400 outline-none bg-transparent"
                       placeholder="0"
                     />
                   </div>
@@ -516,14 +516,14 @@ const CreateAlert = () => {
                 </div>
 
                 {/* Expected Drop Savings */}
-                <div className="bg-white rounded-xl p-4 border border-emerald-200/80 shadow-xs">
+                <div className="bg-white dark:bg-slate-900 rounded-xl p-4 border border-emerald-200/80 shadow-xs">
                   <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider block mb-1">
                     Calculated Savings
                   </span>
                   <span className="text-xl font-black text-emerald-600">
                     ↓ {percentage}%
                   </span>
-                  <span className="text-[11px] text-slate-600 font-bold block mt-1">
+                  <span className="text-[11px] text-slate-600 dark:text-slate-400 font-bold block mt-1">
                     You Save ₹{saving > 0 ? saving.toLocaleString() : 0}
                   </span>
                 </div>
@@ -531,10 +531,10 @@ const CreateAlert = () => {
             </div>
 
             {/* ================= 3. Alert Preferences Section ================= */}
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-6 shadow-sm">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-6 shadow-sm">
               <div className="mb-5">
-                <h2 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                <h2 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs">
                     3
                   </span>
                   Notification Channels & Frequency
@@ -550,8 +550,8 @@ const CreateAlert = () => {
                 <label
                   className={`p-4 rounded-2xl border cursor-pointer transition select-none flex items-start gap-3 ${
                     emailNotify
-                      ? "bg-indigo-50/70 border-indigo-300 text-indigo-950"
-                      : "bg-slate-50 border-slate-200 text-slate-600"
+                      ? "bg-indigo-50/70 dark:bg-indigo-950/70 border-indigo-300 text-indigo-950"
+                      : "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
                   }`}
                 >
                   <input
@@ -565,7 +565,7 @@ const CreateAlert = () => {
                       <FiMail />
                       <span>Email Alert</span>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-1">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                       Direct deal link sent to your inbox.
                     </p>
                   </div>
@@ -575,8 +575,8 @@ const CreateAlert = () => {
                 <label
                   className={`p-4 rounded-2xl border cursor-pointer transition select-none flex items-start gap-3 ${
                     pushNotify
-                      ? "bg-indigo-50/70 border-indigo-300 text-indigo-950"
-                      : "bg-slate-50 border-slate-200 text-slate-600"
+                      ? "bg-indigo-50/70 dark:bg-indigo-950/70 border-indigo-300 text-indigo-950"
+                      : "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
                   }`}
                 >
                   <input
@@ -590,7 +590,7 @@ const CreateAlert = () => {
                       <FiZap />
                       <span>Browser Push</span>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-1">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                       Instant desktop & mobile popup.
                     </p>
                   </div>
@@ -600,8 +600,8 @@ const CreateAlert = () => {
                 <label
                   className={`p-4 rounded-2xl border cursor-pointer transition select-none flex items-start gap-3 ${
                     whatsappNotify
-                      ? "bg-emerald-50/70 border-emerald-300 text-emerald-950"
-                      : "bg-slate-50 border-slate-200 text-slate-600"
+                      ? "bg-emerald-50/70 dark:bg-emerald-950/70 border-emerald-300 text-emerald-950"
+                      : "bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400"
                   }`}
                 >
                   <input
@@ -615,7 +615,7 @@ const CreateAlert = () => {
                       <FaWhatsapp className="text-emerald-600" />
                       <span>WhatsApp Notification</span>
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-1">
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
                       Lightning fast alert message.
                     </p>
                   </div>
@@ -624,8 +624,8 @@ const CreateAlert = () => {
 
               {/* Email Address Input if Email checked */}
               {emailNotify && (
-                <div className="mb-6 p-4 bg-slate-50 rounded-2xl border border-slate-200/80">
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
+                <div className="mb-6 p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
                     Send Email Notifications To:
                   </label>
                   <input
@@ -633,14 +633,14 @@ const CreateAlert = () => {
                     required
                     value={emailAddress}
                     onChange={(e) => setEmailAddress(e.target.value)}
-                    className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500"
                   />
                 </div>
               )}
 
               {/* Frequency Radios */}
               <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">
                   Check & Notification Frequency:
                 </label>
                 <div className="flex flex-wrap items-center gap-3">
@@ -654,7 +654,7 @@ const CreateAlert = () => {
                       className={`px-4 py-2.5 rounded-xl border cursor-pointer text-xs font-bold transition flex items-center gap-2 select-none ${
                         frequency === freq.value
                           ? "bg-indigo-600 text-white border-indigo-600 shadow-sm"
-                          : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200"
+                          : "bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800"
                       }`}
                     >
                       <input
@@ -673,10 +673,10 @@ const CreateAlert = () => {
             </div>
 
             {/* Bottom Actions Bar */}
-            <div className="bg-white rounded-3xl border border-slate-200/80 p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
                 <span className="text-xs text-slate-400 block font-semibold">Ready to activate</span>
-                <span className="text-sm font-black text-slate-900">
+                <span className="text-sm font-black text-slate-900 dark:text-white">
                   {selectedProduct
                     ? `Monitoring ${selectedProduct.name} at ₹${Number(targetPrice || 0).toLocaleString()}`
                     : "Please select a product"}
@@ -687,7 +687,7 @@ const CreateAlert = () => {
                 <button
                   type="button"
                   onClick={() => navigate("/pricealerts")}
-                  className="w-1/2 sm:w-auto px-5 py-3 border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs rounded-xl transition cursor-pointer text-center"
+                  className="w-1/2 sm:w-auto px-5 py-3 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800 font-bold text-xs rounded-xl transition cursor-pointer text-center"
                 >
                   Cancel
                 </button>

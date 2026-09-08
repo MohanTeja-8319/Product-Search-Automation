@@ -8,10 +8,10 @@ const RelatedProducts = ({ products = [] }) => {
   if (!products.length) return null;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl mt-6">
-      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200">
+    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl mt-6">
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-200 dark:border-slate-800">
         <h2 className="text-xl sm:text-2xl font-bold">Similar Products</h2>
-        <p className="text-gray-500 mt-1 text-sm sm:text-base">
+        <p className="text-gray-500 dark:text-slate-400 mt-1 text-sm sm:text-base">
           You may also like these products
         </p>
       </div>
@@ -20,7 +20,7 @@ const RelatedProducts = ({ products = [] }) => {
         {products.slice(0, 5).map((product) => (
           <div
             key={product.id}
-            className="border border-gray-200 rounded-xl p-3 sm:p-4 hover:border-purple-500 hover:shadow-md transition cursor-pointer"
+            className="border border-gray-200 dark:border-slate-800 rounded-xl p-3 sm:p-4 hover:border-purple-500 hover:shadow-md transition cursor-pointer"
             onClick={() => navigate(getProductRoute(product))}
           >
             <img
@@ -33,7 +33,7 @@ const RelatedProducts = ({ products = [] }) => {
               {product.name}
             </h3>
 
-            <p className="text-xs sm:text-sm text-gray-500 mt-1">
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-slate-400 mt-1">
               {product.brand}
             </p>
 

@@ -76,7 +76,7 @@ export default function GoogleAuthModal({ isOpen, onClose, onSuccess }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-fadeIn">
       <div 
-        className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-100 animate-scaleUp relative"
+        className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-gray-100 animate-scaleUp relative"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Decorative Google Accent Bar */}
@@ -85,7 +85,7 @@ export default function GoogleAuthModal({ isOpen, onClose, onSuccess }) {
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-slate-800 transition"
           aria-label="Close Google Authentication"
         >
           <FaTimes className="text-base" />
@@ -94,7 +94,7 @@ export default function GoogleAuthModal({ isOpen, onClose, onSuccess }) {
         <div className="p-7">
           {/* Google Branding Header */}
           <div className="flex flex-col items-center text-center mb-6">
-            <div className="w-12 h-12 rounded-2xl bg-white shadow-md border border-gray-100 flex items-center justify-center mb-3">
+            <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 shadow-md border border-gray-100 flex items-center justify-center mb-3">
               <svg className="w-6 h-6" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
@@ -114,21 +114,21 @@ export default function GoogleAuthModal({ isOpen, onClose, onSuccess }) {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-gray-900">Sign in with Google</h3>
-            <p className="text-xs text-gray-500 mt-1">
-              to continue to <span className="font-semibold text-indigo-600">Product Search Automation</span>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Sign in with Google</h3>
+            <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
+              to continue to <span className="font-semibold text-indigo-600 dark:text-indigo-400">Product Search Automation</span>
             </p>
           </div>
 
           {authSuccess ? (
             <div className="py-6 text-center space-y-4 animate-fadeIn">
-              <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full mx-auto flex items-center justify-center shadow-inner">
+              <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 rounded-full mx-auto flex items-center justify-center shadow-inner">
                 <FaCheck className="text-2xl animate-bounce" />
               </div>
               <div>
-                <h4 className="text-lg font-bold text-gray-900">Authentication Successful!</h4>
+                <h4 className="text-lg font-bold text-gray-900 dark:text-white">Authentication Successful!</h4>
                 <p className="text-sm text-gray-600 mt-1">
-                  Signed in as <span className="font-semibold text-indigo-600">{authSuccess.name}</span>
+                  Signed in as <span className="font-semibold text-indigo-600 dark:text-indigo-400">{authSuccess.name}</span>
                 </p>
               </div>
               <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
@@ -143,7 +143,7 @@ export default function GoogleAuthModal({ isOpen, onClose, onSuccess }) {
               </div>
 
               {/* Account list */}
-              <div className="divide-y divide-gray-100 rounded-2xl border border-gray-100 overflow-hidden bg-gray-50/50">
+              <div className="divide-y divide-gray-100 rounded-2xl border border-gray-100 overflow-hidden bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-900">
                 {mockGoogleAccounts.map((acc) => {
                   const isLoading = loadingAccount === acc.email;
                   return (
@@ -152,23 +152,23 @@ export default function GoogleAuthModal({ isOpen, onClose, onSuccess }) {
                       type="button"
                       disabled={!!loadingAccount}
                       onClick={() => handleSelectAccount(acc)}
-                      className="w-full text-left p-3.5 flex items-center gap-3.5 hover:bg-indigo-50/60 transition cursor-pointer disabled:opacity-60"
+                      className="w-full text-left p-3.5 flex items-center gap-3.5 hover:bg-indigo-50/60 dark:hover:bg-indigo-950/60 transition cursor-pointer disabled:opacity-60"
                     >
                       <img
                         src={acc.avatar}
                         alt={acc.name}
-                        className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                        className="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-slate-800"
                       />
                       <div className="flex-1 min-w-0">
-                        <div className="font-semibold text-sm text-gray-900 truncate">
+                        <div className="font-semibold text-sm text-gray-900 dark:text-white truncate">
                           {acc.name}
                         </div>
-                        <div className="text-xs text-gray-500 truncate">{acc.email}</div>
+                        <div className="text-xs text-gray-500 dark:text-slate-400 truncate">{acc.email}</div>
                       </div>
                       {isLoading ? (
                         <div className="w-5 h-5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                       ) : (
-                        <div className="text-xs font-medium text-indigo-600 opacity-0 group-hover:opacity-100 transition">
+                        <div className="text-xs font-medium text-indigo-600 dark:text-indigo-400 opacity-0 group-hover:opacity-100 transition">
                           Sign In
                         </div>
                       )}
@@ -181,9 +181,9 @@ export default function GoogleAuthModal({ isOpen, onClose, onSuccess }) {
                   type="button"
                   onClick={() => setCustomMode(true)}
                   disabled={!!loadingAccount}
-                  className="w-full text-left p-3.5 flex items-center gap-3.5 hover:bg-indigo-50/60 transition cursor-pointer text-gray-700 hover:text-indigo-600 font-medium text-sm"
+                  className="w-full text-left p-3.5 flex items-center gap-3.5 hover:bg-indigo-50/60 dark:hover:bg-indigo-950/60 transition cursor-pointer text-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium text-sm"
                 >
-                  <div className="w-10 h-10 rounded-full bg-white border border-dashed border-gray-300 flex items-center justify-center text-gray-500">
+                  <div className="w-10 h-10 rounded-full bg-white dark:bg-slate-900 border border-dashed border-gray-300 flex items-center justify-center text-gray-500 dark:text-slate-400">
                     <FaUserPlus className="text-sm" />
                   </div>
                   <span>Use another account</span>
@@ -191,7 +191,7 @@ export default function GoogleAuthModal({ isOpen, onClose, onSuccess }) {
               </div>
 
               {/* Security info note */}
-              <div className="pt-3 border-t border-gray-100 flex items-start gap-2.5 text-[11px] text-gray-500 leading-relaxed">
+              <div className="pt-3 border-t border-gray-100 flex items-start gap-2.5 text-[11px] text-gray-500 dark:text-slate-400 leading-relaxed">
                 <FaShieldAlt className="text-indigo-500 text-sm shrink-0 mt-0.5" />
                 <span>
                   Google securely authorizes your profile info (name, email, and photo) with encrypted token authentication.
@@ -213,7 +213,7 @@ export default function GoogleAuthModal({ isOpen, onClose, onSuccess }) {
                   placeholder="e.g. John Doe"
                   value={customName}
                   onChange={(e) => setCustomName(e.target.value)}
-                  className="w-full text-sm border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                  className="w-full text-sm border border-gray-200 dark:border-slate-800 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
                 />
               </div>
 
@@ -227,7 +227,7 @@ export default function GoogleAuthModal({ isOpen, onClose, onSuccess }) {
                   placeholder="yourname@gmail.com"
                   value={customEmail}
                   onChange={(e) => setCustomEmail(e.target.value)}
-                  className="w-full text-sm border border-gray-200 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                  className="w-full text-sm border border-gray-200 dark:border-slate-800 rounded-xl p-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
                 />
               </div>
 
@@ -235,7 +235,7 @@ export default function GoogleAuthModal({ isOpen, onClose, onSuccess }) {
                 <button
                   type="button"
                   onClick={() => setCustomMode(false)}
-                  className="w-1/2 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-xl text-sm transition"
+                  className="w-1/2 border border-gray-200 dark:border-slate-800 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 text-gray-700 font-semibold py-3 rounded-xl text-sm transition"
                 >
                   Back
                 </button>
@@ -256,9 +256,9 @@ export default function GoogleAuthModal({ isOpen, onClose, onSuccess }) {
         </div>
 
         {/* Footer Note */}
-        <div className="bg-gray-50 px-7 py-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500">
+        <div className="bg-gray-50 dark:bg-gray-950 dark:bg-slate-900 px-7 py-3 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-500 dark:text-slate-400">
           <span>Protected by Google Identity</span>
-          <a href="#help" onClick={(e) => e.preventDefault()} className="text-indigo-600 hover:underline">
+          <a href="#help" onClick={(e) => e.preventDefault()} className="text-indigo-600 dark:text-indigo-400 hover:underline">
             Privacy & Terms
           </a>
         </div>

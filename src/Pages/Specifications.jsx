@@ -61,9 +61,9 @@ const Specifications = ({ product }) => {
   ];
 
   return (
-    <div className="bg-white border border-slate-200/80 rounded-3xl mt-6 overflow-hidden shadow-sm">
-      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100 bg-slate-50/50">
-        <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 rounded-3xl mt-6 overflow-hidden shadow-sm">
+      <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-950">
+        <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
           Key Technical Specifications
         </h2>
         <p className="text-slate-400 text-xs sm:text-sm font-semibold mt-0.5">
@@ -77,12 +77,12 @@ const Specifications = ({ product }) => {
             {specs.map((item, index) => (
               <tr
                 key={index}
-                className={index % 2 === 0 ? "bg-white hover:bg-slate-50/60 transition" : "bg-slate-50/30 hover:bg-slate-50/60 transition"}
+                className={index % 2 === 0 ? "bg-white dark:bg-slate-900 hover:bg-slate-50/60 dark:hover:bg-slate-950/60 dark:bg-slate-900/60 transition" : "bg-slate-50/30 dark:bg-slate-950/30 hover:bg-slate-50/60 dark:hover:bg-slate-950/60 dark:bg-slate-900/60 transition"}
               >
                 <td className="w-1/3 px-4 sm:px-6 py-3 sm:py-3.5 text-slate-400 font-bold uppercase tracking-wider text-[10px] sm:text-[11px]">
                   {item.label}
                 </td>
-                <td className="px-4 sm:px-6 py-3 sm:py-3.5 text-slate-800 font-medium">
+                <td className="px-4 sm:px-6 py-3 sm:py-3.5 text-slate-800 dark:text-slate-100 font-medium">
                   {item.value}
                 </td>
               </tr>

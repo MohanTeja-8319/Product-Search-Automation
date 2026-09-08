@@ -5,7 +5,7 @@ export function StatusBadge({ status, size = "md" }) {
 
   const normalized = status.toString().toLowerCase().trim();
 
-  let styles = "bg-slate-100 text-slate-700 border-slate-200";
+  let styles = "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800";
   let dotColor = "bg-slate-500";
 
   switch (normalized) {
@@ -19,7 +19,7 @@ export function StatusBadge({ status, size = "md" }) {
     case "healthy":
     case "resolved":
     case "in stock":
-      styles = "bg-emerald-50 text-emerald-700 border-emerald-200/80";
+      styles = "bg-emerald-50 dark:bg-emerald-950 text-emerald-700 border-emerald-200/80";
       dotColor = "bg-emerald-500";
       break;
 
@@ -27,7 +27,7 @@ export function StatusBadge({ status, size = "md" }) {
     case "disabled":
     case "stopped":
     case "out of stock":
-      styles = "bg-slate-100 text-slate-600 border-slate-200";
+      styles = "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800";
       dotColor = "bg-slate-400";
       break;
 
@@ -35,7 +35,7 @@ export function StatusBadge({ status, size = "md" }) {
     case "warning":
     case "investigating":
     case "low stock":
-      styles = "bg-amber-50 text-amber-700 border-amber-200/80";
+      styles = "bg-amber-50 dark:bg-amber-950 text-amber-700 border-amber-200/80";
       dotColor = "bg-amber-500";
       break;
 
@@ -43,17 +43,17 @@ export function StatusBadge({ status, size = "md" }) {
     case "error":
     case "critical":
     case "suspended":
-      styles = "bg-rose-50 text-rose-700 border-rose-200/80";
+      styles = "bg-rose-50 dark:bg-rose-950 text-rose-700 border-rose-200/80";
       dotColor = "bg-rose-500";
       break;
 
     case "info":
-      styles = "bg-blue-50 text-blue-700 border-blue-200/80";
+      styles = "bg-blue-50 dark:bg-blue-950 text-blue-700 border-blue-200/80";
       dotColor = "bg-blue-500";
       break;
 
     default:
-      styles = "bg-slate-100 text-slate-700 border-slate-200";
+      styles = "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800";
       dotColor = "bg-slate-500";
   }
 

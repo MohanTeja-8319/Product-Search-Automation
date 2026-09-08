@@ -108,9 +108,9 @@ export function GlobalSearchModal({ isOpen, onClose }) {
       />
 
       {/* Search Palette */}
-      <div className="relative bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 z-10 overflow-hidden animate-scaleUp">
+      <div className="relative bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 dark:border-slate-800 z-10 overflow-hidden animate-scaleUp">
         {/* Input Bar */}
-        <div className="flex items-center px-4 py-3.5 border-b border-slate-100 bg-white">
+        <div className="flex items-center px-4 py-3.5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
           <FiSearch className="text-slate-400 text-lg mr-3 flex-shrink-0" />
           <input
             ref={inputRef}
@@ -118,17 +118,17 @@ export function GlobalSearchModal({ isOpen, onClose }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search users, products, search queries, automation jobs..."
-            className="w-full text-sm text-slate-800 placeholder-slate-400 bg-transparent outline-none"
+            className="w-full text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 bg-transparent outline-none"
           />
           {query && (
             <button
               onClick={() => setQuery("")}
-              className="text-slate-400 hover:text-slate-600 p-1 mr-1"
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-400 dark:text-slate-400 p-1 mr-1"
             >
               <FiX className="text-sm" />
             </button>
           )}
-          <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-slate-500 bg-slate-100 border border-slate-200 rounded">
+          <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded">
             ESC
           </kbd>
         </div>
@@ -137,7 +137,7 @@ export function GlobalSearchModal({ isOpen, onClose }) {
         <div className="max-h-[60vh] overflow-y-auto p-3 space-y-4">
           {trimmed && totalResults === 0 && (
             <div className="py-8 text-center text-xs text-slate-400">
-              No matches found for <strong className="text-slate-600">"{query}"</strong>
+              No matches found for <strong className="text-slate-600 dark:text-slate-400">"{query}"</strong>
             </div>
           )}
 
@@ -152,18 +152,18 @@ export function GlobalSearchModal({ isOpen, onClose }) {
                   <button
                     key={u.id}
                     onClick={() => handleSelect(`/admin/users/${u.id}`)}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-indigo-50/50 flex items-center justify-between transition-colors group"
+                    className="w-full text-left p-2.5 rounded-xl hover:bg-indigo-50/50 dark:hover:bg-indigo-950/50 flex items-center justify-between transition-colors group"
                   >
                     <div className="flex items-center gap-3">
                       <img src={u.avatar} alt={u.name} className="w-7 h-7 rounded-full object-cover" />
                       <div>
-                        <div className="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">
+                        <div className="text-xs font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                           {u.name}
                         </div>
                         <div className="text-[11px] text-slate-400">{u.email} • {u.id}</div>
                       </div>
                     </div>
-                    <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 text-xs" />
+                    <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 text-xs" />
                   </button>
                 ))}
               </div>
@@ -181,12 +181,12 @@ export function GlobalSearchModal({ isOpen, onClose }) {
                   <button
                     key={p.id}
                     onClick={() => handleSelect(`/admin/products/${p.id}`)}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-indigo-50/50 flex items-center justify-between transition-colors group"
+                    className="w-full text-left p-2.5 rounded-xl hover:bg-indigo-50/50 dark:hover:bg-indigo-950/50 flex items-center justify-between transition-colors group"
                   >
                     <div className="flex items-center gap-3">
                       <img src={p.image} alt={p.name} className="w-7 h-7 rounded-lg object-cover" />
                       <div className="max-w-md truncate">
-                        <div className="text-xs font-semibold text-slate-800 truncate group-hover:text-indigo-600">
+                        <div className="text-xs font-semibold text-slate-800 dark:text-slate-100 truncate group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                           {p.name}
                         </div>
                         <div className="text-[11px] text-slate-400">
@@ -194,7 +194,7 @@ export function GlobalSearchModal({ isOpen, onClose }) {
                         </div>
                       </div>
                     </div>
-                    <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 text-xs" />
+                    <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 text-xs" />
                   </button>
                 ))}
               </div>
@@ -212,14 +212,14 @@ export function GlobalSearchModal({ isOpen, onClose }) {
                   <button
                     key={s.id}
                     onClick={() => handleSelect(`/admin/searches/${s.id}`)}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-indigo-50/50 flex items-center justify-between transition-colors group"
+                    className="w-full text-left p-2.5 rounded-xl hover:bg-indigo-50/50 dark:hover:bg-indigo-950/50 flex items-center justify-between transition-colors group"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs font-bold">
+                      <div className="w-7 h-7 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs font-bold">
                         <FiSearch />
                       </div>
                       <div>
-                        <div className="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">
+                        <div className="text-xs font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                           "{s.query}"
                         </div>
                         <div className="text-[11px] text-slate-400">
@@ -227,7 +227,7 @@ export function GlobalSearchModal({ isOpen, onClose }) {
                         </div>
                       </div>
                     </div>
-                    <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 text-xs" />
+                    <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 text-xs" />
                   </button>
                 ))}
               </div>
@@ -245,14 +245,14 @@ export function GlobalSearchModal({ isOpen, onClose }) {
                   <button
                     key={j.jobId}
                     onClick={() => handleSelect(`/admin/automation`)}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-indigo-50/50 flex items-center justify-between transition-colors group"
+                    className="w-full text-left p-2.5 rounded-xl hover:bg-indigo-50/50 dark:hover:bg-indigo-950/50 flex items-center justify-between transition-colors group"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold">
+                      <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 flex items-center justify-center text-xs font-bold">
                         <FiServer />
                       </div>
                       <div>
-                        <div className="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">
+                        <div className="text-xs font-semibold text-slate-800 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
                           {j.jobId} — {j.sourceWebsite}
                         </div>
                         <div className="text-[11px] text-slate-400">
@@ -260,7 +260,7 @@ export function GlobalSearchModal({ isOpen, onClose }) {
                         </div>
                       </div>
                     </div>
-                    <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 text-xs" />
+                    <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 text-xs" />
                   </button>
                 ))}
               </div>
@@ -279,7 +279,7 @@ export function GlobalSearchModal({ isOpen, onClose }) {
                   <button
                     key={item.path}
                     onClick={() => handleSelect(item.path)}
-                    className="w-full text-left p-2 rounded-xl hover:bg-slate-100 flex items-center gap-2.5 text-xs text-slate-700 transition-colors"
+                    className="w-full text-left p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center gap-2.5 text-xs text-slate-700 dark:text-slate-300 transition-colors"
                   >
                     <Icon className="text-slate-400 text-sm" />
                     <span>{item.label}</span>
@@ -291,9 +291,9 @@ export function GlobalSearchModal({ isOpen, onClose }) {
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
+        <div className="px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
           <span>Navigate with mouse or Tab</span>
-          <span className="font-mono text-slate-500">Product Search Automation Admin</span>
+          <span className="font-mono text-slate-500 dark:text-slate-400">Product Search Automation Admin</span>
         </div>
       </div>
     </div>

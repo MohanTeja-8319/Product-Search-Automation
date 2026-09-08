@@ -285,13 +285,31 @@ const Comparison = () => {
     setSearchQuery("");
   };
 
+  
   const renderSlots = () => {
-    const slots = [];
-    for (let i = 0; i < 4; i++) {
-      slots.push(compareList[i] || null);
-    }
+    const slots = [...compareList];
+    while (slots.length < 3) slots.push(null);
     return slots;
   };
+
+  const isDifferent = (keyFunc) => {
+    const valid = renderSlots().filter(Boolean);
+    if (valid.length <= 1) return false;
+    const firstVal = keyFunc(valid[0]);
+    for (let i = 1; i < valid.length; i++) {
+      if (keyFunc(valid[i]) !== firstVal) return true;
+    }
+    return false;
+  };
+
+  const getRowHighlight = (keyFunc, baseClass = "") => {
+    if (!highlightDifferences) return baseClass;
+    if (isDifferent(keyFunc)) {
+      return baseClass + " bg-amber-50/50 dark:bg-amber-900/20";
+    }
+    return baseClass + " opacity-50";
+  };
+
 
   // Find lowest price among compared
   const lowestPriceCompared = useMemo(() => {
@@ -300,7 +318,7 @@ const Comparison = () => {
   }, [compareList]);
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen text-slate-800 flex flex-col font-sans">
+    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-200 flex flex-col font-sans">
       <Sidebar />
 
       <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
@@ -309,11 +327,11 @@ const Comparison = () => {
         <main className="p-4 lg:p-8 flex-1 max-w-7xl w-full mx-auto pb-28">
           {/* Breadcrumbs */}
           <nav className="flex items-center gap-2 text-xs text-slate-400 mb-3">
-            <Link to="/home" className="hover:text-indigo-600 transition">
+            <Link to="/home" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
               Home
             </Link>
             <FiChevronRight className="text-[10px]" />
-            <span className="text-indigo-600 font-semibold">Side-by-Side Comparison</span>
+            <span className="text-indigo-600 dark:text-indigo-400 font-semibold">Side-by-Side Comparison</span>
           </nav>
 
           {/* Hero Banner with Stats */}
@@ -342,7 +360,7 @@ const Comparison = () => {
                 <button
                   onClick={clearAll}
                   disabled={compareList.length === 0}
-                  className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold rounded-xl transition cursor-pointer flex items-center gap-1.5 backdrop-blur-md disabled:opacity-40"
+                  className="px-4 py-2.5 bg-white/10 dark:bg-slate-900/10 hover:bg-white/20 dark:hover:bg-slate-900/20 dark:bg-slate-900 border border-white/20 text-white text-xs font-bold rounded-xl transition cursor-pointer flex items-center gap-1.5 backdrop-blur-md disabled:opacity-40"
                 >
                   <FiTrash2 className="text-sm" />
                   <span>Clear All</span>
@@ -366,7 +384,7 @@ const Comparison = () => {
                 <button
                   key={battle.title}
                   onClick={() => loadPresetBattle(battle)}
-                  className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs transition cursor-pointer border border-white/10 flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-xl bg-white/10 dark:bg-slate-900/10 hover:bg-white/20 dark:hover:bg-slate-900/20 dark:bg-slate-900 text-white font-semibold text-xs transition cursor-pointer border border-white/10 flex items-center gap-1.5"
                 >
                   <span>{battle.icon}</span>
                   <span>{battle.title}</span>
@@ -386,10 +404,10 @@ const Comparison = () => {
                 return (
                   <div
                     key={product.id}
-                    className={`bg-white rounded-3xl border transition-all duration-300 p-5 flex flex-col justify-between shadow-sm relative group hover:shadow-xl hover:-translate-y-1 ${
+                    className={`bg-white dark:bg-slate-900 rounded-3xl border transition-all duration-300 p-5 flex flex-col justify-between shadow-sm relative group hover:shadow-xl hover:-translate-y-1 ${
                       isLowest
                         ? "border-emerald-400 ring-2 ring-emerald-100"
-                        : "border-slate-200/80 hover:border-indigo-300"
+                        : "border-slate-200/80 dark:border-slate-800/80 hover:border-indigo-300"
                     }`}
                   >
                     {/* Badge & Remove */}
@@ -407,14 +425,14 @@ const Comparison = () => {
                       <button
                         onClick={() => removeProduct(product.id)}
                         title="Remove product"
-                        className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1.5 rounded-xl transition cursor-pointer"
+                        className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950 p-1.5 rounded-xl transition cursor-pointer"
                       >
                         <FiX className="text-sm" />
                       </button>
                     </div>
 
                     {/* Image */}
-                    <div className="w-full h-36 bg-slate-50 rounded-2xl flex items-center justify-center p-3 mb-3 border border-slate-100 overflow-hidden">
+                    <div className="w-full h-36 bg-slate-50 dark:bg-slate-950 rounded-2xl flex items-center justify-center p-3 mb-3 border border-slate-100 dark:border-slate-800 overflow-hidden">
                       <img
                         src={product.image}
                         alt={product.name}
@@ -438,12 +456,12 @@ const Comparison = () => {
                         </span>
                       </div>
 
-                      <h3 className="font-bold text-xs text-slate-900 leading-snug line-clamp-2 h-8 px-1">
+                      <h3 className="font-bold text-xs text-slate-900 dark:text-white leading-snug line-clamp-2 h-8 px-1">
                         {product.name}
                       </h3>
 
                       <div className="pt-2">
-                        <span className="font-black text-base text-slate-900">
+                        <span className="font-black text-base text-slate-900 dark:text-white">
                           ₹{product.price.toLocaleString()}
                         </span>
                         {product.mrp && (
@@ -456,7 +474,7 @@ const Comparison = () => {
                       {/* Rating */}
                       <div className="flex items-center justify-center gap-1 pt-1">
                         <FaStar className="text-amber-400 text-xs" />
-                        <span className="text-xs font-black text-slate-800">{product.rating}</span>
+                        <span className="text-xs font-black text-slate-800 dark:text-slate-100">{product.rating}</span>
                         <span className="text-[10px] text-slate-400">
                           ({product.reviews?.toLocaleString() || "1k+"})
                         </span>
@@ -480,12 +498,12 @@ const Comparison = () => {
                   <div
                     key={`empty-${index}`}
                     onClick={() => setShowAddModal(true)}
-                    className="bg-white border-2 border-dashed border-slate-200 hover:border-indigo-400 rounded-3xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-indigo-50/20 transition duration-300 min-h-[280px] select-none group"
+                    className="bg-white dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-800 hover:border-indigo-400 rounded-3xl p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-indigo-50/20 dark:hover:bg-indigo-950/20 transition duration-300 min-h-[280px] select-none group"
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-slate-100 group-hover:bg-indigo-600 group-hover:text-white flex items-center justify-center text-slate-400 text-lg transition duration-200 mb-3 shadow-inner">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 group-hover:bg-indigo-600 group-hover:text-white flex items-center justify-center text-slate-400 text-lg transition duration-200 mb-3 shadow-inner">
                       <FiPlus className="stroke-[3]" />
                     </div>
-                    <h4 className="text-xs font-extrabold text-slate-800">
+                    <h4 className="text-xs font-extrabold text-slate-800 dark:text-slate-100">
                       Add Product {index + 1}
                     </h4>
                     <p className="text-[11px] text-slate-400 mt-1 max-w-[140px] font-medium leading-tight">
@@ -499,10 +517,10 @@ const Comparison = () => {
 
           {/* Full Specifications Matrix Table */}
           {compareList.length > 0 && (
-            <div className="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden mb-10">
-              <div className="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50">
+            <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 shadow-sm overflow-hidden mb-10">
+              <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-950">
                 <div>
-                  <h3 className="font-extrabold text-base text-slate-900">
+                  <h3 className="font-extrabold text-base text-slate-900 dark:text-white">
                     Detailed Specifications Matrix
                   </h3>
                   <p className="text-xs text-slate-400 mt-0.5">
@@ -518,9 +536,9 @@ const Comparison = () => {
                     onChange={(e) => setHighlightDifferences(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
-                  <span className="text-xs font-bold text-slate-600">
-                    Highlight Key Highlights
+                  <div className="relative w-9 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                  <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                    Key Highlights
                   </span>
                 </label>
               </div>
@@ -528,25 +546,25 @@ const Comparison = () => {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse table-fixed min-w-[700px]">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[10px] font-extrabold uppercase tracking-wider">
+                    <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-extrabold uppercase tracking-wider">
                       <th className="py-3.5 px-6 w-[180px] font-bold text-xs">Specification</th>
                       {renderSlots().map((p, idx) => (
-                        <th key={idx} className="py-3.5 px-4 font-bold text-xs text-slate-800">
+                        <th key={idx} className="py-3.5 px-4 font-bold text-xs text-slate-800 dark:text-slate-100">
                           {p ? p.name : `Slot ${idx + 1}`}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 text-xs font-semibold text-slate-700">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-300">
                     {/* Lowest Price Row */}
-                    <tr className="bg-indigo-50/30">
-                      <td className="py-3.5 px-6 text-indigo-700 text-[10px] font-extrabold uppercase tracking-wider">
+                    <tr className={getRowHighlight(p => p.price, "bg-indigo-50/30 dark:bg-indigo-950/30")}>
+                      <td className="py-3.5 px-6 text-indigo-700 dark:text-indigo-400 text-[10px] font-extrabold uppercase tracking-wider">
                         Current Best Price
                       </td>
                       {renderSlots().map((p, idx) => (
                         <td key={idx} className="py-3.5 px-4">
                           {p ? (
-                            <span className="font-black text-sm text-slate-900">
+                            <span className="font-black text-sm text-slate-900 dark:text-white">
                               ₹{p.price.toLocaleString()}
                             </span>
                           ) : (
@@ -557,14 +575,14 @@ const Comparison = () => {
                     </tr>
 
                     {/* Best Store */}
-                    <tr>
+                    <tr className={getRowHighlight(p => p.store)}>
                       <td className="py-3.5 px-6 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
                         Best Store
                       </td>
                       {renderSlots().map((p, idx) => (
                         <td key={idx} className="py-3.5 px-4">
                           {p ? (
-                            <span className="font-bold text-slate-800">{p.store}</span>
+                            <span className="font-bold text-slate-800 dark:text-slate-100">{p.store}</span>
                           ) : (
                             <span className="text-slate-300 italic font-normal">—</span>
                           )}
@@ -573,36 +591,36 @@ const Comparison = () => {
                     </tr>
 
                     {/* Display */}
-                    <tr>
+                    <tr className={getRowHighlight(p => p.display)}>
                       <td className="py-3.5 px-6 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
                         Display
                       </td>
                       {renderSlots().map((p, idx) => (
-                        <td key={idx} className="py-3.5 px-4 text-slate-600 font-medium leading-relaxed">
+                        <td key={idx} className="py-3.5 px-4 text-slate-600 dark:text-slate-400 font-medium leading-relaxed">
                           {p ? p.display : <span className="text-slate-300 italic font-normal">—</span>}
                         </td>
                       ))}
                     </tr>
 
                     {/* Processor */}
-                    <tr className="bg-slate-50/40">
+                    <tr className={getRowHighlight(p => p.processor, "bg-slate-50/40 dark:bg-slate-950/40")}>
                       <td className="py-3.5 px-6 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
                         Processor
                       </td>
                       {renderSlots().map((p, idx) => (
-                        <td key={idx} className="py-3.5 px-4 text-slate-900 font-bold">
+                        <td key={idx} className="py-3.5 px-4 text-slate-900 dark:text-white font-bold">
                           {p ? p.processor : <span className="text-slate-300 italic font-normal">—</span>}
                         </td>
                       ))}
                     </tr>
 
                     {/* RAM & Storage */}
-                    <tr>
+                    <tr className={getRowHighlight(p => p.ram + p.storage)}>
                       <td className="py-3.5 px-6 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
                         RAM / Storage
                       </td>
                       {renderSlots().map((p, idx) => (
-                        <td key={idx} className="py-3.5 px-4 text-slate-700 font-medium">
+                        <td key={idx} className="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-medium">
                           {p ? (
                             <span>
                               {p.ram} RAM · {p.storage}
@@ -615,43 +633,43 @@ const Comparison = () => {
                     </tr>
 
                     {/* Camera */}
-                    <tr className="bg-slate-50/40">
+                    <tr className={getRowHighlight(p => p.camera, "bg-slate-50/40 dark:bg-slate-950/40")}>
                       <td className="py-3.5 px-6 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
                         Camera Setup
                       </td>
                       {renderSlots().map((p, idx) => (
-                        <td key={idx} className="py-3.5 px-4 text-slate-700 font-medium leading-relaxed">
+                        <td key={idx} className="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
                           {p ? p.camera : <span className="text-slate-300 italic font-normal">—</span>}
                         </td>
                       ))}
                     </tr>
 
                     {/* Battery & Charging */}
-                    <tr>
+                    <tr className={getRowHighlight(p => p.battery)}>
                       <td className="py-3.5 px-6 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
                         Battery & Charging
                       </td>
                       {renderSlots().map((p, idx) => (
-                        <td key={idx} className="py-3.5 px-4 text-slate-700 font-medium">
+                        <td key={idx} className="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-medium">
                           {p ? p.battery : <span className="text-slate-300 italic font-normal">—</span>}
                         </td>
                       ))}
                     </tr>
 
                     {/* OS & AI Features */}
-                    <tr className="bg-slate-50/40">
+                    <tr className={getRowHighlight(p => p.os, "bg-slate-50/40 dark:bg-slate-950/40")}>
                       <td className="py-3.5 px-6 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
                         OS / Ecosystem
                       </td>
                       {renderSlots().map((p, idx) => (
-                        <td key={idx} className="py-3.5 px-4 text-slate-700 font-medium">
+                        <td key={idx} className="py-3.5 px-4 text-slate-700 dark:text-slate-300 font-medium">
                           {p ? p.os || "Latest OS" : <span className="text-slate-300 italic font-normal">—</span>}
                         </td>
                       ))}
                     </tr>
 
                     {/* Rating & Reviews */}
-                    <tr>
+                    <tr className={getRowHighlight(p => p.rating)}>
                       <td className="py-3.5 px-6 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
                         User Rating
                       </td>
@@ -660,7 +678,7 @@ const Comparison = () => {
                           {p ? (
                             <div className="flex items-center gap-1.5">
                               <FaStar className="text-amber-400 text-xs" />
-                              <span className="font-extrabold text-slate-900">{p.rating} / 5.0</span>
+                              <span className="font-extrabold text-slate-900 dark:text-white">{p.rating} / 5.0</span>
                               <span className="text-[10px] text-slate-400 font-semibold">
                                 ({p.reviews?.toLocaleString() || "1,200"} reviews)
                               </span>
@@ -678,16 +696,16 @@ const Comparison = () => {
           )}
 
           {/* Bottom Info Banner */}
-          <div className="bg-gradient-to-r from-indigo-50/60 via-purple-50/40 to-blue-50/60 border border-indigo-100/60 rounded-3xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
+          <div className="bg-gradient-to-r from-indigo-50/60 via-purple-50/40 to-blue-50/60 dark:from-indigo-950/60 dark:via-purple-950/40 dark:to-blue-950/60 border border-indigo-100/60 dark:border-indigo-900/60 rounded-3xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200 shrink-0">
                 <BiGitCompare className="text-2xl" />
               </div>
               <div>
-                <h4 className="font-extrabold text-sm text-slate-900 leading-snug">
+                <h4 className="font-extrabold text-sm text-slate-900 dark:text-white leading-snug">
                   Smart Decision Engine Ready
                 </h4>
-                <p className="text-xs font-semibold text-slate-500 mt-0.5">
+                <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
                   Comparing multi-store prices, seller warranties, and verified specs guarantees the best purchase decision.
                 </p>
               </div>
@@ -706,11 +724,11 @@ const Comparison = () => {
       {/* Add Product Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-scaleUp">
-          <div className="bg-white rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
             {/* Modal Header */}
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
               <div>
-                <h3 className="font-extrabold text-slate-900 text-base">
+                <h3 className="font-extrabold text-slate-900 dark:text-white text-base">
                   Add Product to Comparison Matrix
                 </h3>
                 <p className="text-slate-400 text-xs font-semibold mt-0.5">
@@ -722,14 +740,14 @@ const Comparison = () => {
                   setShowAddModal(false);
                   setSearchQuery("");
                 }}
-                className="text-slate-400 hover:text-slate-900 hover:bg-slate-100 p-2 rounded-xl transition cursor-pointer"
+                className="text-slate-400 hover:text-slate-900 dark:hover:text-white dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 p-2 rounded-xl transition cursor-pointer"
               >
                 <FiX className="text-base" />
               </button>
             </div>
 
             {/* Search Input */}
-            <div className="p-4 border-b border-slate-100 bg-slate-50">
+            <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
               <div className="relative">
                 <FiSearch className="absolute left-4 top-3.5 text-slate-400 text-sm" />
                 <input
@@ -737,7 +755,7 @@ const Comparison = () => {
                   placeholder="Search by name, brand, or store (e.g. iPhone, MacBook, Sony)..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:border-indigo-500 focus:outline-none transition"
+                  className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-semibold focus:border-indigo-500 focus:outline-none transition"
                   autoFocus
                 />
               </div>
@@ -762,12 +780,12 @@ const Comparison = () => {
                   return (
                     <div
                       key={p.id}
-                      className={`flex items-center justify-between p-3 hover:bg-indigo-50/40 rounded-2xl transition border ${
-                        isAlreadyAdded ? "border-indigo-100 bg-indigo-50/20" : "border-slate-100"
+                      className={`flex items-center justify-between p-3 hover:bg-indigo-50/40 dark:hover:bg-indigo-950/40 rounded-2xl transition border ${
+                        isAlreadyAdded ? "border-indigo-100 bg-indigo-50/20 dark:bg-indigo-950/20" : "border-slate-100 dark:border-slate-800"
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-12 h-12 bg-white border border-slate-100 rounded-xl p-1 flex items-center justify-center shrink-0">
+                        <div className="w-12 h-12 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl p-1 flex items-center justify-center shrink-0">
                           <img
                             src={p.image}
                             alt={p.name}
@@ -775,7 +793,7 @@ const Comparison = () => {
                           />
                         </div>
                         <div className="min-w-0">
-                          <h4 className="font-bold text-xs text-slate-900 truncate">
+                          <h4 className="font-bold text-xs text-slate-900 dark:text-white truncate">
                             {p.name}
                           </h4>
                           <p className="text-[10px] text-slate-400 font-semibold mt-0.5">
@@ -789,7 +807,7 @@ const Comparison = () => {
                         disabled={isAlreadyAdded}
                         className={`text-xs font-bold py-1.5 px-3.5 rounded-xl transition cursor-pointer ${
                           isAlreadyAdded
-                            ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                            ? "bg-slate-100 dark:bg-slate-800 text-slate-400 cursor-not-allowed"
                             : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs"
                         }`}
                       >

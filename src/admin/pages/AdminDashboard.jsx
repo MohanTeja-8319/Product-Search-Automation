@@ -38,16 +38,16 @@ export function AdminDashboard() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
             System Overview
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
             Real-time monitoring and analytics for product search automation
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 border border-emerald-200">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
             All 6 Scraper Nodes Active
           </span>
@@ -133,15 +133,15 @@ export function AdminDashboard() {
       {/* Grid: Recent Searches (Table) & System Health */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Searches Table (2 Cols) */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col justify-between">
-          <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800/90 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col justify-between">
+          <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-slate-900">Recent Searches</h3>
-              <p className="text-xs text-slate-500 mt-0.5">Live stream of incoming user queries</p>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">Recent Searches</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Live stream of incoming user queries</p>
             </div>
             <Link
               to="/admin/searches"
-              className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors"
+              className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors"
             >
               View all searches <FiArrowRight className="text-xs" />
             </Link>
@@ -150,7 +150,7 @@ export function AdminDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs sm:text-sm">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50/75 text-slate-500 text-[11px] uppercase tracking-wider font-semibold">
+                <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-950/75 dark:bg-slate-950 text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider font-semibold">
                   <th className="px-4 py-3">User</th>
                   <th className="px-4 py-3">Search Query</th>
                   <th className="px-4 py-3">Date/Time</th>
@@ -161,17 +161,17 @@ export function AdminDashboard() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {recentSearches.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
+                  <tr key={item.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-950/80 dark:bg-slate-950 transition-colors">
                     {/* User */}
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-2.5">
                         <img
                           src={item.userAvatar}
                           alt={item.userName}
-                          className="w-7 h-7 rounded-full object-cover border border-slate-200"
+                          className="w-7 h-7 rounded-full object-cover border border-slate-200 dark:border-slate-800"
                         />
                         <div className="truncate">
-                          <span className="font-semibold text-slate-800 block truncate">
+                          <span className="font-semibold text-slate-800 dark:text-slate-100 block truncate">
                             {item.userName}
                           </span>
                           <span className="text-[10px] text-slate-400 block truncate">
@@ -182,12 +182,12 @@ export function AdminDashboard() {
                     </td>
 
                     {/* Search Query */}
-                    <td className="px-4 py-3.5 font-medium text-slate-900 max-w-xs truncate">
+                    <td className="px-4 py-3.5 font-medium text-slate-900 dark:text-white max-w-xs truncate">
                       "{item.query}"
                     </td>
 
                     {/* Date/Time */}
-                    <td className="px-4 py-3.5 text-slate-500 text-xs whitespace-nowrap">
+                    <td className="px-4 py-3.5 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">
                       {item.dateTime}
                     </td>
 
@@ -197,7 +197,7 @@ export function AdminDashboard() {
                     </td>
 
                     {/* Results Count */}
-                    <td className="px-4 py-3.5 text-right font-bold text-slate-800">
+                    <td className="px-4 py-3.5 text-right font-bold text-slate-800 dark:text-slate-100">
                       {item.resultsCount}
                     </td>
 
@@ -205,7 +205,7 @@ export function AdminDashboard() {
                     <td className="px-4 py-3.5 text-center">
                       <Link
                         to={`/admin/searches/${item.id}`}
-                        className="inline-flex items-center justify-center p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        className="inline-flex items-center justify-center p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-lg transition-colors"
                         title="View Search Details"
                       >
                         <FiExternalLink className="text-sm" />
@@ -217,10 +217,10 @@ export function AdminDashboard() {
             </table>
           </div>
 
-          <div className="p-3 bg-slate-50/60 border-t border-slate-100 text-center">
+          <div className="p-3 bg-slate-50/60 dark:bg-slate-950/60 dark:bg-slate-900/60 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 text-center">
             <Link
               to="/admin/searches"
-              className="text-xs font-semibold text-slate-600 hover:text-indigo-600"
+              className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400"
             >
               Showing latest {recentSearches.length} of {searches.length} logged searches
             </Link>
@@ -228,32 +228,32 @@ export function AdminDashboard() {
         </div>
 
         {/* System Health Section (1 Col) */}
-        <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800/90 dark:border-slate-800 shadow-sm p-5 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-2">
                 <FiActivity className="text-emerald-500 text-base" />
-                <h3 className="text-base font-bold text-slate-900">System Health</h3>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">System Health</h3>
               </div>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 border border-emerald-200">
                 100% Operational
               </span>
             </div>
 
-            <p className="text-xs text-slate-500 mt-2 mb-4">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2 mb-4">
               Continuous heartbeat telemetry for cluster infrastructure
             </p>
 
             {/* Exactly the 4 specified health indicators */}
             <div className="space-y-3">
               {/* 1. Backend API */}
-              <div className="p-3 rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-slate-50 transition-colors flex items-center justify-between">
+              <div className="p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800 transition-colors flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
+                  <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm">
                     <FiServer />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-slate-800">
+                    <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100">
                       {systemHealth.backendApi.name}
                     </h4>
                     <span className="text-[10px] text-slate-400">
@@ -265,13 +265,13 @@ export function AdminDashboard() {
               </div>
 
               {/* 2. Database */}
-              <div className="p-3 rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-slate-50 transition-colors flex items-center justify-between">
+              <div className="p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800 transition-colors flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-sm">
+                  <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-950 text-blue-600 flex items-center justify-center text-sm">
                     <FiDatabase />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-slate-800">
+                    <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100">
                       {systemHealth.database.name}
                     </h4>
                     <span className="text-[10px] text-slate-400">
@@ -283,13 +283,13 @@ export function AdminDashboard() {
               </div>
 
               {/* 3. Automation Service */}
-              <div className="p-3 rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-slate-50 transition-colors flex items-center justify-between">
+              <div className="p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800 transition-colors flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-sm">
+                  <div className="w-8 h-8 rounded-lg bg-purple-50 dark:bg-purple-950 text-purple-600 flex items-center justify-center text-sm">
                     <FiCpu />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-slate-800">
+                    <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100">
                       {systemHealth.automationService.name}
                     </h4>
                     <span className="text-[10px] text-slate-400">
@@ -301,13 +301,13 @@ export function AdminDashboard() {
               </div>
 
               {/* 4. Source Websites */}
-              <div className="p-3 rounded-xl border border-slate-100 bg-slate-50/60 hover:bg-slate-50 transition-colors flex items-center justify-between">
+              <div className="p-3 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800 transition-colors flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center text-sm">
                     <FiGlobe />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-slate-800">
+                    <h4 className="text-xs font-bold text-slate-800 dark:text-slate-100">
                       {systemHealth.sourceWebsites.name}
                     </h4>
                     <span className="text-[10px] text-slate-400">
@@ -320,9 +320,9 @@ export function AdminDashboard() {
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+          <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
             <span>Uptime: 99.98% (30d)</span>
-            <Link to="/admin/logs" className="text-indigo-600 font-semibold hover:underline">
+            <Link to="/admin/logs" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">
               System Logs →
             </Link>
           </div>

@@ -73,17 +73,17 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
+    <div className="h-[100dvh] w-full relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
       {/* Particle Animation Background */}
       <ParticleBackground />
 
-      <div className="relative z-10 w-full max-w-4xl bg-white/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden grid md:grid-cols-12 transition-all">
+      <div className="relative z-10 w-full max-w-4xl bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden grid md:grid-cols-12 transition-all">
         {/* Left Informative Column */}
         <div className="hidden md:flex md:col-span-5 flex-col justify-between bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 text-white p-8 lg:p-10 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-2xl pointer-events-none" />
 
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-6">
               <FaShieldAlt className="text-purple-300" /> Secure Password Reset
             </div>
             <h1 className="text-3xl font-extrabold tracking-tight">Product Search</h1>
@@ -110,7 +110,7 @@ export default function ResetPassword() {
             </div>
 
             <div className="flex items-center gap-3 text-xs font-bold text-white">
-              <div className="w-7 h-7 rounded-full flex items-center justify-center bg-white/20 border-2 border-white ring-2 ring-purple-300/50">
+              <div className="w-7 h-7 rounded-full flex items-center justify-center bg-white/20 dark:bg-slate-900/20 dark:bg-slate-900 border-2 border-white ring-2 ring-purple-300/50">
                 3
               </div>
               <span>3. Set New Password</span>
@@ -130,7 +130,7 @@ export default function ResetPassword() {
               <Link
                 to="/verify-otp"
                 state={{ email }}
-                className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 transition cursor-pointer"
+                className="inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-400 transition cursor-pointer"
               >
                 <FaArrowLeft className="text-[10px]" /> Back to Verification
               </Link>
@@ -151,7 +151,7 @@ export default function ResetPassword() {
                 <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                   Set New Password 🔑
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                <p className="text-sm text-gray-500 dark:text-slate-400 dark:text-gray-400 mt-2">
                   Create a strong, unique password{email ? <> for <span className="font-semibold text-indigo-600 dark:text-indigo-400">{email}</span></> : ""}.
                 </p>
               </div>
@@ -170,7 +170,7 @@ export default function ResetPassword() {
                       placeholder="Enter new password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full text-sm border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-12 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                      className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-12 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
                     />
                     <button
                       type="button"
@@ -195,7 +195,7 @@ export default function ResetPassword() {
                       placeholder="Re-enter new password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full text-sm border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-12 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                      className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-12 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
                     />
                     <button
                       type="button"
@@ -209,9 +209,9 @@ export default function ResetPassword() {
 
                 {/* Live Password Strength Meter */}
                 {password && (
-                  <div className="p-3.5 rounded-2xl bg-gray-50 dark:bg-slate-800/70 border border-gray-100 dark:border-gray-800 space-y-2 text-xs">
+                  <div className="p-3.5 rounded-2xl bg-gray-50 dark:bg-gray-950 dark:bg-slate-900 dark:bg-slate-800/70 border border-gray-100 dark:border-gray-800 space-y-2 text-xs">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-500 dark:text-gray-400 font-medium">Strength:</span>
+                      <span className="text-gray-500 dark:text-slate-400 dark:text-gray-400 font-medium">Strength:</span>
                       <span className="font-bold text-gray-800 dark:text-gray-200">
                         {strengthLabels[Math.max(0, strengthScore - 1)] || "Too Weak"}
                       </span>
@@ -286,7 +286,7 @@ export default function ResetPassword() {
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                   Password Reset Successfully! 🎉
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-sm mx-auto leading-relaxed">
+                <p className="text-sm text-gray-500 dark:text-slate-400 dark:text-gray-400 mt-2 max-w-sm mx-auto leading-relaxed">
                   Your new password has been saved. You can now sign in with your updated credentials.
                 </p>
               </div>

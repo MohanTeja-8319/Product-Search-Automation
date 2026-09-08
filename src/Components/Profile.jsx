@@ -80,7 +80,7 @@ const Profile = () => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2.5 cursor-pointer p-1.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition border border-transparent hover:border-slate-200 dark:hover:border-slate-700 focus:outline-none"
+        className="flex items-center gap-2.5 cursor-pointer p-1.5 rounded-2xl hover:bg-slate-100 dark:hover:bg-slate-800 transition border border-transparent hover:border-slate-200 dark:hover:border-slate-800 dark:border-slate-800 dark:hover:border-slate-700 focus:outline-none"
         aria-expanded={isOpen}
         aria-haspopup="true"
         title={`Account menu for ${displayName}`}
@@ -89,7 +89,7 @@ const Profile = () => {
           <img
             src={avatarUrl}
             alt={displayName}
-            className="w-9 h-9 rounded-xl border-2 border-indigo-200 dark:border-indigo-500/40 object-cover bg-indigo-50 dark:bg-slate-800 shadow-xs"
+            className="w-9 h-9 rounded-xl border-2 border-indigo-200 dark:border-indigo-500/40 object-cover bg-indigo-50 dark:bg-indigo-950 dark:bg-slate-800 shadow-xs"
             onError={(e) => {
               e.target.onerror = null;
               e.target.src =
@@ -109,7 +109,7 @@ const Profile = () => {
           <span className="font-bold text-xs text-slate-900 dark:text-white leading-tight truncate max-w-[120px]">
             {displayName}
           </span>
-          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-semibold leading-none mt-0.5">
+          <span className="text-[10px] text-slate-400 dark:text-slate-500 dark:text-slate-400 font-semibold leading-none mt-0.5">
             {userBadge}
           </span>
         </div>
@@ -123,14 +123,14 @@ const Profile = () => {
 
       {/* Interactive Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/90 dark:border-slate-800 py-3 z-50 animate-fadeIn">
+        <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/90 dark:border-slate-800/90 dark:border-slate-800 py-3 z-50 animate-fadeIn">
           {/* User Info Header */}
           <div className="px-4 pb-3 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between">
             <div className="flex items-center gap-3 min-w-0 flex-1">
               <img
                 src={avatarUrl}
                 alt={displayName}
-                className="w-10 h-10 rounded-2xl border border-indigo-100 dark:border-slate-700 object-cover bg-indigo-50 dark:bg-slate-800 shrink-0"
+                className="w-10 h-10 rounded-2xl border border-indigo-100 dark:border-slate-700 object-cover bg-indigo-50 dark:bg-indigo-950 dark:bg-slate-800 shrink-0"
               />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
@@ -156,7 +156,7 @@ const Profile = () => {
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white flex items-center justify-center transition cursor-pointer shrink-0 ml-2"
+              className="w-7 h-7 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white dark:text-white dark:text-slate-400 dark:hover:text-white flex items-center justify-center transition cursor-pointer shrink-0 ml-2"
               title="Close profile menu"
             >
               <FiX className="text-sm" />
@@ -164,13 +164,13 @@ const Profile = () => {
           </div>
 
           {/* Quick Menu Options (Account Profile only) */}
-          <div className="py-2 px-2 space-y-1 text-xs font-semibold text-slate-700 dark:text-slate-200">
+          <div className="py-2 px-2 space-y-1 text-xs font-semibold text-slate-700 dark:text-slate-300 dark:text-slate-200">
             <Link
               to="/settings"
               onClick={() => setIsOpen(false)}
-              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 group"
+              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800 transition text-slate-700 dark:text-slate-300 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 group"
             >
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm shrink-0 group-hover:scale-105 transition-transform">
+              <div className="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm shrink-0 group-hover:scale-105 transition-transform">
                 <FiUser />
               </div>
               <div className="flex-1">
@@ -185,7 +185,7 @@ const Profile = () => {
             <button
               type="button"
               onClick={handleLogout}
-              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-2xl bg-rose-50/60 dark:bg-rose-950/30 hover:bg-rose-100/80 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 transition font-bold text-xs cursor-pointer group"
+              className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-2xl bg-rose-50/60 dark:bg-rose-950/60 dark:bg-rose-950/30 hover:bg-rose-100/80 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 transition font-bold text-xs cursor-pointer group"
             >
               <div className="w-8 h-8 rounded-lg bg-rose-100 dark:bg-rose-900/60 text-rose-600 dark:text-rose-300 flex items-center justify-center text-sm group-hover:scale-105 transition-transform shrink-0">
                 <FiLogOut />

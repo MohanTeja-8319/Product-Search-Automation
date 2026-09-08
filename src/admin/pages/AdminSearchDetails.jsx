@@ -27,12 +27,12 @@ export function AdminSearchDetails() {
 
   if (!search) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center max-w-lg mx-auto my-12 shadow-sm">
-        <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-3 text-xl">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 text-center max-w-lg mx-auto my-12 shadow-sm">
+        <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950 text-rose-500 flex items-center justify-center mx-auto mb-3 text-xl">
           <FiAlertCircle />
         </div>
-        <h3 className="text-lg font-bold text-slate-800">Search Record Not Found</h3>
-        <p className="text-xs text-slate-500 mt-1 mb-5">
+        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Search Record Not Found</h3>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-5">
           No search session found with ID <strong className="font-mono">{id}</strong>.
         </p>
         <Link
@@ -55,24 +55,24 @@ export function AdminSearchDetails() {
         <button
           type="button"
           onClick={() => navigate("/admin/searches")}
-          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-xs transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white dark:text-white bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-3 py-1.5 rounded-xl shadow-xs transition-colors"
         >
           <FiArrowLeft /> Back to Searches
         </button>
 
-        <span className="font-mono text-xs font-bold text-slate-500">
+        <span className="font-mono text-xs font-bold text-slate-500 dark:text-slate-400">
           ID: {search.id}
         </span>
       </div>
 
       {/* 1. Search Information Header Card */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800/90 dark:border-slate-800 shadow-sm p-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100 dark:border-slate-800">
           <div>
-            <span className="text-[11px] font-semibold text-indigo-600 uppercase tracking-wider block mb-1">
+            <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block mb-1">
               Search Query
             </span>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
+            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
               "{search.query}"
             </h2>
           </div>
@@ -82,7 +82,7 @@ export function AdminSearchDetails() {
         {/* Search Metadata Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mt-4">
           {/* User */}
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">
               User
             </span>
@@ -94,7 +94,7 @@ export function AdminSearchDetails() {
               />
               <Link
                 to={`/admin/users/${search.userId}`}
-                className="text-xs font-bold text-slate-800 hover:text-indigo-600 truncate block"
+                className="text-xs font-bold text-slate-800 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 truncate block"
               >
                 {search.userName}
               </Link>
@@ -102,47 +102,47 @@ export function AdminSearchDetails() {
           </div>
 
           {/* Search ID */}
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">
               Search ID
             </span>
-            <span className="font-mono text-xs font-bold text-slate-700">{search.id}</span>
+            <span className="font-mono text-xs font-bold text-slate-700 dark:text-slate-300">{search.id}</span>
           </div>
 
           {/* Started Time */}
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">
               Started Time
             </span>
-            <span className="text-xs font-medium text-slate-700 whitespace-nowrap">
+            <span className="text-xs font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap">
               {search.startedTime || search.dateTime}
             </span>
           </div>
 
           {/* Completed Time */}
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">
               Completed Time
             </span>
-            <span className="text-xs font-medium text-slate-700 whitespace-nowrap">
+            <span className="text-xs font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap">
               {search.completedTime || "In Progress"}
             </span>
           </div>
 
           {/* Duration */}
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">
               Duration
             </span>
-            <span className="text-xs font-bold font-mono text-indigo-600">{search.duration}</span>
+            <span className="text-xs font-bold font-mono text-indigo-600 dark:text-indigo-400">{search.duration}</span>
           </div>
 
           {/* Total Results */}
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+          <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800">
             <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">
               Collected Results
             </span>
-            <span className="text-xs font-extrabold text-slate-900">{search.resultsCount} Products</span>
+            <span className="text-xs font-extrabold text-slate-900 dark:text-white">{search.resultsCount} Products</span>
           </div>
         </div>
       </div>
@@ -151,8 +151,8 @@ export function AdminSearchDetails() {
       {comparison && (
         <div>
           <div className="mb-3">
-            <h3 className="text-base font-bold text-slate-900">Comparison Summary</h3>
-            <p className="text-xs text-slate-500">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">Comparison Summary</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Automated multi-store evaluation highlight cards
             </p>
           </div>
@@ -160,7 +160,7 @@ export function AdminSearchDetails() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Card 1: Cheapest Product */}
             {comparison.cheapest && (
-              <div className="bg-white rounded-2xl border border-emerald-200 shadow-xs p-5 relative overflow-hidden flex flex-col justify-between">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-emerald-200 shadow-xs p-5 relative overflow-hidden flex flex-col justify-between">
                 <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-extrabold uppercase px-3 py-1 rounded-bl-xl tracking-wider flex items-center gap-1">
                   <FiTrendingDown className="text-xs" /> Cheapest Option
                 </div>
@@ -170,13 +170,13 @@ export function AdminSearchDetails() {
                     <img
                       src={comparison.cheapest.image}
                       alt={comparison.cheapest.name}
-                      className="w-14 h-14 rounded-xl object-contain bg-slate-50 p-1 border border-slate-200"
+                      className="w-14 h-14 rounded-xl object-contain bg-slate-50 dark:bg-slate-950 p-1 border border-slate-200 dark:border-slate-800"
                     />
                     <div className="flex-1 min-w-0">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 mb-1">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 mb-1">
                         <FiGlobe className="text-[10px]" /> {comparison.cheapest.website}
                       </span>
-                      <h4 className="text-xs font-bold text-slate-900 truncate">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">
                         {comparison.cheapest.name}
                       </h4>
                     </div>
@@ -191,13 +191,13 @@ export function AdminSearchDetails() {
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                   <span className="text-[11px] font-medium text-emerald-700">Lowest Price Found</span>
                   <a
                     href={comparison.cheapest.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-400"
                   >
                     View Store <FiExternalLink className="text-[10px]" />
                   </a>
@@ -207,7 +207,7 @@ export function AdminSearchDetails() {
 
             {/* Card 2: Highest-Rated Product */}
             {comparison.highestRated && (
-              <div className="bg-white rounded-2xl border border-amber-200 shadow-xs p-5 relative overflow-hidden flex flex-col justify-between">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-amber-200 shadow-xs p-5 relative overflow-hidden flex flex-col justify-between">
                 <div className="absolute top-0 right-0 bg-amber-500 text-white text-[10px] font-extrabold uppercase px-3 py-1 rounded-bl-xl tracking-wider flex items-center gap-1">
                   <FiAward className="text-xs" /> Highest Rated
                 </div>
@@ -217,21 +217,21 @@ export function AdminSearchDetails() {
                     <img
                       src={comparison.highestRated.image}
                       alt={comparison.highestRated.name}
-                      className="w-14 h-14 rounded-xl object-contain bg-slate-50 p-1 border border-slate-200"
+                      className="w-14 h-14 rounded-xl object-contain bg-slate-50 dark:bg-slate-950 p-1 border border-slate-200 dark:border-slate-800"
                     />
                     <div className="flex-1 min-w-0">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700 mb-1">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 mb-1">
                         <FiGlobe className="text-[10px]" /> {comparison.highestRated.website}
                       </span>
-                      <h4 className="text-xs font-bold text-slate-900 truncate">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">
                         {comparison.highestRated.name}
                       </h4>
                     </div>
                   </div>
 
-                  <div className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                  <div className="text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
                     <span>₹{comparison.highestRated.price.toLocaleString("en-IN")}</span>
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-50 text-amber-900 text-xs font-bold border border-amber-200">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950 text-amber-900 text-xs font-bold border border-amber-200">
                       <FiStar className="text-amber-500 fill-amber-500 text-[10px]" />
                       {comparison.highestRated.rating}
                     </span>
@@ -241,13 +241,13 @@ export function AdminSearchDetails() {
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
                   <span className="text-[11px] font-medium text-amber-700">Top Rated Seller</span>
                   <a
                     href={comparison.highestRated.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-400"
                   >
                     View Store <FiExternalLink className="text-[10px]" />
                   </a>
@@ -257,7 +257,7 @@ export function AdminSearchDetails() {
 
             {/* Card 3: Best Overall Result */}
             {comparison.bestOverall && (
-              <div className="bg-white rounded-2xl border border-indigo-200 shadow-xs p-5 relative overflow-hidden flex flex-col justify-between">
+              <div className="bg-white dark:bg-slate-900 rounded-2xl border border-indigo-200 shadow-xs p-5 relative overflow-hidden flex flex-col justify-between">
                 <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-extrabold uppercase px-3 py-1 rounded-bl-xl tracking-wider flex items-center gap-1">
                   <FiZap className="text-xs" /> Best Overall
                 </div>
@@ -267,33 +267,33 @@ export function AdminSearchDetails() {
                     <img
                       src={comparison.bestOverall.image}
                       alt={comparison.bestOverall.name}
-                      className="w-14 h-14 rounded-xl object-contain bg-slate-50 p-1 border border-slate-200"
+                      className="w-14 h-14 rounded-xl object-contain bg-slate-50 dark:bg-slate-950 p-1 border border-slate-200 dark:border-slate-800"
                     />
                     <div className="flex-1 min-w-0">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 text-indigo-700 mb-1">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-400 mb-1">
                         <FiGlobe className="text-[10px]" /> {comparison.bestOverall.website}
                       </span>
-                      <h4 className="text-xs font-bold text-slate-900 truncate">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">
                         {comparison.bestOverall.name}
                       </h4>
                     </div>
                   </div>
 
-                  <div className="text-xl font-extrabold text-indigo-700">
+                  <div className="text-xl font-extrabold text-indigo-700 dark:text-indigo-400">
                     ₹{comparison.bestOverall.price.toLocaleString("en-IN")}
                   </div>
-                  <div className="text-[11px] text-slate-500 mt-0.5 font-medium">
+                  <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">
                     {comparison.bestOverall.highlight || "Best balance of rating, price & fast delivery"}
                   </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                  <span className="text-[11px] font-semibold text-indigo-600">Recommended Pick</span>
+                <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                  <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">Recommended Pick</span>
                   <a
                     href={comparison.bestOverall.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 hover:text-indigo-800"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-400"
                   >
                     View Store <FiExternalLink className="text-[10px]" />
                   </a>
@@ -305,15 +305,15 @@ export function AdminSearchDetails() {
       )}
 
       {/* 3. Search Results Table / List */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
-        <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800/90 dark:border-slate-800 shadow-sm overflow-hidden">
+        <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-slate-900">Scraped Product Results</h3>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">Scraped Product Results</h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               Raw collected products from active store connectors
             </p>
           </div>
-          <span className="text-xs font-bold text-slate-700 bg-slate-100 px-3 py-1 rounded-lg">
+          <span className="text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg">
             {results.length} Products Found
           </span>
         </div>
@@ -326,7 +326,7 @@ export function AdminSearchDetails() {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs sm:text-sm">
               <thead>
-                <tr className="border-b border-slate-100 bg-slate-50/75 text-slate-500 text-[11px] uppercase tracking-wider font-semibold">
+                <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-950/75 dark:bg-slate-950 text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider font-semibold">
                   <th className="px-4 py-3">Product Image</th>
                   <th className="px-4 py-3">Product Name</th>
                   <th className="px-4 py-3">Price</th>
@@ -338,10 +338,10 @@ export function AdminSearchDetails() {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {results.map((item, idx) => (
-                  <tr key={item.id || idx} className="hover:bg-slate-50 transition-colors">
+                  <tr key={item.id || idx} className="hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800 transition-colors">
                     {/* Image */}
                     <td className="px-4 py-3">
-                      <div className="w-10 h-10 rounded-lg bg-slate-50 p-1 border border-slate-200 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-lg bg-slate-50 dark:bg-slate-950 p-1 border border-slate-200 dark:border-slate-800 flex items-center justify-center">
                         <img
                           src={item.image}
                           alt={item.name}
@@ -351,13 +351,13 @@ export function AdminSearchDetails() {
                     </td>
 
                     {/* Product Name */}
-                    <td className="px-4 py-3 font-semibold text-slate-900 max-w-xs truncate">
+                    <td className="px-4 py-3 font-semibold text-slate-900 dark:text-white max-w-xs truncate">
                       {item.name}
                     </td>
 
                     {/* Price */}
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="font-extrabold text-slate-900">
+                      <div className="font-extrabold text-slate-900 dark:text-white">
                         ₹{item.price.toLocaleString("en-IN")}
                       </div>
                       {item.discount && (
@@ -369,20 +369,20 @@ export function AdminSearchDetails() {
 
                     {/* Rating */}
                     <td className="px-4 py-3 text-center">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200/60">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950 text-amber-800 text-xs font-bold border border-amber-200/60">
                         <FiStar className="text-amber-500 fill-amber-500 text-[10px]" />
                         {item.rating}
                       </span>
                     </td>
 
                     {/* Reviews */}
-                    <td className="px-4 py-3 text-slate-500 text-xs">
+                    <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-xs">
                       {item.reviews.toLocaleString()}
                     </td>
 
                     {/* Website */}
                     <td className="px-4 py-3">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                         <FiGlobe className="text-xs" /> {item.website}
                       </span>
                     </td>
@@ -393,7 +393,7 @@ export function AdminSearchDetails() {
                         href={item.productUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 transition-colors"
                       >
                         <span>Visit Store</span>
                         <FiExternalLink className="text-[10px]" />

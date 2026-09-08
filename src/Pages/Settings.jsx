@@ -261,7 +261,7 @@ export default function Settings() {
     ACCENT_RINGS.find((r) => r.id === selectedRing)?.ring || "ring-4 ring-indigo-500";
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen text-slate-800 flex flex-col font-sans">
+    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-200 flex flex-col font-sans">
       <Sidebar />
 
       <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
@@ -270,11 +270,11 @@ export default function Settings() {
         <main className="p-4 lg:p-8 flex-1 max-w-6xl w-full mx-auto pb-28">
           {/* Breadcrumbs */}
           <nav className="flex items-center gap-2 text-xs text-slate-400 mb-3">
-            <Link to="/home" className="hover:text-indigo-600 transition">
+            <Link to="/home" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
               Home
             </Link>
             <FiChevronRight className="text-[10px]" />
-            <span className="text-indigo-600 font-semibold">Profile & Platform Settings</span>
+            <span className="text-indigo-600 dark:text-indigo-400 font-semibold">Profile & Platform Settings</span>
           </nav>
 
           {/* Hero Banner */}
@@ -289,7 +289,7 @@ export default function Settings() {
                     <img
                       src={profile.avatar}
                       alt={profile.fullName}
-                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover bg-white"
+                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover bg-white dark:bg-slate-900"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src =
@@ -320,7 +320,7 @@ export default function Settings() {
                 <button
                   type="button"
                   onClick={generateRandomAvatar}
-                  className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold text-xs rounded-xl transition flex items-center gap-2 backdrop-blur-md cursor-pointer"
+                  className="px-4 py-2.5 bg-white/10 dark:bg-slate-900/10 hover:bg-white/20 dark:hover:bg-slate-900/20 dark:bg-slate-900 border border-white/20 text-white font-bold text-xs rounded-xl transition flex items-center gap-2 backdrop-blur-md cursor-pointer"
                   title="Randomize Avatar"
                 >
                   <FaDice className="text-amber-400 text-sm animate-spin-slow" />
@@ -340,7 +340,7 @@ export default function Settings() {
           </div>
 
           {/* Navigation Tabs Bar */}
-          <div className="flex items-center gap-2 bg-white p-2 rounded-2xl border border-slate-200/80 mb-8 shadow-sm overflow-x-auto scrollbar-hide">
+          <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 mb-8 shadow-sm overflow-x-auto scrollbar-hide">
             {[
               { id: "profile", label: "Profile & Avatar Studio", icon: FiUser },
               { id: "preferences", label: "Shopping Preferences", icon: FiSliders },
@@ -356,7 +356,7 @@ export default function Settings() {
                   className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 cursor-pointer ${
                     isSelected
                       ? "bg-indigo-600 text-white shadow-sm"
-                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
                   }`}
                 >
                   <Icon className="text-sm" />
@@ -372,14 +372,14 @@ export default function Settings() {
             {activeTab === "profile" && (
               <div className="space-y-8 animate-fadeIn">
                 {/* 🌟 1. AVATAR STUDIO CARD */}
-                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm space-y-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+                <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 shadow-sm space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
                     <div>
-                      <div className="inline-flex items-center gap-1.5 text-indigo-600 font-bold text-xs mb-1">
+                      <div className="inline-flex items-center gap-1.5 text-indigo-600 dark:text-indigo-400 font-bold text-xs mb-1">
                         <FiStar />
                         <span>Interactive Avatar Studio</span>
                       </div>
-                      <h2 className="text-lg font-extrabold text-slate-900">
+                      <h2 className="text-lg font-extrabold text-slate-900 dark:text-white">
                         Customize Your Persona & Badge
                       </h2>
                       <p className="text-xs text-slate-400 mt-0.5">
@@ -391,16 +391,16 @@ export default function Settings() {
                       <button
                         type="button"
                         onClick={generateRandomAvatar}
-                        className="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-xs"
+                        className="px-3.5 py-2 bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-400 font-bold text-xs rounded-xl transition flex items-center gap-1.5 cursor-pointer shadow-xs"
                       >
-                        <FaMagic className="text-xs text-indigo-600" />
+                        <FaMagic className="text-xs text-indigo-600 dark:text-indigo-400" />
                         <span>Random Generator</span>
                       </button>
 
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center gap-1.5 cursor-pointer"
+                        className="px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-xl transition flex items-center gap-1.5 cursor-pointer"
                       >
                         <FiCamera className="text-xs" />
                         <span>Upload Photo</span>
@@ -431,7 +431,7 @@ export default function Settings() {
                           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer shrink-0 ${
                             avatarCategory === cat.id
                               ? "bg-slate-900 text-white shadow-xs"
-                              : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200"
                           }`}
                         >
                           {cat.label}
@@ -449,16 +449,16 @@ export default function Settings() {
                             onClick={() => selectAvatar(av.url)}
                             className={`group relative rounded-2xl p-1 border cursor-pointer transition-all duration-200 flex flex-col items-center justify-center ${
                               isSelected
-                                ? "border-indigo-600 bg-indigo-50/50 ring-2 ring-indigo-500/20 scale-105 shadow-md"
-                                : "border-slate-200 bg-slate-50/60 hover:bg-slate-100 hover:border-slate-300"
+                                ? "border-indigo-600 bg-indigo-50/50 dark:bg-indigo-950/50 ring-2 ring-indigo-500/20 scale-105 shadow-md"
+                                : "border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/60 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
                             }`}
                           >
                             <img
                               src={av.url}
                               alt={av.name}
-                              className="w-12 h-12 rounded-xl object-cover bg-white"
+                              className="w-12 h-12 rounded-xl object-cover bg-white dark:bg-slate-900"
                             />
-                            <span className="text-[10px] font-bold text-slate-500 mt-1 truncate max-w-full">
+                            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-1 truncate max-w-full">
                               {av.name}
                             </span>
                             {isSelected && (
@@ -473,10 +473,10 @@ export default function Settings() {
                   </div>
 
                   {/* 🎨 ACCENT RING & STATUS BADGE CUSTOMIZATION */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100 dark:border-slate-800">
                     {/* Accent Rings */}
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2.5">
+                      <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2.5">
                         Avatar Frame Accent:
                       </label>
                       <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
@@ -489,8 +489,8 @@ export default function Settings() {
                               onClick={() => setSelectedRing(ring.id)}
                               className={`p-2 rounded-xl border text-center transition cursor-pointer flex flex-col items-center gap-1 ${
                                 isSelected
-                                  ? "border-indigo-600 bg-indigo-50/70 ring-2 ring-indigo-500/20 font-bold text-indigo-700"
-                                  : "border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-600"
+                                  ? "border-indigo-600 bg-indigo-50/70 dark:bg-indigo-950/70 ring-2 ring-indigo-500/20 font-bold text-indigo-700 dark:text-indigo-400"
+                                  : "border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400"
                               }`}
                             >
                               <div
@@ -519,7 +519,7 @@ export default function Settings() {
 
                     {/* Shopper Badge Title */}
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2.5">
+                      <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2.5">
                         Shopper Profile Badge:
                       </label>
                       <div className="relative">
@@ -527,7 +527,7 @@ export default function Settings() {
                           name="badge"
                           value={profile.badge}
                           onChange={handleProfileChange}
-                          className="w-full pl-4 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs font-bold focus:bg-white focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer"
+                          className="w-full pl-4 pr-10 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs font-bold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer"
                         >
                           {BADGE_OPTIONS.map((b) => (
                             <option key={b} value={b}>
@@ -545,9 +545,9 @@ export default function Settings() {
                 </div>
 
                 {/* 📝 2. PERSONAL DETAILS CARD */}
-                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm space-y-6">
+                <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 shadow-sm space-y-6">
                   <div>
-                    <h2 className="text-base font-extrabold text-slate-900">
+                    <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
                       Personal Account Information
                     </h2>
                     <p className="text-xs text-slate-400 mt-0.5">
@@ -557,7 +557,7 @@ export default function Settings() {
 
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                      <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                         Full Name
                       </label>
                       <div className="relative">
@@ -566,14 +566,14 @@ export default function Settings() {
                           name="fullName"
                           value={profile.fullName}
                           onChange={handleProfileChange}
-                          className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 text-xs sm:text-sm font-semibold focus:bg-white focus:outline-none focus:border-indigo-500 transition"
+                          className="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500 transition"
                         />
                         <FiUser className="absolute right-4 top-3.5 text-slate-400 text-sm" />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                      <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                         Email Address
                       </label>
                       <div className="relative">
@@ -582,7 +582,7 @@ export default function Settings() {
                           name="email"
                           value={profile.email}
                           onChange={handleProfileChange}
-                          className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 text-xs sm:text-sm font-semibold focus:bg-white focus:outline-none focus:border-indigo-500 transition"
+                          className="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500 transition"
                         />
                         <FiMail className="absolute right-4 top-3.5 text-slate-400 text-sm" />
                       </div>
@@ -590,7 +590,7 @@ export default function Settings() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                        <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                           Phone Number
                         </label>
                         <div className="relative">
@@ -599,14 +599,14 @@ export default function Settings() {
                             name="phone"
                             value={profile.phone}
                             onChange={handleProfileChange}
-                            className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 text-xs sm:text-sm font-semibold focus:bg-white focus:outline-none focus:border-indigo-500 transition"
+                            className="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500 transition"
                           />
                           <FiPhone className="absolute right-4 top-3.5 text-slate-400 text-sm" />
                         </div>
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                        <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                           Location / Region
                         </label>
                         <div className="relative">
@@ -615,7 +615,7 @@ export default function Settings() {
                             name="location"
                             value={profile.location}
                             onChange={handleProfileChange}
-                            className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 text-xs sm:text-sm font-semibold focus:bg-white focus:outline-none focus:border-indigo-500 transition"
+                            className="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500 transition"
                           />
                           <FiMapPin className="absolute right-4 top-3.5 text-slate-400 text-sm" />
                         </div>
@@ -628,9 +628,9 @@ export default function Settings() {
 
             {/* ================= TAB 2: PREFERENCES ================= */}
             {activeTab === "preferences" && (
-              <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm space-y-6 animate-fadeIn">
+              <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 shadow-sm space-y-6 animate-fadeIn">
                 <div>
-                  <h2 className="text-base font-extrabold text-slate-900">
+                  <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
                     Shopping & Store Preferences
                   </h2>
                   <p className="text-xs text-slate-400 mt-0.5">
@@ -641,14 +641,14 @@ export default function Settings() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {/* Default Currency */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                       Default Currency
                     </label>
                     <div className="relative">
                       <select
                         value={preferences.currency}
                         onChange={(e) => handlePreferenceChange("currency", e.target.value)}
-                        className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 text-xs font-bold focus:bg-white focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer"
+                        className="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-xs font-bold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer"
                       >
                         <option value="INR (₹) - Indian Rupee">INR (₹) - Indian Rupee</option>
                         <option value="USD ($) - US Dollar">USD ($) - US Dollar</option>
@@ -661,14 +661,14 @@ export default function Settings() {
 
                   {/* Default Store */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                    <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">
                       Preferred Primary Retailer
                     </label>
                     <div className="relative">
                       <select
                         value={preferences.defaultStore}
                         onChange={(e) => handlePreferenceChange("defaultStore", e.target.value)}
-                        className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 text-xs font-bold focus:bg-white focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer"
+                        className="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-xs font-bold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500 appearance-none cursor-pointer"
                       >
                         <option value="Amazon">Amazon</option>
                         <option value="Flipkart">Flipkart</option>
@@ -683,12 +683,12 @@ export default function Settings() {
 
                 {/* Toggles */}
                 <div className="pt-4 space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200/80">
+                  <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800">
                     <div>
-                      <span className="block text-xs font-bold text-slate-900">
+                      <span className="block text-xs font-bold text-slate-900 dark:text-white">
                         Automatic History Tracking
                       </span>
-                      <span className="block text-[11px] text-slate-500 mt-0.5">
+                      <span className="block text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                         Log visited product comparisons for quick timeline access.
                       </span>
                     </div>
@@ -701,7 +701,7 @@ export default function Settings() {
                         }
                         className="sr-only peer"
                       />
-                      <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                      <div className="w-10 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white dark:bg-slate-900 after:border-slate-300 dark:border-slate-700 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
                     </label>
                   </div>
                 </div>
@@ -710,9 +710,9 @@ export default function Settings() {
 
             {/* ================= TAB 3: NOTIFICATIONS ================= */}
             {activeTab === "notifications" && (
-              <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm space-y-6 animate-fadeIn">
+              <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 shadow-sm space-y-6 animate-fadeIn">
                 <div>
-                  <h2 className="text-base font-extrabold text-slate-900">
+                  <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
                     Price Alerts & Channels
                   </h2>
                   <p className="text-xs text-slate-400 mt-0.5">
@@ -722,16 +722,16 @@ export default function Settings() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Email */}
-                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200/80">
+                  <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-base font-bold">
+                      <div className="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-base font-bold">
                         <FiMail />
                       </div>
                       <div>
-                        <span className="block text-xs font-bold text-slate-900">
+                        <span className="block text-xs font-bold text-slate-900 dark:text-white">
                           Email Price Drops
                         </span>
-                        <span className="block text-[11px] text-slate-500">
+                        <span className="block text-[11px] text-slate-500 dark:text-slate-400">
                           To {profile.email}
                         </span>
                       </div>
@@ -747,16 +747,16 @@ export default function Settings() {
                   </div>
 
                   {/* Browser Push */}
-                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200/80">
+                  <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-base font-bold">
                         <FiBell />
                       </div>
                       <div>
-                        <span className="block text-xs font-bold text-slate-900">
+                        <span className="block text-xs font-bold text-slate-900 dark:text-white">
                           Browser Push
                         </span>
-                        <span className="block text-[11px] text-slate-500">
+                        <span className="block text-[11px] text-slate-500 dark:text-slate-400">
                           Instant desktop & mobile popups
                         </span>
                       </div>
@@ -772,16 +772,16 @@ export default function Settings() {
                   </div>
 
                   {/* WhatsApp */}
-                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200/80">
+                  <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-base font-bold">
                         <FaWhatsapp />
                       </div>
                       <div>
-                        <span className="block text-xs font-bold text-slate-900">
+                        <span className="block text-xs font-bold text-slate-900 dark:text-white">
                           WhatsApp Alerts
                         </span>
-                        <span className="block text-[11px] text-slate-500">
+                        <span className="block text-[11px] text-slate-500 dark:text-slate-400">
                           Real-time flash deal pings
                         </span>
                       </div>
@@ -797,16 +797,16 @@ export default function Settings() {
                   </div>
 
                   {/* Daily Digest */}
-                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-200/80">
+                  <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-950 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-base font-bold">
                         <FiCheckCircle />
                       </div>
                       <div>
-                        <span className="block text-xs font-bold text-slate-900">
+                        <span className="block text-xs font-bold text-slate-900 dark:text-white">
                           Daily Digest Summary
                         </span>
-                        <span className="block text-[11px] text-slate-500">
+                        <span className="block text-[11px] text-slate-500 dark:text-slate-400">
                           Morning portfolio recap
                         </span>
                       </div>
@@ -827,9 +827,9 @@ export default function Settings() {
             {/* ================= TAB 4: SECURITY ================= */}
             {activeTab === "security" && (
               <div className="space-y-6 animate-fadeIn">
-                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm space-y-6">
+                <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 shadow-sm space-y-6">
                   <div>
-                    <h2 className="text-base font-extrabold text-slate-900">Change Password</h2>
+                    <h2 className="text-base font-extrabold text-slate-900 dark:text-white">Change Password</h2>
                     <p className="text-xs text-slate-400 mt-0.5">
                       Ensure your account remains safe with a strong passphrase
                     </p>
@@ -837,7 +837,7 @@ export default function Settings() {
 
                   <form onSubmit={handlePasswordUpdate} className="space-y-4 max-w-lg">
                     <div>
-                      <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                      <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                         Current Password
                       </label>
                       <input
@@ -847,13 +847,13 @@ export default function Settings() {
                         onChange={(e) =>
                           setSecurityForm({ ...securityForm, currentPassword: e.target.value })
                         }
-                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:outline-none focus:border-indigo-500"
+                        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs font-semibold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500"
                       />
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                        <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                           New Password
                         </label>
                         <input
@@ -863,12 +863,12 @@ export default function Settings() {
                           onChange={(e) =>
                             setSecurityForm({ ...securityForm, newPassword: e.target.value })
                           }
-                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:outline-none focus:border-indigo-500"
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs font-semibold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                        <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                           Confirm Password
                         </label>
                         <input
@@ -878,7 +878,7 @@ export default function Settings() {
                           onChange={(e) =>
                             setSecurityForm({ ...securityForm, confirmPassword: e.target.value })
                           }
-                          className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:outline-none focus:border-indigo-500"
+                          className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs font-semibold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500"
                         />
                       </div>
                     </div>
@@ -893,9 +893,9 @@ export default function Settings() {
                 </div>
 
                 {/* Delete Account */}
-                <div className="bg-white p-6 sm:p-8 rounded-3xl border border-rose-100 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-rose-100 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
-                    <h3 className="font-extrabold text-sm text-slate-900">
+                    <h3 className="font-extrabold text-sm text-slate-900 dark:text-white">
                       Delete Account Permanently
                     </h3>
                     <p className="text-xs text-slate-400 mt-0.5">
@@ -906,7 +906,7 @@ export default function Settings() {
                   <button
                     type="button"
                     onClick={() => setShowDeleteModal(true)}
-                    className="px-4 py-2.5 border border-rose-200 hover:bg-rose-50 text-rose-600 font-bold text-xs rounded-xl transition cursor-pointer flex items-center gap-1.5 self-start sm:self-auto"
+                    className="px-4 py-2.5 border border-rose-200 hover:bg-rose-50 dark:hover:bg-rose-950 text-rose-600 font-bold text-xs rounded-xl transition cursor-pointer flex items-center gap-1.5 self-start sm:self-auto"
                   >
                     <FiTrash2 className="text-sm" />
                     <span>Delete Account</span>
@@ -931,25 +931,25 @@ export default function Settings() {
       {/* Confirmation Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-scaleUp">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 dark:border-slate-800 space-y-4">
             <div className="flex items-center gap-3 text-rose-600">
-              <div className="w-10 h-10 rounded-2xl bg-rose-50 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-2xl bg-rose-50 dark:bg-rose-950 flex items-center justify-center">
                 <FiAlertTriangle className="text-xl" />
               </div>
-              <h3 className="text-base font-extrabold text-slate-900">
+              <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
                 Confirm Account Deletion
               </h3>
             </div>
 
-            <p className="text-xs text-slate-500 leading-relaxed font-medium">
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
               Are you sure you want to permanently erase your profile? All saved alerts, comparison sets, and tracked items will be deleted immediately.
             </p>
 
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
                 onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer"
+                className="px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition cursor-pointer"
               >
                 Cancel
               </button>

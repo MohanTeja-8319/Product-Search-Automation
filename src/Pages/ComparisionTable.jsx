@@ -17,10 +17,10 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
   if (!comparison || comparison.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200/80 mt-6 overflow-hidden shadow-sm">
-      <div className="px-4 sm:px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+    <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 mt-6 overflow-hidden shadow-sm">
+      <div className="px-4 sm:px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
         <div>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
+          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">
             Compare Stores & Live Deals
           </h2>
           <p className="text-slate-400 text-xs font-semibold mt-0.5">
@@ -38,11 +38,11 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
           return (
             <div
               key={store.id || store.store}
-              className={`p-4 transition ${isBest ? "bg-emerald-50/50" : "hover:bg-slate-50/60"}`}
+              className={`p-4 transition ${isBest ? "bg-emerald-50/50 dark:bg-emerald-950/50" : "hover:bg-slate-50/60 dark:hover:bg-slate-950/60 dark:bg-slate-900/60"}`}
             >
               <div className="flex items-center justify-between gap-3 mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 p-1.5 flex items-center justify-center shrink-0 shadow-xs">
+                  <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-1.5 flex items-center justify-center shrink-0 shadow-xs">
                     <img
                       src={storeLogos[store.store] || "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=100"}
                       alt={store.store}
@@ -69,17 +69,17 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs font-semibold my-3 bg-slate-50/60 p-3 rounded-xl">
+              <div className="grid grid-cols-2 gap-y-2 gap-x-4 text-xs font-semibold my-3 bg-slate-50/60 dark:bg-slate-950/60 dark:bg-slate-900/60 dark:bg-slate-950 p-3 rounded-xl">
                 <div>
                   <span className="text-slate-400 text-[10px] uppercase font-bold block">Store Price</span>
-                  <span className={`text-base font-black ${isBest ? "text-emerald-700" : "text-slate-900"}`}>
+                  <span className={`text-base font-black ${isBest ? "text-emerald-700" : "text-slate-900 dark:text-white"}`}>
                     ₹{store.price.toLocaleString()}
                   </span>
                 </div>
 
                 <div>
                   <span className="text-slate-400 text-[10px] uppercase font-bold block">Seller Rating</span>
-                  <div className="inline-flex items-center gap-1 text-slate-800 font-bold mt-0.5">
+                  <div className="inline-flex items-center gap-1 text-slate-800 dark:text-slate-100 font-bold mt-0.5">
                     <FaStar className="text-amber-400 text-xs" />
                     <span>{store.rating}</span>
                   </div>
@@ -123,7 +123,7 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-[10px] font-extrabold uppercase tracking-wider">
+            <tr className="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-[10px] font-extrabold uppercase tracking-wider">
               <th className="px-6 py-4 font-bold text-xs">Retail Store</th>
               <th className="px-4 py-4 font-bold text-xs text-center">Store Price</th>
               <th className="px-4 py-4 font-bold text-xs text-center">Seller Rating</th>
@@ -140,13 +140,13 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
               return (
                 <tr
                   key={store.id || store.store}
-                  className={`hover:bg-slate-50/70 transition duration-150 ${
-                    isBest ? "bg-emerald-50/40" : ""
+                  className={`hover:bg-slate-50/70 dark:hover:bg-slate-950/70 transition duration-150 ${
+                    isBest ? "bg-emerald-50/40 dark:bg-emerald-950/40" : ""
                   }`}
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 p-1.5 flex items-center justify-center shrink-0 shadow-xs">
+                      <div className="w-10 h-10 rounded-xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-1.5 flex items-center justify-center shrink-0 shadow-xs">
                         <img
                           src={storeLogos[store.store] || "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=100"}
                           alt={store.store}
@@ -173,20 +173,20 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
                   </td>
 
                   <td className="px-4 py-4 text-center">
-                    <span className={`text-base font-black ${isBest ? "text-emerald-700" : "text-slate-900"}`}>
+                    <span className={`text-base font-black ${isBest ? "text-emerald-700" : "text-slate-900 dark:text-white"}`}>
                       ₹{store.price.toLocaleString()}
                     </span>
                   </td>
 
                   <td className="px-4 py-4 text-center">
-                    <div className="inline-flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg border border-amber-100 text-slate-800 font-bold">
+                    <div className="inline-flex items-center gap-1 bg-amber-50 dark:bg-amber-950 px-2 py-1 rounded-lg border border-amber-100 text-slate-800 dark:text-slate-100 font-bold">
                       <FaStar className="text-amber-400 text-xs" />
                       <span>{store.rating}</span>
                     </div>
                   </td>
 
                   <td className="px-4 py-4 text-center">
-                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md">
+                    <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-md">
                       {store.discount || "—"}
                     </span>
                   </td>

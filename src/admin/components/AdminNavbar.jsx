@@ -67,14 +67,14 @@ export function AdminNavbar({
   const pageTitle = getPageTitle(location.pathname);
 
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 px-4 sm:px-6 flex items-center justify-between transition-colors">
+    <header className="sticky top-0 z-30 h-16 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 px-4 sm:px-6 flex items-center justify-between transition-colors">
       {/* Left Section: Sidebar toggle & Current Page Title */}
       <div className="flex items-center gap-3 sm:gap-4">
         {/* Mobile Toggle Button */}
         <button
           type="button"
           onClick={onOpenMobileSidebar}
-          className="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none cursor-pointer"
+          className="lg:hidden p-2 rounded-xl text-slate-600 dark:text-slate-400 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white dark:text-white dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none cursor-pointer"
           aria-label="Open mobile menu"
         >
           <FiMenu className="text-xl" />
@@ -84,7 +84,7 @@ export function AdminNavbar({
         <button
           type="button"
           onClick={onToggleSidebar}
-          className="hidden lg:flex p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none cursor-pointer"
+          className="hidden lg:flex p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 dark:text-slate-100 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none cursor-pointer"
           aria-label="Toggle sidebar collapse"
         >
           <FiMenu className="text-lg" />
@@ -95,7 +95,7 @@ export function AdminNavbar({
           <h1 className="text-base sm:text-lg font-black text-slate-900 dark:text-white tracking-tight">
             {pageTitle}
           </h1>
-          <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60">
+          <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-400 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60">
             <FiShield className="text-[10px]" />
             Admin Only
           </span>
@@ -107,7 +107,7 @@ export function AdminNavbar({
         {/* Switch to Client Storefront */}
         <Link
           to="/home"
-          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl transition border border-slate-200/80 dark:border-slate-700"
+          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-400 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-xl transition border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 dark:border-slate-700"
           title="Switch to User Storefront"
         >
           <FiShoppingBag className="text-xs text-indigo-600 dark:text-indigo-400" />
@@ -118,12 +118,12 @@ export function AdminNavbar({
         <button
           type="button"
           onClick={onOpenSearch}
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 rounded-xl transition-colors border border-slate-200/60 dark:border-slate-700 cursor-pointer"
+          className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200/80 dark:hover:bg-slate-700 rounded-xl transition-colors border border-slate-200/60 dark:border-slate-800/60 dark:border-slate-800 dark:border-slate-700 cursor-pointer"
           title="Search admin items (Ctrl+K)"
         >
           <FiSearch className="text-sm text-slate-400" />
           <span>Search...</span>
-          <kbd className="px-1.5 py-0.5 text-[10px] font-mono text-slate-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded">
+          <kbd className="px-1.5 py-0.5 text-[10px] font-mono text-slate-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 dark:border-slate-700 rounded">
             ⌘K
           </kbd>
         </button>
@@ -136,7 +136,7 @@ export function AdminNavbar({
           <button
             type="button"
             onClick={() => setIsNotifOpen(!isNotifOpen)}
-            className="relative p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none cursor-pointer"
+            className="relative p-2 rounded-xl text-slate-600 dark:text-slate-400 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white dark:text-white dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors focus:outline-none cursor-pointer"
             aria-label="View system notifications"
           >
             <FiBell className="text-lg" />
@@ -166,7 +166,7 @@ export function AdminNavbar({
                 "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80"
               }
               alt={adminUser?.name}
-              className="w-8 h-8 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shadow-xs"
+              className="w-8 h-8 rounded-xl object-cover border border-slate-200 dark:border-slate-800 dark:border-slate-700 shadow-xs"
             />
             <div className="hidden md:flex flex-col text-left">
               <span className="text-xs font-black text-slate-900 dark:text-white leading-tight">

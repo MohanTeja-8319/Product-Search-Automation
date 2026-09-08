@@ -4,17 +4,17 @@ const StoreOffers = ({ comparison }) => {
   if (!comparison || comparison.length === 0) return null;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl mt-6">
+    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl mt-6">
 
       {/* Header */}
 
-      <div className="px-6 py-5 border-b border-gray-200">
+      <div className="px-6 py-5 border-b border-gray-200 dark:border-slate-800">
 
         <h2 className="text-2xl font-bold">
           Store Offers
         </h2>
 
-        <p className="text-gray-500 mt-1">
+        <p className="text-gray-500 dark:text-slate-400 mt-1">
           Bank offers, coupons and cashback available
         </p>
 
@@ -26,7 +26,7 @@ const StoreOffers = ({ comparison }) => {
 
           <div
             key={store.id}
-            className="border border-gray-200 rounded-xl p-5 hover:border-purple-500 transition"
+            className="border border-gray-200 dark:border-slate-800 rounded-xl p-5 hover:border-purple-500 transition"
           >
 
             <div className="flex justify-between items-center">
@@ -39,7 +39,7 @@ const StoreOffers = ({ comparison }) => {
 
                 </h3>
 
-                <p className="text-gray-500 text-sm">
+                <p className="text-gray-500 dark:text-slate-400 text-sm">
 
                   Extra savings available
 
@@ -57,25 +57,25 @@ const StoreOffers = ({ comparison }) => {
 
             <div className="grid md:grid-cols-2 gap-4 mt-5">
 
-              <div className="bg-purple-50 rounded-lg p-4">
+              <div className="bg-purple-50 dark:bg-purple-950 rounded-lg p-4">
 
                 💳 10% Instant Discount on HDFC Cards
 
               </div>
 
-              <div className="bg-blue-50 rounded-lg p-4">
+              <div className="bg-blue-50 dark:bg-blue-950 rounded-lg p-4">
 
                 💰 ₹1000 Cashback using UPI
 
               </div>
 
-              <div className="bg-yellow-50 rounded-lg p-4">
+              <div className="bg-yellow-50 dark:bg-yellow-950 rounded-lg p-4">
 
                 🎁 Exchange Bonus Available
 
               </div>
 
-              <div className="bg-green-50 rounded-lg p-4">
+              <div className="bg-green-50 dark:bg-green-950 rounded-lg p-4">
 
                 🚚 Free Delivery
 

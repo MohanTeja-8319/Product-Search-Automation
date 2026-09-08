@@ -101,28 +101,28 @@ export default function HelpSupport() {
       name: "Price Alerts & Triggers",
       icon: FiZap,
       count: "3 Guides",
-      color: "text-amber-600 bg-amber-50 border-amber-200",
+      color: "text-amber-600 bg-amber-50 dark:bg-amber-950 border-amber-200",
     },
     {
       id: "store-integrations",
       name: "Store Integrations",
       icon: FiShoppingCart,
       count: "2 Guides",
-      color: "text-blue-600 bg-blue-50 border-blue-200",
+      color: "text-blue-600 bg-blue-50 dark:bg-blue-950 border-blue-200",
     },
     {
       id: "comparison-engine",
       name: "Specs & Comparison",
       icon: FiHelpCircle,
       count: "2 Guides",
-      color: "text-indigo-600 bg-indigo-50 border-indigo-200",
+      color: "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 border-indigo-200",
     },
     {
       id: "account-privacy",
       name: "Privacy & Account",
       icon: FiShield,
       count: "1 Guide",
-      color: "text-emerald-600 bg-emerald-50 border-emerald-200",
+      color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950 border-emerald-200",
     },
   ];
 
@@ -165,7 +165,7 @@ export default function HelpSupport() {
   };
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen text-slate-800 flex flex-col font-sans">
+    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-200 flex flex-col font-sans">
       <Sidebar />
 
       <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
@@ -174,11 +174,11 @@ export default function HelpSupport() {
         <main className="p-4 lg:p-8 flex-1 max-w-6xl w-full mx-auto pb-28">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs text-slate-400 mb-3">
-            <Link to="/home" className="hover:text-indigo-600 transition">
+            <Link to="/home" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
               Home
             </Link>
             <FiChevronRight className="text-[10px]" />
-            <span className="text-indigo-600 font-semibold">Help & Support Center</span>
+            <span className="text-indigo-600 dark:text-indigo-400 font-semibold">Help & Support Center</span>
           </nav>
 
           {/* Hero Banner */}
@@ -209,12 +209,12 @@ export default function HelpSupport() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search answers (e.g. 'Amazon alerts', 'Compare stores', 'History')..."
-                    className="w-full pl-11 pr-16 py-3 bg-white text-slate-900 rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 text-xs sm:text-sm font-semibold transition"
+                    className="w-full pl-11 pr-16 py-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 text-xs sm:text-sm font-semibold transition"
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery("")}
-                      className="absolute right-3.5 top-3 text-[11px] font-bold text-slate-400 hover:text-slate-700 bg-slate-100 px-2 py-0.5 rounded-lg"
+                      className="absolute right-3.5 top-3 text-[11px] font-bold text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg"
                     >
                       Clear
                     </button>
@@ -225,13 +225,13 @@ export default function HelpSupport() {
           </div>
 
           {/* Platform Status Ribbon */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-4 mb-8 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-4 mb-8 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm font-bold">
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center text-sm font-bold">
                 <FiActivity />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                <span className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                   PriceScout Crawler Engine: 100% Operational
                 </span>
@@ -241,7 +241,7 @@ export default function HelpSupport() {
               </div>
             </div>
 
-            <span className="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <span className="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-50 dark:bg-emerald-950 px-3 py-1 rounded-full border border-emerald-200">
               All Systems Normal
             </span>
           </div>
@@ -258,21 +258,21 @@ export default function HelpSupport() {
                   onClick={() => setSelectedCategory(isSelected ? "all" : cat.id)}
                   className={`p-5 rounded-3xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
                     isSelected
-                      ? "bg-indigo-50/80 border-indigo-300 ring-2 ring-indigo-500/20 shadow-md"
-                      : "bg-white border-slate-200/80 hover:border-indigo-200 hover:shadow-md"
+                      ? "bg-indigo-50/80 dark:bg-indigo-950/80 border-indigo-300 ring-2 ring-indigo-500/20 shadow-md"
+                      : "bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 hover:border-indigo-200 hover:shadow-md"
                   }`}
                 >
                   <div className="flex items-center justify-between w-full mb-3">
                     <div className={`p-2.5 rounded-2xl border ${cat.color}`}>
                       <Icon className="text-lg" />
                     </div>
-                    <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
                       {cat.count}
                     </span>
                   </div>
 
                   <div>
-                    <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm">
+                    <h3 className="font-extrabold text-slate-900 dark:text-white text-xs sm:text-sm">
                       {cat.name}
                     </h3>
                     <p className="text-[11px] text-slate-400 mt-0.5">Common guides & FAQs</p>
@@ -286,10 +286,10 @@ export default function HelpSupport() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             {/* Left Column: FAQ Accordion */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm space-y-6">
+              <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 shadow-sm space-y-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h2 className="text-base font-extrabold text-slate-900">
+                    <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
                       Frequently Asked Questions
                     </h2>
                     <p className="text-xs text-slate-400 mt-0.5">
@@ -299,7 +299,7 @@ export default function HelpSupport() {
                   {selectedCategory !== "all" && (
                     <button
                       onClick={() => setSelectedCategory("all")}
-                      className="text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 px-3 py-1 rounded-xl cursor-pointer"
+                      className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 px-3 py-1 rounded-xl cursor-pointer"
                     >
                       Show All FAQs
                     </button>
@@ -309,7 +309,7 @@ export default function HelpSupport() {
                 {filteredFaqs.length === 0 ? (
                   <div className="text-center py-10 space-y-3">
                     <FiHelpCircle className="w-10 h-10 text-slate-300 mx-auto" />
-                    <p className="text-xs font-bold text-slate-600">
+                    <p className="text-xs font-bold text-slate-600 dark:text-slate-400">
                       No matching questions found
                     </p>
                     <p className="text-[11px] text-slate-400">
@@ -324,31 +324,31 @@ export default function HelpSupport() {
                       return (
                         <div
                           key={faq.id}
-                          className="border border-slate-200/80 rounded-2xl overflow-hidden transition"
+                          className="border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 rounded-2xl overflow-hidden transition"
                         >
                           <button
                             onClick={() => toggleFaq(faq.id)}
-                            className="w-full p-4 text-left font-bold text-slate-900 text-xs sm:text-sm flex items-center justify-between gap-4 hover:bg-slate-50 transition cursor-pointer"
+                            className="w-full p-4 text-left font-bold text-slate-900 dark:text-white text-xs sm:text-sm flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-950 dark:hover:bg-slate-800 transition cursor-pointer"
                           >
                             <span>{faq.question}</span>
                             {isOpen ? (
-                              <FiChevronUp className="text-indigo-600 shrink-0 text-base" />
+                              <FiChevronUp className="text-indigo-600 dark:text-indigo-400 shrink-0 text-base" />
                             ) : (
                               <FiChevronDown className="text-slate-400 shrink-0 text-base" />
                             )}
                           </button>
 
                           {isOpen && (
-                            <div className="p-4 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/50 space-y-3">
+                            <div className="p-4 pt-0 text-xs text-slate-600 dark:text-slate-400 leading-relaxed border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-950 space-y-3">
                               <p className="pt-2">{faq.answer}</p>
-                              <div className="flex items-center gap-4 text-[11px] text-slate-400 pt-2 border-t border-slate-200/60 font-semibold">
+                              <div className="flex items-center gap-4 text-[11px] text-slate-400 pt-2 border-t border-slate-200/60 dark:border-slate-800/60 dark:border-slate-800 font-semibold">
                                 <span>Was this helpful?</span>
                                 <button
                                   type="button"
                                   onClick={() =>
                                     showToast("Thank you for your feedback!", "success")
                                   }
-                                  className="text-indigo-600 hover:underline cursor-pointer"
+                                  className="text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer"
                                 >
                                   Yes, helpful
                                 </button>
@@ -360,7 +360,7 @@ export default function HelpSupport() {
                                       "info"
                                     )
                                   }
-                                  className="text-slate-500 hover:underline cursor-pointer"
+                                  className="text-slate-500 dark:text-slate-400 hover:underline cursor-pointer"
                                 >
                                   Needs improvement
                                 </button>
@@ -378,9 +378,9 @@ export default function HelpSupport() {
             {/* Right Column: Support Ticket Form & Contacts */}
             <div className="lg:col-span-5 space-y-6">
               {/* Submit Ticket Card */}
-              <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm space-y-5">
+              <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 shadow-sm space-y-5">
                 <div>
-                  <h2 className="text-base font-extrabold text-slate-900">
+                  <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
                     Submit Support Ticket
                   </h2>
                   <p className="text-xs text-slate-400 mt-0.5">
@@ -390,14 +390,14 @@ export default function HelpSupport() {
 
                 <form onSubmit={handleSubmitTicket} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                       Issue Category
                     </label>
                     <select
                       name="category"
                       value={ticketForm.category}
                       onChange={handleTicketChange}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs font-bold focus:bg-white focus:outline-none focus:border-indigo-500"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs font-bold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500"
                     >
                       <option value="Price Alert Issue">Price Alert Issue</option>
                       <option value="Store Crawler Sync">Store Crawler Sync</option>
@@ -410,7 +410,7 @@ export default function HelpSupport() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                       Subject
                     </label>
                     <input
@@ -419,12 +419,12 @@ export default function HelpSupport() {
                       value={ticketForm.subject}
                       onChange={handleTicketChange}
                       placeholder="e.g. Price drop alert not received on iPhone 16"
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs font-semibold focus:bg-white focus:outline-none focus:border-indigo-500"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs font-semibold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1.5">
+                    <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                       Message Details
                     </label>
                     <textarea
@@ -433,12 +433,12 @@ export default function HelpSupport() {
                       value={ticketForm.message}
                       onChange={handleTicketChange}
                       placeholder="Describe your question or product link details..."
-                      className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs font-medium focus:bg-white focus:outline-none focus:border-indigo-500 resize-none"
+                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs font-medium focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500 resize-none"
                     />
                   </div>
 
                   <div className="flex items-center justify-between pt-1">
-                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl cursor-pointer transition">
+                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl cursor-pointer transition">
                       <FiPaperclip className="text-xs" />
                       <span>Attach Screenshot</span>
                       <input
@@ -448,7 +448,7 @@ export default function HelpSupport() {
                       />
                     </label>
                     {attachmentName && (
-                      <span className="text-[11px] text-slate-500 truncate max-w-[150px] font-semibold">
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[150px] font-semibold">
                         {attachmentName}
                       </span>
                     )}
@@ -472,7 +472,7 @@ export default function HelpSupport() {
                 </h3>
 
                 <div className="space-y-3 text-xs">
-                  <div className="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/10">
+                  <div className="flex items-center justify-between p-3 bg-white/5 dark:bg-slate-900/5 dark:bg-slate-900 rounded-2xl border border-white/10">
                     <div className="flex items-center gap-2.5">
                       <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                       <span className="font-bold">Live Support Chat</span>
@@ -482,7 +482,7 @@ export default function HelpSupport() {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-white/5 rounded-2xl border border-white/10">
+                  <div className="flex items-center justify-between p-3 bg-white/5 dark:bg-slate-900/5 dark:bg-slate-900 rounded-2xl border border-white/10">
                     <div className="flex items-center gap-2.5">
                       <FiMail className="text-slate-400" />
                       <span className="font-bold">Support Email</span>

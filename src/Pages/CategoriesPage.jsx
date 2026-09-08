@@ -31,7 +31,7 @@ const CATEGORY_META = [
     department: "Electronics",
     icon: "📱",
     gradient: "from-blue-600 to-indigo-600",
-    bgLight: "bg-blue-50/70 border-blue-200/60",
+    bgLight: "bg-blue-50/70 dark:bg-blue-950/70 border-blue-200/60",
     textGradient: "from-blue-600 to-indigo-600",
     image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=300&q=80",
     description: "Compare flagships, 5G smartphones & budget champions across verified retailers.",
@@ -45,7 +45,7 @@ const CATEGORY_META = [
     department: "Electronics",
     icon: "💻",
     gradient: "from-indigo-600 to-purple-600",
-    bgLight: "bg-indigo-50/70 border-indigo-200/60",
+    bgLight: "bg-indigo-50/70 dark:bg-indigo-950/70 border-indigo-200/60",
     textGradient: "from-indigo-600 to-purple-600",
     image: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=300&q=80",
     description: "MacBooks, ultrabooks, thin & lights, and high-performance gaming laptops.",
@@ -59,7 +59,7 @@ const CATEGORY_META = [
     department: "Audio",
     icon: "🎧",
     gradient: "from-violet-600 to-pink-600",
-    bgLight: "bg-violet-50/70 border-violet-200/60",
+    bgLight: "bg-violet-50/70 dark:bg-violet-950/70 border-violet-200/60",
     textGradient: "from-violet-600 to-pink-600",
     image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&q=80",
     description: "Active noise-canceling headphones, premium over-ears & true wireless earbuds.",
@@ -73,7 +73,7 @@ const CATEGORY_META = [
     department: "Fashion & Lifestyle",
     icon: "💎",
     gradient: "from-amber-500 to-rose-500",
-    bgLight: "bg-amber-50/70 border-amber-200/60",
+    bgLight: "bg-amber-50/70 dark:bg-amber-950/70 border-amber-200/60",
     textGradient: "from-amber-600 to-rose-600",
     image: "https://images.unsplash.com/photo-1625869016774-3a92be2ae2cd?w=300&q=80",
     description: "Designer jewelry, silver earrings, bracelets, pendants & luxury gifts.",
@@ -87,7 +87,7 @@ const CATEGORY_META = [
     department: "Fashion & Lifestyle",
     icon: "👕",
     gradient: "from-rose-500 to-orange-500",
-    bgLight: "bg-rose-50/70 border-rose-200/60",
+    bgLight: "bg-rose-50/70 dark:bg-rose-950/70 border-rose-200/60",
     textGradient: "from-rose-600 to-orange-600",
     image: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=300&q=80",
     description: "Sportswear, casual denim jeans, designer maxi dresses, ethnic kurtas & tees.",
@@ -101,7 +101,7 @@ const CATEGORY_META = [
     department: "Electronics",
     icon: "⌚",
     gradient: "from-teal-500 to-cyan-600",
-    bgLight: "bg-teal-50/70 border-teal-200/60",
+    bgLight: "bg-teal-50/70 dark:bg-teal-950/70 border-teal-200/60",
     textGradient: "from-teal-600 to-cyan-600",
     image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&q=80",
     description: "Fitness trackers, GPS running watches, cellular smartwatches & AMOLED bands.",
@@ -115,7 +115,7 @@ const CATEGORY_META = [
     department: "Electronics",
     icon: "📷",
     gradient: "from-emerald-500 to-teal-600",
-    bgLight: "bg-emerald-50/70 border-emerald-200/60",
+    bgLight: "bg-emerald-50/70 dark:bg-emerald-950/70 border-emerald-200/60",
     textGradient: "from-emerald-600 to-teal-600",
     image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=300&q=80",
     description: "Mirrorless cameras, full-frame DSLRs, vlogging cameras & action cams.",
@@ -129,7 +129,7 @@ const CATEGORY_META = [
     department: "Home & Appliances",
     icon: "📺",
     gradient: "from-red-500 to-purple-600",
-    bgLight: "bg-red-50/70 border-red-200/60",
+    bgLight: "bg-red-50/70 dark:bg-red-950/70 border-red-200/60",
     textGradient: "from-red-600 to-purple-600",
     image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=300&q=80",
     description: "4K OLED, QLED, Mini-LED smart televisions with Dolby Vision & Atmos.",
@@ -143,7 +143,7 @@ const CATEGORY_META = [
     department: "Electronics",
     icon: "📱",
     gradient: "from-sky-500 to-blue-600",
-    bgLight: "bg-sky-50/70 border-sky-200/60",
+    bgLight: "bg-sky-50/70 dark:bg-sky-950/70 border-sky-200/60",
     textGradient: "from-sky-600 to-blue-600",
     image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=300&q=80",
     description: "Productivity tablets, iPad Pro, iPad Air, Galaxy Tabs & drawing screens.",
@@ -157,7 +157,7 @@ const CATEGORY_META = [
     department: "Home & Appliances",
     icon: "🧊",
     gradient: "from-cyan-500 to-teal-600",
-    bgLight: "bg-cyan-50/70 border-cyan-200/60",
+    bgLight: "bg-cyan-50/70 dark:bg-cyan-950/70 border-cyan-200/60",
     textGradient: "from-cyan-600 to-teal-600",
     image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=300&q=80",
     description: "Smart refrigerators, washing machines, air purifiers, robotic vacuums & microwaves.",
@@ -224,7 +224,7 @@ const CategoriesPage = () => {
   }, [activePreviewCategory]);
 
   return (
-    <div className="bg-[#f8fafc] min-h-screen text-slate-800 flex flex-col font-sans">
+    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 transition-colors duration-200 flex flex-col font-sans">
       {/* App Sidebar */}
       <Sidebar />
 
@@ -235,11 +235,11 @@ const CategoriesPage = () => {
         <main className="p-4 lg:p-8 flex-1 max-w-7xl w-full mx-auto pb-24">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs text-slate-400 mb-3">
-            <Link to="/home" className="hover:text-indigo-600 transition">
+            <Link to="/home" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
               Home
             </Link>
             <FiChevronRight className="text-[10px]" />
-            <span className="text-indigo-600 font-semibold">Product Categories</span>
+            <span className="text-indigo-600 dark:text-indigo-400 font-semibold">Product Categories</span>
           </nav>
 
           {/* Hero Banner */}
@@ -264,7 +264,7 @@ const CategoriesPage = () => {
               </div>
 
               {/* Instant Search in Categories */}
-              <div className="flex items-center bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-2 max-w-md w-full shadow-inner">
+              <div className="flex items-center bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/20 rounded-2xl p-2 max-w-md w-full shadow-inner">
                 <FiSearch className="text-indigo-300 ml-3 text-base" />
                 <input
                   type="text"
@@ -287,7 +287,7 @@ const CategoriesPage = () => {
             {/* Quick Metrics */}
             <div className="mt-8 pt-5 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-slate-300">
               <div className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-base">
+                <span className="w-8 h-8 rounded-xl bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 flex items-center justify-center text-base">
                   🗂️
                 </span>
                 <div>
@@ -297,7 +297,7 @@ const CategoriesPage = () => {
               </div>
 
               <div className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-base">
+                <span className="w-8 h-8 rounded-xl bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 flex items-center justify-center text-base">
                   🏬
                 </span>
                 <div>
@@ -307,7 +307,7 @@ const CategoriesPage = () => {
               </div>
 
               <div className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-base">
+                <span className="w-8 h-8 rounded-xl bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 flex items-center justify-center text-base">
                   ⚡
                 </span>
                 <div>
@@ -317,7 +317,7 @@ const CategoriesPage = () => {
               </div>
 
               <div className="flex items-center gap-2.5">
-                <span className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-base">
+                <span className="w-8 h-8 rounded-xl bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 flex items-center justify-center text-base">
                   🏷️
                 </span>
                 <div>
@@ -339,7 +339,7 @@ const CategoriesPage = () => {
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer shrink-0 ${
                     isSelected
                       ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
-                      : "bg-white border border-slate-200/80 text-slate-700 hover:border-indigo-300 hover:bg-slate-50"
+                      : "bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 text-slate-700 dark:text-slate-300 hover:border-indigo-300 hover:bg-slate-50 dark:hover:bg-slate-950"
                   }`}
                 >
                   {dept}
@@ -358,10 +358,10 @@ const CategoriesPage = () => {
                 <div
                   key={cat.name}
                   onClick={() => setActivePreviewCategory(cat.name)}
-                  className={`group bg-white rounded-3xl border transition-all duration-300 p-6 flex flex-col justify-between relative cursor-pointer hover:-translate-y-1 hover:shadow-xl ${
+                  className={`group bg-white dark:bg-slate-900 rounded-3xl border transition-all duration-300 p-6 flex flex-col justify-between relative cursor-pointer hover:-translate-y-1 hover:shadow-xl ${
                     isSelected
                       ? "border-indigo-500 ring-2 ring-indigo-500/20 shadow-lg"
-                      : "border-slate-200/80 hover:border-indigo-300 shadow-sm"
+                      : "border-slate-200/80 dark:border-slate-800/80 hover:border-indigo-300 shadow-sm"
                   }`}
                 >
                   <div>
@@ -374,22 +374,22 @@ const CategoriesPage = () => {
                           {cat.icon}
                         </div>
                         <div>
-                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">
+                          <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 px-2 py-0.5 rounded-md">
                             {cat.department}
                           </span>
-                          <h3 className="font-extrabold text-base text-slate-900 mt-1 group-hover:text-indigo-600 transition">
+                          <h3 className="font-extrabold text-base text-slate-900 dark:text-white mt-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
                             {cat.name}
                           </h3>
                         </div>
                       </div>
 
-                      <span className="bg-slate-100 text-slate-700 font-extrabold text-xs px-2.5 py-1 rounded-full shrink-0">
+                      <span className="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-extrabold text-xs px-2.5 py-1 rounded-full shrink-0">
                         {count} Deals
                       </span>
                     </div>
 
                     {/* Description */}
-                    <p className="text-xs text-slate-500 leading-relaxed mb-4">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
                       {cat.description}
                     </p>
 
@@ -402,7 +402,7 @@ const CategoriesPage = () => {
                         {cat.topBrands.slice(0, 5).map((brand) => (
                           <span
                             key={brand}
-                            className="bg-slate-50 border border-slate-200/70 text-slate-600 text-[11px] font-semibold px-2 py-0.5 rounded-md"
+                            className="bg-slate-50 dark:bg-slate-950 border border-slate-200/70 dark:border-slate-800/70 dark:border-slate-800 text-slate-600 dark:text-slate-400 text-[11px] font-semibold px-2 py-0.5 rounded-md"
                           >
                             {brand}
                           </span>
@@ -412,12 +412,12 @@ const CategoriesPage = () => {
                   </div>
 
                   {/* Card Footer: Starting price & Navigation */}
-                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between mt-2">
+                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between mt-2">
                     <div>
                       <span className="text-[10px] text-slate-400 font-medium block">
                         Deals starting from
                       </span>
-                      <span className="text-sm font-extrabold text-slate-900">
+                      <span className="text-sm font-extrabold text-slate-900 dark:text-white">
                         ₹{cat.minPriceEstimate.toLocaleString()}
                       </span>
                     </div>
@@ -440,16 +440,16 @@ const CategoriesPage = () => {
 
           {/* Featured Deals Spotlight for Selected Category */}
           {previewProducts.length > 0 && (
-            <section className="bg-white rounded-3xl border border-slate-200/80 p-6 lg:p-8 shadow-sm mb-12">
+            <section className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-6 lg:p-8 shadow-sm mb-12">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-xl">🔥</span>
-                    <h2 className="text-xl font-extrabold text-slate-900">
+                    <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">
                       Trending in {activePreviewCategory}
                     </h2>
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     Hand-picked verified deals with the highest price-to-value rating.
                   </p>
                 </div>
@@ -463,7 +463,7 @@ const CategoriesPage = () => {
                       )}`
                     )
                   }
-                  className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-400 flex items-center gap-1 cursor-pointer"
                 >
                   <span>View All in {activePreviewCategory}</span>
                   <FiArrowRight />
@@ -486,11 +486,11 @@ const CategoriesPage = () => {
                           navigate(`/product/${product.id}`);
                         }
                       }}
-                      className="group bg-slate-50/70 hover:bg-white rounded-2xl border border-slate-200/80 hover:border-indigo-300 p-4 transition-all duration-200 flex flex-col justify-between cursor-pointer hover:shadow-md"
+                      className="group bg-slate-50/70 dark:bg-slate-950/70 dark:bg-slate-950 hover:bg-white dark:hover:bg-slate-900 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-indigo-300 p-4 transition-all duration-200 flex flex-col justify-between cursor-pointer hover:shadow-md"
                     >
                       <div>
                         {/* Image */}
-                        <div className="w-full h-36 bg-white rounded-xl p-3 flex items-center justify-center mb-3 border border-slate-100 overflow-hidden select-none">
+                        <div className="w-full h-36 bg-white dark:bg-slate-900 rounded-xl p-3 flex items-center justify-center mb-3 border border-slate-100 dark:border-slate-800 overflow-hidden select-none">
                           <img
                             src={product.image}
                             alt={product.name}
@@ -514,17 +514,17 @@ const CategoriesPage = () => {
                           )}
                         </div>
 
-                        <h4 className="font-bold text-xs text-slate-900 line-clamp-2 group-hover:text-indigo-600 transition">
+                        <h4 className="font-bold text-xs text-slate-900 dark:text-white line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
                           {product.name}
                         </h4>
                       </div>
 
-                      <div className="mt-3 pt-2.5 border-t border-slate-200/60">
+                      <div className="mt-3 pt-2.5 border-t border-slate-200/60 dark:border-slate-800/60 dark:border-slate-800">
                         <div className="flex items-baseline justify-between mb-2.5">
-                          <span className="text-sm font-black text-slate-900">
+                          <span className="text-sm font-black text-slate-900 dark:text-white">
                             ₹{product.price.toLocaleString()}
                           </span>
-                          <span className="text-[10px] text-slate-500 font-semibold">
+                          <span className="text-[10px] text-slate-500 dark:text-slate-400 font-semibold">
                             {product.store}
                           </span>
                         </div>
@@ -553,42 +553,42 @@ const CategoriesPage = () => {
 
           {/* Bottom Statistics Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-2xl font-bold">
                 📦
               </div>
               <div>
-                <div className="text-xl font-black text-slate-900">15,000+</div>
+                <div className="text-xl font-black text-slate-900 dark:text-white">15,000+</div>
                 <div className="text-xs font-semibold text-slate-400">Products Tracked</div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl font-bold">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950 text-purple-600 flex items-center justify-center text-2xl font-bold">
                 🏪
               </div>
               <div>
-                <div className="text-xl font-black text-slate-900">7+ Stores</div>
+                <div className="text-xl font-black text-slate-900 dark:text-white">7+ Stores</div>
                 <div className="text-xs font-semibold text-slate-400">Multi-Retailer Engine</div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl font-bold">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950 text-amber-600 flex items-center justify-center text-2xl font-bold">
                 🔔
               </div>
               <div>
-                <div className="text-xl font-black text-slate-900">5,400+</div>
+                <div className="text-xl font-black text-slate-900 dark:text-white">5,400+</div>
                 <div className="text-xs font-semibold text-slate-400">Price Alerts Triggered</div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl font-bold">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center text-2xl font-bold">
                 💰
               </div>
               <div>
-                <div className="text-xl font-black text-slate-900">₹3.2 Lakh+</div>
+                <div className="text-xl font-black text-slate-900 dark:text-white">₹3.2 Lakh+</div>
                 <div className="text-xs font-semibold text-slate-400">User Savings Generated</div>
               </div>
             </div>

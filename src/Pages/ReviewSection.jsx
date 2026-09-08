@@ -45,11 +45,11 @@ const reviews = [
 
 const ReviewsSection = () => {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl mt-6">
+    <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl mt-6">
       {/* Header */}
-      <div className="border-b border-gray-200 px-4 sm:px-6 py-4 sm:py-5">
+      <div className="border-b border-gray-200 dark:border-slate-800 px-4 sm:px-6 py-4 sm:py-5">
         <h2 className="text-xl sm:text-2xl font-bold">Customer Reviews</h2>
-        <p className="text-gray-500 mt-1 text-sm sm:text-base">
+        <p className="text-gray-500 dark:text-slate-400 mt-1 text-sm sm:text-base">
           What customers are saying
         </p>
       </div>
@@ -62,7 +62,7 @@ const ReviewsSection = () => {
               4.7
             </h1>
             <p className="text-lg sm:text-xl mt-2">⭐⭐⭐⭐⭐</p>
-            <p className="text-gray-500 mt-2 text-sm sm:text-base">
+            <p className="text-gray-500 dark:text-slate-400 mt-2 text-sm sm:text-base">
               Based on 3,426 reviews
             </p>
           </div>
@@ -86,7 +86,7 @@ const ReviewsSection = () => {
                     style={{ width: `${item.percent}%` }}
                   />
                 </div>
-                <span className="text-xs sm:text-sm text-gray-500 w-10 text-right">
+                <span className="text-xs sm:text-sm text-gray-500 dark:text-slate-400 w-10 text-right">
                   {item.percent}%
                 </span>
               </div>
@@ -99,7 +99,7 @@ const ReviewsSection = () => {
           {reviews.map((review) => (
             <div
               key={review.id}
-              className="border border-gray-200 rounded-xl p-4 sm:p-5"
+              className="border border-gray-200 dark:border-slate-800 rounded-xl p-4 sm:p-5"
             >
               <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-0">
                 <div>
@@ -118,7 +118,7 @@ const ReviewsSection = () => {
                   </div>
                 </div>
 
-                <span className="text-xs sm:text-sm text-gray-500">
+                <span className="text-xs sm:text-sm text-gray-500 dark:text-slate-400">
                   {review.date}
                 </span>
               </div>
