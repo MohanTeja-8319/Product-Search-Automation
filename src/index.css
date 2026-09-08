@@ -60,15 +60,4 @@ html.dark body {
   color: #f1f5f9;
 }
 
-.dark input:not([type="checkbox"]):not([type="radio"]),
-.dark select,
-.dark textarea {
-  background-color: #0f172a !important;
-  color: #f8fafc !important;
-  border-color: #334155 !important;
-}
 
-.dark input::placeholder,
-.dark textarea::placeholder {
-  color: #64748b !important;
-}
