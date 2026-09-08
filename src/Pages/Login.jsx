@@ -83,12 +83,12 @@ export function Login() {
 
       <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-y-auto max-w-5xl w-full max-h-[calc(100dvh-2rem)] grid md:grid-cols-2">
         {/* Left Hero Graphic Section */}
-        <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 text-white p-8 lg:p-10 relative overflow-hidden">
+        <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 text-white p-6 lg:p-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
           
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-4">
               <FaShoppingBag className="text-purple-300" /> Smart Price Intelligence
             </div>
             <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight">Product Search</h1>
@@ -98,7 +98,7 @@ export function Login() {
             </p>
           </div>
 
-          <div className="relative z-10 my-6 flex justify-center">
+          <div className="relative z-10 my-3 flex justify-center">
             <img 
               src={A} 
               alt="Shopping Automation" 
@@ -114,8 +114,8 @@ export function Login() {
         </div>
 
         {/* Right Authentication Form Section */}
-        <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
-          <div className="text-center md:text-left mb-6">
+        <div className="p-6 sm:p-6 lg:p-8 flex flex-col justify-center">
+          <div className="text-center md:text-left mb-4">
             <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
               Welcome Back 👋
             </h2>
@@ -125,7 +125,7 @@ export function Login() {
           </div>
 
           {/* Quick Demo Helper */}
-          <div className="mb-5 p-3 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/80 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
+          <div className="mb-3 p-3 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/80 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
             <div className="flex items-center gap-2 text-indigo-900 dark:text-indigo-400 dark:text-indigo-200 font-medium">
               <FaBolt className="text-amber-500" />
               <span>Quick Test Access:</span>
@@ -146,20 +146,20 @@ export function Login() {
           )}
 
           {/* Email / Password Sign In Form */}
-          <form onSubmit={handleManualLogin} className="space-y-4">
+          <form onSubmit={handleManualLogin} className="space-y-3">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
                 Email Address
               </label>
               <div className="relative">
-                <FaEnvelope className="absolute top-4 left-4 text-gray-400" />
+                <FaEnvelope className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-400" />
                 <input
                   type="email"
                   required
                   placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-2.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
                 />
               </div>
             </div>
@@ -169,19 +169,19 @@ export function Login() {
                 Password
               </label>
               <div className="relative">
-                <FaLock className="absolute top-4 left-4 text-gray-400" />
+                <FaLock className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-400" />
                 <input
                   type={showPassword ? "text" : "password"}
                   required
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-12 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-2.5 pl-12 pr-12 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
                   aria-label="Toggle password visibility"
                 >
                   {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -211,7 +211,7 @@ export function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 active:scale-[0.99] text-white font-bold py-3.5 rounded-2xl text-sm transition shadow-lg shadow-indigo-200 dark:shadow-none flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 active:scale-[0.99] text-white font-bold py-2.5 rounded-2xl text-sm transition shadow-lg shadow-indigo-200 dark:shadow-none flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -222,7 +222,7 @@ export function Login() {
           </form>
 
           {/* Divider directly down of the Sign In button */}
-          <div className="flex items-center my-5">
+          <div className="flex items-center my-3">
             <div className="flex-1 border-t border-gray-200 dark:border-slate-800 dark:border-gray-700"></div>
             <span className="px-3 text-xs uppercase font-bold text-gray-400">OR CONTINUE WITH</span>
             <div className="flex-1 border-t border-gray-200 dark:border-slate-800 dark:border-gray-700"></div>
@@ -232,7 +232,7 @@ export function Login() {
           <button
             type="button"
             onClick={() => setGoogleModalOpen(true)}
-            className="w-full border border-gray-200 dark:border-slate-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 bg-white dark:bg-slate-800/60 text-gray-700 dark:text-gray-200 py-3.5 px-4 rounded-2xl flex items-center justify-center gap-3 font-semibold text-sm transition-all duration-200 shadow-sm cursor-pointer hover:border-indigo-200 group"
+            className="w-full border border-gray-200 dark:border-slate-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 bg-white dark:bg-slate-800/60 text-gray-700 dark:text-gray-200 py-2.5 px-4 rounded-2xl flex items-center justify-center gap-3 font-semibold text-sm transition-all duration-200 shadow-sm cursor-pointer hover:border-indigo-200 group"
           >
             <svg className="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
               <path
@@ -255,14 +255,14 @@ export function Login() {
             <span>Continue with Google</span>
           </button>
 
-          <p className="text-center text-xs text-gray-600 dark:text-gray-400 mt-6">
+          <p className="text-center text-xs text-gray-600 dark:text-gray-400 mt-4">
             Don't have an account?
             <Link to="/register" className="text-indigo-600 dark:text-indigo-400 font-bold ml-1.5 hover:underline">
               Create Free Account
             </Link>
           </p>
 
-          <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800 text-center">
+          <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 text-center">
             <Link
               to="/admin/login"
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 dark:hover:bg-purple-900/60 px-3.5 py-1.5 rounded-xl transition"
@@ -350,12 +350,12 @@ const handleSubmit = async (e) => {
 
       <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-y-auto max-w-5xl w-full max-h-[calc(100dvh-2rem)] grid md:grid-cols-2">
         {/* Left Informative Panel */}
-        <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 text-white p-8 lg:p-10 relative overflow-hidden">
+        <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 text-white p-6 lg:p-8 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
           
           <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-4">
               🚀 Start Saving Money
             </div>
             <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight">Join Us Today</h1>
@@ -364,7 +364,7 @@ const handleSubmit = async (e) => {
             </p>
           </div>
 
-          <div className="relative z-10 my-6 flex justify-center">
+          <div className="relative z-10 my-3 flex justify-center">
             <img
               src="https://cdn-icons-png.flaticon.com/512/891/891462.png"
               alt="Join Platform"
@@ -379,8 +379,8 @@ const handleSubmit = async (e) => {
         </div>
 
         {/* Right Form Section */}
-        <div className="p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
-          <div className="text-center md:text-left mb-6">
+        <div className="p-6 sm:p-6 lg:p-8 flex flex-col justify-center">
+          <div className="text-center md:text-left mb-4">
             <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
               Create Account ✨
             </h2>
@@ -395,13 +395,13 @@ const handleSubmit = async (e) => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
                 Full Name
               </label>
               <div className="relative">
-                <FaUser className="absolute top-4 left-4 text-gray-400" />
+                <FaUser className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-400" />
                 <input
                   type="text"
                   name="fullName"
@@ -409,7 +409,7 @@ const handleSubmit = async (e) => {
                   placeholder="e.g. Mohan Teja"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-2.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
                 />
               </div>
             </div>
@@ -419,7 +419,7 @@ const handleSubmit = async (e) => {
                 Email Address
               </label>
               <div className="relative">
-                <FaEnvelope className="absolute top-4 left-4 text-gray-400" />
+                <FaEnvelope className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-400" />
                 <input
                   type="email"
                   name="email"
@@ -427,7 +427,7 @@ const handleSubmit = async (e) => {
                   placeholder="name@example.com"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-2.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
                 />
               </div>
             </div>
@@ -438,7 +438,7 @@ const handleSubmit = async (e) => {
                   Password
                 </label>
                 <div className="relative">
-                  <FaLock className="absolute top-4 left-3 text-gray-400 text-xs" />
+                  <FaLock className="absolute top-1/2 -translate-y-1/2 left-3 text-gray-400 text-xs" />
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
@@ -446,12 +446,12 @@ const handleSubmit = async (e) => {
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full text-xs border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-9 pr-9 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                    className="w-full text-xs border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-2.5 pl-9 pr-9 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-4 text-gray-400 hover:text-gray-600 transition"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
                   >
                     {showPassword ? <FaEyeSlash className="text-xs" /> : <FaEye className="text-xs" />}
                   </button>
@@ -463,7 +463,7 @@ const handleSubmit = async (e) => {
                   Confirm
                 </label>
                 <div className="relative">
-                  <FaLock className="absolute top-4 left-3 text-gray-400 text-xs" />
+                  <FaLock className="absolute top-1/2 -translate-y-1/2 left-3 text-gray-400 text-xs" />
                   <input
                     type={showConfirm ? "text" : "password"}
                     name="confirmPassword"
@@ -471,12 +471,12 @@ const handleSubmit = async (e) => {
                     placeholder="Confirm"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full text-xs border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-3.5 pl-9 pr-9 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
+                    className="w-full text-xs border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-2.5 pl-9 pr-9 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirm(!showConfirm)}
-                    className="absolute right-3 top-4 text-gray-400 hover:text-gray-600 transition"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
                   >
                     {showConfirm ? <FaEyeSlash className="text-xs" /> : <FaEye className="text-xs" />}
                   </button>
@@ -500,7 +500,7 @@ const handleSubmit = async (e) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 active:scale-[0.99] text-white font-bold py-3.5 rounded-2xl text-sm transition shadow-lg shadow-indigo-200 dark:shadow-none flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 active:scale-[0.99] text-white font-bold py-2.5 rounded-2xl text-sm transition shadow-lg shadow-indigo-200 dark:shadow-none flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -511,7 +511,7 @@ const handleSubmit = async (e) => {
           </form>
 
           {/* Divider directly down of the Sign Up button */}
-          <div className="flex items-center my-5">
+          <div className="flex items-center my-3">
             <div className="flex-1 border-t border-gray-200 dark:border-slate-800 dark:border-gray-700"></div>
             <span className="px-3 text-xs uppercase font-bold text-gray-400">OR REGISTER WITH</span>
             <div className="flex-1 border-t border-gray-200 dark:border-slate-800 dark:border-gray-700"></div>
@@ -521,7 +521,7 @@ const handleSubmit = async (e) => {
           <button
             type="button"
             onClick={() => setGoogleModalOpen(true)}
-            className="w-full border border-gray-200 dark:border-slate-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 bg-white dark:bg-slate-800/60 text-gray-700 dark:text-gray-200 py-3.5 px-4 rounded-2xl flex items-center justify-center gap-3 font-semibold text-sm transition-all duration-200 shadow-sm cursor-pointer hover:border-indigo-200 group"
+            className="w-full border border-gray-200 dark:border-slate-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 bg-white dark:bg-slate-800/60 text-gray-700 dark:text-gray-200 py-2.5 px-4 rounded-2xl flex items-center justify-center gap-3 font-semibold text-sm transition-all duration-200 shadow-sm cursor-pointer hover:border-indigo-200 group"
           >
             <svg className="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
               <path
@@ -544,7 +544,7 @@ const handleSubmit = async (e) => {
             <span>Sign up with Google</span>
           </button>
 
-          <p className="text-center text-xs text-gray-600 dark:text-gray-400 mt-6">
+          <p className="text-center text-xs text-gray-600 dark:text-gray-400 mt-4">
             Already have an account?
             <Link to="/" className="text-indigo-600 dark:text-indigo-400 font-bold ml-1.5 hover:underline">
               Sign In
@@ -605,14 +605,14 @@ export function Logout() {
               <button
                 type="button"
                 onClick={() => navigate("/home")}
-                className="w-1/2 border border-gray-200 dark:border-slate-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300 font-bold py-3.5 rounded-2xl text-sm transition cursor-pointer"
+                className="w-1/2 border border-gray-200 dark:border-slate-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300 font-bold py-2.5 rounded-2xl text-sm transition cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleConfirmLogout}
-                className="w-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3.5 rounded-2xl text-sm transition cursor-pointer shadow-lg shadow-indigo-200 dark:shadow-none"
+                className="w-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-2.5 rounded-2xl text-sm transition cursor-pointer shadow-lg shadow-indigo-200 dark:shadow-none"
               >
                 Sign Out
               </button>
@@ -650,7 +650,7 @@ export function Logout() {
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3.5 rounded-2xl text-sm transition cursor-pointer shadow-lg shadow-indigo-200"
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-2.5 rounded-2xl text-sm transition cursor-pointer shadow-lg shadow-indigo-200"
             >
               Sign In Again
             </button>
