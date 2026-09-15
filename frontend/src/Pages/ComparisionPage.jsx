@@ -11,7 +11,6 @@ import SummaryCards from "./SummaryCards";
 import PriceHistory from "./PriceHistory";
 import Recommendation from "./Recommendation";
 import StoreOffers from "./StoreOffers";
-import EMICalculator from "./EMICalaculator";
 import PriceAlert from "./PriceAlert";
 import ReviewsSection from "./ReviewSection";
 import RelatedProducts from "./RelatedProducts";
@@ -24,13 +23,60 @@ import ComparisonTable from "./ComparisionTable";
 
 import comparisonProducts from "../data/comparisionProducts";
 import dummyProducts from "../data/products";
+import { getLiveComparison } from "../utils/api";
 
 const ComparisonPage = () => {
   const navigate = useNavigate();
   const { productName } = useParams();
 
   const decodedName = decodeURIComponent(productName);
-  const comparison = comparisonProducts[decodedName];
+  const staticComparison = comparisonProducts[decodedName];
+  const [liveComparison, setLiveComparison] = React.useState(null);
+  const [loadingLiveComparison, setLoadingLiveComparison] = React.useState(!staticComparison);
+  const [liveComparisonError, setLiveComparisonError] = React.useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (staticComparison?.length) {
+      setLoadingLiveComparison(false);
+      return undefined;
+    }
+
+    setLoadingLiveComparison(true);
+    getLiveComparison(decodedName)
+      .then((response) => {
+        if (!cancelled) {
+          const liveItems = response?.product?.comparison || [];
+          const requiredStores = ["Amazon", "Flipkart", "Myntra"];
+          const stores = new Set(liveItems.map((item) => item.store));
+          const existsOnAllStores = requiredStores.every((store) => stores.has(store));
+
+          if (existsOnAllStores) {
+            setLiveComparison(liveItems);
+          } else {
+            setLiveComparison(null);
+            setLiveComparisonError(
+              "This product is not available on all three live stores (Amazon, Flipkart and Myntra)."
+            );
+          }
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          setLiveComparisonError(error.message || "Unable to load live comparison.");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingLiveComparison(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [decodedName, staticComparison]);
+
+  const comparison = staticComparison?.length ? staticComparison : liveComparison;
 
   useEffect(() => {
     if (comparison && comparison.length > 0) {
@@ -56,10 +102,30 @@ const ComparisonPage = () => {
     }
   }, [comparison, decodedName]);
 
+  if (loadingLiveComparison) {
+    return (
+      <div className="min-h-screen flex justify-center items-center px-4 text-center">
+        <div>
+          <div className="text-2xl font-bold">Loading live comparison…</div>
+          <p className="text-sm text-slate-500 mt-2">Checking Amazon, Flipkart and Myntra.</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!comparison) {
     return (
       <div className="min-h-screen flex justify-center items-center px-4 text-center">
-        <h1 className="text-2xl sm:text-3xl font-bold">No Comparison Available</h1>
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold">No Comparison Available</h1>
+          <p className="text-sm text-slate-500 mt-2">{liveComparisonError || "This product is not available from multiple stores."}</p>
+          <button
+            onClick={() => navigate(-1)}
+            className="mt-5 px-4 py-2 bg-indigo-600 text-white rounded-lg font-semibold"
+          >
+            Back to Search
+          </button>
+        </div>
       </div>
     );
   }
@@ -135,8 +201,6 @@ const ComparisonPage = () => {
               lowestPrice={lowestPrice}
             />
 
-            {/* EMI */}
-            <EMICalculator price={bestDeal.price} />
 
             {/* Price Alert */}
             <PriceAlert currentPrice={bestDeal.price} />

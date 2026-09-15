@@ -31,12 +31,13 @@ import {
 import { FaHeart, FaStar, FaStore, FaExchangeAlt, FaFire } from "react-icons/fa";
 
 import dummyProducts from "../data/products.js";
-import comparisonProducts from "../data/comparisionProducts";
+import staticComparisonProducts from "../data/comparisionProducts";
 
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import groupProducts from "../utils/groupProducts";
 import { toggleWishlistItem, isProductInWishlist } from "../utils/wishlistHelper";
+import { searchLiveProducts } from "../utils/api";
 
 // Store Logo Config & Badges
 const STORE_CONFIG = {
@@ -45,7 +46,6 @@ const STORE_CONFIG = {
   Croma: { bg: "bg-[#00838f] text-white", border: "border-teal-700", char: "croma", label: "Croma" },
   Myntra: { bg: "bg-gradient-to-r from-[#ff3f6c] to-[#ff527b] text-white", border: "border-pink-500", char: "M", label: "Myntra" },
   Ajio: { bg: "bg-[#2c4152] text-white", border: "border-slate-600", char: "AJIO", label: "Ajio" },
-  "Reliance Digital": { bg: "bg-[#e42529] text-white", border: "border-red-600", char: "RD", label: "Reliance" },
   "Apple Store": { bg: "bg-black text-white", border: "border-gray-900", char: "", label: "Apple" },
 };
 
@@ -603,6 +603,7 @@ const ProductGridCard = ({
   const inWishlist = isProductInWishlist(product.name);
   const comparison = comparisonProducts[product.name];
   const hasComparison = !!comparison && comparison.length > 0;
+  const isLiveProduct = product.live === true;
   const storeDetail = getStoreDetails(product.store);
 
   // Price calculations
@@ -610,7 +611,10 @@ const ProductGridCard = ({
   const savings = Math.max(0, originalPrice - product.price);
 
   const handleCardClick = () => {
-    if (hasComparison) {
+    if (hasComparison || isLiveProduct) {
+      // Live products do not exist in the old dummyProducts array.
+      // Always send live results to the live Comparison Page, which fetches
+      // the comparison by product name from the backend.
       navigate(`/comparison/${encodeURIComponent(product.name)}`);
     } else {
       navigate(`/product/${product.id}`);
@@ -793,7 +797,7 @@ const ProductGridCard = ({
               }}
               className="flex-1 py-2.5 px-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-bold rounded-xl transition duration-200 shadow-sm hover:shadow flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <span>{hasComparison ? "Compare Stores" : "View Details"}</span>
+              <span>{hasComparison || isLiveProduct ? "Compare Stores" : "View Details"}</span>
               <FiArrowRight className="text-xs" />
             </button>
 
@@ -826,13 +830,14 @@ const ProductListCard = ({
   const inWishlist = isProductInWishlist(product.name);
   const comparison = comparisonProducts[product.name];
   const hasComparison = !!comparison && comparison.length > 0;
+  const isLiveProduct = product.live === true;
   const storeDetail = getStoreDetails(product.store);
 
   const originalPrice = product.originalPrice || Math.round(product.price * 1.12);
   const savings = Math.max(0, originalPrice - product.price);
 
   const handleCardClick = () => {
-    if (hasComparison) {
+    if (hasComparison || isLiveProduct) {
       navigate(`/comparison/${encodeURIComponent(product.name)}`);
     } else {
       navigate(`/product/${product.id}`);
@@ -1030,6 +1035,7 @@ const ComparisonTableView = ({
             {products.map((product) => {
               const comparison = comparisonProducts[product.name];
               const hasComparison = !!comparison && comparison.length > 0;
+              const isLiveProduct = product.live === true;
               const storeDetail = getStoreDetails(product.store);
               const inWishlist = isProductInWishlist(product.name);
               const isCompared = isComparedList.some((p) => p.id === product.id);
@@ -1038,7 +1044,7 @@ const ComparisonTableView = ({
                 <tr
                   key={product.id}
                   onClick={() => {
-                    if (hasComparison) {
+                    if (hasComparison || isLiveProduct) {
                       navigate(`/comparison/${encodeURIComponent(product.name)}`);
                     } else {
                       navigate(`/product/${product.id}`);
@@ -1176,7 +1182,7 @@ const ComparisonTableView = ({
                         }}
                         className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-lg transition shadow-xs cursor-pointer"
                       >
-                        {hasComparison ? "Compare" : "View"}
+                        {hasComparison || isLiveProduct ? "Compare" : "View"}
                       </button>
                     </div>
                   </td>
@@ -1505,6 +1511,100 @@ const SearchPage = () => {
 
   // Search input state
   const [searchInput, setSearchInput] = useState(query);
+  const [liveProducts, setLiveProducts] = useState([]);
+  const [liveComparisonProducts, setLiveComparisonProducts] = useState({});
+  const [liveLoading, setLiveLoading] = useState(false);
+  const [liveSearchError, setLiveSearchError] = useState("");
+
+  // Live search uses the backend so the QuickCommerce API key never reaches the browser.
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!query.trim()) {
+      setLiveProducts([]);
+      setLiveComparisonProducts({});
+      setLiveSearchError("");
+      setLiveLoading(false);
+      return undefined;
+    }
+
+    setLiveLoading(true);
+    setLiveSearchError("");
+
+    searchLiveProducts(query.trim())
+      .then((response) => {
+        if (cancelled) return;
+        const products = Array.isArray(response?.products)
+          ? response.products
+          : Array.isArray(response?.data?.products)
+            ? response.data.products
+            : Array.isArray(response?.data)
+              ? response.data
+              : response?.product
+                ? [response.product]
+                : [];
+
+        const comparisonMap = {};
+
+        // A live comparison is valid only when the exact product
+        // is available on all three stores used by this project.
+        const requiredStores = ["Amazon", "Flipkart", "Myntra"];
+
+        products.forEach((product) => {
+          const comparison = Array.isArray(product?.comparison)
+            ? product.comparison
+            : [];
+
+          const normalizedComparison = comparison.filter((item) => {
+            const store = String(item?.store || "").trim().toLowerCase();
+            return requiredStores.some(
+              (requiredStore) => store === requiredStore.toLowerCase()
+            );
+          });
+
+          const stores = new Set(
+            normalizedComparison.map((item) =>
+              String(item?.store || "").trim().toLowerCase()
+            )
+          );
+
+          const existsOnAllStores = requiredStores.every((store) =>
+            stores.has(store.toLowerCase())
+          );
+
+          if (existsOnAllStores && product?.name) {
+            // Keep exactly one offer per store.
+            const uniqueComparison = requiredStores
+              .map((store) =>
+                normalizedComparison.find(
+                  (item) =>
+                    String(item?.store || "").trim().toLowerCase() ===
+                    store.toLowerCase()
+                )
+              )
+              .filter(Boolean);
+
+            comparisonMap[product.name] = uniqueComparison;
+          }
+        });
+
+        setLiveProducts(products);
+        setLiveComparisonProducts(comparisonMap);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setLiveProducts([]);
+        setLiveComparisonProducts({});
+        setLiveSearchError(error.message || "Unable to load live products.");
+        })
+      .finally(() => {
+        if (!cancelled) setLiveLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [query]);
 
   useEffect(() => {
     setSearchInput(query);
@@ -1522,32 +1622,46 @@ const SearchPage = () => {
     setWishlistUpdateFlag((prev) => prev + 1);
   };
 
+  const sourceProducts = query.trim() ? liveProducts : dummyProducts;
+  const comparisonData = query.trim()
+    ? liveComparisonProducts
+    : staticComparisonProducts;
+
   // Distinct Filter options
-  const brands = useMemo(() => [...new Set(dummyProducts.map((p) => p.brand))].sort(), []);
-  const categories = useMemo(() => [...new Set(dummyProducts.map((p) => p.category))].sort(), []);
-  const stores = useMemo(() => [...new Set(dummyProducts.map((p) => p.store))].sort(), []);
+  const brands = useMemo(
+    () => [...new Set(sourceProducts.map((p) => p.brand).filter(Boolean))].sort(),
+    [sourceProducts]
+  );
+  const categories = useMemo(
+    () => [...new Set(sourceProducts.map((p) => p.category).filter(Boolean))].sort(),
+    [sourceProducts]
+  );
+  const stores = useMemo(
+    () => [...new Set(sourceProducts.map((p) => p.store).filter(Boolean))].sort(),
+    [sourceProducts]
+  );
 
   // Counts
   const brandCounts = useMemo(() => {
     return brands.reduce((acc, b) => {
-      acc[b] = dummyProducts.filter((p) => p.brand === b).length;
+      acc[b] = sourceProducts.filter((p) => p.brand === b).length;
       return acc;
     }, {});
-  }, [brands]);
+  }, [brands, sourceProducts]);
 
   const categoryCounts = useMemo(() => {
     return categories.reduce((acc, c) => {
-      acc[c] = dummyProducts.filter((p) => p.category === c).length;
+      acc[c] = sourceProducts.filter((p) => p.category === c).length;
       return acc;
     }, {});
-  }, [categories]);
+  }, [categories, sourceProducts]);
 
   const storeCounts = useMemo(() => {
     return stores.reduce((acc, s) => {
-      acc[s] = dummyProducts.filter((p) => p.store === s).length;
+      acc[s] = sourceProducts.filter((p) => p.store === s).length;
       return acc;
     }, {});
-  }, [stores]);
+  }, [stores, sourceProducts]);
 
   // Filter Handlers
   const handleBrandChange = (brand) => {
@@ -1618,14 +1732,14 @@ const SearchPage = () => {
 
   // Search Filter Pipeline
   const filteredProducts = useMemo(() => {
-    let list = dummyProducts.filter((product) => {
+    let list = sourceProducts.filter((product) => {
       const term = query.toLowerCase().trim();
       const matchesSearch =
         !term ||
-        product.name.toLowerCase().includes(term) ||
-        product.brand.toLowerCase().includes(term) ||
-        product.category.toLowerCase().includes(term) ||
-        product.store.toLowerCase().includes(term);
+        String(product.name || "").toLowerCase().includes(term) ||
+        String(product.brand || "").toLowerCase().includes(term) ||
+        String(product.category || "").toLowerCase().includes(term) ||
+        String(product.store || "").toLowerCase().includes(term);
 
       const matchesBrand =
         selectedBrands.length === 0 || selectedBrands.includes(product.brand);
@@ -1635,8 +1749,9 @@ const SearchPage = () => {
         selectedStores.length === 0 || selectedStores.includes(product.store);
       const matchesRating =
         selectedRatings.length === 0 || selectedRatings.some((r) => product.rating >= r);
+      const numericPrice = Number(product.price) || 0;
       const matchesPrice =
-        product.price >= minPrice && product.price <= maxPrice;
+        numericPrice >= minPrice && numericPrice <= maxPrice;
 
       const discountVal = parseFloat(product.discount) || 0;
       const matchesDiscount = discountVal >= selectedDiscount;
@@ -1656,15 +1771,15 @@ const SearchPage = () => {
     });
 
     // Grouping
-    const grouped = [...groupProducts(list)];
+    const grouped = query.trim() ? [...list] : [...groupProducts(list)];
 
     // Sorting
     switch (sortBy) {
       case "low-high":
-        grouped.sort((a, b) => a.price - b.price);
+        grouped.sort((a, b) => (Number(a.price) || 0) - (Number(b.price) || 0));
         break;
       case "high-low":
-        grouped.sort((a, b) => b.price - a.price);
+        grouped.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
         break;
       case "discount":
         grouped.sort(
@@ -1693,6 +1808,7 @@ const SearchPage = () => {
     selectedDiscount,
     inStockOnly,
     sortBy,
+    sourceProducts,
   ]);
 
   // Pagination
@@ -1769,7 +1885,7 @@ const SearchPage = () => {
                 </h1>
 
                 <p className="text-slate-300 text-xs lg:text-sm mt-1.5 max-w-xl">
-                  Compare real-time prices across Amazon, Flipkart, Croma, Myntra & more to find the guaranteed lowest price.
+                  Compare live prices across Amazon, Flipkart and Myntra to find the lowest available deal.
                 </p>
               </div>
 
@@ -1815,7 +1931,7 @@ const SearchPage = () => {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-indigo-400">🏬</span>
-                <span><strong>7</strong> Verified Store Platforms</span>
+                <span><strong>3</strong> Live Store Platforms</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-amber-400">⚡</span>
@@ -1823,6 +1939,17 @@ const SearchPage = () => {
               </div>
             </div>
           </div>
+
+          {query && (liveLoading || liveSearchError) && (
+            <div className={`mb-5 rounded-xl border px-4 py-3 text-xs font-semibold ${
+              liveSearchError
+                ? "bg-rose-50 border-rose-200 text-rose-700"
+                : "bg-indigo-50 border-indigo-200 text-indigo-700"
+            }`}>
+              {liveLoading && "Searching Amazon, Flipkart and Myntra for live prices…"}
+              {!liveLoading && liveSearchError && liveSearchError}
+            </div>
+          )}
 
           {/* Quick Category Pills Bar */}
           <div className="mb-6 overflow-x-auto scrollbar-hide py-1">
@@ -1845,7 +1972,7 @@ const SearchPage = () => {
                     selectedCategories.length === 0 ? "bg-indigo-700 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
                   }`}
                 >
-                  {dummyProducts.length}
+                  {sourceProducts.length}
                 </span>
               </button>
 
@@ -2183,7 +2310,7 @@ const SearchPage = () => {
                         <ProductGridCard
                           key={product.id}
                           product={product}
-                          comparisonProducts={comparisonProducts}
+                          comparisonProducts={comparisonData}
                           onWishlistToggle={triggerWishlistUpdate}
                           isCompared={comparedProducts.some((p) => p.id === product.id)}
                           onToggleCompare={toggleCompare}
@@ -2200,7 +2327,7 @@ const SearchPage = () => {
                         <ProductListCard
                           key={product.id}
                           product={product}
-                          comparisonProducts={comparisonProducts}
+                          comparisonProducts={comparisonData}
                           onWishlistToggle={triggerWishlistUpdate}
                           isCompared={comparedProducts.some((p) => p.id === product.id)}
                           onToggleCompare={toggleCompare}
@@ -2214,7 +2341,7 @@ const SearchPage = () => {
                   {viewMode === "table" && (
                     <ComparisonTableView
                       products={currentProducts}
-                      comparisonProducts={comparisonProducts}
+                      comparisonProducts={comparisonData}
                       onWishlistToggle={triggerWishlistUpdate}
                       isComparedList={comparedProducts}
                       onToggleCompare={toggleCompare}

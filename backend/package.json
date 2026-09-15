@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "commonjs",
-  "description": "Auth backend (login/register) for Product Search Automation",
+  "description": "Authentication + live multi-store product search backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
