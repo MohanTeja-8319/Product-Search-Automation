@@ -341,7 +341,7 @@ const Home = () => {
                 <button
                   key={cat.name}
                   onClick={() =>
-                    navigate(`/search?category=${encodeURIComponent(cat.searchKey)}`)
+                    navigate(`/search?q=${encodeURIComponent(cat.searchKey)}`)
                   }
                   className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-500 rounded-2xl p-3.5 flex flex-col items-center text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
                 >

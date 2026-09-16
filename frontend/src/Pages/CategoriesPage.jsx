@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
+import { searchLiveProducts } from "../utils/api";
 import { useNavigate, Link } from "react-router-dom";
 import {
   FiSearch,
@@ -209,18 +210,23 @@ const CategoriesPage = () => {
     });
   }, [searchQuery, selectedDept]);
 
-  // Get preview deals for the active category
-  const previewProducts = useMemo(() => {
-    const activeMeta = CATEGORY_META.find((c) => c.name === activePreviewCategory);
-    const key = activeMeta ? activeMeta.searchKey.toLowerCase() : "smartphones";
-
-    const matches = dummyProducts.filter((p) => {
-      const pCat = (p.category || "").toLowerCase();
-      const pName = (p.name || "").toLowerCase();
-      return pCat.includes(key) || pName.includes(key);
-    });
-
-    return matches.slice(0, 4);
+  const [previewProducts, setPreviewProducts] = useState([]);
+  
+  useEffect(() => {
+    let active = true;
+    const fetchPreviews = async () => {
+      setPreviewProducts([]);
+      const activeMeta = CATEGORY_META.find((c) => c.name === activePreviewCategory);
+      const key = activeMeta ? activeMeta.searchKey : "smartphones";
+      try {
+        const res = await searchLiveProducts(key);
+        if (active && res && res.products) {
+          setPreviewProducts(res.products.slice(0, 4));
+        }
+      } catch (err) {}
+    };
+    fetchPreviews();
+    return () => { active = false; };
   }, [activePreviewCategory]);
 
   return (
@@ -425,7 +431,7 @@ const CategoriesPage = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/search?category=${encodeURIComponent(cat.searchKey)}`);
+                        navigate(`/search?q=${encodeURIComponent(cat.searchKey)}`);
                       }}
                       className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow-sm flex items-center gap-1.5 cursor-pointer"
                     >
@@ -457,7 +463,7 @@ const CategoriesPage = () => {
                 <button
                   onClick={() =>
                     navigate(
-                      `/search?category=${encodeURIComponent(
+                      `/search?q=${encodeURIComponent(
                         CATEGORY_META.find((c) => c.name === activePreviewCategory)?.searchKey ||
                           activePreviewCategory
                       )}`
@@ -480,11 +486,7 @@ const CategoriesPage = () => {
                     <div
                       key={product.id}
                       onClick={() => {
-                        if (hasComparison) {
-                          navigate(`/comparison/${encodeURIComponent(product.name)}`);
-                        } else {
-                          navigate(`/product/${product.id}`);
-                        }
+                        navigate(`/comparison/${encodeURIComponent(product.name)}`);
                       }}
                       className="group bg-slate-50/70 dark:bg-slate-950/70 dark:bg-slate-950 hover:bg-white dark:hover:bg-slate-900 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-indigo-300 p-4 transition-all duration-200 flex flex-col justify-between cursor-pointer hover:shadow-md"
                     >
@@ -532,15 +534,11 @@ const CategoriesPage = () => {
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (hasComparison) {
-                              navigate(`/comparison/${encodeURIComponent(product.name)}`);
-                            } else {
-                              navigate(`/product/${product.id}`);
-                            }
+                            navigate(`/comparison/${encodeURIComponent(product.name)}`);
                           }}
                           className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-1 cursor-pointer"
                         >
-                          <span>{hasComparison ? "Compare Stores" : "View Deal"}</span>
+                          <span>Compare Stores</span>
                           <FiArrowRight className="text-xs" />
                         </button>
                       </div>
