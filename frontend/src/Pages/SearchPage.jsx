@@ -233,17 +233,32 @@ export const Filters = ({
               })}
             </div>
 
-            {/* Slider */}
-            <div>
-              <input
-                type="range"
-                min="1000"
-                max="500000"
-                step="1000"
-                value={maxPrice}
-                onChange={(e) => { setMinPrice(0); setMaxPrice(Number(e.target.value)); }}
-                className="w-full accent-indigo-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg"
-              />
+            {/* Dual Sliders */}
+            <div className="flex flex-col gap-3">
+              <div>
+                <label className="text-[10px] text-slate-500 font-bold mb-1 block">Min Price Slider</label>
+                <input
+                  type="range"
+                  min="0"
+                  max="500000"
+                  step="1000"
+                  value={minPrice}
+                  onChange={(e) => setMinPrice(Math.min(Number(e.target.value), maxPrice))}
+                  className="w-full accent-indigo-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] text-slate-500 font-bold mb-1 block">Max Price Slider</label>
+                <input
+                  type="range"
+                  min="0"
+                  max="500000"
+                  step="1000"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(Math.max(Number(e.target.value), minPrice))}
+                  className="w-full accent-indigo-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg"
+                />
+              </div>
             </div>
 
             {/* Min - Max Box */}
