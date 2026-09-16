@@ -250,12 +250,12 @@ export const Filters = ({
             <div className="flex items-center justify-between gap-2 text-xs">
               <div className="flex-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-2.5 py-1.5 text-center">
                 <span className="text-[10px] text-slate-400 block font-medium">Min</span>
-                <span className="font-bold text-slate-800 dark:text-slate-100">₹{minPrice.toLocaleString()}</span>
+                <input type="number" value={minPrice} onChange={(e) => setMinPrice(Number(e.target.value))} className="w-full bg-transparent font-bold text-slate-800 dark:text-slate-100 text-center outline-none" />
               </div>
               <span className="text-slate-300 font-bold">—</span>
               <div className="flex-1 bg-slate-50 dark:bg-slate-950 border border-indigo-200 rounded-lg px-2.5 py-1.5 text-center">
                 <span className="text-[10px] text-indigo-500 block font-medium">Max</span>
-                <span className="font-bold text-indigo-700 dark:text-indigo-400">₹{maxPrice.toLocaleString()}</span>
+                <input type="number" value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))} className="w-full bg-transparent font-bold text-indigo-700 dark:text-indigo-400 text-center outline-none" />
               </div>
             </div>
           </div>
