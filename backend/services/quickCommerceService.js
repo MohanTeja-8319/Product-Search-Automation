@@ -175,8 +175,13 @@ function selectSpecificProduct(rawProducts, query) {
 }
 
 function mapPlatformProduct(item, platform) {
-  const price = Number(item.offer_price ?? item.price ?? 0);
-  const mrp = Number(item.mrp ?? 0);
+  const parsePrice = (p) => {
+    if (typeof p === "number") return p;
+    if (typeof p === "string") return Number(p.replace(/[^\d.]/g, "")) || 0;
+    return 0;
+  };
+  const price = parsePrice(item.offer_price ?? item.price ?? 0);
+  const mrp = parsePrice(item.mrp ?? 0);
 
   return {
     id: String(item.id ?? item.item_id ?? `${platform}-${Date.now()}-${Math.random()}`),
