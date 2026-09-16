@@ -22,83 +22,11 @@ import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { useNavigate, Link } from "react-router-dom";
 import comparisonProducts from "../data/comparisionProducts";
-
-// Curated Initial Alerts Seed
-const DEFAULT_ALERTS = [
-  {
-    id: 1,
-    productId: 1,
-    productName: "Apple iPhone 16 (128GB)",
-    image: "/images/apple-iphone-15.jpg",
-    currentPrice: 79999,
-    targetPrice: 72999,
-    store: "Amazon",
-    notifyPriceDrop: true,
-    notifyStock: true,
-    email: true,
-    push: true,
-    frequency: "Instant",
-    active: true,
-    createdAt: "Yesterday at 4:30 PM",
-    category: "Smartphones",
-    initialPrice: 85999,
-  },
-  {
-    id: 2,
-    productId: 51,
-    productName: "Apple MacBook Air M4 (16GB/256GB)",
-    image: "/images/macbook-air-m4.jpg",
-    currentPrice: 114999,
-    targetPrice: 104999,
-    store: "Apple Store",
-    notifyPriceDrop: true,
-    notifyStock: false,
-    email: true,
-    push: true,
-    frequency: "Instant",
-    active: true,
-    createdAt: "2 days ago",
-    category: "Laptops",
-    initialPrice: 119999,
-  },
-  {
-    id: 3,
-    productId: 3,
-    productName: "Samsung Galaxy S24 (256GB)",
-    image: "/images/s24plus.jpg",
-    currentPrice: 67999,
-    targetPrice: 68000,
-    store: "Flipkart",
-    notifyPriceDrop: true,
-    notifyStock: true,
-    email: true,
-    push: true,
-    frequency: "Instant",
-    active: false, // Triggered!
-    triggeredAt: "Today at 11:15 AM",
-    createdAt: "3 days ago",
-    category: "Smartphones",
-    initialPrice: 74999,
-  },
-  {
-    id: 4,
-    productId: 45,
-    productName: "Swarovski Diamond Drop Earrings",
-    image: "/images/diamond-drop-earrings.webp",
-    currentPrice: 4999,
-    targetPrice: 4500,
-    store: "Amazon",
-    notifyPriceDrop: true,
-    notifyStock: true,
-    email: true,
-    push: true,
-    frequency: "Daily",
-    active: true,
-    createdAt: "5 days ago",
-    category: "Accessories",
-    initialPrice: 5999,
-  },
-];
+import {
+  getAlerts,
+  updateAlert as updateAlertApi,
+  deleteAlert as deleteAlertApi,
+} from "../utils/api";
 
 const STORE_STYLES = {
   Amazon: "bg-[#131921] text-amber-400 font-bold",
@@ -110,28 +38,68 @@ const STORE_STYLES = {
   "Reliance Digital": "bg-[#e42529] text-white font-bold",
 };
 
+// Turns a Mongo ISO timestamp into a short relative label ("2 days ago").
+function formatRelativeTime(value) {
+  if (!value) return "Recently";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Recently";
+
+  const diffMs = Date.now() - date.getTime();
+  const diffSec = Math.round(diffMs / 1000);
+  const diffMin = Math.round(diffSec / 60);
+  const diffHr = Math.round(diffMin / 60);
+  const diffDay = Math.round(diffHr / 24);
+
+  if (diffSec < 60) return "Just now";
+  if (diffMin < 60) return `${diffMin} minute${diffMin === 1 ? "" : "s"} ago`;
+  if (diffHr < 24) return `${diffHr} hour${diffHr === 1 ? "" : "s"} ago`;
+  if (diffDay < 7) return `${diffDay} day${diffDay === 1 ? "" : "s"} ago`;
+  return date.toLocaleDateString();
+}
+
 const PriceAlerts = () => {
   const navigate = useNavigate();
-  const [alerts, setAlerts] = useState(() => {
-    const saved = localStorage.getItem("priceAlerts");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed.length > 0) return parsed;
-      } catch (e) {}
-    }
-    localStorage.setItem("priceAlerts", JSON.stringify(DEFAULT_ALERTS));
-    return DEFAULT_ALERTS;
-  });
+  const [alerts, setAlerts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [needsLogin, setNeedsLogin] = useState(false);
 
   const [activeTab, setActiveTab] = useState("all"); // 'all' | 'active' | 'triggered'
   const [searchQuery, setSearchQuery] = useState("");
   const [toastMessage, setToastMessage] = useState("");
 
-  // Sync to localStorage
+  // Load the logged-in user's alerts from MongoDB.
   useEffect(() => {
-    localStorage.setItem("priceAlerts", JSON.stringify(alerts));
-  }, [alerts]);
+    let cancelled = false;
+
+    async function loadAlerts() {
+      if (!localStorage.getItem("token")) {
+        setNeedsLogin(true);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setLoadError("");
+      try {
+        const res = await getAlerts();
+        if (!cancelled) {
+          setAlerts(res?.alerts || []);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setLoadError(err.message || "Could not load your price alerts.");
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    loadAlerts();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -141,55 +109,77 @@ const PriceAlerts = () => {
   };
 
   // Toggle Alert Active / Paused
-  const toggleAlertStatus = (id) => {
+  const toggleAlertStatus = async (id) => {
+    const target = alerts.find((a) => a._id === id);
+    if (!target) return;
+
+    const newStatus = !target.active;
+    // Optimistic update, rolled back if the request fails.
     setAlerts((prev) =>
-      prev.map((alert) => {
-        if (alert.id === id) {
-          const newStatus = !alert.active;
-          showToast(
-            newStatus
-              ? `Alert for "${alert.productName}" resumed.`
-              : `Alert for "${alert.productName}" paused.`
-          );
-          return { ...alert, active: newStatus };
-        }
-        return alert;
-      })
+      prev.map((alert) => (alert._id === id ? { ...alert, active: newStatus } : alert))
     );
+
+    try {
+      await updateAlertApi(id, { active: newStatus });
+      showToast(
+        newStatus
+          ? `Alert for "${target.productName}" resumed.`
+          : `Alert for "${target.productName}" paused.`
+      );
+    } catch (err) {
+      // Roll back on failure.
+      setAlerts((prev) =>
+        prev.map((alert) => (alert._id === id ? { ...alert, active: !newStatus } : alert))
+      );
+      showToast(err.message || "Could not update the alert.");
+    }
   };
 
   // Delete Alert
-  const deleteAlert = (id) => {
-    const target = alerts.find((a) => a.id === id);
-    setAlerts((prev) => prev.filter((a) => a.id !== id));
-    if (target) {
+  const deleteAlert = async (id) => {
+    const target = alerts.find((a) => a._id === id);
+    if (!target) return;
+
+    try {
+      await deleteAlertApi(id);
+      setAlerts((prev) => prev.filter((a) => a._id !== id));
       showToast(`Removed alert for "${target.productName}".`);
+    } catch (err) {
+      showToast(err.message || "Could not delete the alert.");
     }
   };
 
   // Simulate Price Drop on First Active Alert
-  const simulatePriceDrop = () => {
+  const simulatePriceDrop = async () => {
     const firstActive = alerts.find((a) => a.active);
     if (!firstActive) {
       showToast("No active alerts to trigger.");
       return;
     }
 
-    setAlerts((prev) =>
-      prev.map((alert) => {
-        if (alert.id === firstActive.id) {
-          return {
-            ...alert,
-            active: false,
-            currentPrice: Math.round(alert.targetPrice * 0.95), // Drops below target!
-            triggeredAt: "Just now",
-          };
-        }
-        return alert;
-      })
-    );
+    const newPrice = Math.round(firstActive.targetPrice * 0.95); // Drops below target!
+    const triggeredAt = new Date().toISOString();
 
-    showToast(`⚡ Price drop triggered for "${firstActive.productName}"!`);
+    try {
+      const res = await updateAlertApi(firstActive._id, {
+        active: false,
+        currentPrice: newPrice,
+        triggeredAt,
+      });
+      const updatedAlert = res?.alert;
+
+      setAlerts((prev) =>
+        prev.map((alert) =>
+          alert._id === firstActive._id
+            ? updatedAlert || { ...alert, active: false, currentPrice: newPrice, triggeredAt }
+            : alert
+        )
+      );
+
+      showToast(`⚡ Price drop triggered for "${firstActive.productName}"!`);
+    } catch (err) {
+      showToast(err.message || "Could not trigger the price drop.");
+    }
   };
 
   // Metrics
@@ -379,7 +369,47 @@ const PriceAlerts = () => {
 
           {/* Alerts List */}
           <div className="space-y-4 mb-10">
-            {displayedAlerts.length === 0 ? (
+            {needsLogin ? (
+              <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-12 text-center shadow-sm">
+                <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4 text-2xl">
+                  <FiBell />
+                </div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1">
+                  Sign in to see your price alerts
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-5">
+                  Price alerts are saved to your account so we can notify you the moment a
+                  price drops.
+                </p>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow transition cursor-pointer"
+                >
+                  Sign In
+                </button>
+              </div>
+            ) : loading ? (
+              <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-12 text-center shadow-sm">
+                <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4 text-2xl animate-spin">
+                  <FiRefreshCw />
+                </div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                  Loading your price alerts...
+                </h3>
+              </div>
+            ) : loadError ? (
+              <div className="bg-white dark:bg-slate-900 rounded-3xl border border-rose-200 dark:border-rose-900 p-12 text-center shadow-sm">
+                <div className="w-16 h-16 rounded-2xl bg-rose-50 dark:bg-rose-950 text-rose-600 flex items-center justify-center mx-auto mb-4 text-2xl">
+                  <FiAlertCircle />
+                </div>
+                <h3 className="text-base font-bold text-slate-900 dark:text-white mb-1">
+                  Could not load price alerts
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+                  {loadError}
+                </p>
+              </div>
+            ) : displayedAlerts.length === 0 ? (
               <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 p-12 text-center shadow-sm">
                 <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4 text-2xl">
                   <FiBell />
@@ -420,7 +450,7 @@ const PriceAlerts = () => {
 
                 return (
                   <div
-                    key={alert.id}
+                    key={alert._id}
                     className={`bg-white dark:bg-slate-900 rounded-2xl border transition-all duration-300 p-5 shadow-sm hover:shadow-md flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 relative ${
                       isTargetReached
                         ? "border-emerald-300 dark:border-emerald-800 ring-2 ring-emerald-100 dark:ring-emerald-900/50 bg-gradient-to-r from-white via-emerald-50/20 to-white dark:from-slate-900 dark:via-emerald-950/30 dark:to-slate-900"
@@ -470,7 +500,7 @@ const PriceAlerts = () => {
 
                         <p className="text-[11px] text-slate-400 flex items-center gap-1.5">
                           <FiClock className="text-[10px]" />
-                          Created {alert.createdAt || "Recently"}
+                          Created {formatRelativeTime(alert.createdAt)}
                           {alert.frequency && ` · ${alert.frequency} Alert`}
                         </p>
                       </div>
@@ -514,7 +544,7 @@ const PriceAlerts = () => {
                           <input
                             type="checkbox"
                             checked={alert.active}
-                            onChange={() => toggleAlertStatus(alert.id)}
+                            onChange={() => toggleAlertStatus(alert._id)}
                             className="sr-only peer"
                           />
                           <div className="relative w-10 h-5 bg-slate-200 dark:bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
@@ -545,7 +575,7 @@ const PriceAlerts = () => {
 
                       {/* Delete */}
                       <button
-                        onClick={() => deleteAlert(alert.id)}
+                        onClick={() => deleteAlert(alert._id)}
                         title="Delete Alert"
                         className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950 rounded-xl transition cursor-pointer"
                       >

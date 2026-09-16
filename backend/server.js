@@ -4,6 +4,8 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
+const profileRoutes = require("./routes/profileRoutes");
+const alertRoutes = require("./routes/alertRoutes");
 
 const app = express();
 
@@ -19,6 +21,8 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/profile", profileRoutes);
+app.use("/api/alerts", alertRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });

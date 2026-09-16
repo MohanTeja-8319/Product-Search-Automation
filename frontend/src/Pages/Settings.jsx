@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FiUser,
   FiMail,
@@ -31,6 +31,13 @@ import { FaStore, FaWhatsapp, FaKey, FaShieldAlt, FaDice, FaMagic } from "react-
 
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
+import {
+  getCurrentUser,
+  updateProfile as updateProfileApi,
+  changePassword as changePasswordApi,
+  deleteAccount as deleteAccountApi,
+  updateStoredUser,
+} from "../utils/api";
 
 // Curated Avatar Collections
 const AVATAR_COLLECTIONS = {
@@ -98,6 +105,7 @@ const BADGE_OPTIONS = [
 ];
 
 export default function Settings() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("profile");
   const [avatarCategory, setAvatarCategory] = useState("characters"); // 'characters' | 'bots' | 'artistic' | 'photos'
   const [selectedRing, setSelectedRing] = useState("indigo");
@@ -165,6 +173,11 @@ export default function Settings() {
   });
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteError, setDeleteError] = useState("");
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [savingPassword, setSavingPassword] = useState(false);
   const fileInputRef = useRef(null);
 
   // Sync ring
@@ -173,6 +186,48 @@ export default function Settings() {
       setSelectedRing(profile.accentRing);
     }
   }, [profile.accentRing]);
+
+  // Load the logged-in user's real data from the backend (via JWT) so the
+  // Edit Profile form always reflects what's actually in MongoDB and never
+  // shows blank fields for data that already exists.
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadProfileFromServer() {
+      try {
+        const res = await getCurrentUser();
+        const serverUser = res?.user;
+        if (!serverUser || cancelled) return;
+
+        setProfile((prev) => ({
+          ...prev,
+          fullName: serverUser.fullName || prev.fullName,
+          email: serverUser.email || prev.email,
+          phone: serverUser.phone || prev.phone,
+          location: serverUser.location || prev.location,
+        }));
+
+        // Keep localStorage in sync too, without touching local-only
+        // fields like avatar/badge/accentRing/provider.
+        updateStoredUser({
+          name: serverUser.fullName,
+          fullName: serverUser.fullName,
+          email: serverUser.email,
+          phone: serverUser.phone,
+          location: serverUser.location,
+        });
+      } catch (err) {
+        // If the token is missing/expired we just keep whatever was
+        // already loaded from localStorage as a fallback.
+        console.error("Failed to load profile:", err);
+      }
+    }
+
+    loadProfileFromServer();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
@@ -222,21 +277,61 @@ export default function Settings() {
   };
 
   // Save Settings & Broadcast Live Update
-  const handleSaveChanges = (e) => {
+  const handleSaveChanges = async (e) => {
     if (e) e.preventDefault();
-    const updatedUser = {
-      ...profile,
-      name: profile.fullName,
-      accentRing: selectedRing,
-    };
 
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    window.dispatchEvent(new Event("user-profile-updated"));
-    showToast("Profile & Avatar settings saved globally!", "success");
+    setSavingProfile(true);
+    try {
+      // Persist name/email/phone/location to the SAME existing user
+      // document in MongoDB — only fields that changed are sent, the
+      // backend preserves everything else.
+      const res = await updateProfileApi({
+        name: profile.fullName,
+        email: profile.email,
+        phone: profile.phone,
+        location: profile.location,
+      });
+
+      const savedUser = res?.user;
+
+      // Local-only cosmetic fields (avatar, badge, accentRing) stay in
+      // localStorage; real profile fields come back from the server so
+      // the UI reflects exactly what's stored in MongoDB.
+      const updatedUser = updateStoredUser({
+        name: savedUser?.fullName ?? profile.fullName,
+        fullName: savedUser?.fullName ?? profile.fullName,
+        email: savedUser?.email ?? profile.email,
+        phone: savedUser?.phone ?? profile.phone,
+        location: savedUser?.location ?? profile.location,
+        avatar: profile.avatar,
+        badge: profile.badge,
+        accentRing: selectedRing,
+        provider: profile.provider,
+      });
+
+      setProfile((prev) => ({
+        ...prev,
+        fullName: updatedUser.fullName || updatedUser.name || prev.fullName,
+        email: updatedUser.email || prev.email,
+        phone: updatedUser.phone ?? prev.phone,
+        location: updatedUser.location ?? prev.location,
+        accentRing: selectedRing,
+      }));
+
+      showToast(res?.message || "Profile saved successfully!", "success");
+    } catch (err) {
+      showToast(err.message || "Could not save profile changes.", "error");
+    } finally {
+      setSavingProfile(false);
+    }
   };
 
-  const handlePasswordUpdate = (e) => {
+  const handlePasswordUpdate = async (e) => {
     e.preventDefault();
+    if (!securityForm.currentPassword) {
+      showToast("Please enter your current password.", "error");
+      return;
+    }
     if (!securityForm.newPassword || !securityForm.confirmPassword) {
       showToast("Please provide your new password.", "error");
       return;
@@ -245,16 +340,53 @@ export default function Settings() {
       showToast("Passwords do not match.", "error");
       return;
     }
-    showToast("Password updated successfully!", "success");
-    setSecurityForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+
+    setSavingPassword(true);
+    try {
+      const res = await changePasswordApi({
+        currentPassword: securityForm.currentPassword,
+        newPassword: securityForm.newPassword,
+        confirmPassword: securityForm.confirmPassword,
+      });
+      showToast(res?.message || "Password updated successfully!", "success");
+      setSecurityForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+    } catch (err) {
+      showToast(err.message || "Could not update password.", "error");
+    } finally {
+      setSavingPassword(false);
+    }
   };
 
-  const confirmDeleteAccount = () => {
-    setShowDeleteModal(false);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    window.dispatchEvent(new Event("user-profile-updated"));
-    showToast("Account deletion request initiated.", "error");
+  const confirmDeleteAccount = async () => {
+    if (!deletePassword) {
+      setDeleteError("Please enter your password to confirm.");
+      return;
+    }
+
+    setDeletingAccount(true);
+    setDeleteError("");
+    try {
+      // Permanently deletes the user document (and everything owned by
+      // them, e.g. price alerts) from MongoDB.
+      await deleteAccountApi({ password: deletePassword });
+
+      // Wipe every trace of this session from the browser too —
+      // including any leftover local-only alert/wishlist caches.
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("priceAlerts");
+      localStorage.removeItem("wishlist");
+      sessionStorage.clear();
+      window.dispatchEvent(new Event("user-profile-updated"));
+
+      setShowDeleteModal(false);
+      setDeletePassword("");
+      navigate("/login");
+    } catch (err) {
+      setDeleteError(err.message || "Could not delete your account. Please try again.");
+    } finally {
+      setDeletingAccount(false);
+    }
   };
 
   const currentRingStyle =
@@ -330,10 +462,11 @@ export default function Settings() {
                 <button
                   onClick={handleSaveChanges}
                   type="button"
-                  className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
+                  disabled={savingProfile}
+                  className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <FiSave className="text-sm" />
-                  <span>Save Profile</span>
+                  <span>{savingProfile ? "Saving..." : "Save Profile"}</span>
                 </button>
               </div>
             </div>
@@ -885,9 +1018,10 @@ export default function Settings() {
 
                     <button
                       type="submit"
-                      className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition cursor-pointer"
+                      disabled={savingPassword}
+                      className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-xs transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      Update Password
+                      {savingPassword ? "Updating..." : "Update Password"}
                     </button>
                   </form>
                 </div>
@@ -942,23 +1076,49 @@ export default function Settings() {
             </div>
 
             <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-              Are you sure you want to permanently erase your profile? All saved alerts, comparison sets, and tracked items will be deleted immediately.
+              This permanently deletes your account and all associated data — including your
+              profile, saved price alerts, and tracked items — from our database. This cannot be undone.
             </p>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
+                Enter your password to confirm
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={deletePassword}
+                onChange={(e) => {
+                  setDeletePassword(e.target.value);
+                  if (deleteError) setDeleteError("");
+                }}
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-xs font-semibold focus:bg-white dark:focus:bg-slate-900 focus:outline-none focus:border-rose-500"
+              />
+              {deleteError && (
+                <p className="text-[11px] text-rose-600 font-bold mt-1.5">{deleteError}</p>
+              )}
+            </div>
 
             <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100 dark:border-slate-800">
               <button
                 type="button"
-                onClick={() => setShowDeleteModal(false)}
-                className="px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition cursor-pointer"
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeletePassword("");
+                  setDeleteError("");
+                }}
+                disabled={deletingAccount}
+                className="px-4 py-2 text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={confirmDeleteAccount}
-                className="px-4 py-2 text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow transition cursor-pointer"
+                disabled={deletingAccount}
+                className="px-4 py-2 text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white rounded-xl shadow transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Permanently Delete
+                {deletingAccount ? "Deleting..." : "Permanently Delete"}
               </button>
             </div>
           </div>

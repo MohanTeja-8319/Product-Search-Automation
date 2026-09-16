@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Alert = require("../models/Alert");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
 
@@ -14,6 +15,8 @@ function sanitizeUser(user) {
     id: user._id,
     fullName: user.fullName,
     email: user.email,
+    phone: user.phone || "",
+    location: user.location || "",
     createdAt: user.createdAt,
   };
 }
@@ -227,5 +230,165 @@ exports.resetPassword = async (req, res) => {
   } catch (err) {
     console.error("Reset password error:", err);
     return res.status(500).json({ message: "Could not reset password." });
+  }
+};
+
+// @route POST /api/auth/change-password (protected)
+// Changes the password for the SAME logged-in user's existing document
+// in the existing `users` collection. Never creates a new user/collection.
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: "New passwords do not match." });
+    }
+
+    if (newPassword.length < 6) {
+      return res
+        .status(400)
+        .json({ message: "New password must be at least 6 characters long." });
+    }
+
+    // req.userId comes from the existing JWT auth middleware — identifies
+    // the SAME user document, never trust an id from the request body.
+    const user = await User.findById(req.userId).select("+password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Current password is incorrect." });
+    }
+
+    if (currentPassword === newPassword) {
+      return res
+        .status(400)
+        .json({ message: "New password must be different from the current password." });
+    }
+
+    // Only the password field is touched; the pre-save hook hashes it.
+    // _id, email, fullName, phone and every other field stay untouched.
+    user.password = newPassword;
+    await user.save();
+
+    return res.status(200).json({ message: "Password changed successfully." });
+  } catch (err) {
+    console.error("Change password error:", err);
+    return res.status(500).json({ message: "Could not change password." });
+  }
+};
+
+// @route PUT /api/profile (protected)
+// Partially updates ONLY the fields provided, on the SAME existing user
+// document identified via the JWT. Never creates a new user document.
+exports.updateProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const { name, fullName, email, phone, location } = req.body;
+    const nextFullName = fullName !== undefined ? fullName : name;
+
+    // Only assign fields that were actually provided — never overwrite
+    // existing values with blank/undefined/null.
+    if (nextFullName !== undefined && nextFullName !== null) {
+      const trimmedName = String(nextFullName).trim();
+      if (!trimmedName) {
+        return res.status(400).json({ message: "Full name cannot be empty." });
+      }
+      user.fullName = trimmedName;
+    }
+
+    if (email !== undefined && email !== null) {
+      const trimmedEmail = String(email).trim();
+      if (!trimmedEmail) {
+        return res.status(400).json({ message: "Email cannot be empty." });
+      }
+      if (!/^\S+@\S+\.\S+$/.test(trimmedEmail)) {
+        return res.status(400).json({ message: "Please enter a valid email address." });
+      }
+
+      const lowerEmail = trimmedEmail.toLowerCase();
+      if (lowerEmail !== user.email) {
+        const existingUser = await User.findOne({ email: lowerEmail });
+        if (existingUser && String(existingUser._id) !== String(user._id)) {
+          return res
+            .status(409)
+            .json({ message: "This email is already in use by another account." });
+        }
+        user.email = lowerEmail;
+      }
+    }
+
+    if (phone !== undefined && phone !== null) {
+      user.phone = String(phone).trim();
+    }
+
+    if (location !== undefined && location !== null) {
+      user.location = String(location).trim();
+    }
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: sanitizeUser(user),
+    });
+  } catch (err) {
+    if (err.code === 11000) {
+      return res
+        .status(409)
+        .json({ message: "This email is already in use by another account." });
+    }
+    console.error("Update profile error:", err);
+    return res.status(500).json({ message: "Could not update profile." });
+  }
+};
+
+// @route DELETE /api/profile (protected)
+// Permanently deletes the SAME logged-in user's document from the
+// existing `users` collection, plus everything owned by that user
+// (price alerts, etc.) so nothing is left orphaned in the database.
+// Requires the current password to confirm — deletion is irreversible.
+exports.deleteAccount = async (req, res) => {
+  try {
+    const { password } = req.body;
+
+    if (!password) {
+      return res
+        .status(400)
+        .json({ message: "Please confirm your password to delete your account." });
+    }
+
+    const user = await User.findById(req.userId).select("+password");
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Incorrect password." });
+    }
+
+    const userId = user._id;
+
+    // Cascade delete everything owned by this user before removing the
+    // account itself, so no orphaned documents are left behind.
+    await Alert.deleteMany({ user: userId });
+    await User.findByIdAndDelete(userId);
+
+    return res.status(200).json({ message: "Account deleted successfully." });
+  } catch (err) {
+    console.error("Delete account error:", err);
+    return res.status(500).json({ message: "Could not delete account." });
   }
 };

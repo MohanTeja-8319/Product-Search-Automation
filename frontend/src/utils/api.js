@@ -3,12 +3,14 @@ const API_BASE_URL =
   "http://localhost:5000/api";
 
 async function request(path, options = {}) {
+  const { headers: customHeaders, ...rest } = options;
+
   const res = await fetch(`${API_BASE_URL}${path}`, {
+    ...rest,
     headers: {
       "Content-Type": "application/json",
-      ...(options.headers || {}),
+      ...(customHeaders || {}),
     },
-    ...options,
   });
 
   let data = null;
@@ -27,6 +29,20 @@ async function request(path, options = {}) {
   }
 
   return data;
+}
+
+/* Same as `request`, but attaches the logged-in user's JWT
+   (from localStorage) so the backend can identify them. */
+function authRequest(path, options = {}) {
+  const token = localStorage.getItem("token");
+
+  return request(path, {
+    ...options,
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(options.headers || {}),
+    },
+  });
 }
 
 
@@ -73,6 +89,8 @@ export function saveAuth({
   const payload = {
     name: user.fullName,
     email: user.email,
+    phone: user.phone || "",
+    location: user.location || "",
 
     avatar:
       `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(
@@ -143,6 +161,111 @@ export function resetPassword({
       }),
     }
   );
+}
+
+
+/* =========================
+   LOGGED-IN USER (change password / edit profile)
+========================= */
+
+/* Fetches the currently logged-in user's data from the backend
+   using the JWT — used to prefill the Edit Profile form so
+   fields are never blank if the data already exists. */
+export function getCurrentUser() {
+  return authRequest("/auth/me");
+}
+
+
+/* Changes the password for the SAME existing user account.
+   Requires the current password to be verified server-side. */
+export function changePassword({
+  currentPassword,
+  newPassword,
+  confirmPassword,
+}) {
+  return authRequest("/auth/change-password", {
+    method: "POST",
+    body: JSON.stringify({
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    }),
+  });
+}
+
+
+/* Updates ONLY the profile fields provided. The backend identifies
+   the user from the JWT and preserves every other existing value. */
+export function updateProfile({ name, email, phone, location }) {
+  return authRequest("/profile", {
+    method: "PUT",
+    body: JSON.stringify({ name, email, phone, location }),
+  });
+}
+
+
+/* Permanently deletes the logged-in user's account (and everything
+   owned by them, e.g. price alerts) from the database. Requires the
+   current password to confirm. */
+export function deleteAccount({ password }) {
+  return authRequest("/profile", {
+    method: "DELETE",
+    body: JSON.stringify({ password }),
+  });
+}
+
+
+/* Merges an updated user object into localStorage without wiping
+   out local-only fields (avatar, badge, accentRing, provider). */
+export function updateStoredUser(patch) {
+  let existing = {};
+  try {
+    const raw = localStorage.getItem("user");
+    if (raw) existing = JSON.parse(raw);
+  } catch {}
+
+  const merged = { ...existing, ...patch };
+  localStorage.setItem("user", JSON.stringify(merged));
+  window.dispatchEvent(new Event("user-profile-updated"));
+  return merged;
+}
+
+
+/* =========================
+   PRICE ALERTS
+========================= */
+
+/* Fetches every price alert that belongs to the logged-in user. */
+export function getAlerts() {
+  return authRequest("/alerts");
+}
+
+
+/* Creates (or refreshes, if one already exists for the same product)
+   a price alert for the logged-in user. */
+export function createAlert(alert) {
+  return authRequest("/alerts", {
+    method: "POST",
+    body: JSON.stringify(alert),
+  });
+}
+
+
+/* Updates one alert (e.g. toggling active/paused, or simulating a
+   price drop). `id` is the alert's Mongo _id. */
+export function updateAlert(id, patch) {
+  return authRequest(`/alerts/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(patch),
+  });
+}
+
+
+/* Deletes one alert belonging to the logged-in user. */
+export function deleteAlert(id) {
+  return authRequest(`/alerts/${id}`, {
+    method: "DELETE",
+  });
 }
 
 

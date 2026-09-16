@@ -22,6 +22,7 @@ import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import dummyProducts from "../data/products";
 import comparisonProducts from "../data/comparisionProducts";
+import { createAlert as createAlertApi } from "../utils/api";
 
 const POPULAR_SUGGESTIONS = [
   { name: "Apple iPhone 16", icon: "📱" },
@@ -63,6 +64,8 @@ const CreateAlert = () => {
   const [whatsappNotify, setWhatsappNotify] = useState(false);
   const [emailAddress, setEmailAddress] = useState("user@example.com");
   const [frequency, setFrequency] = useState("Instant");
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState("");
 
   // Load product if passed via URL param
   useEffect(() => {
@@ -135,38 +138,45 @@ const CreateAlert = () => {
     setSelectedDiscountPreset(null);
   };
 
-  const handleCreateAlert = (e) => {
+  const handleCreateAlert = async (e) => {
     if (e) e.preventDefault();
     if (!selectedProduct || !targetPrice) return;
 
-    const alerts = JSON.parse(localStorage.getItem("priceAlerts")) || [];
+    if (!localStorage.getItem("token")) {
+      setCreateError("Please sign in to create a price alert.");
+      navigate("/login");
+      return;
+    }
 
-    const newAlert = {
-      id: Date.now(),
-      productId: selectedProduct.id,
-      productName: selectedProduct.name,
-      image: selectedProduct.image,
-      currentPrice: selectedProduct.price,
-      targetPrice: Number(targetPrice),
-      initialPrice: selectedProduct.originalPrice || selectedProduct.price,
-      store: store || selectedProduct.store,
-      category: selectedProduct.category || "General",
-      notifyPriceDrop,
-      notifyStock,
-      email: emailNotify,
-      push: pushNotify,
-      whatsapp: whatsappNotify,
-      emailAddress: emailAddress,
-      frequency,
-      active: true,
-      createdAt: "Just now",
-    };
+    setCreating(true);
+    setCreateError("");
 
-    // Remove existing if duplicate, prepend new
-    const updated = [newAlert, ...alerts.filter((a) => a.productName !== selectedProduct.name)];
-    localStorage.setItem("priceAlerts", JSON.stringify(updated));
+    try {
+      // Persisted to MongoDB under the logged-in user, not localStorage.
+      await createAlertApi({
+        productId: selectedProduct.id,
+        productName: selectedProduct.name,
+        image: selectedProduct.image,
+        currentPrice: selectedProduct.price,
+        targetPrice: Number(targetPrice),
+        initialPrice: selectedProduct.originalPrice || selectedProduct.price,
+        store: store || selectedProduct.store,
+        category: selectedProduct.category || "General",
+        notifyPriceDrop,
+        notifyStock,
+        email: emailNotify,
+        push: pushNotify,
+        whatsapp: whatsappNotify,
+        emailAddress,
+        frequency,
+      });
 
-    navigate("/pricealerts");
+      navigate("/pricealerts");
+    } catch (err) {
+      setCreateError(err.message || "Could not create the price alert. Please try again.");
+    } finally {
+      setCreating(false);
+    }
   };
 
   const storeOptions =
@@ -681,6 +691,9 @@ const CreateAlert = () => {
                     ? `Monitoring ${selectedProduct.name} at ₹${Number(targetPrice || 0).toLocaleString()}`
                     : "Please select a product"}
                 </span>
+                {createError && (
+                  <p className="text-[11px] text-rose-600 font-bold mt-1.5">{createError}</p>
+                )}
               </div>
 
               <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -694,11 +707,11 @@ const CreateAlert = () => {
 
                 <button
                   type="submit"
-                  disabled={!selectedProduct || !targetPrice}
+                  disabled={!selectedProduct || !targetPrice || creating}
                   className="w-1/2 sm:w-auto px-7 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-md transition cursor-pointer flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <FiBell className="text-sm" />
-                  <span>Activate Price Alert</span>
+                  <span>{creating ? "Activating..." : "Activate Price Alert"}</span>
                 </button>
               </div>
             </div>
