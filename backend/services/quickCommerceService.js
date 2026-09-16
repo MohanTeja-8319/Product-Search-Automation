@@ -175,13 +175,8 @@ function selectSpecificProduct(rawProducts, query) {
 }
 
 function mapPlatformProduct(item, platform) {
-  const parsePrice = (p) => {
-    if (typeof p === "number") return p;
-    if (typeof p === "string") return Number(p.replace(/[^\d.]/g, "")) || 0;
-    return 0;
-  };
-  const price = parsePrice(item.offer_price ?? item.price ?? 0);
-  const mrp = parsePrice(item.mrp ?? 0);
+  const price = Number(item.offer_price ?? item.price ?? 0);
+  const mrp = Number(item.mrp ?? 0);
 
   return {
     id: String(item.id ?? item.item_id ?? `${platform}-${Date.now()}-${Math.random()}`),
@@ -198,12 +193,7 @@ function mapPlatformProduct(item, platform) {
     reviews: item.rating_count ?? item.ratingCount ?? 0,
     availability: item.available === false ? "Out of Stock" : "In Stock",
     image: item.images?.[0] || item.image || "",
-    url: item.deeplink || item.link || item.url || (
-      platform === "Amazon" ? `https://www.amazon.in/s?k=${encodeURIComponent(item.name)}` :
-      platform === "Flipkart" ? `https://www.flipkart.com/search?q=${encodeURIComponent(item.name)}` :
-      platform === "Myntra" ? `https://www.myntra.com/${encodeURIComponent(item.name)}` :
-      "#"
-    ),
+    url: item.deeplink || "",
     store: item.platform?.name || platform,
     inventory: item.inventory ?? null,
     sla: item.platform?.sla || null,
@@ -299,11 +289,14 @@ function groupProducts(rawProducts) {
     });
 }
 
-async function fetchGroupSearch({ query, lat, lon, pincode }) {
+async function fetchGroupSearch({ query, lat, lon, pincode, skipCache = false }) {
   const cacheKey = makeCacheKey({ query, lat, lon, pincode });
-  const cached = getCachedSearch(cacheKey);
-  if (cached) {
-    return { ...cached, _fromCache: true };
+
+  if (!skipCache) {
+    const cached = getCachedSearch(cacheKey);
+    if (cached) {
+      return { ...cached, _fromCache: true };
+    }
   }
 
   const params = new URLSearchParams({
@@ -331,14 +324,26 @@ async function fetchGroupSearch({ query, lat, lon, pincode }) {
   }
 
   if (!response.ok) {
+    console.error("======================================");
+    console.error("❌ QUICKCOMMERCE API ERROR");
+    console.error("HTTP Status:", response.status);
+    console.error("Response:", payload);
+    console.error("======================================");
+
     const error = new Error(
-      payload?.message || `QuickCommerce API returned ${response.status}`
+      payload?.message ||
+        payload?.error ||
+        `QuickCommerce API returned ${response.status}`
     );
     error.status = response.status;
+    error.response = payload;
     throw error;
   }
 
-  setCachedSearch(cacheKey, payload);
+  if (!skipCache) {
+    setCachedSearch(cacheKey, payload);
+  }
+
   return payload;
 }
 
@@ -381,7 +386,7 @@ async function searchSpecificLiveProduct({ query, lat, lon, pincode }) {
   const queryTokens = meaningfulTokens(query);
   const searchApiQuery = queryTokens.length > 6 ? queryTokens.slice(0, 6).join(" ") : query;
   
-  const payload = await fetchGroupSearch({ query: searchApiQuery, lat, lon, pincode });
+  const payload = await fetchGroupSearch({ query: searchApiQuery, lat, lon, pincode, skipCache: true });
   const raw = [];
   const results = payload?.data?.results || {};
 

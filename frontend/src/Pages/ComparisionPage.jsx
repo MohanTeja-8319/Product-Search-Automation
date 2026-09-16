@@ -199,7 +199,12 @@ const ComparisonPage = () => {
 
 
             {/* Price Alert */}
-            <PriceAlert currentPrice={bestDeal.price} />
+            <PriceAlert
+              currentPrice={bestDeal.price}
+              productName={decodedName}
+              image={bestDeal.image}
+              store={bestDeal.store}
+            />
 
             {/* Reviews */}
             <ReviewsSection />

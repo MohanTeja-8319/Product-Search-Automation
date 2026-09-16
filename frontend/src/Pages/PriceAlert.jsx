@@ -2,15 +2,19 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
-import { FiHeart } from "react-icons/fi";
+import { FiHeart, FiLoader } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
 import { toggleWishlistItem, isProductInWishlist } from "../utils/wishlistHelper";
+import { createAlert as createAlertApi, getStoredUserEmail } from "../utils/api";
+import { enableBrowserPush } from "../utils/push";
 
 const PriceAlert = ({
   currentPrice: initialCurrentPrice,
   productName: initialProductName,
   image: initialImage,
   store: initialStore,
+  productId: initialProductId,
+  category: initialCategory,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -24,21 +28,58 @@ const PriceAlert = ({
   const store = initialStore || "Flipkart";
   const image = initialImage || "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&q=80";
 
-  const [email, setEmail] = useState("");
+  // Default the email box to the signed-in user's registered email instead
+  // of a placeholder like "user@example.com".
+  const [email, setEmail] = useState(getStoredUserEmail());
   const [targetPrice, setTargetPrice] = useState(displayPrice);
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
   const [wishlistUpdated, setWishlistUpdated] = useState(0);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     if (e) e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim() || submitting) return;
 
-    setSubmitted(true);
+    if (!localStorage.getItem("token")) {
+      setErrorMsg("Please sign in to create a price alert.");
+      navigate("/login");
+      return;
+    }
 
-    setTimeout(() => {
-      setSubmitted(false);
-      setEmail("");
-    }, 3000);
+    setSubmitting(true);
+    setErrorMsg("");
+
+    // Best-effort browser push registration — never blocks the alert from
+    // being created, since email notifications work regardless.
+    await enableBrowserPush().catch(() => {});
+
+    try {
+      await createAlertApi({
+        productId: initialProductId,
+        productName,
+        image,
+        currentPrice: displayPrice,
+        targetPrice: Number(targetPrice),
+        initialPrice: displayPrice,
+        store,
+        category: initialCategory || "General",
+        notifyPriceDrop: true,
+        notifyStock: true,
+        email: true,
+        push: true,
+        whatsapp: false,
+        emailAddress: email,
+        frequency: "Instant",
+      });
+
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 4000);
+    } catch (err) {
+      setErrorMsg(err.message || "Could not create the price alert. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inWishlist = isProductInWishlist(productName);
@@ -80,7 +121,7 @@ const PriceAlert = ({
                 ₹{displayPrice.toLocaleString()}
               </h2>
               <p className="text-xs text-gray-400 mt-3 font-medium">
-                We'll notify you whenever the price reaches your target.
+                We'll notify you by email and browser push whenever the price reaches your target.
               </p>
             </div>
 
@@ -114,14 +155,21 @@ const PriceAlert = ({
 
               <button
                 type="submit"
-                className="w-full bg-[#6c5ce7] hover:bg-[#5b4bc4] text-white py-3 rounded-xl font-bold text-xs shadow-md shadow-indigo-100 transition duration-200 cursor-pointer"
+                disabled={submitting}
+                className="w-full bg-[#6c5ce7] hover:bg-[#5b4bc4] text-white py-3 rounded-xl font-bold text-xs shadow-md shadow-indigo-100 transition duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Set Price Alert
+                {submitting && <FiLoader className="animate-spin" />}
+                <span>{submitting ? "Activating..." : "Set Price Alert"}</span>
               </button>
 
               {submitted && (
                 <div className="bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 text-emerald-700 text-xs rounded-xl p-3 font-semibold flex items-center gap-2">
                   ✅ Price alert created successfully!
+                </div>
+              )}
+              {errorMsg && (
+                <div className="bg-rose-50 dark:bg-rose-950 border border-rose-200 text-rose-700 text-xs rounded-xl p-3 font-semibold flex items-center gap-2">
+                  ⚠️ {errorMsg}
                 </div>
               )}
             </form>

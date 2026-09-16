@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
   FiSearch,
@@ -23,7 +23,6 @@ import Navbar from "../Components/Navbar";
 import dummyProducts from "../data/products";
 import comparisonProducts from "../data/comparisionProducts";
 import { toggleWishlistItem, isProductInWishlist } from "../utils/wishlistHelper";
-import { searchLiveProducts } from "../utils/api";
 
 const STORE_CONFIG = {
   Amazon: { bg: "bg-[#131921] text-amber-400", char: "a", label: "Amazon" },
@@ -54,29 +53,6 @@ const Home = () => {
   const [recBudget, setRecBudget] = useState("all");
   const [recPriority, setRecPriority] = useState("balanced");
   const [recResult, setRecResult] = useState(null);
-
-  const [trendingProducts, setTrendingProducts] = useState([]);
-  const [bestDeals, setBestDeals] = useState([]);
-  const [loadingInitial, setLoadingInitial] = useState(true);
-
-  useEffect(() => {
-    const fetchInitial = async () => {
-      try {
-        setLoadingInitial(true);
-        const res = await searchLiveProducts("trending smartwatches smartphones");
-        if (res && res.products) {
-          setTrendingProducts(res.products.slice(0, 8));
-          const deals = res.products.filter(p => parseInt(p.discount || "0") >= 10);
-          setBestDeals(deals.length >= 4 ? deals.slice(0, 4) : res.products.slice(0, 4));
-        }
-      } catch (err) {
-        console.error("Failed to load initial live products", err);
-      } finally {
-        setLoadingInitial(false);
-      }
-    };
-    fetchInitial();
-  }, []);
 
   // Search Handler
   const handleSearch = (customTerm) => {
@@ -168,8 +144,30 @@ const Home = () => {
     },
   ];
 
+  // Curated Trending Products from catalog
+  const trendingProducts = useMemo(() => {
+    const list = [
+      dummyProducts.find((p) => p.name === "Apple iPhone 16") || dummyProducts[0],
+      dummyProducts.find((p) => p.name === "Samsung Galaxy S24") || dummyProducts[2],
+      dummyProducts.find((p) => p.name === "Apple MacBook Air M4") || dummyProducts[50],
+      dummyProducts.find((p) => p.name === "OnePlus 13") || dummyProducts[4],
+      dummyProducts.find((p) => p.name === "Dell XPS 13") || dummyProducts[51],
+      dummyProducts.find((p) => p.name === "Google Pixel 9") || dummyProducts[8],
+      dummyProducts.find((p) => p.name === "ASUS ROG Zephyrus G16") || dummyProducts[53] || dummyProducts[1],
+      dummyProducts.find((p) => p.name === "Vivo V50") || dummyProducts[13],
+    ].filter(Boolean);
+    return list.slice(0, 8);
+  }, []);
 
-
+  // Curated Best Deals
+  const bestDeals = useMemo(() => {
+    return dummyProducts
+      .filter((p) => {
+        const discountNum = parseInt(p.discount || "0", 10);
+        return discountNum >= 10;
+      })
+      .slice(0, 4);
+  }, []);
 
   // Smart Recommendation Logic
   const handleFindBestProduct = () => {
@@ -400,7 +398,11 @@ const Home = () => {
                   <div
                     key={product.id}
                     onClick={() => {
-                      navigate(`/comparison/${encodeURIComponent(product.name)}`);
+                      if (hasComparison) {
+                        navigate(`/comparison/${encodeURIComponent(product.name)}`);
+                      } else {
+                        navigate(`/product/${product.id}`);
+                      }
                     }}
                     className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-600 rounded-3xl p-4 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 hover:shadow-lg relative cursor-pointer"
                   >
@@ -482,12 +484,16 @@ const Home = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate(`/comparison/${encodeURIComponent(product.name)}`);
+                          if (hasComparison) {
+                            navigate(`/comparison/${encodeURIComponent(product.name)}`);
+                          } else {
+                            navigate(`/product/${product.id}`);
+                          }
                         }}
                         className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <FaExchangeAlt className="text-[10px]" />
-                        <span>Compare Stores</span>
+                        <span>{hasComparison ? "Compare Stores" : "View Deal"}</span>
                       </button>
                     </div>
                   </div>
@@ -534,7 +540,11 @@ const Home = () => {
                   <div
                     key={deal.id}
                     onClick={() => {
-                      navigate(`/comparison/${encodeURIComponent(deal.name)}`);
+                      if (hasComparison) {
+                        navigate(`/comparison/${encodeURIComponent(deal.name)}`);
+                      } else {
+                        navigate(`/product/${deal.id}`);
+                      }
                     }}
                     className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-600 rounded-3xl p-4 flex flex-col justify-between shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer"
                   >
@@ -589,11 +599,15 @@ const Home = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigate(`/comparison/${encodeURIComponent(deal.name)}`);
+                          if (hasComparison) {
+                            navigate(`/comparison/${encodeURIComponent(deal.name)}`);
+                          } else {
+                            navigate(`/product/${deal.id}`);
+                          }
                         }}
                         className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition shadow-xs cursor-pointer"
                       >
-                        Compare Stores →
+                        Claim Deal →
                       </button>
                     </div>
                   </div>
@@ -891,7 +905,12 @@ const Home = () => {
                   <button
                     onClick={() => {
                       setShowRecommendationModal(false);
-                      navigate(`/comparison/${encodeURIComponent(recResult.name)}`);
+                      const comparison = comparisonProducts[recResult.name];
+                      if (comparison && comparison.length > 0) {
+                        navigate(`/comparison/${encodeURIComponent(recResult.name)}`);
+                      } else {
+                        navigate(`/product/${recResult.id}`);
+                      }
                     }}
                     className="w-full mt-3.5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl transition shadow-sm cursor-pointer"
                   >

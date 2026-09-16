@@ -270,6 +270,53 @@ export function deleteAlert(id) {
 
 
 /* =========================
+   BROWSER PUSH NOTIFICATIONS
+========================= */
+
+/* Public VAPID key the frontend needs to create a PushManager subscription.
+   Not auth-protected — it's not secret. */
+export function getVapidPublicKey() {
+  return request("/push/vapid-public-key");
+}
+
+/* Saves this browser's push subscription for the logged-in user so the
+   alert monitor can send it real push notifications later. */
+export function subscribePush({ endpoint, keys }) {
+  return authRequest("/push/subscribe", {
+    method: "POST",
+    body: JSON.stringify({ endpoint, keys }),
+  });
+}
+
+/* Removes this browser's push subscription (e.g. user turned push off). */
+export function unsubscribePush(endpoint) {
+  return authRequest("/push/unsubscribe", {
+    method: "POST",
+    body: JSON.stringify({ endpoint }),
+  });
+}
+
+
+/* =========================
+   CURRENT USER HELPERS
+========================= */
+
+/* Reads the logged-in user's registered email straight out of localStorage
+   (saved at login/registration) so alert forms can default to it instead
+   of a placeholder like "user@example.com". Returns "" if not logged in. */
+export function getStoredUserEmail() {
+  try {
+    const raw = localStorage.getItem("user");
+    if (!raw) return "";
+    const parsed = JSON.parse(raw);
+    return parsed?.email || "";
+  } catch {
+    return "";
+  }
+}
+
+
+/* =========================
    LIVE SEARCH CACHE
 ========================= */
 

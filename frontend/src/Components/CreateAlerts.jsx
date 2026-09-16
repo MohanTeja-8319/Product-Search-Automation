@@ -22,7 +22,8 @@ import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import dummyProducts from "../data/products";
 import comparisonProducts from "../data/comparisionProducts";
-import { createAlert as createAlertApi } from "../utils/api";
+import { createAlert as createAlertApi, getStoredUserEmail } from "../utils/api";
+import { enableBrowserPush } from "../utils/push";
 
 const POPULAR_SUGGESTIONS = [
   { name: "Apple iPhone 16", icon: "📱" },
@@ -62,10 +63,13 @@ const CreateAlert = () => {
   const [emailNotify, setEmailNotify] = useState(true);
   const [pushNotify, setPushNotify] = useState(true);
   const [whatsappNotify, setWhatsappNotify] = useState(false);
-  const [emailAddress, setEmailAddress] = useState("user@example.com");
+  // Default to the signed-in user's registered email, not a placeholder —
+  // that's the address alert emails actually get sent to on the backend.
+  const [emailAddress, setEmailAddress] = useState(getStoredUserEmail());
   const [frequency, setFrequency] = useState("Instant");
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState("");
+  const [pushNotice, setPushNotice] = useState("");
 
   // Load product if passed via URL param
   useEffect(() => {
@@ -150,6 +154,23 @@ const CreateAlert = () => {
 
     setCreating(true);
     setCreateError("");
+    setPushNotice("");
+
+    // If "Browser Push" is checked, actually register for it — subscribes
+    // this browser with the backend so alertMonitor.js can send real push
+    // notifications, not just save a preference flag. Never blocks alert
+    // creation: if the browser/user declines, the alert still saves with
+    // email notifications intact.
+    if (pushNotify) {
+      try {
+        await enableBrowserPush();
+      } catch (pushErr) {
+        setPushNotice(
+          pushErr.message ||
+            "Could not enable browser push for this device. Email alerts will still work."
+        );
+      }
+    }
 
     try {
       // Persisted to MongoDB under the logged-in user, not localStorage.
@@ -167,7 +188,7 @@ const CreateAlert = () => {
         email: emailNotify,
         push: pushNotify,
         whatsapp: whatsappNotify,
-        emailAddress,
+        emailAddress: emailAddress || getStoredUserEmail(),
         frequency,
       });
 
@@ -693,6 +714,9 @@ const CreateAlert = () => {
                 </span>
                 {createError && (
                   <p className="text-[11px] text-rose-600 font-bold mt-1.5">{createError}</p>
+                )}
+                {pushNotice && (
+                  <p className="text-[11px] text-amber-600 font-bold mt-1.5">{pushNotice}</p>
                 )}
               </div>
 

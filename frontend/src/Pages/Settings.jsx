@@ -38,6 +38,7 @@ import {
   deleteAccount as deleteAccountApi,
   updateStoredUser,
 } from "../utils/api";
+import { enableBrowserPush, disableBrowserPush, getExistingPushSubscription } from "../utils/push";
 
 // Curated Avatar Collections
 const AVATAR_COLLECTIONS = {
@@ -240,7 +241,38 @@ export default function Settings() {
 
   const handleNotificationChange = (name, value) => {
     setNotifications((prev) => ({ ...prev, [name]: value }));
+
+    // The "Browser Push" toggle actually subscribes/unsubscribes this
+    // browser with the backend, instead of just flipping a local flag.
+    if (name === "pushPriceDrops") {
+      if (value) {
+        enableBrowserPush()
+          .then(() => showToast("Browser push notifications enabled on this device.", "success"))
+          .catch((err) => {
+            setNotifications((prev) => ({ ...prev, pushPriceDrops: false }));
+            showToast(err.message || "Could not enable browser push notifications.", "error");
+          });
+      } else {
+        disableBrowserPush()
+          .then(() => showToast("Browser push notifications disabled on this device.", "success"))
+          .catch(() => {});
+      }
+    }
   };
+
+  // Reflect whether this browser is actually subscribed to push, instead
+  // of assuming the default "on" state is real.
+  useEffect(() => {
+    let cancelled = false;
+    getExistingPushSubscription().then((subscription) => {
+      if (!cancelled) {
+        setNotifications((prev) => ({ ...prev, pushPriceDrops: !!subscription }));
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // Avatar Selection
   const selectAvatar = (url) => {

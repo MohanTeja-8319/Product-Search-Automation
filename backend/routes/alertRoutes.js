@@ -6,10 +6,12 @@ const {
   createAlert,
   updateAlert,
   deleteAlert,
+  checkNow,
 } = require("../controllers/alertController");
 
 router.get("/", protect, getAlerts);
 router.post("/", protect, createAlert);
+router.post("/check-now", protect, checkNow);
 router.patch("/:id", protect, updateAlert);
 router.delete("/:id", protect, deleteAlert);
 

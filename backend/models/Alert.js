@@ -80,6 +80,13 @@ const alertSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    // Last time the background monitor actually checked a live price for
+    // this alert. Used to respect the Instant / Daily / Weekly frequency
+    // without re-checking (and spending API credits) too often.
+    lastCheckedAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 );
