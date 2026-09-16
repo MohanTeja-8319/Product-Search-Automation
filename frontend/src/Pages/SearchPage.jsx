@@ -1520,18 +1520,12 @@ const SearchPage = () => {
   useEffect(() => {
     let cancelled = false;
 
-    if (!query.trim()) {
-      setLiveProducts([]);
-      setLiveComparisonProducts({});
-      setLiveSearchError("");
-      setLiveLoading(false);
-      return undefined;
-    }
+    const searchTerm = query.trim() || "trending smartphones laptops";
 
     setLiveLoading(true);
     setLiveSearchError("");
 
-    searchLiveProducts(query.trim())
+    searchLiveProducts(searchTerm)
       .then((response) => {
         if (cancelled) return;
         const products = Array.isArray(response?.products)
@@ -1622,10 +1616,8 @@ const SearchPage = () => {
     setWishlistUpdateFlag((prev) => prev + 1);
   };
 
-  const sourceProducts = query.trim() ? liveProducts : dummyProducts;
-  const comparisonData = query.trim()
-    ? liveComparisonProducts
-    : staticComparisonProducts;
+  const sourceProducts = liveProducts;
+  const comparisonData = liveComparisonProducts;
 
   // Distinct Filter options
   const brands = useMemo(

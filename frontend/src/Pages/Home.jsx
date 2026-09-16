@@ -23,6 +23,7 @@ import Navbar from "../Components/Navbar";
 import dummyProducts from "../data/products";
 import comparisonProducts from "../data/comparisionProducts";
 import { toggleWishlistItem, isProductInWishlist } from "../utils/wishlistHelper";
+import { searchLiveProducts } from "../utils/api";
 
 const STORE_CONFIG = {
   Amazon: { bg: "bg-[#131921] text-amber-400", char: "a", label: "Amazon" },
@@ -53,6 +54,29 @@ const Home = () => {
   const [recBudget, setRecBudget] = useState("all");
   const [recPriority, setRecPriority] = useState("balanced");
   const [recResult, setRecResult] = useState(null);
+
+  const [trendingProducts, setTrendingProducts] = useState([]);
+  const [bestDeals, setBestDeals] = useState([]);
+  const [loadingInitial, setLoadingInitial] = useState(true);
+
+  useEffect(() => {
+    const fetchInitial = async () => {
+      try {
+        setLoadingInitial(true);
+        const res = await searchLiveProducts("trending smartwatches smartphones");
+        if (res && res.products) {
+          setTrendingProducts(res.products.slice(0, 8));
+          const deals = res.products.filter(p => parseInt(p.discount || "0") >= 10);
+          setBestDeals(deals.length >= 4 ? deals.slice(0, 4) : res.products.slice(0, 4));
+        }
+      } catch (err) {
+        console.error("Failed to load initial live products", err);
+      } finally {
+        setLoadingInitial(false);
+      }
+    };
+    fetchInitial();
+  }, []);
 
   // Search Handler
   const handleSearch = (customTerm) => {
@@ -144,30 +168,8 @@ const Home = () => {
     },
   ];
 
-  // Curated Trending Products from catalog
-  const trendingProducts = useMemo(() => {
-    const list = [
-      dummyProducts.find((p) => p.name === "Apple iPhone 16") || dummyProducts[0],
-      dummyProducts.find((p) => p.name === "Samsung Galaxy S24") || dummyProducts[2],
-      dummyProducts.find((p) => p.name === "Apple MacBook Air M4") || dummyProducts[50],
-      dummyProducts.find((p) => p.name === "OnePlus 13") || dummyProducts[4],
-      dummyProducts.find((p) => p.name === "Dell XPS 13") || dummyProducts[51],
-      dummyProducts.find((p) => p.name === "Google Pixel 9") || dummyProducts[8],
-      dummyProducts.find((p) => p.name === "ASUS ROG Zephyrus G16") || dummyProducts[53] || dummyProducts[1],
-      dummyProducts.find((p) => p.name === "Vivo V50") || dummyProducts[13],
-    ].filter(Boolean);
-    return list.slice(0, 8);
-  }, []);
 
-  // Curated Best Deals
-  const bestDeals = useMemo(() => {
-    return dummyProducts
-      .filter((p) => {
-        const discountNum = parseInt(p.discount || "0", 10);
-        return discountNum >= 10;
-      })
-      .slice(0, 4);
-  }, []);
+
 
   // Smart Recommendation Logic
   const handleFindBestProduct = () => {
