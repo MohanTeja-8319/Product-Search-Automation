@@ -367,7 +367,11 @@ async function searchSpecificLiveProduct({ query, lat, lon, pincode }) {
     throw error;
   }
 
-  const payload = await fetchGroupSearch({ query, lat, lon, pincode });
+  // Simplify the search query for the external API. Extremely long titles often return 0 results.
+  const queryTokens = meaningfulTokens(query);
+  const searchApiQuery = queryTokens.length > 6 ? queryTokens.slice(0, 6).join(" ") : query;
+  
+  const payload = await fetchGroupSearch({ query: searchApiQuery, lat, lon, pincode });
   const raw = [];
   const results = payload?.data?.results || {};
 
