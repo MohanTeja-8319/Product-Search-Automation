@@ -1549,19 +1549,12 @@ const SearchPage = () => {
   // Live search uses the backend so the QuickCommerce API key never reaches the browser.
   useEffect(() => {
     let cancelled = false;
-
-    if (!query.trim()) {
-      setLiveProducts([]);
-      setLiveComparisonProducts({});
-      setLiveSearchError("");
-      setLiveLoading(false);
-      return undefined;
-    }
+    const activeQuery = query.trim() || "trending smartphones laptops";
 
     setLiveLoading(true);
     setLiveSearchError("");
 
-    searchLiveProducts(query.trim())
+    searchLiveProducts(activeQuery)
       .then((response) => {
         if (cancelled) return;
         const products = Array.isArray(response?.products)
