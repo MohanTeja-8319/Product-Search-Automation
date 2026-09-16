@@ -74,11 +74,11 @@ const CATEGORY_EMOJIS = {
 
 // Quick Price Presets
 const PRICE_PRESETS = [
-  { label: "All Prices", min: 0, max: 150000 },
+  { label: "All Prices", min: 0, max: 500000 },
   { label: "Under ₹10k", min: 0, max: 10000 },
   { label: "₹10k – ₹30k", min: 10000, max: 30000 },
   { label: "₹30k – ₹70k", min: 30000, max: 70000 },
-  { label: "₹70k+", min: 70000, max: 150000 },
+  { label: "₹70k+", min: 70000, max: 500000 },
 ];
 
 /* =========================================================================
@@ -238,7 +238,7 @@ export const Filters = ({
               <input
                 type="range"
                 min="1000"
-                max="150000"
+                max="500000"
                 step="1000"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
@@ -1494,7 +1494,7 @@ const SearchPage = () => {
   const [selectedDiscount, setSelectedDiscount] = useState(0);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(150000);
+  const [maxPrice, setMaxPrice] = useState(500000);
   const [sortBy, setSortBy] = useState("relevance");
 
   // View States
@@ -1692,7 +1692,7 @@ const SearchPage = () => {
     setSelectedDiscount(0);
     setInStockOnly(false);
     setMinPrice(0);
-    setMaxPrice(150000);
+    setMaxPrice(500000);
     setSortBy("relevance");
     setCurrentPage(1);
   };
@@ -1720,7 +1720,7 @@ const SearchPage = () => {
     selectedRatings.length +
     (selectedDiscount > 0 ? 1 : 0) +
     (inStockOnly ? 1 : 0) +
-    (minPrice > 0 || maxPrice < 150000 ? 1 : 0);
+    (minPrice > 0 || maxPrice < 500000 ? 1 : 0);
 
   // Search Filter Pipeline
   const filteredProducts = useMemo(() => {
@@ -1734,11 +1734,11 @@ const SearchPage = () => {
         String(product.store || "").toLowerCase().includes(term);
 
       const matchesBrand =
-        selectedBrands.length === 0 || selectedBrands.includes(product.brand);
+        selectedBrands.length === 0 || selectedBrands.some(b => b.toLowerCase() === (product.brand || "").toLowerCase());
       const matchesCategory =
-        selectedCategories.length === 0 || selectedCategories.includes(product.category);
+        selectedCategories.length === 0 || selectedCategories.some(c => c.toLowerCase() === (product.category || "").toLowerCase());
       const matchesStore =
-        selectedStores.length === 0 || selectedStores.includes(product.store);
+        selectedStores.length === 0 || selectedStores.some(s => s.toLowerCase() === (product.store || "").toLowerCase());
       const matchesRating =
         selectedRatings.length === 0 || selectedRatings.some((r) => product.rating >= r);
       const numericPrice = Number(product.price) || 0;
@@ -2091,7 +2091,7 @@ const SearchPage = () => {
                 </span>
               )}
 
-              {(minPrice > 0 || maxPrice < 150000) && (
+              {(minPrice > 0 || maxPrice < 500000) && (
                 <span className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1.5">
                   <span>
                     ₹{minPrice.toLocaleString()} - ₹{maxPrice.toLocaleString()}
@@ -2099,7 +2099,7 @@ const SearchPage = () => {
                   <button
                     onClick={() => {
                       setMinPrice(0);
-                      setMaxPrice(150000);
+                      setMaxPrice(500000);
                     }}
                     className="hover:text-slate-900 dark:hover:text-white dark:text-white"
                   >
