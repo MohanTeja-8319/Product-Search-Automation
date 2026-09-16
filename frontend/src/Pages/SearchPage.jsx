@@ -1754,13 +1754,8 @@ const SearchPage = () => {
   // Search Filter Pipeline
   const filteredProducts = useMemo(() => {
     let list = sourceProducts.filter((product) => {
-      const term = query.toLowerCase().trim();
-      const matchesSearch =
-        !term ||
-        String(product.name || "").toLowerCase().includes(term) ||
-        String(product.brand || "").toLowerCase().includes(term) ||
-        String(product.category || "").toLowerCase().includes(term) ||
-        String(product.store || "").toLowerCase().includes(term);
+      // The backend API already handles the search query matching.
+      const matchesSearch = true;
 
       const matchesBrand =
         selectedBrands.length === 0 || selectedBrands.some(b => b.toLowerCase() === (product.brand || "").toLowerCase());
