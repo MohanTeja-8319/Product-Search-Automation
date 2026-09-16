@@ -487,7 +487,7 @@ const Home = () => {
                         className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <FaExchangeAlt className="text-[10px]" />
-                        <span>{hasComparison ? "Compare Stores" : "View Deal"}</span>
+                        <span>Compare Stores</span>
                       </button>
                     </div>
                   </div>
@@ -593,7 +593,7 @@ const Home = () => {
                         }}
                         className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition shadow-xs cursor-pointer"
                       >
-                        Claim Deal →
+                        Compare Stores →
                       </button>
                     </div>
                   </div>
