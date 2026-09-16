@@ -241,7 +241,7 @@ export const Filters = ({
                 max="500000"
                 step="1000"
                 value={maxPrice}
-                onChange={(e) => setMaxPrice(Number(e.target.value))}
+                onChange={(e) => { setMinPrice(0); setMaxPrice(Number(e.target.value)); }}
                 className="w-full accent-indigo-600 cursor-pointer h-1.5 bg-slate-200 rounded-lg"
               />
             </div>
