@@ -1741,7 +1741,12 @@ const SearchPage = () => {
         selectedStores.length === 0 || selectedStores.some(s => s.toLowerCase() === (product.store || "").toLowerCase());
       const matchesRating =
         selectedRatings.length === 0 || selectedRatings.some((r) => product.rating >= r);
-      const numericPrice = Number(product.price) || 0;
+      const parsePrice = (p) => {
+        if (typeof p === "number") return p;
+        if (typeof p === "string") return Number(p.replace(/[^\d.]/g, "")) || 0;
+        return 0;
+      };
+      const numericPrice = parsePrice(product.price) || 0;
       const matchesPrice =
         numericPrice >= minPrice && numericPrice <= maxPrice;
 
