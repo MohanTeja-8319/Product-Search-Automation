@@ -400,11 +400,7 @@ const Home = () => {
                   <div
                     key={product.id}
                     onClick={() => {
-                      if (hasComparison) {
-                        navigate(`/comparison/${encodeURIComponent(product.name)}`);
-                      } else {
-                        navigate(`/product/${product.id}`);
-                      }
+                      navigate(`/comparison/${encodeURIComponent(product.name)}`);
                     }}
                     className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-600 rounded-3xl p-4 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 hover:shadow-lg relative cursor-pointer"
                   >
@@ -486,11 +482,7 @@ const Home = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (hasComparison) {
-                            navigate(`/comparison/${encodeURIComponent(product.name)}`);
-                          } else {
-                            navigate(`/product/${product.id}`);
-                          }
+                          navigate(`/comparison/${encodeURIComponent(product.name)}`);
                         }}
                         className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                       >
@@ -542,11 +534,7 @@ const Home = () => {
                   <div
                     key={deal.id}
                     onClick={() => {
-                      if (hasComparison) {
-                        navigate(`/comparison/${encodeURIComponent(deal.name)}`);
-                      } else {
-                        navigate(`/product/${deal.id}`);
-                      }
+                      navigate(`/comparison/${encodeURIComponent(deal.name)}`);
                     }}
                     className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-600 rounded-3xl p-4 flex flex-col justify-between shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer"
                   >
@@ -601,11 +589,7 @@ const Home = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (hasComparison) {
-                            navigate(`/comparison/${encodeURIComponent(deal.name)}`);
-                          } else {
-                            navigate(`/product/${deal.id}`);
-                          }
+                          navigate(`/comparison/${encodeURIComponent(deal.name)}`);
                         }}
                         className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition shadow-xs cursor-pointer"
                       >
@@ -907,12 +891,7 @@ const Home = () => {
                   <button
                     onClick={() => {
                       setShowRecommendationModal(false);
-                      const comparison = comparisonProducts[recResult.name];
-                      if (comparison && comparison.length > 0) {
-                        navigate(`/comparison/${encodeURIComponent(recResult.name)}`);
-                      } else {
-                        navigate(`/product/${recResult.id}`);
-                      }
+                      navigate(`/comparison/${encodeURIComponent(recResult.name)}`);
                     }}
                     className="w-full mt-3.5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl transition shadow-sm cursor-pointer"
                   >
