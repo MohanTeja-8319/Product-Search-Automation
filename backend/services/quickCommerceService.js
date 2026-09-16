@@ -128,15 +128,9 @@ function selectSpecificProduct(rawProducts, query) {
       continue;
     }
 
-    // Require every meaningful query token to be present in the candidate.
-    const queryTokens = meaningfulTokens(query);
-    const candidateTokens = new Set(
-      meaningfulTokens(`${best.item.brand || ""} ${best.item.name || ""} ${best.item.quantity || ""}`)
-    );
-    const allTokensMatch = queryTokens.every((token) => candidateTokens.has(token));
-
-    if (!allTokensMatch) {
-      details.push({ platform, found: false, reason: "No exact model-token match" });
+    // Require a reasonable match score instead of a strict 100% exact token match.
+    if (best.score < 0.4) {
+      details.push({ platform, found: false, reason: `Match score too low: ${best.score.toFixed(2)}` });
       continue;
     }
 
