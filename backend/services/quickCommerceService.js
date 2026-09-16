@@ -193,7 +193,12 @@ function mapPlatformProduct(item, platform) {
     reviews: item.rating_count ?? item.ratingCount ?? 0,
     availability: item.available === false ? "Out of Stock" : "In Stock",
     image: item.images?.[0] || item.image || "",
-    url: item.deeplink || "",
+    url: item.deeplink || item.link || item.url || (
+      platform === "Amazon" ? `https://www.amazon.in/s?k=${encodeURIComponent(item.name)}` :
+      platform === "Flipkart" ? `https://www.flipkart.com/search?q=${encodeURIComponent(item.name)}` :
+      platform === "Myntra" ? `https://www.myntra.com/${encodeURIComponent(item.name)}` :
+      "#"
+    ),
     store: item.platform?.name || platform,
     inventory: item.inventory ?? null,
     sla: item.platform?.sla || null,
