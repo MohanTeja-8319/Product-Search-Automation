@@ -144,7 +144,7 @@ function selectSpecificProduct(rawProducts, query) {
     details.push({ platform, found: true, score: Number(best.score.toFixed(3)) });
   }
 
-  if (selected.length !== LIVE_PLATFORMS.length) {
+  if (selected.length === 0) {
     return { product: null, details };
   }
 
