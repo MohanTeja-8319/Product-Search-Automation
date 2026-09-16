@@ -48,16 +48,12 @@ const ComparisonPage = () => {
       .then((response) => {
         if (!cancelled) {
           const liveItems = response?.product?.comparison || [];
-          const requiredStores = ["Amazon", "Flipkart", "Myntra"];
-          const stores = new Set(liveItems.map((item) => item.store));
-          const existsOnAllStores = requiredStores.every((store) => stores.has(store));
-
-          if (existsOnAllStores) {
+          if (liveItems.length > 0) {
             setLiveComparison(liveItems);
           } else {
             setLiveComparison(null);
             setLiveComparisonError(
-              "This product is not available on all three live stores (Amazon, Flipkart and Myntra)."
+              "No deals found for this product across our supported stores."
             );
           }
         }
