@@ -174,6 +174,15 @@ function selectSpecificProduct(rawProducts, query) {
   };
 }
 
+function generateFallbackUrl(platform, productName) {
+  const query = encodeURIComponent(productName);
+  const p = platform.toLowerCase();
+  if (p.includes("amazon")) return `https://www.amazon.in/s?k=${query}`;
+  if (p.includes("flipkart")) return `https://www.flipkart.com/search?q=${query}`;
+  if (p.includes("myntra")) return `https://www.myntra.com/${query}`;
+  return `https://www.google.com/search?q=${query}+buy`;
+}
+
 function mapPlatformProduct(item, platform) {
   const price = Number(item.offer_price ?? item.price ?? 0);
   const mrp = Number(item.mrp ?? 0);
@@ -193,7 +202,7 @@ function mapPlatformProduct(item, platform) {
     reviews: item.rating_count ?? item.ratingCount ?? 0,
     availability: item.available === false ? "Out of Stock" : "In Stock",
     image: item.images?.[0] || item.image || "",
-    url: item.deeplink || "",
+    url: item.url || item.link || item.deeplink || generateFallbackUrl(platform, item.name || ""),
     store: item.platform?.name || platform,
     inventory: item.inventory ?? null,
     sla: item.platform?.sla || null,
