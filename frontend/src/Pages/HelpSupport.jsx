@@ -348,12 +348,12 @@ export default function HelpSupport() {
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-white/5 dark:bg-slate-900/5 dark:bg-slate-900 rounded-2xl border border-white/10">
-                    <div className="flex items-center gap-2.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 bg-white/5 dark:bg-slate-900/5 dark:bg-slate-900 rounded-2xl border border-white/10">
+                    <div className="flex items-center gap-2.5 shrink-0">
                       <FiMail className="text-slate-400" />
                       <span className="font-bold">Support Email</span>
                     </div>
-                    <span className="text-[11px] text-slate-300 font-mono">
+                    <span className="text-[10px] sm:text-[11px] text-slate-300 font-mono break-all text-left sm:text-right">
                       geddadaleelasatyavaraprasad@gmail.com
                     </span>
                   </div>
