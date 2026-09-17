@@ -81,22 +81,30 @@ export default function HelpSupport() {
     {
       id: "general",
       name: "General Overview",
-      icon: <FiHelpCircle className="text-indigo-500" />,
+      icon: FiHelpCircle,
+      color: "bg-indigo-50 dark:bg-indigo-950 text-indigo-600 border-indigo-100 dark:border-indigo-900",
+      count: 1,
     },
     {
       id: "comparison-engine",
       name: "Search & Comparison",
-      icon: <FiSearch className="text-purple-500" />,
+      icon: FiSearch,
+      color: "bg-purple-50 dark:bg-purple-950 text-purple-600 border-purple-100 dark:border-purple-900",
+      count: 1,
     },
     {
       id: "price-alerts",
       name: "Alerts & Tracking",
-      icon: <FiBell className="text-amber-500" />,
+      icon: FiBell,
+      color: "bg-amber-50 dark:bg-amber-950 text-amber-600 border-amber-100 dark:border-amber-900",
+      count: 1,
     },
     {
       id: "support",
       name: "Contact & Support",
-      icon: <FiMessageSquare className="text-emerald-500" />,
+      icon: FiMessageSquare,
+      color: "bg-emerald-50 dark:bg-emerald-950 text-emerald-600 border-emerald-100 dark:border-emerald-900",
+      count: 1,
     },
   ];
 
