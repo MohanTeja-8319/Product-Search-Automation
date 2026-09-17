@@ -27,15 +27,9 @@ export function AdminSidebar({
   const { adminUser } = useAdminAuth();
   const navigate = useNavigate();
 
-  // Exactly the 7 allowed sidebar items
   const menuItems = [
     { name: "Dashboard", path: "/admin/dashboard", icon: FiGrid },
-    { name: "Users", path: "/admin/users", icon: FiUsers },
-    { name: "Products", path: "/admin/products", icon: FiPackage },
-    { name: "Searches", path: "/admin/searches", icon: FiSearch },
-    { name: "Automation Jobs", path: "/admin/automation", icon: FiCpu },
-    { name: "Sources", path: "/admin/sources", icon: FiGlobe },
-    { name: "System Logs", path: "/admin/logs", icon: FiFileText }
+    { name: "Users", path: "/admin/users", icon: FiUsers }
   ];
 
   const handleNavClick = () => {

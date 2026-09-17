@@ -27,6 +27,7 @@ export function AdminDashboard() {
     searchesPerDay,
     searchStatusBreakdown,
     systemHealth,
+    users,
     searches
   } = useAdminData();
 
@@ -132,98 +133,60 @@ export function AdminDashboard() {
 
       {/* Grid: Recent Searches (Table) & System Health */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Searches Table (2 Cols) */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800/90 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col justify-between">
-          <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        {/* Recent Users Table (2 Cols) */}
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800/90 dark:border-slate-800 shadow-sm flex flex-col">
+          <div className="p-4 sm:p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
             <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">Recent Searches</h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Live stream of incoming user queries</p>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <FiUsers className="text-indigo-500" />
+                Recent Users
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Latest users registered on the platform.
+              </p>
             </div>
             <Link
-              to="/admin/searches"
-              className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-400 flex items-center gap-1 transition-colors"
+              to="/admin/users"
+              className="px-3 py-1.5 text-[11px] font-bold text-indigo-700 bg-indigo-50 dark:bg-indigo-950 hover:bg-indigo-100 rounded-lg transition-colors"
             >
-              View all searches <FiArrowRight className="text-xs" />
+              View All Users
             </Link>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs sm:text-sm">
+          <div className="flex-1 overflow-x-auto">
+            <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/75 dark:bg-slate-950/75 dark:bg-slate-950 text-slate-500 dark:text-slate-400 text-[11px] uppercase tracking-wider font-semibold">
-                  <th className="px-4 py-3">User</th>
-                  <th className="px-4 py-3">Search Query</th>
-                  <th className="px-4 py-3">Date/Time</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3 text-right">Results</th>
-                  <th className="px-4 py-3 text-center">Action</th>
+                <tr className="bg-slate-50/50 dark:bg-slate-950/50 border-b border-slate-100 dark:border-slate-800">
+                  <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">User</th>
+                  <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email</th>
+                  <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider">Joined</th>
+                  <th className="px-4 py-3 text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {recentSearches.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-950/80 dark:bg-slate-950 transition-colors">
-                    {/* User */}
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                {users.slice(0, 5).map((user) => (
+                  <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-950/50 transition-colors">
                     <td className="px-4 py-3.5">
-                      <div className="flex items-center gap-2.5">
-                        <img
-                          src={item.userAvatar}
-                          alt={item.userName}
-                          className="w-7 h-7 rounded-full object-cover border border-slate-200 dark:border-slate-800"
-                        />
-                        <div className="truncate">
-                          <span className="font-semibold text-slate-800 dark:text-slate-100 block truncate">
-                            {item.userName}
-                          </span>
-                          <span className="text-[10px] text-slate-400 block truncate">
-                            {item.userId}
-                          </span>
-                        </div>
+                      <div className="flex items-center gap-3">
+                        <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full bg-slate-200" />
+                        <span className="font-bold text-slate-900 dark:text-white text-sm">{user.name}</span>
                       </div>
                     </td>
-
-                    {/* Search Query */}
-                    <td className="px-4 py-3.5 font-medium text-slate-900 dark:text-white max-w-xs truncate">
-                      "{item.query}"
+                    <td className="px-4 py-3.5 font-medium text-slate-600 dark:text-slate-400 text-xs">
+                      {user.email}
                     </td>
-
-                    {/* Date/Time */}
                     <td className="px-4 py-3.5 text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap">
-                      {item.dateTime}
+                      {user.joinedDate}
                     </td>
-
-                    {/* Status */}
-                    <td className="px-4 py-3.5 whitespace-nowrap">
-                      <StatusBadge status={item.status} size="sm" />
-                    </td>
-
-                    {/* Results Count */}
-                    <td className="px-4 py-3.5 text-right font-bold text-slate-800 dark:text-slate-100">
-                      {item.resultsCount}
-                    </td>
-
-                    {/* Action */}
-                    <td className="px-4 py-3.5 text-center">
-                      <Link
-                        to={`/admin/searches/${item.id}`}
-                        className="inline-flex items-center justify-center p-1.5 text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950 rounded-lg transition-colors"
-                        title="View Search Details"
-                      >
-                        <FiExternalLink className="text-sm" />
-                      </Link>
+                    <td className="px-4 py-3.5 whitespace-nowrap text-right">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 border border-emerald-200">
+                        Active
+                      </span>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
-
-          <div className="p-3 bg-slate-50/60 dark:bg-slate-950/60 dark:bg-slate-900/60 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 text-center">
-            <Link
-              to="/admin/searches"
-              className="text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400"
-            >
-              Showing latest {recentSearches.length} of {searches.length} logged searches
-            </Link>
           </div>
         </div>
 
@@ -322,9 +285,7 @@ export function AdminDashboard() {
 
           <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
             <span>Uptime: 99.98% (30d)</span>
-            <Link to="/admin/logs" className="text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">
-              System Logs →
-            </Link>
+            
           </div>
         </div>
       </div>

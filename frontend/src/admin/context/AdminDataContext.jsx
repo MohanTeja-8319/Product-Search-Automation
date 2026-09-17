@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
+import { API_BASE_URL } from "../../utils/api";
 import {
   initialAdminStats,
   initialSearchesPerDay,
@@ -31,6 +32,48 @@ export function AdminDataProvider({ children }) {
   const [systemLogs, setSystemLogs] = useState(initialSystemLogs);
   const [notifications, setNotifications] = useState(initialAdminNotifications);
   const [globalLoading, setGlobalLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchLiveData = async () => {
+      try {
+        setGlobalLoading(true);
+        // Fetch Users
+        const userRes = await fetch(`${API_BASE_URL}/admin/users`);
+        if (userRes.ok) {
+          const liveUsers = await userRes.json();
+          const mappedUsers = liveUsers.map(u => ({
+            id: u._id,
+            name: u.name,
+            email: u.email,
+            status: "Active", // Default
+            avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=" + u.name,
+            joinedDate: new Date(u.createdAt).toISOString().split('T')[0],
+            role: "User",
+            lastActive: "Today",
+            totalSearches: 0
+          }));
+          setUsers(mappedUsers);
+        }
+
+        // Fetch Stats
+        const statsRes = await fetch(`${API_BASE_URL}/admin/stats`);
+        if (statsRes.ok) {
+          const liveStats = await statsRes.json();
+          setStats(prev => ({
+            ...prev,
+            totalUsers: liveStats.totalUsers.toLocaleString(),
+            priceAlerts: liveStats.totalAlerts.toLocaleString(),
+            activeScrapers: liveStats.activeScrapers.toLocaleString()
+          }));
+        }
+      } catch (err) {
+        console.error("Failed to fetch live admin data", err);
+      } finally {
+        setGlobalLoading(false);
+      }
+    };
+    fetchLiveData();
+  }, []);
 
   // User Actions
   const toggleUserStatus = useCallback((userId) => {

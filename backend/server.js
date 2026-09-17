@@ -37,6 +37,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/alerts", alertRoutes);
 app.use("/api/push", pushRoutes);
+app.use("/api/admin", require("./routes/adminRoutes"));
 
 /* ================================
    HEALTH CHECK
