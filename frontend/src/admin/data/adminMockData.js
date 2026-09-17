@@ -6,6 +6,7 @@ export const initialAdminStats = {
   totalProducts: { value: "145,920", numeric: 145920, change: "+2,430 indexed today", isPositive: true },
   totalSearches: { value: "89,450", numeric: 89450, change: "+18.6% search volume", isPositive: true },
   successfulSearches: { value: "86,120", numeric: 86120, change: "96.3% success rate", isPositive: true },
+  activeScrapers: { value: "6", numeric: 6, change: "100% Uptime", isPositive: true },
   failedSearches: { value: "3,330", numeric: 3330, change: "3.7% failure rate", isPositive: false }
 };
 
