@@ -126,8 +126,7 @@ export default function Settings() {
         return {
           fullName: parsed.name || parsed.fullName || "Mohan Teja",
           email: parsed.email || "mohan.teja@gmail.com",
-          phone: parsed.phone || "+91 98492 10834",
-          location: parsed.location || "Bengaluru, Karnataka, India",
+          phone: parsed.phone || "",
           avatar:
             parsed.avatar ||
             "https://api.dicebear.com/7.x/adventurer/svg?seed=Mohan",
@@ -140,8 +139,7 @@ export default function Settings() {
     return {
       fullName: "Mohan Teja",
       email: "mohan.teja@gmail.com",
-      phone: "+91 98492 10834",
-      location: "Bengaluru, Karnataka, India",
+      phone: "",
       avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=Mohan",
       badge: "✨ Verified Shopper",
       accentRing: "indigo",
@@ -321,7 +319,6 @@ export default function Settings() {
         name: profile.fullName,
         email: profile.email,
         phone: profile.phone,
-        location: profile.location,
       });
 
       const savedUser = res?.user;
@@ -334,7 +331,6 @@ export default function Settings() {
         fullName: savedUser?.fullName ?? profile.fullName,
         email: savedUser?.email ?? profile.email,
         phone: savedUser?.phone ?? profile.phone,
-        location: savedUser?.location ?? profile.location,
         avatar: profile.avatar,
         badge: profile.badge,
         accentRing: selectedRing,
@@ -346,7 +342,6 @@ export default function Settings() {
         fullName: updatedUser.fullName || updatedUser.name || prev.fullName,
         email: updatedUser.email || prev.email,
         phone: updatedUser.phone ?? prev.phone,
-        location: updatedUser.location ?? prev.location,
         accentRing: selectedRing,
       }));
 
@@ -474,7 +469,7 @@ export default function Settings() {
                     {profile.fullName}
                   </h1>
                   <p className="text-slate-300 text-xs mt-0.5 font-medium">
-                    {profile.email} · {profile.location}
+                    {profile.email}
                   </p>
                 </div>
               </div>
@@ -753,7 +748,7 @@ export default function Settings() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
                           Phone Number
@@ -763,26 +758,11 @@ export default function Settings() {
                             type="text"
                             name="phone"
                             value={profile.phone}
+                            placeholder="+91-0000000000"
                             onChange={handleProfileChange}
-                            className="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500 transition"
+                            className="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500 transition placeholder:font-normal placeholder:text-slate-400"
                           />
                           <FiPhone className="absolute right-4 top-3.5 text-slate-400 text-sm" />
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                          Location / Region
-                        </label>
-                        <div className="relative">
-                          <input
-                            type="text"
-                            name="location"
-                            value={profile.location}
-                            onChange={handleProfileChange}
-                            className="w-full pl-4 pr-10 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-900 dark:text-white text-xs sm:text-sm font-semibold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500 transition"
-                          />
-                          <FiMapPin className="absolute right-4 top-3.5 text-slate-400 text-sm" />
                         </div>
                       </div>
                     </div>
