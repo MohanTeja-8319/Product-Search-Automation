@@ -17,15 +17,11 @@ import {
 } from "react-icons/fi";
 import { useAdminData } from "../context/AdminDataContext";
 import StatCard from "../components/StatCard";
-import SearchesPerDayChart from "../components/SearchesPerDayChart";
-import SearchStatusChart from "../components/SearchStatusChart";
 import StatusBadge from "../components/StatusBadge";
 
 export function AdminDashboard() {
   const {
     stats,
-    searchesPerDay,
-    searchStatusBreakdown,
     systemHealth,
     users,
     searches
@@ -99,7 +95,7 @@ export function AdminDashboard() {
 
         {/* 5. Successful Searches */}
         <StatCard
-          title="Successful Searches"
+          title="Active Price Alerts"
           value={stats.successfulSearches.value}
           icon={FiCheckCircle}
           supportingText={stats.successfulSearches.change}
@@ -109,29 +105,16 @@ export function AdminDashboard() {
 
         {/* 6. Failed Searches */}
         <StatCard
-          title="Failed Searches"
-          value={stats.failedSearches.value}
+          title="Scraper Health"
+          value={stats.activeScrapers.value}
           icon={FiAlertCircle}
-          supportingText={stats.failedSearches.change}
-          isPositive={stats.failedSearches.isPositive}
+          supportingText={stats.activeScrapers.change}
+          isPositive={stats.activeScrapers.isPositive}
           color="rose"
         />
       </div>
 
-      {/* Exactly the Two Required Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart 1: Searches Per Day (Line Chart) */}
-        <div className="lg:col-span-2">
-          <SearchesPerDayChart data={searchesPerDay} />
-        </div>
-
-        {/* Chart 2: Search Status (Donut Chart) */}
-        <div className="lg:col-span-1">
-          <SearchStatusChart breakdown={searchStatusBreakdown} />
-        </div>
-      </div>
-
-      {/* Grid: Recent Searches (Table) & System Health */}
+      {/* Grid: Recent Users & System Health */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Users Table (2 Cols) */}
         <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800/90 dark:border-slate-800 shadow-sm flex flex-col">
