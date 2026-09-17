@@ -53,76 +53,50 @@ export default function HelpSupport() {
   const faqs = [
     {
       id: 1,
-      category: "price-alerts",
-      question: "How do I set up a real-time price drop alert for a product?",
-      answer:
-        "Open the 'Price Alerts' page or click the bell icon on any product card. Choose your desired target price (or use our 1-click discount presets like 10% Drop), select notification channels (Email, Browser Push, WhatsApp), and click 'Activate Price Alert'.",
+      category: "general",
+      question: "What is Product Search Automation?",
+      answer: "Product Search Automation is an intelligent platform that automatically searches for products across major e-commerce websites like Amazon, Flipkart, Myntra, and more. It aggregates the product data to help you find exactly what you are looking for in one unified interface."
     },
     {
       id: 2,
-      category: "store-integrations",
-      question: "Which e-commerce stores and retailers are supported?",
-      answer:
-        "We support live price comparison and stock tracking across Amazon India, Flipkart, Croma, Apple Store, Reliance Digital, Myntra, and Ajio. Prices are checked every hour.",
+      category: "comparison-engine",
+      question: "How does the platform help me find the best deals?",
+      answer: "Our system continuously tracks and compares product prices across multiple retailers in real-time. We provide side-by-side comparison tables, historical price trend charts, and highlight the absolute lowest prices so you can maximize your savings."
     },
     {
       id: 3,
-      category: "comparison-engine",
-      question: "How does the multi-store product comparison engine calculate savings?",
-      answer:
-        "Our engine compares the highest list price against the lowest verified seller price, factoring in active bank instant discounts and cashback to show the true maximum savings amount.",
+      category: "price-alerts",
+      question: "What features are available for tracking products?",
+      answer: "You can track your favorite items by adding them to your wishlist, monitoring stock availability, and setting up custom Price Drop Alerts to be notified the moment a product reaches your desired target price."
     },
     {
       id: 4,
-      category: "price-history",
-      question: "Can I view historical price trends before making a purchase?",
-      answer:
-        "Yes! When viewing any product on the comparison page, scroll to 'Price History' to view interactive lowest, highest, and average price trends over the last 30, 90, or 365 days.",
-    },
-    {
-      id: 5,
-      category: "price-alerts",
-      question: "How quickly are price drop notifications delivered?",
-      answer:
-        "Instant alerts are dispatched within seconds of a price reduction being detected on an authorized retailer.",
-    },
-    {
-      id: 6,
-      category: "account-privacy",
-      question: "How can I manage or delete my saved wishlist and browsing data?",
-      answer:
-        "Navigate to 'Settings' or 'Browsing History' where you can selectively delete individual items or click 'Clear All History' to erase stored local data anytime.",
-    },
+      category: "support",
+      question: "I am facing an issue. How can I contact support?",
+      answer: "If any problem contact with this mail: admin@productautomation.io"
+    }
   ];
 
   const categories = [
     {
-      id: "price-alerts",
-      name: "Price Alerts & Triggers",
-      icon: FiZap,
-      count: "3 Guides",
-      color: "text-amber-600 bg-amber-50 dark:bg-amber-950 border-amber-200",
-    },
-    {
-      id: "store-integrations",
-      name: "Store Integrations",
-      icon: FiShoppingCart,
-      count: "2 Guides",
-      color: "text-blue-600 bg-blue-50 dark:bg-blue-950 border-blue-200",
+      id: "general",
+      name: "General Overview",
+      icon: <FiHelpCircle className="text-indigo-500" />,
     },
     {
       id: "comparison-engine",
-      name: "Specs & Comparison",
-      icon: FiHelpCircle,
-      count: "2 Guides",
-      color: "text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 border-indigo-200",
+      name: "Search & Comparison",
+      icon: <FiSearch className="text-purple-500" />,
     },
     {
-      id: "account-privacy",
-      name: "Privacy & Account",
-      icon: FiShield,
-      count: "1 Guide",
-      color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950 border-emerald-200",
+      id: "price-alerts",
+      name: "Alerts & Tracking",
+      icon: <FiBell className="text-amber-500" />,
+    },
+    {
+      id: "support",
+      name: "Contact & Support",
+      icon: <FiMessageSquare className="text-emerald-500" />,
     },
   ];
 
@@ -488,7 +462,7 @@ export default function HelpSupport() {
                       <span className="font-bold">Support Email</span>
                     </div>
                     <span className="text-[11px] text-slate-300 font-mono">
-                      support@pricescout.io
+                      admin@productautomation.io
                     </span>
                   </div>
                 </div>
