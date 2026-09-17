@@ -63,7 +63,7 @@ export default function HelpSupport() {
       id: 4,
       category: "support",
       question: "I am facing an issue. How can I contact support?",
-      answer: "If any problem contact with this mail: admin@productautomation.io"
+      answer: "If any problem contact with this mail: geddadaleelasatyavaraprasad@gmail.com"
     }
   ];
 
@@ -354,7 +354,7 @@ export default function HelpSupport() {
                       <span className="font-bold">Support Email</span>
                     </div>
                     <span className="text-[11px] text-slate-300 font-mono">
-                      admin@productautomation.io
+                      geddadaleelasatyavaraprasad@gmail.com
                     </span>
                   </div>
                 </div>
