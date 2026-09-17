@@ -72,12 +72,7 @@ export function Login() {
       {/* Dynamic Animated Particles Background */}
       <ParticleBackground />
 
-      {/* Google Authentication Modal */}
-      <GoogleAuthModal
-        isOpen={googleModalOpen}
-        onClose={() => setGoogleModalOpen(false)}
-        onSuccess={() => navigate("/home")}
-      />
+      
 
       <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden max-w-5xl w-full grid md:grid-cols-2">
         {/* Left Hero Graphic Section */}
@@ -306,12 +301,7 @@ const handleSubmit = async (e) => {
       {/* Particle Background */}
       <ParticleBackground />
 
-      {/* Google Auth Modal */}
-      <GoogleAuthModal
-        isOpen={googleModalOpen}
-        onClose={() => setGoogleModalOpen(false)}
-        onSuccess={() => navigate("/home")}
-      />
+      
 
       <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden max-w-5xl w-full grid md:grid-cols-2">
         {/* Left Informative Panel */}
