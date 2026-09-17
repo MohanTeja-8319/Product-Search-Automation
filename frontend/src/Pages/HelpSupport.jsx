@@ -38,17 +38,7 @@ export default function HelpSupport() {
     setTimeout(() => setToast(null), 3500);
   };
 
-  // Ticket Form State
-  const [ticketForm, setTicketForm] = useState({
-    name: "Mohan Teja",
-    email: "mohan.teja@gmail.com",
-    category: "Price Alert Issue",
-    priority: "Medium",
-    subject: "",
-    message: "",
-  });
-
-  const [attachmentName, setAttachmentName] = useState("");
+  
 
   const faqs = [
     {
@@ -183,26 +173,7 @@ export default function HelpSupport() {
               </p>
 
               {/* Search Bar */}
-              <div className="pt-2 relative max-w-xl mx-auto">
-                <div className="relative">
-                  <FiSearch className="w-4 h-4 text-slate-400 absolute left-4 top-3.5" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search answers (e.g. 'Amazon alerts', 'Compare stores', 'History')..."
-                    className="w-full pl-11 pr-16 py-3 bg-white dark:bg-slate-900 text-slate-900 dark:text-white rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 text-xs sm:text-sm font-semibold transition"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery("")}
-                      className="absolute right-3.5 top-3 text-[11px] font-bold text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-lg"
-                    >
-                      Clear
-                    </button>
-                  )}
-                </div>
-              </div>
+              
             </div>
           </div>
 
@@ -358,94 +329,7 @@ export default function HelpSupport() {
             </div>
 
             {/* Right Column: Support Ticket Form & Contacts */}
-            <div className="lg:col-span-5 space-y-6">
-              {/* Submit Ticket Card */}
-              <div className="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 shadow-sm space-y-5">
-                <div>
-                  <h2 className="text-base font-extrabold text-slate-900 dark:text-white">
-                    Submit Support Ticket
-                  </h2>
-                  <p className="text-xs text-slate-400 mt-0.5">
-                    Our technical support team replies within 2 hours
-                  </p>
-                </div>
-
-                <form onSubmit={handleSubmitTicket} className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                      Issue Category
-                    </label>
-                    <select
-                      name="category"
-                      value={ticketForm.category}
-                      onChange={handleTicketChange}
-                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs font-bold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500"
-                    >
-                      <option value="Price Alert Issue">Price Alert Issue</option>
-                      <option value="Store Crawler Sync">Store Crawler Sync</option>
-                      <option value="Product Comparison Missing">
-                        Product Comparison Missing
-                      </option>
-                      <option value="Account & Preferences">Account & Preferences</option>
-                      <option value="Other Question">Other Question</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                      Subject
-                    </label>
-                    <input
-                      type="text"
-                      name="subject"
-                      value={ticketForm.subject}
-                      onChange={handleTicketChange}
-                      placeholder="e.g. Price drop alert not received on iPhone 16"
-                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs font-semibold focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1.5">
-                      Message Details
-                    </label>
-                    <textarea
-                      name="message"
-                      rows={4}
-                      value={ticketForm.message}
-                      onChange={handleTicketChange}
-                      placeholder="Describe your question or product link details..."
-                      className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-slate-900 dark:text-white text-xs font-medium focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-900 focus:outline-none focus:border-indigo-500 resize-none"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between pt-1">
-                    <label className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl cursor-pointer transition">
-                      <FiPaperclip className="text-xs" />
-                      <span>Attach Screenshot</span>
-                      <input
-                        type="file"
-                        onChange={handleFileAttachment}
-                        className="hidden"
-                      />
-                    </label>
-                    {attachmentName && (
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-[150px] font-semibold">
-                        {attachmentName}
-                      </span>
-                    )}
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-extrabold text-xs rounded-xl shadow-md transition cursor-pointer"
-                  >
-                    <FiSend className="text-xs" />
-                    <span>Send Support Ticket</span>
-                  </button>
-                </form>
-              </div>
-
+            <div className="lg:col-span-4 space-y-6">
               {/* Direct Support Channels */}
               <div className="bg-gradient-to-br from-slate-900 to-indigo-950 text-white p-6 rounded-3xl space-y-4 shadow-lg">
                 <h3 className="font-extrabold text-sm flex items-center gap-2">
