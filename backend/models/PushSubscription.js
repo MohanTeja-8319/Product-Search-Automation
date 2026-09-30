@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
-// One document per browser/device the user has enabled push on. A single
-// user can have several (phone + laptop, etc.) so we key on the unique
-// endpoint the browser's Push API gives us, not on the user alone.
+
+
+
 const pushSubscriptionSchema = new mongoose.Schema(
   {
     user: {

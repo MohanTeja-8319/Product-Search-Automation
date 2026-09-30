@@ -3,20 +3,31 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" type="image/png" href="/logo.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Product Search Automation — Admin Panel & Platform</title>
+  <title>Comparely — Compare. Save. Shop Smarter.</title>
   <meta name="description"
-    content="Production-ready Admin Panel and multi-store scraping aggregator for Product Search Automation." />
+    content="Comparely is an intelligent product price comparison platform that aggregates live prices from Amazon, Flipkart, Myntra and more." />
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
     rel="stylesheet" />
+  <!-- Anti-FOUC: apply saved theme before React mounts -->
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    })();
+  </script>
 </head>
 
-<body class="bg-slate-50 antialiased" style="font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;">
+<body style="font-family: 'Inter', system-ui, -apple-system, sans-serif;">
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>

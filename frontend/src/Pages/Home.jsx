@@ -1,909 +1,435 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  FiSearch,
-  FiArrowRight,
-  FiHeart,
-  FiTag,
-  FiStar,
-  FiX,
-  FiChevronRight,
-  FiPercent,
-  FiGrid,
-  FiZap,
-  FiShoppingBag,
-  FiShield,
-  FiClock,
-  FiCheckCircle,
+  FiSearch, FiArrowRight, FiTrendingUp, FiHeart,
+  FiChevronRight, FiStar, FiShoppingBag, FiZap,
+  FiShield, FiClock, FiCheckCircle, FiPercent,
+  FiSmartphone, FiMonitor, FiHeadphones, FiWatch,
+  FiCamera, FiHome, FiGrid,
 } from "react-icons/fi";
-import { FaHeart, FaStar, FaStore, FaExchangeAlt, FaFire, FaRobot } from "react-icons/fa";
-
+import { FaHeart, FaStar, FaExchangeAlt, FaGamepad } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
-import dummyProducts from "../data/products";
-import comparisonProducts from "../data/comparisionProducts";
-import { toggleWishlistItem, isProductInWishlist } from "../utils/wishlistHelper";
 import { searchLiveProducts } from "../utils/api";
+import { toggleWishlistItem, isProductInWishlist } from "../utils/wishlistHelper";
 
-const STORE_CONFIG = {
-  Amazon: { bg: "bg-[#131921] text-amber-400", char: "a", label: "Amazon" },
-  Flipkart: { bg: "bg-[#2874f0] text-yellow-300", char: "f", label: "Flipkart" },
-  Croma: { bg: "bg-[#00838f] text-white", char: "croma", label: "Croma" },
-  Myntra: { bg: "bg-gradient-to-r from-[#ff3f6c] to-[#ff527b] text-white", char: "M", label: "Myntra" },
-  Ajio: { bg: "bg-[#2c4152] text-white", char: "AJIO", label: "Ajio" },
-  "Reliance Digital": { bg: "bg-[#e42529] text-white", char: "RD", label: "Reliance" },
-  "Apple Store": { bg: "bg-black text-white", char: "", label: "Apple" },
-};
+const CATEGORIES = [
+  { name: "Mobiles",    icon: FiSmartphone, key: "Smartphones",     color: "#4F46E5", bg: "#EEF2FF" },
+  { name: "Laptops",    icon: FiMonitor,    key: "Laptops",          color: "#7C3AED", bg: "#F5F3FF" },
+  { name: "Audio",      icon: FiHeadphones, key: "Headphones",       color: "#DB2777", bg: "#FDF2F8" },
+  { name: "Wearables",  icon: FiWatch,      key: "Smartwatches",     color: "#0891B2", bg: "#ECFEFF" },
+  { name: "Cameras",    icon: FiCamera,     key: "Camera",           color: "#059669", bg: "#ECFDF5" },
+  { name: "Gaming",     icon: FaGamepad,    key: "Gaming",           color: "#DC2626", bg: "#FEF2F2" },
+  { name: "Home",       icon: FiHome,       key: "Home Appliances",  color: "#D97706", bg: "#FFFBEB" },
+  { name: "Fashion",    icon: FiShoppingBag,key: "Clothing",         color: "#BE185D", bg: "#FDF2F8" },
+];
 
-const getStoreDetails = (storeName) => {
-  return STORE_CONFIG[storeName] || {
-    bg: "bg-indigo-600 text-white",
-    char: storeName ? storeName[0].toUpperCase() : "S",
-    label: storeName || "Store",
-  };
-};
+const FEATURES = [
+  { icon: FaExchangeAlt, title: "Compare Stores",    desc: "Side-by-side prices from Amazon, Flipkart, Myntra & more.",  color: "#4F46E5", bg: "#EEF2FF" },
+  { icon: FiZap,         title: "Save Time & Money", desc: "No more tab-hopping. Find the best deal in seconds.",        color: "#059669", bg: "#ECFDF5" },
+  { icon: FiShield,      title: "Verified Data",     desc: "Live prices pulled directly from retailer listings.",        color: "#0891B2", bg: "#ECFEFF" },
+  { icon: FiCheckCircle, title: "Price Alerts",      desc: "Get notified by email when price drops to your target.",     color: "#D97706", bg: "#FFFBEB" },
+];
 
-const Home = () => {
-  const navigate = useNavigate();
-  const [search, setSearch] = useState("");
-  const [, setWishlistVersion] = useState(0);
 
-  // Smart Recommendation Modal State
-  const [showRecommendationModal, setShowRecommendationModal] = useState(false);
-  const [recCategory, setRecCategory] = useState("Smartphones");
-  const [recBudget, setRecBudget] = useState("all");
-  const [recPriority, setRecPriority] = useState("balanced");
-  const [recResult, setRecResult] = useState(null);
-
-  // Search Handler
-  const handleSearch = (customTerm) => {
-    const query = customTerm !== undefined ? customTerm : search;
-    if (query.trim() !== "") {
-      navigate(`/search?q=${encodeURIComponent(query.trim())}`);
-    } else {
-      navigate("/search");
-    }
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
-
-  const handleWishlistClick = (e, product) => {
-    e.stopPropagation();
-    toggleWishlistItem(product);
-    setWishlistVersion((prev) => prev + 1);
-  };
-
-  // Popular search tags
-  const popularSearches = [
-    "iPhone 16",
-    "HP Laptop",
-    "AirPods",
-    "Smart Watch",
-  ];
-
-  // 8 Specific Categories requested
-  const categoriesList = [
-    {
-      name: "Mobiles",
-      icon: "📱",
-      searchKey: "Smartphones",
-      count: "40+ Deals",
-      gradient: "from-blue-600 to-indigo-600",
-    },
-    {
-      name: "Laptops",
-      icon: "💻",
-      searchKey: "Laptops",
-      count: "25+ Deals",
-      gradient: "from-indigo-600 to-purple-600",
-    },
-    {
-      name: "Audio",
-      icon: "🎧",
-      searchKey: "Headphones",
-      count: "20+ Deals",
-      gradient: "from-violet-600 to-pink-600",
-    },
-    {
-      name: "Wearables",
-      icon: "⌚",
-      searchKey: "Smartwatches",
-      count: "15+ Deals",
-      gradient: "from-teal-500 to-cyan-600",
-    },
-    {
-      name: "Cameras",
-      icon: "📷",
-      searchKey: "Camera",
-      count: "10+ Deals",
-      gradient: "from-emerald-500 to-teal-600",
-    },
-    {
-      name: "Gaming",
-      icon: "🎮",
-      searchKey: "Gaming",
-      count: "18+ Deals",
-      gradient: "from-rose-500 to-red-600",
-    },
-    {
-      name: "Home",
-      icon: "🏠",
-      searchKey: "Home Appliances",
-      count: "15+ Deals",
-      gradient: "from-amber-500 to-orange-600",
-    },
-    {
-      name: "Fashion",
-      icon: "👟",
-      searchKey: "Clothing",
-      count: "30+ Deals",
-      gradient: "from-pink-500 to-rose-600",
-    },
-  ];
-
-  // Curated Trending Products from catalog
-  const [trendingProducts, setTrendingProducts] = useState([]);
-
-  // Curated Best Deals
-  const [bestDeals, setBestDeals] = useState([]);
-
+function ProductCard({ product, onClick }) {
+  const [inWishlist, setInWishlist] = useState(false);
 
   useEffect(() => {
-    let active = true;
-    const fetchHomeData = async () => {
-      try {
-        const res = await searchLiveProducts("trending smartwatches smartphones");
-        if (active && res && res.products) {
-          const prods = res.products;
-          setTrendingProducts(prods.slice(0, 8));
-          setBestDeals(prods.slice(8, 16));
-        }
-      } catch (err) {
-        console.error("Home API fetch error:", err);
-      }
-    };
-    fetchHomeData();
-    return () => { active = false; };
-  }, []);
-  
-  // Smart Recommendation Logic
-  const handleFindBestProduct = () => {
-    let matches = dummyProducts.filter((p) => {
-      const matchCat =
-        recCategory === "all" ||
-        (p.category || "").toLowerCase().includes(recCategory.toLowerCase()) ||
-        (p.name || "").toLowerCase().includes(recCategory.toLowerCase());
-      return matchCat;
-    });
+    setInWishlist(isProductInWishlist(product.name));
+  }, [product.name]);
 
-    if (recBudget === "budget") {
-      matches = matches.filter((p) => p.price <= 25000);
-    } else if (recBudget === "mid") {
-      matches = matches.filter((p) => p.price > 25000 && p.price <= 60000);
-    } else if (recBudget === "premium") {
-      matches = matches.filter((p) => p.price > 60000);
-    }
-
-    if (recPriority === "rating") {
-      matches.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-    } else if (recPriority === "discount") {
-      matches.sort(
-        (a, b) =>
-          parseInt(b.discount || "0", 10) - parseInt(a.discount || "0", 10)
-      );
-    } else {
-      matches.sort((a, b) => (b.rating || 4.5) - (a.rating || 4.5));
-    }
-
-    const topPick = matches[0] || dummyProducts[0];
-    setRecResult(topPick);
+  const handleWishlist = (e) => {
+    e.stopPropagation();
+    toggleWishlistItem(product);
+    setInWishlist(prev => !prev);
   };
 
   return (
-    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200">
-      {/* Global App Sidebar */}
-      <Sidebar />
+    <div
+      onClick={onClick}
+      className="card card-hover animate-fade-in-up"
+      style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12, position: "relative" }}
+    >
+      {}
+      <button
+        onClick={handleWishlist}
+        style={{
+          position: "absolute", top: 14, right: 14,
+          width: 32, height: 32, borderRadius: "50%",
+          background: "var(--surface)", border: "1px solid var(--border)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          cursor: "pointer", zIndex: 2,
+          color: inWishlist ? "#EF4444" : "var(--text-400)",
+          transition: "var(--transition)",
+          boxShadow: "var(--shadow-xs)"
+        }}
+        onMouseEnter={e => e.currentTarget.style.borderColor = "#EF4444"}
+        onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
+      >
+        {inWishlist ? <FaHeart size={13} /> : <FiHeart size={13} />}
+      </button>
 
-      {/* Main Content Area */}
-      <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
-        {/* Global Navbar with Search, ThemeToggle, Notifications & Profile */}
-        <Navbar />
+      {}
+      {product.discount && (
+        <div style={{ position: "absolute", top: 14, left: 14, zIndex: 2 }}>
+          <span className="badge badge-success">{product.discount} OFF</span>
+        </div>
+      )}
 
-        <main className="p-4 lg:p-8 flex-1 max-w-7xl w-full mx-auto pb-24">
-          {/* Breadcrumb Navigation */}
-          <nav className="flex items-center gap-2 text-xs text-slate-400 mb-3">
-            <span className="text-indigo-600 dark:text-indigo-400 font-semibold">Home</span>
-            <FiChevronRight className="text-[10px]" />
-            <span className="text-slate-500 dark:text-slate-400">Multi-Store Product Compare</span>
-          </nav>
+      {}
+      <div style={{
+        width: "100%", height: 160,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        background: "var(--bg)", borderRadius: "var(--radius-md)",
+        overflow: "hidden", marginTop: product.discount ? 20 : 0,
+      }}>
+        <img
+          src={product.image}
+          alt={product.name}
+          style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain", transition: "transform 0.3s ease" }}
+          onMouseEnter={e => e.target.style.transform = "scale(1.06)"}
+          onMouseLeave={e => e.target.style.transform = "scale(1)"}
+          onError={e => { e.target.src = "https://via.placeholder.com/160x160?text=Product"; }}
+        />
+      </div>
 
-          {/* =====================================================================
-              1. HERO BANNER
-              Consistent with CategoriesPage & other app headers
-              ===================================================================== */}
-          <div className="relative rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 lg:p-10 mb-8 overflow-hidden shadow-xl">
-            <div className="relative z-10 grid lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-8">
-                {/* Header Tag */}
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/30 border border-indigo-400/30 text-indigo-200 text-xs font-bold mb-3.5">
-                  <FiZap className="text-amber-400 text-xs" />
-                  <span>Real-Time Multi-Store Product Search & Comparison</span>
-                </div>
+      {}
+      <h3 style={{
+        fontSize: 13, fontWeight: 600, color: "var(--text-900)",
+        lineHeight: 1.4, display: "-webkit-box",
+        WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden"
+      }}>
+        {product.name}
+      </h3>
 
-                {/* Hero Headline */}
-                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
-                  Search Once.
-                  <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-blue-300 to-cyan-300">
-                    Compare Everywhere.
-                  </span>
-                </h1>
+      {}
+      {product.rating && (
+        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <FaStar size={11} style={{ color: "#F59E0B" }} />
+          <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-700)" }}>{product.rating}</span>
+          <span style={{ fontSize: 11, color: "var(--text-400)" }}>(reviews)</span>
+        </div>
+      )}
 
-                {/* Subtitle */}
-                <p className="text-slate-300 text-xs sm:text-sm lg:text-base mt-3 max-w-xl leading-relaxed">
-                  Find the best products and prices across multiple online stores. Compare prices, ratings, and discounts from Amazon, Flipkart, Croma, and more.
-                </p>
+      <div>
+        <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", background: "var(--primary-light)", color: "var(--primary)", borderRadius: "var(--radius-sm)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          {product.store || "Verified Store"}
+        </span>
+      </div>
 
-                {/* Integrated Search Box */}
-                <div className="mt-6 max-w-xl">
-                  <div className="flex items-center bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/20 rounded-2xl p-1.5 shadow-inner">
-                    <span className="text-base ml-3 mr-2 text-indigo-200">🔍</span>
-                    <input
-                      type="text"
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      onKeyDown={handleKeyDown}
-                      placeholder="Search for a product..."
-                      className="bg-transparent text-white placeholder-slate-400 px-2 py-2 text-xs sm:text-sm w-full focus:outline-none font-medium"
-                    />
-                    <button
-                      onClick={() => handleSearch()}
-                      className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition shadow-sm cursor-pointer shrink-0"
-                    >
-                      Search
-                    </button>
-                  </div>
+      {}
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
+        <span style={{ fontSize: 18, fontWeight: 800, color: "var(--success)" }}>
+          ₹{product.price?.toLocaleString()}
+        </span>
+        {product.originalPrice > product.price && (
+          <span style={{ fontSize: 12, color: "var(--text-400)", textDecoration: "line-through" }}>
+            ₹{product.originalPrice?.toLocaleString()}
+          </span>
+        )}
+      </div>
 
-                  {/* Popular Searches */}
-                  <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <span className="text-xs font-bold text-slate-400">
-                      Popular:
-                    </span>
-                    {popularSearches.map((item) => (
-                      <button
-                        key={item}
-                        onClick={() => {
-                          setSearch(item);
-                          handleSearch(item);
-                        }}
-                        className="px-2.5 py-1 rounded-lg bg-white/10 dark:bg-slate-900/10 hover:bg-white/20 dark:hover:bg-slate-900/20 dark:bg-slate-900 border border-white/15 text-xs font-medium text-slate-200 transition cursor-pointer"
-                      >
-                        {item}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+      {}
+      <button
+        onClick={onClick}
+        className="btn btn-primary btn-full"
+        style={{ marginTop: "auto" }}
+      >
+        <FaExchangeAlt size={12} />
+        Compare Prices
+      </button>
+    </div>
+  );
+}
+
+export default function HomePage() {
+  const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const [trendingProducts, setTrendingProducts] = useState([]);
+  const [bestDeals, setBestDeals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    searchLiveProducts("trending smartphones laptops")
+      .then(res => {
+        if (active && res?.products) {
+          setTrendingProducts(res.products.slice(0, 8));
+          setBestDeals(res.products.slice(8, 16));
+        }
+      })
+      .catch(err => console.error("Home fetch error:", err))
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
+
+  const handleSearch = (e) => {
+    e?.preventDefault();
+    if (search.trim()) navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+    else navigate("/search");
+  };
+
+  const SkeletonCard = () => (
+    <div className="card" style={{ padding: 20 }}>
+      <div className="skeleton" style={{ height: 160, borderRadius: "var(--radius-md)", marginBottom: 12 }} />
+      <div className="skeleton" style={{ height: 14, borderRadius: 4, marginBottom: 8 }} />
+      <div className="skeleton" style={{ height: 14, width: "70%", borderRadius: 4, marginBottom: 12 }} />
+      <div className="skeleton" style={{ height: 22, width: "50%", borderRadius: 4, marginBottom: 16 }} />
+      <div className="skeleton" style={{ height: 38, borderRadius: "var(--radius-md)" }} />
+    </div>
+  );
+
+  return (
+    <div className="page-wrapper">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="main-content">
+        <Navbar onMenuToggle={() => setSidebarOpen(o => !o)} />
+        <div className="page-body">
+
+          {}
+          <section style={{
+            background: "transparent",
+            padding: "clamp(32px, 5vw, 56px) clamp(20px, 5vw, 48px)",
+            marginBottom: 40,
+            position: "relative",
+            overflow: "hidden",
+            textAlign: "center",
+          }}>
+            <div style={{ position: "relative", zIndex: 1, maxWidth: 640, margin: "0 auto" }}>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                background: "var(--primary-light)",
+                color: "var(--primary)",
+                borderRadius: "var(--radius-full)",
+                padding: "6px 16px", fontSize: 12, fontWeight: 700,
+                marginBottom: 24, letterSpacing: "0.04em",
+              }}>
+                <FiZap size={14} /> Smart Price Comparison
               </div>
 
-              {/* Quick Metrics Badge Column */}
-              <div className="lg:col-span-4 hidden lg:grid grid-cols-2 gap-3 text-xs">
-                <div className="bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                  <div className="text-2xl font-black text-white">15,000+</div>
-                  <div className="text-[11px] text-slate-300 mt-0.5 font-medium">Products Tracked</div>
+              <h1 className="font-heading" style={{
+                fontSize: "clamp(48px, 6vw, 72px)",
+                fontWeight: 400, lineHeight: 1.1,
+                color: "var(--text-900)",
+                marginBottom: 24,
+              }}>
+                Compare Prices.<br />
+                <span style={{ fontStyle: "italic", opacity: 0.8 }}>Shop Smarter.</span>
+              </h1>
+
+              <p style={{
+                fontSize: 16, color: "var(--text-500)", lineHeight: 1.7,
+                marginBottom: 36, maxWidth: 480, margin: "0 auto 36px"
+              }}>
+                Search any product and instantly compare prices across Amazon, Flipkart, Myntra & more — all in one place.
+              </p>
+
+              <form onSubmit={handleSearch}>
+                <div style={{
+                  display: "flex", gap: 0,
+                  background: "var(--surface)",
+                  border: "1px solid var(--text-300)",
+                  borderRadius: "var(--radius-full)",
+                  padding: "6px 6px 6px 20px",
+                  maxWidth: 520, margin: "0 auto",
+                }}>
+                  <FiSearch size={18} style={{ color: "var(--text-400)", alignSelf: "center", flexShrink: 0 }} />
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder="Search iPhone, laptops, headphones..."
+                    style={{
+                      flex: 1, border: "none", outline: "none", padding: "10px 14px",
+                      fontSize: 14, background: "transparent", color: "var(--text-900)",
+                      fontFamily: "'Inter', sans-serif",
+                    }}
+                    onKeyDown={e => e.key === "Enter" && handleSearch()}
+                  />
+                  <button type="submit" className="btn btn-primary btn-pill" style={{ padding: "11px 28px" }}>
+                    Search
+                  </button>
                 </div>
-                <div className="bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                  <div className="text-2xl font-black text-white">7+ Stores</div>
-                  <div className="text-[11px] text-slate-300 mt-0.5 font-medium">Verified Retailers</div>
-                </div>
-                <div className="bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                  <div className="text-2xl font-black text-amber-400">Live Deals</div>
-                  <div className="text-[11px] text-slate-300 mt-0.5 font-medium">Auto-Aggregated</div>
-                </div>
-                <div className="bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-                  <div className="text-2xl font-black text-emerald-400">Up to 35%</div>
-                  <div className="text-[11px] text-slate-300 mt-0.5 font-medium">Money Saved</div>
-                </div>
+              </form>
+
+              {}
+              <div style={{ marginTop: 16, display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 8 }}>
+                <span style={{ fontSize: 12, color: "var(--text-500)", alignSelf: "center" }}>Try:</span>
+                {["iPhone 16", "Samsung TV", "AirPods", "HP Laptop"].map(q => (
+                  <button key={q} onClick={() => navigate(`/search?q=${encodeURIComponent(q)}`)} style={{
+                    background: "transparent", border: "1px solid var(--border)",
+                    color: "var(--text-700)", borderRadius: "var(--radius-full)", padding: "4px 12px",
+                    fontSize: 12, cursor: "pointer", transition: "var(--transition)", fontFamily: "'Inter', sans-serif",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "var(--primary-light)"; e.currentTarget.style.borderColor = "var(--primary)"; e.currentTarget.style.color = "var(--primary)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-700)"; }}
+                  >
+                    {q}
+                  </button>
+                ))}
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* =====================================================================
-              2. EXPLORE CATEGORIES SECTION
-              ===================================================================== */}
-          <section className="mb-10">
-            <div className="flex items-center justify-between mb-5">
+
+          {}
+          <section style={{ marginBottom: 48 }}>
+            <div className="section-header">
               <div>
-                <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 mb-0.5">
-                  <FiGrid className="text-xs" />
-                  <span>Browse by Department</span>
-                </div>
-                <h2 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-white">
-                  Explore Categories
-                </h2>
+                <div className="section-label"><FiGrid size={11} /> Browse by Category</div>
+                <h2 className="section-title">Explore Categories</h2>
               </div>
-
-              <button
-                onClick={() => navigate("/categories")}
-                className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <span>View All Categories</span>
-                <FiChevronRight className="text-xs" />
+              <button className="section-link" onClick={() => navigate("/categories")}>
+                View All <FiChevronRight size={14} />
               </button>
             </div>
 
-            {/* 8 Category Cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3.5">
-              {categoriesList.map((cat) => (
+            <div className="categories-grid" style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gap: 12 }}>
+              {CATEGORIES.map((cat) => (
                 <button
                   key={cat.name}
-                  onClick={() =>
-                    navigate(`/search?q=${encodeURIComponent(cat.searchKey)}`)
-                  }
-                  className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-500 rounded-2xl p-3.5 flex flex-col items-center text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer"
+                  onClick={() => navigate(`/search?q=${encodeURIComponent(cat.key)}`)}
+                  style={{
+                    display: "flex", flexDirection: "column", alignItems: "center",
+                    gap: 10, padding: "20px 8px",
+                    background: "var(--surface)", border: "1px solid var(--border)",
+                    borderRadius: "var(--radius-lg)", cursor: "pointer",
+                    transition: "var(--transition-slow)", fontFamily: "'Inter', sans-serif",
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = cat.color;
+                    e.currentTarget.style.transform = "translateY(-3px)";
+                    e.currentTarget.style.boxShadow = "var(--shadow-md)";
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = "var(--border)";
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
                 >
-                  <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cat.gradient} text-white flex items-center justify-center text-2xl mb-2.5 shadow-sm group-hover:scale-105 transition-transform`}
-                  >
-                    {cat.icon}
+                  <div style={{
+                    width: 46, height: 46, borderRadius: "50%",
+                    background: cat.bg, display: "flex",
+                    alignItems: "center", justifyContent: "center",
+                    color: cat.color, transition: "transform 0.3s ease"
+                  }}>
+                    <cat.icon size={20} />
                   </div>
-
-                  <h3 className="font-extrabold text-xs text-slate-900 dark:text-white leading-tight">
-                    {cat.name}
-                  </h3>
-
-                  <span className="text-[10px] text-slate-400 dark:text-slate-500 dark:text-slate-400 font-semibold mt-1">
-                    {cat.count}
-                  </span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-700)" }}>{cat.name}</span>
                 </button>
               ))}
             </div>
           </section>
 
-          {/* =====================================================================
-              3. TRENDING PRODUCTS SECTION
-              ===================================================================== */}
-          <section className="mb-10">
-            <div className="flex items-center justify-between mb-5">
+          {}
+          <section style={{ marginBottom: 48 }}>
+            <div className="section-header">
               <div>
-                <div className="flex items-center gap-1.5 text-xs font-bold text-rose-600 dark:text-rose-400 mb-0.5">
-                  <FaFire className="text-xs" />
-                  <span>Popular Inquiries</span>
-                </div>
-                <h2 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-white">
-                  Trending Products 🔥
-                </h2>
+                <div className="section-label"><FiTrendingUp size={11} /> Hot Right Now</div>
+                <h2 className="section-title">Trending Products</h2>
               </div>
-
-              <button
-                onClick={() => navigate("/search")}
-                className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <span>View All Products</span>
-                <FiChevronRight className="text-xs" />
+              <button className="section-link" onClick={() => navigate("/search")}>
+                View All <FiChevronRight size={14} />
               </button>
             </div>
 
-            {/* Trending Products Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              {trendingProducts.map((product) => {
-                const inWishlist = isProductInWishlist(product.name);
-                const comparison = comparisonProducts[product.name];
-                const hasComparison = !!comparison && comparison.length > 0;
-                const storeDetail = getStoreDetails(product.store);
-
-                return (
-                  <div
-                    key={product.id}
-                    onClick={() => {
-                      navigate(`/comparison/${encodeURIComponent(product.name)}`);
-                    }}
-                    className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-600 rounded-3xl p-4 flex flex-col justify-between transition-all duration-200 hover:-translate-y-1 hover:shadow-lg relative cursor-pointer"
-                  >
-                    <div>
-                      {/* Top Badges & Wishlist */}
-                      <div className="flex items-center justify-between mb-2.5">
-                        <span className="text-[10px] font-extrabold bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 dark:text-indigo-300 px-2 py-0.5 rounded-md uppercase tracking-wider">
-                          {product.category}
-                        </span>
-
-                        <button
-                          onClick={(e) => handleWishlistClick(e, product)}
-                          title={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
-                          className="w-7 h-7 rounded-full bg-slate-50 dark:bg-slate-950 dark:bg-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/50 flex items-center justify-center text-slate-400 hover:text-rose-600 transition cursor-pointer"
-                        >
-                          {inWishlist ? (
-                            <FaHeart className="text-rose-600 text-xs" />
-                          ) : (
-                            <FiHeart className="text-xs" />
-                          )}
-                        </button>
-                      </div>
-
-                      {/* Product Image */}
-                      <div className="w-full h-40 bg-slate-50/70 dark:bg-slate-950/70 dark:bg-slate-950/60 rounded-2xl p-3 flex items-center justify-center mb-3.5 border border-slate-100 dark:border-slate-800 overflow-hidden">
-                        <img
-                          src={product.image}
-                          alt={product.name}
-                          className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-200"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src =
-                              "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=200";
-                          }}
-                        />
-                      </div>
-
-                      {/* Brand, Rating & Store */}
-                      <div className="flex items-center justify-between gap-1 mb-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">
-                          {product.brand}
-                        </span>
-
-                        {product.rating && (
-                          <div className="flex items-center gap-1 text-[11px] font-bold text-amber-500 bg-amber-50 dark:bg-amber-950 dark:bg-amber-400/10 px-1.5 py-0.5 rounded">
-                            <FaStar className="text-[10px]" />
-                            <span>{product.rating}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Product Name */}
-                      <h3 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
-                        {product.name}
-                      </h3>
-                    </div>
-
-                    {/* Pricing & Action */}
-                    <div className="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800">
-                      <div className="flex items-baseline justify-between mb-3">
-                        <div>
-                          <span className="text-base font-black text-slate-900 dark:text-white">
-                            ₹{product.price.toLocaleString()}
-                          </span>
-                          {product.originalPrice && product.originalPrice > product.price && (
-                            <span className="text-xs text-slate-400 line-through ml-1.5 font-normal">
-                              ₹{product.originalPrice.toLocaleString()}
-                            </span>
-                          )}
-                        </div>
-
-                        {product.discount && (
-                          <span className="text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 px-1.5 py-0.5 rounded">
-                            {product.discount}
-                          </span>
-                        )}
-                      </div>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/comparison/${encodeURIComponent(product.name)}`);
-                        }}
-                        className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
-                      >
-                        <FaExchangeAlt className="text-[10px]" />
-                        <span>Compare Stores</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            {loading ? (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+                {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
+              </div>
+            ) : trendingProducts.length > 0 ? (
+              <div className="products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+                {trendingProducts.map((product, i) => (
+                  <ProductCard
+                    key={product.id || i}
+                    product={product}
+                    onClick={() => navigate(`/comparison/${encodeURIComponent(product.name)}`, { state: { product } })}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="card empty-state">
+                <div className="empty-state-icon"><FiSearch size={28} /></div>
+                <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--text-700)", marginBottom: 6 }}>No products loaded</h3>
+                <p style={{ fontSize: 13, color: "var(--text-400)" }}>Make sure the backend server is running.</p>
+              </div>
+            )}
           </section>
 
-          {/* =====================================================================
-              4. BEST DEALS SECTION
-              ===================================================================== */}
-          <section className="mb-10">
-            <div className="flex items-center justify-between mb-5">
-              <div>
-                <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-0.5">
-                  <FiPercent className="text-xs" />
-                  <span>Maximum Savings</span>
-                </div>
-                <h2 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-white">
-                  Best Deals & Discounts 💰
-                </h2>
-              </div>
-
-              <button
-                onClick={() => navigate("/search")}
-                className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1 cursor-pointer"
-              >
-                <span>View All Deals</span>
-                <FiChevronRight className="text-xs" />
-              </button>
-            </div>
-
-            {/* Deals Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-              {bestDeals.map((deal) => {
-                const comparison = comparisonProducts[deal.name];
-                const hasComparison = !!comparison && comparison.length > 0;
-                const savings =
-                  deal.originalPrice && deal.originalPrice > deal.price
-                    ? deal.originalPrice - deal.price
-                    : 0;
-
-                return (
-                  <div
-                    key={deal.id}
-                    onClick={() => {
-                      navigate(`/comparison/${encodeURIComponent(deal.name)}`);
-                    }}
-                    className="group bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 hover:border-emerald-300 dark:hover:border-emerald-600 rounded-3xl p-4 flex flex-col justify-between shadow-sm hover:shadow-lg transition-all duration-200 cursor-pointer"
-                  >
-                    <div>
-                      {/* Top Save Tag */}
-                      <div className="flex items-center justify-between mb-2.5">
-                        <span className="bg-emerald-600 text-white font-extrabold text-[10px] px-2 py-0.5 rounded shadow-xs flex items-center gap-1">
-                          <FiTag className="text-[9px]" />
-                          {deal.discount}
-                        </span>
-
-                        <span className="text-[10px] font-bold text-slate-400">
-                          {deal.store}
-                        </span>
-                      </div>
-
-                      {/* Image */}
-                      <div className="w-full h-36 bg-slate-50/70 dark:bg-slate-950/70 dark:bg-slate-950/60 rounded-2xl p-3 flex items-center justify-center mb-3 border border-slate-100 dark:border-slate-800">
-                        <img
-                          src={deal.image}
-                          alt={deal.name}
-                          className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-200"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src =
-                              "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=200";
-                          }}
-                        />
-                      </div>
-
-                      <h3 className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white line-clamp-2 leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition">
-                        {deal.name}
-                      </h3>
-
-                      {savings > 0 && (
-                        <p className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mt-1">
-                          Save ₹{savings.toLocaleString()} on purchase
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="mt-3.5 pt-3 border-t border-slate-100 dark:border-slate-800">
-                      <div className="flex items-baseline justify-between mb-3">
-                        <span className="text-base font-black text-slate-900 dark:text-white">
-                          ₹{deal.price.toLocaleString()}
-                        </span>
-                        <span className="text-xs text-slate-400 line-through">
-                          ₹{deal.originalPrice?.toLocaleString()}
-                        </span>
-                      </div>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigate(`/comparison/${encodeURIComponent(deal.name)}`);
-                        }}
-                        className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition shadow-xs cursor-pointer"
-                      >
-                        Compare Stores →
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-
-          {/* =====================================================================
-              5. SMART RECOMMENDATION SECTION
-              ===================================================================== */}
-          <section className="mb-10">
-            <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-6 lg:p-8 shadow-sm">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-3xl shrink-0 font-bold">
-                    🤖
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-500/20 px-2 py-0.5 rounded-md">
-                      Smart Assistant
-                    </span>
-                    <h2 className="text-lg lg:text-2xl font-extrabold text-slate-900 dark:text-white mt-1">
-                      Not sure what to buy?
-                    </h2>
-                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-                      Tell us your requirements and budget. We'll pick the best value option for you.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 shrink-0">
-                  <button
-                    onClick={() => {
-                      setShowRecommendationModal(true);
-                      handleFindBestProduct();
-                    }}
-                    className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs sm:text-sm transition shadow-sm cursor-pointer flex items-center gap-2"
-                  >
-                    <FaRobot className="text-sm" />
-                    <span>Find My Best Product</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Bottom App Metrics Summary Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-2xl font-bold">
-                📦
-              </div>
-              <div>
-                <div className="text-xl font-black text-slate-900 dark:text-white">15,000+</div>
-                <div className="text-xs font-semibold text-slate-400">Products Tracked</div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-950 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center text-2xl font-bold">
-                🏪
-              </div>
-              <div>
-                <div className="text-xl font-black text-slate-900 dark:text-white">7+ Stores</div>
-                <div className="text-xs font-semibold text-slate-400">Multi-Retailer Engine</div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl font-bold">
-                🔔
-              </div>
-              <div>
-                <div className="text-xl font-black text-slate-900 dark:text-white">5,400+</div>
-                <div className="text-xs font-semibold text-slate-400">Price Alerts Sent</div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 p-5 shadow-sm flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl font-bold">
-                💰
-              </div>
-              <div>
-                <div className="text-xl font-black text-slate-900 dark:text-white">₹3.2 Lakh+</div>
-                <div className="text-xs font-semibold text-slate-400">User Savings Generated</div>
-              </div>
-            </div>
-          </div>
-        </main>
-
-        {/* =====================================================================
-            SIMPLE FOOTER (HOME PAGE ONLY)
-            ===================================================================== */}
-        <footer className="mt-auto border-t border-slate-200/80 dark:border-slate-800/80 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 py-8 px-4 lg:px-8 transition-colors">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
-            {/* Left Brand */}
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-xs">
-                🔍
-              </div>
-              <div>
-                <span className="font-bold text-slate-900 dark:text-white text-sm">
-                  Price<span className="text-indigo-600 dark:text-indigo-400">Scout</span>
-                </span>
-                <span className="text-[11px] text-slate-400 dark:text-slate-500 dark:text-slate-400 ml-2 hidden sm:inline">
-                  Search Once. Compare Everywhere.
-                </span>
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 font-medium">
-              <Link to="/home" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                Home
-              </Link>
-              <Link to="/search" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                Search
-              </Link>
-              <Link to="/categories" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                Categories
-              </Link>
-              <Link to="/comparison" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                Compare
-              </Link>
-              <Link to="/wishlist" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                Wishlist
-              </Link>
-              <Link to="/support" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition">
-                Help & Support
-              </Link>
-            </div>
-
-            {/* Copyright */}
-            <p className="text-[11px] text-slate-400 text-center md:text-right">
-              © 2026 PriceScout. All rights reserved.
-            </p>
-          </div>
-        </footer>
-
-        {/* Global Modal for Smart Recommendation */}
-        {showRecommendationModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs animate-fadeIn">
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-              <button
-                onClick={() => setShowRecommendationModal(false)}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 dark:text-slate-300 dark:hover:text-white flex items-center justify-center transition cursor-pointer"
-              >
-                <FiX className="text-base" />
-              </button>
-
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl font-bold">
-                  🤖
-                </div>
+          {}
+          {bestDeals.length > 0 && (
+            <section style={{ marginBottom: 48 }}>
+              <div className="section-header">
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">
-                    Smart Product Advisor
+                  <div className="section-label"><FiPercent size={11} /> Maximum Savings</div>
+                  <h2 className="section-title">Best Deals</h2>
+                </div>
+                <button className="section-link" onClick={() => navigate("/search")}>
+                  View All <FiChevronRight size={14} />
+                </button>
+              </div>
+              <div className="products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+                {bestDeals.map((product, i) => (
+                  <ProductCard
+                    key={product.id || i}
+                    product={product}
+                    onClick={() => navigate(`/comparison/${encodeURIComponent(product.name)}`, { state: { product } })}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {}
+          <section style={{ marginBottom: 48 }}>
+            <div style={{ textAlign: "center", marginBottom: 32 }}>
+              <div className="section-label" style={{ justifyContent: "center" }}>
+                <FiCheckCircle size={11} /> Why Comparely?
+              </div>
+              <h2 className="section-title">Built for Smart Shoppers</h2>
+            </div>
+            <div className="features-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+              {FEATURES.map((f, i) => (
+                <div key={i} className="card" style={{ padding: 28, textAlign: "center" }}>
+                  <div style={{
+                    width: 52, height: 52, borderRadius: "var(--radius-lg)",
+                    background: f.bg, color: f.color,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    margin: "0 auto 16px", fontSize: 22
+                  }}>
+                    <f.icon size={22} />
+                  </div>
+                  <h3 style={{ fontSize: 14, fontWeight: 700, color: "var(--text-900)", marginBottom: 8 }}>
+                    {f.title}
                   </h3>
-                  <p className="text-xs text-slate-400">
-                    Select your preferences to find the best match
-                  </p>
+                  <p style={{ fontSize: 13, color: "var(--text-500)", lineHeight: 1.6 }}>{f.desc}</p>
                 </div>
-              </div>
-
-              {/* Selectors */}
-              <div className="space-y-3.5 text-xs">
-                {/* 1. Category */}
-                <div>
-                  <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1.5">
-                    1. What category are you looking for?
-                  </label>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {["Smartphones", "Laptops", "Headphones", "Accessories", "Clothing"].map(
-                      (cat) => (
-                        <button
-                          key={cat}
-                          onClick={() => {
-                            setRecCategory(cat);
-                            setTimeout(handleFindBestProduct, 50);
-                          }}
-                          className={`py-2 px-2.5 rounded-xl font-bold transition border cursor-pointer text-xs ${
-                            recCategory === cat
-                              ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
-                              : "bg-slate-50 dark:bg-slate-950 dark:bg-slate-800 border-slate-200 dark:border-slate-800 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-300"
-                          }`}
-                        >
-                          {cat}
-                        </button>
-                      )
-                    )}
-                  </div>
-                </div>
-
-                {/* 2. Budget */}
-                <div>
-                  <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1.5">
-                    2. Select Budget
-                  </label>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {[
-                      { id: "all", label: "Any Budget" },
-                      { id: "budget", label: "Under ₹25k" },
-                      { id: "mid", label: "₹25k – ₹60k" },
-                      { id: "premium", label: "₹60,000+" },
-                    ].map((b) => (
-                      <button
-                        key={b.id}
-                        onClick={() => {
-                          setRecBudget(b.id);
-                          setTimeout(handleFindBestProduct, 50);
-                        }}
-                        className={`py-2 px-2.5 rounded-xl font-bold transition border cursor-pointer text-xs ${
-                          recBudget === b.id
-                            ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
-                            : "bg-slate-50 dark:bg-slate-950 dark:bg-slate-800 border-slate-200 dark:border-slate-800 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-300"
-                        }`}
-                      >
-                        {b.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 3. Priority */}
-                <div>
-                  <label className="font-bold text-slate-700 dark:text-slate-300 block mb-1.5">
-                    3. Priority
-                  </label>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {[
-                      { id: "balanced", label: "Best Overall" },
-                      { id: "rating", label: "Top Rated ⭐" },
-                      { id: "discount", label: "Max Discount" },
-                    ].map((p) => (
-                      <button
-                        key={p.id}
-                        onClick={() => {
-                          setRecPriority(p.id);
-                          setTimeout(handleFindBestProduct, 50);
-                        }}
-                        className={`py-2 px-2.5 rounded-xl font-bold transition border cursor-pointer text-xs ${
-                          recPriority === p.id
-                            ? "bg-indigo-600 text-white border-indigo-600 shadow-xs"
-                            : "bg-slate-50 dark:bg-slate-950 dark:bg-slate-800 border-slate-200 dark:border-slate-800 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:border-indigo-300"
-                        }`}
-                      >
-                        {p.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Recommended Top Pick Result */}
-              {recResult && (
-                <div className="mt-5 p-4 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/80 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/30">
-                  <div className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-2">
-                    Top Recommended Match
-                  </div>
-
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-16 h-16 bg-white dark:bg-slate-800 rounded-xl p-2 flex items-center justify-center shrink-0 border border-slate-100 dark:border-slate-800">
-                      <img
-                        src={recResult.image}
-                        alt={recResult.name}
-                        className="max-h-full max-w-full object-contain"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=150";
-                        }}
-                      />
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-extrabold text-xs sm:text-sm text-slate-900 dark:text-white truncate">
-                        {recResult.name}
-                      </h4>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-sm font-black text-indigo-600 dark:text-indigo-400">
-                          ₹{recResult.price.toLocaleString()}
-                        </span>
-                        {recResult.discount && (
-                          <span className="text-[10px] font-extrabold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded">
-                            {recResult.discount}
-                          </span>
-                        )}
-                        <span className="text-[10px] text-slate-400">
-                          ⭐ {recResult.rating}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      setShowRecommendationModal(false);
-                      navigate(`/comparison/${encodeURIComponent(recResult.name)}`);
-                    }}
-                    className="w-full mt-3.5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl transition shadow-sm cursor-pointer"
-                  >
-                    View & Compare This Product →
-                  </button>
-                </div>
-              )}
+              ))}
             </div>
-          </div>
-        )}
+          </section>
+
+
+        </div>
       </div>
+
+      <style>{`
+        @media (max-width: 1024px) {
+          .categories-grid { grid-template-columns: repeat(4, 1fr) !important; }
+          .products-grid   { grid-template-columns: repeat(2, 1fr) !important; }
+          .features-grid   { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 640px) {
+          .categories-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 8px !important; }
+          .products-grid   { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+          .features-grid   { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+          .cta-banner      { padding: 28px 20px !important; }
+          .cta-buttons     { width: 100%; }
+          .cta-buttons .btn { flex: 1; justify-content: center; }
+        }
+      `}</style>
     </div>
   );
-};
-
-export default Home;
+}

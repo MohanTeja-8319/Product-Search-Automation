@@ -9,255 +9,255 @@ import { createAlert as createAlertApi, getStoredUserEmail } from "../utils/api"
 import { enableBrowserPush } from "../utils/push";
 
 const PriceAlert = ({
-  currentPrice: initialCurrentPrice,
-  productName: initialProductName,
-  image: initialImage,
-  store: initialStore,
-  productId: initialProductId,
-  category: initialCategory,
+ currentPrice: initialCurrentPrice,
+ productName: initialProductName,
+ image: initialImage,
+ store: initialStore,
+ productId: initialProductId,
+ category: initialCategory,
 }) => {
-  const location = useLocation();
-  const navigate = useNavigate();
+ const location = useLocation();
+ const navigate = useNavigate();
 
-  // Route check
-  const isPage = initialCurrentPrice === undefined && location.pathname.toLowerCase() === "/price-alerts";
+ 
+ const isPage = initialCurrentPrice === undefined && location.pathname.toLowerCase() === "/price-alerts";
 
-  // Data defaults matching screenshot
-  const displayPrice = initialCurrentPrice !== undefined && initialCurrentPrice !== null ? initialCurrentPrice : 78999;
-  const productName = initialProductName || "Apple iPhone 16";
-  const store = initialStore || "Flipkart";
-  const image = initialImage || "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&q=80";
+ 
+ const displayPrice = initialCurrentPrice !== undefined && initialCurrentPrice !== null ? initialCurrentPrice : 0;
+ const productName = initialProductName || "";
+ const store = initialStore || "";
+ const image = initialImage || "";
 
-  // Default the email box to the signed-in user's registered email instead
-  // of a placeholder like "user@example.com".
-  const [email, setEmail] = useState(getStoredUserEmail());
-  const [targetPrice, setTargetPrice] = useState(displayPrice);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-  const [wishlistUpdated, setWishlistUpdated] = useState(0);
+ 
+ 
+ const [email, setEmail] = useState(getStoredUserEmail());
+ const [targetPrice, setTargetPrice] = useState(displayPrice);
+ const [submitting, setSubmitting] = useState(false);
+ const [submitted, setSubmitted] = useState(false);
+ const [errorMsg, setErrorMsg] = useState("");
+ const [wishlistUpdated, setWishlistUpdated] = useState(0);
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
-    if (!email.trim() || submitting) return;
+ const handleSubmit = async (e) => {
+ if (e) e.preventDefault();
+ if (!email.trim() || submitting) return;
 
-    if (!localStorage.getItem("token")) {
-      setErrorMsg("Please sign in to create a price alert.");
-      navigate("/login");
-      return;
-    }
+ if (!localStorage.getItem("token")) {
+ setErrorMsg("Please sign in to create a price alert.");
+ navigate("/login");
+ return;
+ }
 
-    setSubmitting(true);
-    setErrorMsg("");
+ setSubmitting(true);
+ setErrorMsg("");
 
-    // Best-effort browser push registration — never blocks the alert from
-    // being created, since email notifications work regardless.
-    await enableBrowserPush().catch(() => {});
+ 
+ 
+ await enableBrowserPush().catch(() => {});
 
-    try {
-      await createAlertApi({
-        productId: initialProductId,
-        productName,
-        image,
-        currentPrice: displayPrice,
-        targetPrice: Number(targetPrice),
-        initialPrice: displayPrice,
-        store,
-        category: initialCategory || "General",
-        notifyPriceDrop: true,
-        notifyStock: true,
-        email: true,
-        push: true,
-        whatsapp: false,
-        emailAddress: email,
-        frequency: "Instant",
-      });
+ try {
+ await createAlertApi({
+ productId: initialProductId,
+ productName,
+ image,
+ currentPrice: displayPrice,
+ targetPrice: Number(targetPrice),
+ initialPrice: displayPrice,
+ store,
+ category: initialCategory || "General",
+ notifyPriceDrop: true,
+ notifyStock: true,
+ email: true,
+ push: true,
+ whatsapp: false,
+ emailAddress: email,
+ frequency: "Instant",
+ });
 
-      setSubmitted(true);
-      setTimeout(() => setSubmitted(false), 4000);
-    } catch (err) {
-      setErrorMsg(err.message || "Could not create the price alert. Please try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+ setSubmitted(true);
+ setTimeout(() => setSubmitted(false), 4000);
+ } catch (err) {
+ setErrorMsg(err.message || "Could not create the price alert. Please try again.");
+ } finally {
+ setSubmitting(false);
+ }
+ };
 
-  const inWishlist = isProductInWishlist(productName);
+ const inWishlist = isProductInWishlist(productName);
 
-  const handleWishlistToggle = () => {
-    toggleWishlistItem({
-      name: productName,
-      category: "Smartphone",
-      price: displayPrice,
-      image: image,
-      store: store,
-    });
-    setWishlistUpdated((prev) => prev + 1);
-  };
+ const handleWishlistToggle = () => {
+ toggleWishlistItem({
+ name: productName,
+ category: "Smartphone",
+ price: displayPrice,
+ image: image,
+ store: store,
+ });
+ setWishlistUpdated((prev) => prev + 1);
+ };
 
-  const cardContent = (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      {/* Price Alert Main Card */}
-      <div className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800/80 dark:border-slate-800 rounded-2xl shadow-sm overflow-hidden">
-        {/* Header */}
-        <div className="px-6 py-5 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-            <span>🔔</span> Price Alert
-          </h2>
-          <p className="text-xs text-gray-500 dark:text-slate-400 mt-1 font-medium">
-            Get notified when this product becomes cheaper.
-          </p>
-        </div>
+ const cardContent = (
+ <div className="space-y-6 max-w-5xl mx-auto">
+ {}
+ <div className="bg-white border border-gray-200/80 rounded-[16px] shadow-soft overflow-hidden">
+ {}
+ <div className="px-6 py-5 border-b border-gray-100">
+ <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+ <span></span> Price Alert
+ </h2>
+ <p className="text-xs text-gray-500 mt-1 font-medium">
+ Get notified when this product becomes cheaper.
+ </p>
+ </div>
 
-        {/* Content Body */}
-        <div className="p-6 md:p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-            {/* Left Column */}
-            <div>
-              <p className="text-xs font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wide mb-2">
-                Current Lowest Price
-              </p>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-[#6c5ce7] tracking-tight">
-                ₹{displayPrice.toLocaleString()}
-              </h2>
-              <p className="text-xs text-gray-400 mt-3 font-medium">
-                We'll notify you by email and browser push whenever the price reaches your target.
-              </p>
-            </div>
+ {}
+ <div className="p-6 md:p-8">
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+ {}
+ <div>
+ <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+ Current Lowest Price
+ </p>
+ <h2 className="text-4xl md:text-5xl font-extrabold text-[#6c5ce7] tracking-tight">
+ ₹{displayPrice.toLocaleString()}
+ </h2>
+ <p className="text-xs text-gray-400 mt-3 font-medium">
+ We'll notify you by email and browser push whenever the price reaches your target.
+ </p>
+ </div>
 
-            {/* Right Column Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-xs text-gray-800 outline-none focus:border-[#6c5ce7] focus:ring-1 focus:ring-[#6c5ce7] transition"
-                  required
-                />
-              </div>
+ {/* Right Column Form */}
+ <form onSubmit={handleSubmit} className="space-y-4">
+ <div>
+ <label className="block text-xs font-bold text-gray-700 mb-1.5">
+ Email Address
+ </label>
+ <input
+ type="email"
+ placeholder="Enter your email"
+ value={email}
+ onChange={(e) => setEmail(e.target.value)}
+ className="w-full border border-gray-300 rounded-[10px] px-4 py-2.5 text-xs text-gray-800 outline-none focus:border-[#6c5ce7] focus:ring-1 focus:ring-[#6c5ce7] transition"
+ required
+ />
+ </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1.5">
-                  Notify Me At Price
-                </label>
-                <input
-                  type="number"
-                  value={targetPrice}
-                  onChange={(e) => setTargetPrice(Number(e.target.value))}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-2.5 text-xs text-gray-800 outline-none focus:border-[#6c5ce7] focus:ring-1 focus:ring-[#6c5ce7] transition"
-                />
-              </div>
+ <div>
+ <label className="block text-xs font-bold text-gray-700 mb-1.5">
+ Notify Me At Price
+ </label>
+ <input
+ type="number"
+ value={targetPrice}
+ onChange={(e) => setTargetPrice(Number(e.target.value))}
+ className="w-full border border-gray-300 rounded-[10px] px-4 py-2.5 text-xs text-gray-800 outline-none focus:border-[#6c5ce7] focus:ring-1 focus:ring-[#6c5ce7] transition"
+ />
+ </div>
 
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full bg-[#6c5ce7] hover:bg-[#5b4bc4] text-white py-3 rounded-xl font-bold text-xs shadow-md shadow-indigo-100 transition duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {submitting && <FiLoader className="animate-spin" />}
-                <span>{submitting ? "Activating..." : "Set Price Alert"}</span>
-              </button>
+ <button
+ type="submit"
+ disabled={submitting}
+ className="w-full bg-[#6c5ce7] hover:bg-[#5b4bc4] text-white py-3 rounded-[10px] font-bold text-xs shadow-soft shadow-indigo-100 transition duration-200 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+ >
+ {submitting && <FiLoader className="animate-spin" />}
+ <span>{submitting ? "Activating..." : "Set Price Alert"}</span>
+ </button>
 
-              {submitted && (
-                <div className="bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 text-emerald-700 text-xs rounded-xl p-3 font-semibold flex items-center gap-2">
-                  ✅ Price alert created successfully!
-                </div>
-              )}
-              {errorMsg && (
-                <div className="bg-rose-50 dark:bg-rose-950 border border-rose-200 text-rose-700 text-xs rounded-xl p-3 font-semibold flex items-center gap-2">
-                  ⚠️ {errorMsg}
-                </div>
-              )}
-            </form>
-          </div>
-        </div>
-      </div>
+ {submitted && (
+ <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs rounded-[10px] p-3 font-semibold flex items-center gap-2">
+ ✅ Price alert created successfully!
+ </div>
+ )}
+ {errorMsg && (
+ <div className="bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-[10px] p-3 font-semibold flex items-center gap-2">
+ ⚠️ {errorMsg}
+ </div>
+ )}
+ </form>
+ </div>
+ </div>
+ </div>
 
-      {/* Bottom Customer Reviews Section */}
-      <div className="bg-white dark:bg-slate-900 border border-gray-200/80 dark:border-slate-800/80 dark:border-slate-800 rounded-2xl p-6 shadow-sm">
-        <h3 className="text-base font-bold text-gray-900 dark:text-white mb-4">
-          Customer Reviews
-        </h3>
+ {/* Bottom Customer Reviews Section */}
+ <div className="bg-white border border-gray-200/80 rounded-[16px] p-6 shadow-soft">
+ <h3 className="text-base font-bold text-gray-900 mb-4">
+ Customer Reviews
+ </h3>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border border-gray-100 rounded-xl bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 transition">
-          {/* Product Thumbnail & Title */}
-          <div className="flex items-center gap-4 w-full sm:w-auto">
-            <div className="w-14 h-14 bg-white dark:bg-slate-900 rounded-lg p-1.5 border border-gray-100 flex items-center justify-center shrink-0">
-              <img
-                src={image}
-                alt={productName}
-                className="max-h-full max-w-full object-contain"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=200";
-                }}
-              />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">
-                {productName}
-              </h4>
-              <p className="text-xs font-semibold text-gray-400 mt-0.5">
-                Best Price on {store}
-              </p>
-            </div>
-          </div>
+ <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border border-gray-100 rounded-[10px] bg-gray-50/50 hover:bg-gray-50 :bg-gray-950 :bg-slate-950 :bg-slate-800 transition">
+ {/* Product Thumbnail & Title */}
+ <div className="flex items-center gap-4 w-full sm:w-auto">
+ <div className="w-14 h-14 bg-white rounded-[10px] p-1.5 border border-gray-100 flex items-center justify-center shrink-0">
+ <img
+ src={image}
+ alt={productName}
+ className="max-h-full max-w-full object-contain"
+ onError={(e) => {
+ e.target.onerror = null;
+ e.target.src = "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=200";
+ }}
+ />
+ </div>
+ <div>
+ <h4 className="text-sm font-bold text-gray-900 leading-tight">
+ {productName}
+ </h4>
+ <p className="text-xs font-semibold text-gray-400 mt-0.5">
+ Best Price on {store}
+ </p>
+ </div>
+ </div>
 
-          {/* Price, Action Button & Heart */}
-          <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
-            <div className="text-right sm:text-left">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">
-                Lowest Price
-              </p>
-              <p className="text-lg font-extrabold text-[#6c5ce7]">
-                ₹{displayPrice.toLocaleString()}
-              </p>
-            </div>
+ {/* Price, Action Button & Heart */}
+ <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
+ <div className="text-right sm:text-left">
+ <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">
+ Lowest Price
+ </p>
+ <p className="text-lg font-extrabold text-[#6c5ce7]">
+ ₹{displayPrice.toLocaleString()}
+ </p>
+ </div>
 
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => navigate(`/comparison/${encodeURIComponent(productName)}`)}
-                className="px-5 py-2.5 bg-[#6c5ce7] hover:bg-[#5b4bc4] text-white font-bold text-xs rounded-xl shadow-sm transition cursor-pointer"
-              >
-                Buy Now
-              </button>
-              <button
-                onClick={handleWishlistToggle}
-                className="p-2.5 rounded-xl border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 text-gray-400 hover:text-red-500 transition cursor-pointer"
-                title="Add to Wishlist"
-              >
-                {inWishlist ? (
-                  <FaHeart className="text-red-500 text-sm" />
-                ) : (
-                  <FiHeart className="text-gray-400 hover:text-red-500 text-sm" />
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+ <div className="flex items-center gap-3">
+ <button
+ onClick={() => navigate(`/comparison/${encodeURIComponent(productName)}`)}
+ className="px-5 py-2.5 bg-[#6c5ce7] hover:bg-[#5b4bc4] text-white font-bold text-xs rounded-[10px] shadow-soft transition cursor-pointer"
+ >
+ Buy Now
+ </button>
+ <button
+ onClick={handleWishlistToggle}
+ className="p-2.5 rounded-[10px] border border-gray-200 bg-white hover:bg-gray-50 :bg-gray-950 :bg-slate-950 :bg-slate-800 text-gray-400 hover:text-red-500 transition cursor-pointer"
+ title="Add to Wishlist"
+ >
+ {inWishlist ? (
+ <FaHeart className="text-red-500 text-sm" />
+ ) : (
+ <FiHeart className="text-gray-400 hover:text-red-500 text-sm" />
+ )}
+ </button>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ );
 
-  if (!isPage) {
-    return cardContent;
-  }
+ if (!isPage) {
+ return cardContent;
+ }
 
-  return (
-    <div className="bg-[#f8fafc] dark:bg-slate-950 min-h-screen text-gray-800 dark:text-slate-100 transition-colors duration-200">
-      <Sidebar />
-      <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
-        <Navbar />
-        <main className="p-6 flex-1">
-          {cardContent}
-        </main>
-      </div>
-    </div>
-  );
+ return (
+ <div className="bg-[#f8fafc] min-h-screen text-gray-800 transition-colors duration-200">
+ <Sidebar />
+ <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
+ <Navbar />
+ <main className="p-6 flex-1">
+ {cardContent}
+ </main>
+ </div>
+ </div>
+ );
 };
 
 export default PriceAlert;

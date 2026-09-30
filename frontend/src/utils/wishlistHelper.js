@@ -1,3 +1,5 @@
+import { syncUserData } from "./api";
+
 export const toggleWishlistItem = (product) => {
   const stored = localStorage.getItem("wishlistItems");
   let wishlist = [];
@@ -5,13 +7,14 @@ export const toggleWishlistItem = (product) => {
     try {
       wishlist = JSON.parse(stored);
     } catch (e) {
-      // Ignore
+      
     }
   }
   const exists = wishlist.some((item) => item.name.toLowerCase() === product.name.toLowerCase());
   if (exists) {
     wishlist = wishlist.filter((item) => item.name.toLowerCase() !== product.name.toLowerCase());
     localStorage.setItem("wishlistItems", JSON.stringify(wishlist));
+    if (localStorage.getItem("token")) syncUserData({ wishlist }).catch(() => {});
     return { added: false, wishlist };
   } else {
     const newItem = {
@@ -29,11 +32,13 @@ export const toggleWishlistItem = (product) => {
     };
     wishlist.push(newItem);
     localStorage.setItem("wishlistItems", JSON.stringify(wishlist));
+    if (localStorage.getItem("token")) syncUserData({ wishlist }).catch(() => {});
     return { added: true, wishlist };
   }
 };
 
 export const isProductInWishlist = (productName) => {
+  if (!productName) return false;
   const stored = localStorage.getItem("wishlistItems");
   if (!stored) return false;
   try {
@@ -42,4 +47,22 @@ export const isProductInWishlist = (productName) => {
   } catch (e) {
     return false;
   }
+};
+
+
+export const getWishlist = () => {
+  const stored = localStorage.getItem('wishlistItems');
+  if (!stored) return [];
+  try { return JSON.parse(stored); } catch (e) { return []; }
+};
+
+export const removeWishlistItem = (productName) => {
+  const stored = localStorage.getItem('wishlistItems');
+  if (!stored) return;
+  try {
+    let wishlist = JSON.parse(stored);
+    wishlist = wishlist.filter(item => item.name.toLowerCase() !== productName.toLowerCase());
+    localStorage.setItem('wishlistItems', JSON.stringify(wishlist));
+    if (localStorage.getItem("token")) syncUserData({ wishlist }).catch(() => {});
+  } catch (e) {}
 };

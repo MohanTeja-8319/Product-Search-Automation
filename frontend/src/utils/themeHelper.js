@@ -1,4 +1,4 @@
-// Theme management helper
+
 
 export const getInitialTheme = () => {
   try {

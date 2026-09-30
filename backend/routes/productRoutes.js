@@ -2,7 +2,7 @@ const express = require("express");
 const {
   searchLiveProducts,
   searchSpecificLiveProduct,
-} = require("../services/quickCommerceService");
+} = require("../services/serpApiService");
 
 const router = express.Router();
 
@@ -23,18 +23,50 @@ function getLocation(req) {
   return { lat, lon, pincode };
 };
 
-/*
-  SEARCH
-  Used by SearchPage.
+function extractProductFromUrl(urlStr) {
+  try {
+    let urlToParse = urlStr;
+    if (!urlToParse.startsWith('http://') && !urlToParse.startsWith('https://')) {
+      if (urlToParse.startsWith('www.') || urlToParse.includes('.com/') || urlToParse.includes('.in/')) {
+        urlToParse = 'https://' + urlToParse;
+      } else {
+        return urlStr;
+      }
+    }
 
-  Returns:
-  {
-    status: "success",
-    products: [...]
+    const parsed = new URL(urlToParse);
+    const host = parsed.hostname.toLowerCase();
+    const pathname = parsed.pathname;
+
+    let slug = "";
+
+    if (host.includes("amazon.")) {
+      const match = pathname.match(/^\/([^\/]+)\/dp\//);
+      if (match) slug = match[1];
+    } else if (host.includes("flipkart.com")) {
+      const match = pathname.match(/^\/([^\/]+)\/p\//);
+      if (match) slug = match[1];
+    }
+    
+    if (!slug) {
+       const segments = pathname.split('/').filter(s => s.includes('-') && isNaN(s.replace(/-/g, '')));
+       if (segments.length) {
+         slug = segments.sort((a,b) => b.length - a.length)[0];
+       }
+    }
+
+    if (slug) {
+      return decodeURIComponent(slug).replace(/-/g, ' ').replace(/\+/g, ' ').trim();
+    }
+    return urlStr;
+  } catch (e) {
+    return urlStr;
   }
-*/
+}
+
 router.get("/search", async (req, res) => {
-  const query = String(req.query.q || "").trim();
+  let query = String(req.query.q || "").trim();
+  query = extractProductFromUrl(query);
 
   if (!query) {
     return res.status(400).json({
@@ -53,6 +85,7 @@ router.get("/search", async (req, res) => {
 
     return res.json({
       status: "success",
+      query: query,
       products: result.products || [],
       platforms: result.platforms || [],
       creditsRemaining: result.creditsRemaining,
@@ -69,15 +102,12 @@ router.get("/search", async (req, res) => {
 });
 
 
-/*
-  SPECIFIC PRODUCT
-  Used when we want ONE exact product
-  across Amazon + Flipkart + Myntra.
-*/
+
 router.get("/specific", async (req, res) => {
-  const query = String(
+  let query = String(
     req.query.name || req.query.q || ""
   ).trim();
+  query = extractProductFromUrl(query);
 
   if (!query) {
     return res.status(400).json({
@@ -127,58 +157,6 @@ router.get("/specific", async (req, res) => {
 });
 
 
-/*
-  COMPARE
-  Used by ComparisonPage.
-*/
-router.get("/compare", async (req, res) => {
-  const query = String(
-    req.query.name || req.query.q || ""
-  ).trim();
-
-  if (!query) {
-    return res.status(400).json({
-      status: "error",
-      message: "Product name is required.",
-    });
-  }
-
-  try {
-    const location = getLocation(req);
-
-    const result = await searchSpecificLiveProduct({
-      query,
-      ...location,
-    });
-
-    return res.json({
-      status: "success",
-
-      product: result.product || null,
-
-      products: result.product
-        ? [result.product]
-        : [],
-
-      platforms: result.platforms || [],
-
-      matchDetails: result.matchDetails || null,
-
-      creditsRemaining: result.creditsRemaining,
-
-      fromCache: result.fromCache || false,
-    });
-  } catch (error) {
-    console.error("Live comparison failed:", error);
-
-    return res.status(error.status || 502).json({
-      status: "error",
-      message:
-        error.message ||
-        "Live comparison failed.",
-    });
-  }
-});
 
 
 module.exports = router;

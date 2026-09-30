@@ -2,6 +2,8 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
+const compression = require("compression");
 const connectDB = require("./config/db");
 
 const authRoutes = require("./routes/authRoutes");
@@ -15,9 +17,7 @@ const sendEmail = require("./utils/sendEmail");
 
 const app = express();
 
-/* ================================
-   MIDDLEWARE
-================================ */
+
 
 app.use(
   cors({
@@ -26,11 +26,12 @@ app.use(
   })
 );
 
+app.use(helmet());
+app.use(compression());
+
 app.use(express.json());
 
-/* ================================
-   ROUTES
-================================ */
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
@@ -39,17 +40,13 @@ app.use("/api/alerts", alertRoutes);
 app.use("/api/push", pushRoutes);
 app.use("/api/admin", require("./routes/adminRoutes"));
 
-/* ================================
-   HEALTH CHECK
-================================ */
+
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-/* ================================
-   404 HANDLER
-================================ */
+
 
 app.use((req, res) => {
   res.status(404).json({
@@ -57,32 +54,20 @@ app.use((req, res) => {
   });
 });
 
-/* ================================
-   SERVER CONFIGURATION
-================================ */
+
 
 const PORT = process.env.PORT || 5000;
 
-/*
-  15 minutes = 15 × 60 × 1000
-                  = 900000 ms
 
-  If ALERT_CHECK_INTERVAL_MS exists
-  in .env, it will use that value.
-
-  Otherwise, default = 15 minutes.
-*/
 
 const ALERT_CHECK_INTERVAL_MS =
   Number(process.env.ALERT_CHECK_INTERVAL_MS) || 15 * 60 * 1000;
 
-/* ================================
-   ALERT MONITOR
-================================ */
+
 
 async function runAlertMonitor(label) {
   console.log("======================================");
-  console.log(`🔎 ${label}`);
+  console.log(`[Monitor] ${label}`);
   console.log("======================================");
 
   try {
@@ -93,49 +78,39 @@ async function runAlertMonitor(label) {
     ).length;
 
     console.log("======================================");
-    console.log(`📊 Checked: ${results.length}`);
-    console.log(`🎯 Triggered: ${triggered}`);
+    console.log(`Checked: ${results.length}`);
+    console.log(`Triggered: ${triggered}`);
     console.log("======================================");
   } catch (error) {
-    console.error("❌ Alert check failed:", error);
+    console.error("Alert check failed:", error);
   }
 }
 
-/* ================================
-   START SERVER
-================================ */
+
 
 connectDB()
   .then(async () => {
-    /* ------------------------------
-       Start Express server
-    ------------------------------ */
+    
 
     app.listen(PORT, async () => {
       console.log(
         `Server running on http://localhost:${PORT}`
       );
 
-      /* ------------------------------
-         Check SMTP connection
-      ------------------------------ */
+      
 
       await sendEmail.verifyEmailTransporter();
     });
 
-    /* ------------------------------
-       Show alert interval
-    ------------------------------ */
+    
 
     console.log(
-      `⏱️ Price alert monitor interval: ${
+      `Price alert monitor interval: ${
         ALERT_CHECK_INTERVAL_MS / 60000
       } minutes`
     );
 
-    /* ------------------------------
-       Initial check after 5 seconds
-    ------------------------------ */
+    
 
     setTimeout(() => {
       runAlertMonitor(
@@ -143,9 +118,7 @@ connectDB()
       );
     }, 5000);
 
-    /* ------------------------------
-       Run every 15 minutes
-    ------------------------------ */
+    
 
     setInterval(() => {
       runAlertMonitor(
@@ -155,7 +128,7 @@ connectDB()
   })
   .catch((error) => {
     console.error(
-      "❌ Server startup failed:",
+      "Server startup failed:",
       error
     );
 

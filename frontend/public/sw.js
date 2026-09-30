@@ -1,6 +1,6 @@
-// Minimal service worker just for Web Push. It has no offline/caching
-// responsibilities — its only job is to turn a push message into a
-// visible OS notification, and take the user somewhere useful on click.
+
+
+
 
 self.addEventListener("install", () => {
   self.skipWaiting();

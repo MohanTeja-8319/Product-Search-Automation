@@ -6,7 +6,7 @@ body,
     padding: 0;
 }
 
-/* Hide scrollbar but allow scrolling */
+
 .hide-scrollbar {
     overflow-y: auto;
     scrollbar-width: none;

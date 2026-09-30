@@ -1,37 +1,112 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { 
-  FaEye, 
-  FaEyeSlash, 
-  
-  FaUser, 
-  FaEnvelope, 
-  FaLock, 
-  FaArrowLeft, 
-  FaBolt,
-  FaShieldAlt,
-  FaShoppingBag,
-  FaCheck
-} from "react-icons/fa";
-import { FiCheckCircle, FiLogOut, FiAlertTriangle } from "react-icons/fi";
-import ParticleBackground from "../Components/ParticleBackground";
-import ResetPassword from "./ResetPassword";
-import A from "../assets/ab.png";
+import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiArrowRight, FiBarChart2, FiCheck } from "react-icons/fi";
 import { loginUser, registerUser, saveAuth } from "../utils/api";
 
-// ==========================================
-// 1. LOGIN COMPONENT
-// ==========================================
-export function Login() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(true);
-    const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+const FEATURES = [
+  "Compare prices across 7+ stores instantly",
+  "Set price alerts & get email notifications",
+  "Track price history over time",
+  "Free to use — no credit card needed",
+];
+
+export function AuthLayout({ children, title, subtitle, isRegister }) {
   const navigate = useNavigate();
 
-  const handleManualLogin = async (e) => {
+  return (
+    <div style={{
+      minHeight: "100vh", display: "flex",
+      background: "var(--bg)", fontFamily: "'Inter', sans-serif"
+    }}>
+      {/* Sidebar (Left) */}
+      <div style={{
+        width: 480, flexShrink: 0,
+        background: "var(--primary-content)", // Stark dark/black
+        display: "flex", flexDirection: "column", padding: "48px 48px",
+        position: "relative", overflow: "hidden",
+        borderRight: "1px solid var(--border)"
+      }}>
+        <div style={{ position: "absolute", top: -80, right: -80, width: 260, height: 260, borderRadius: "50%", background: "var(--primary-muted)" }} />
+        
+        {/* Brand */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 80, position: "relative" }}>
+          <img
+            src="/logo.png"
+            alt="Comparely"
+            style={{ height: 60, width: "auto", objectFit: "contain" }}
+          />
+        </div>
+
+        {/* Hero Text */}
+        <div style={{ flex: 1, position: "relative" }}>
+          <h2 className="font-heading" style={{
+            fontSize: 42, color: "var(--primary)", lineHeight: 1.1, marginBottom: 24, fontStyle: "italic"
+          }}>
+            Intelligent commerce.
+          </h2>
+          <p style={{ fontSize: 13, color: "var(--text-400)", lineHeight: 1.8, marginBottom: 40, maxWidth: 300, letterSpacing: "0.02em" }}>
+            The definitive destination to contrast, analyze, and acquire across premium retailers.
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            {FEATURES.map((f, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <div style={{ width: 4, height: 4, background: "var(--primary)", borderRadius: "50%" }} />
+                <span style={{ fontSize: 12, color: "var(--text-300)", letterSpacing: "0.03em", textTransform: "uppercase", fontWeight: 600 }}>{f}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{ position: "relative", fontSize: 11, color: "var(--text-500)", marginTop: 48, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          © 2026 Comparely
+        </div>
+      </div>
+
+      {}
+      <div style={{
+        flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "40px 24px"
+      }}>
+        <div style={{ width: "100%", maxWidth: 420 }}>
+          <h1 className="font-heading" style={{
+            fontSize: 32, fontWeight: 400,
+            color: "var(--text-900)", marginBottom: 12
+          }}>
+            {title}
+          </h1>
+          <p style={{ fontSize: 13, color: "var(--text-500)", marginBottom: 40, lineHeight: 1.6, letterSpacing: "0.01em" }}>
+            {subtitle}
+          </p>
+          {children}
+          <div style={{ marginTop: 28, textAlign: "center", fontSize: 13, color: "var(--text-400)" }}>
+            {isRegister ? (
+              <>Already have an account?{" "}
+                <Link to="/login" style={{ color: "var(--primary)", fontWeight: 600, textDecoration: "none" }}>Sign In</Link>
+              </>
+            ) : (
+              <>Don't have an account?{" "}
+                <Link to="/register" style={{ color: "var(--primary)", fontWeight: 600, textDecoration: "none" }}>Create Account</Link>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── LOGIN ──────────────────────────────────────
+export function Login() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -46,542 +121,191 @@ export function Login() {
     }
   };
 
-  const handleQuickDemoLogin = (demoName, demoEmail) => {
-    setEmail(demoEmail);
-    setPassword("DemoPass@2026");
-    setLoading(true);
-
-    setTimeout(() => {
-      const userPayload = {
-        name: demoName,
-        email: demoEmail,
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80",
-        provider: "demo",
-        loggedInAt: new Date().toISOString(),
-      };
-
-      localStorage.setItem("user", JSON.stringify(userPayload));
-      localStorage.setItem("token", `demo-${Date.now()}`);
-      setLoading(false);
-      navigate("/home");
-    }, 500);
-  };
-
   return (
-    <div className="h-[100dvh] w-full relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
-      {/* Dynamic Animated Particles Background */}
-      <ParticleBackground />
-
-      
-
-      <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden max-w-5xl w-full grid md:grid-cols-2">
-        {/* Left Hero Graphic Section */}
-        <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 text-white p-6 lg:p-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
-          
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-4">
-              <FaShoppingBag className="text-purple-300" /> Smart Price Intelligence
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight">Product Search</h1>
-            <h2 className="text-2xl lg:text-3xl font-semibold text-purple-200 mt-2">Automation</h2>
-            <p className="text-purple-100/80 text-sm lg:text-base mt-4 leading-relaxed">
-              Search products across Amazon, Flipkart, Croma & Reliance simultaneously with real-time price alerts and automated comparisons.
-            </p>
+    <AuthLayout
+      title="Welcome back"
+      subtitle="Sign in to your Comparely account to continue."
+      isRegister={false}
+    >
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        {error && (
+          <div style={{
+            padding: "12px 16px", borderRadius: "var(--radius-md)",
+            background: "var(--danger-light)", color: "var(--danger)",
+            fontSize: 13, fontWeight: 500, border: "1px solid #FCA5A5"
+          }}>
+            {error}
           </div>
+        )}
 
-          <div className="relative z-10 my-3 flex justify-center">
-            <img 
-              src={A} 
-              alt="Shopping Automation" 
-              className="w-72 lg:w-84 drop-shadow-2xl hover:scale-105 transition-transform duration-500" 
+        {/* Email */}
+        <div>
+          <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-400)", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 8 }}>
+            Email Address
+          </label>
+          <div className="input-group" style={{ borderRadius: "0", border: "none", borderBottom: "1px solid var(--border)", paddingBottom: 4 }}>
+            <span style={{ padding: "0 0 0 14px", color: "var(--text-400)", display: "flex" }}>
+              <FiMail size={15} />
+            </span>
+            <input
+              className="input"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              required
+              style={{ border: "none", boxShadow: "none", padding: "8px 0" }}
             />
           </div>
+        </div>
 
-          <div className="relative z-10 flex items-center justify-between text-xs text-purple-200/70 pt-4 border-t border-white/10">
-            <span>✓ Multi-store Aggregation</span>
-            <span>✓ Live Price History</span>
-            <span>✓ Instant Alerts</span>
+        {/* Password */}
+        <div style={{ marginTop: 24 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+            <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-400)", textTransform: "uppercase", letterSpacing: "0.08em" }}>Password</label>
+            <Link to="/forgot-password" style={{ fontSize: 11, color: "var(--text-400)", textDecoration: "none", fontWeight: 600 }}>
+              FORGOT PASSWORD?
+            </Link>
+          </div>
+          <div className="input-group" style={{ borderRadius: "0", border: "none", borderBottom: "1px solid var(--border)", paddingBottom: 4 }}>
+            <span style={{ padding: "0 0 0 14px", color: "var(--text-400)", display: "flex" }}>
+              <FiLock size={15} />
+            </span>
+            <input
+              className="input"
+              type={showPw ? "text" : "password"}
+              placeholder="Enter your password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+              style={{ border: "none", boxShadow: "none", padding: "8px 0" }}
+            />
+            <button type="button" onClick={() => setShowPw(p => !p)}
+              style={{ padding: "0 14px", background: "none", border: "none", color: "var(--text-400)", cursor: "pointer", display: "flex" }}>
+              {showPw ? <FiEyeOff size={15} /> : <FiEye size={15} />}
+            </button>
           </div>
         </div>
 
-        {/* Right Authentication Form Section */}
-        <div className="p-6 sm:p-6 lg:p-8 flex flex-col justify-center">
-          <div className="text-center md:text-left mb-4">
-            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-              Welcome Back 👋
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-slate-400 dark:text-gray-400 mt-1">
-              Sign in to manage price alerts and smart comparisons
-            </p>
-          </div>
+        <button type="submit" className="btn btn-primary btn-full btn-lg" disabled={loading}
+          style={{ marginTop: 24, borderRadius: "0", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600, padding: "16px", opacity: loading ? 0.7 : 1 }}>
+          {loading ? "Signing in..." : (<>Sign In <FiArrowRight size={16} /></>)}
+        </button>
 
-          {/* Quick Demo Helper */}
-          <div className="mb-3 p-3 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/80 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/50 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
-            <div className="flex items-center gap-2 text-indigo-900 dark:text-indigo-400 dark:text-indigo-200 font-medium">
-              <FaBolt className="text-amber-500" />
-              <span>Quick Test Access:</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => handleQuickDemoLogin("Mohan Teja", "mohan.teja@gmail.com")}
-              className="px-3 py-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg text-xs shadow-sm transition cursor-pointer"
-            >
-              Mohan Teja (Demo)
-            </button>
-          </div>
-
-          {error && (
-            <div className="mb-4 p-3 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-300 text-xs font-medium">
-              {error}
-            </div>
-          )}
-
-          {/* Email / Password Sign In Form */}
-          <form onSubmit={handleManualLogin} className="space-y-3">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
-                Email Address
-              </label>
-              <div className="relative">
-                <FaEnvelope className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-400" />
-                <input
-                  type="email"
-                  required
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-2.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
-                Password
-              </label>
-              <div className="relative">
-                <FaLock className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-400" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  required
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-2.5 pl-12 pr-12 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
-                  aria-label="Toggle password visibility"
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center text-xs">
-              <label className="flex items-center gap-2 cursor-pointer text-gray-600 dark:text-gray-400">
-                <input 
-                  type="checkbox" 
-                  checked={rememberMe} 
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="rounded border-gray-300 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 w-4 h-4" 
-                />
-                Remember me
-              </label>
-              <Link 
-                to="/forgot-password" 
-                className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-400 font-semibold hover:underline"
-              >
-                Forgot Password?
-              </Link>
-            </div>
-
-            {/* Primary Sign In Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 active:scale-[0.99] text-white font-bold py-2.5 rounded-2xl text-sm transition shadow-lg shadow-indigo-200 dark:shadow-none flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                "Sign In"
-              )}
-            </button>
-          </form>
-
-          
-
-          <p className="text-center text-xs text-gray-600 dark:text-gray-400 mt-4">
-            Don't have an account?
-            <Link to="/register" className="text-indigo-600 dark:text-indigo-400 font-bold ml-1.5 hover:underline">
-              Create Free Account
-            </Link>
-          </p>
-
-          <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 text-center">
-            <Link
-              to="/admin/login"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 dark:hover:bg-purple-900/60 px-3.5 py-1.5 rounded-xl transition"
-            >
-              <FaShieldAlt className="text-purple-500" />
-              <span>Switch to Admin Portal</span> →
-            </Link>
-          </div>
+        {/* Admin link */}
+        <div style={{ textAlign: "center" }}>
+          <Link to="/admin/login" style={{ fontSize: 12, color: "var(--text-400)", textDecoration: "none" }}>
+            Admin Portal →
+          </Link>
         </div>
-      </div>
-    </div>
+      </form>
+    </AuthLayout>
   );
 }
 
-// ==========================================
-// 2. REGISTER COMPONENT
-// ==========================================
+// ── REGISTER ──────────────────────────────────
 export function Register() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
-    const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    agreedToTerms: false,
-  });
+  const navigate = useNavigate();
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (password !== confirmPassword) { setError("Passwords do not match."); return; }
+    setLoading(true);
+    try {
+      const data = await registerUser({ fullName, email, password, confirmPassword });
+      saveAuth(data);
+      navigate("/home");
+    } catch (err) {
+      setError(err.message || "Registration failed.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  if (!formData.fullName || !formData.email || !formData.password || !formData.confirmPassword) {
-    setError("Please fill all required fields.");
-    return;
-  }
-  if (formData.password !== formData.confirmPassword) {
-    setError("Passwords do not match.");
-    return;
-  }
-  if (!formData.agreedToTerms) {
-    setError("Please agree to the Terms & Conditions.");
-    return;
-  }
-
-  setLoading(true);
-  try {
-    await registerUser(formData);
-    setFormData({
-      fullName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      agreedToTerms: false,
-    });
-    navigate("/", { state: { registered: true, email: formData.email } });
-  } catch (err) {
-    setError(err.message || "Registration failed. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
   return (
-    <div className="h-[100dvh] w-full relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
-      {/* Particle Background */}
-      <ParticleBackground />
-
-      
-
-      <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden max-w-5xl w-full grid md:grid-cols-2">
-        {/* Left Informative Panel */}
-        <div className="hidden md:flex flex-col justify-between bg-gradient-to-br from-purple-700 via-indigo-800 to-slate-900 text-white p-6 lg:p-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-72 h-72 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
-          
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 dark:bg-slate-900/10 dark:bg-slate-900 backdrop-blur-md border border-white/15 text-xs font-semibold text-purple-200 mb-4">
-              🚀 Start Saving Money
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight">Join Us Today</h1>
-            <p className="text-purple-100/80 text-sm lg:text-base mt-4 leading-relaxed">
-              Create your account to unlock automated price tracking, deal alerts, and instant multi-platform comparison tools.
-            </p>
+    <AuthLayout
+      title="Create your account"
+      subtitle="Start comparing prices for free. No credit card required."
+      isRegister={true}
+    >
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {error && (
+          <div style={{
+            padding: "12px 16px", borderRadius: "var(--radius-md)",
+            background: "var(--danger-light)", color: "var(--danger)",
+            fontSize: 13, fontWeight: 500, border: "1px solid #FCA5A5"
+          }}>
+            {error}
           </div>
+        )}
 
-          <div className="relative z-10 my-3 flex justify-center">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/891/891462.png"
-              alt="Join Platform"
-              className="w-48 drop-shadow-2xl hover:scale-105 transition-transform duration-500"
-            />
-          </div>
-
-          <div className="relative z-10 text-xs text-purple-200/70 pt-4 border-t border-white/10 flex justify-between">
-            <span>Free Forever Tier</span>
-            <span>Zero Spam Guarantee</span>
+        <div>
+          <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-400)", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 8 }}>Full Name</label>
+          <div className="input-group" style={{ borderRadius: "0", border: "none", borderBottom: "1px solid var(--border)", paddingBottom: 4 }}>
+            <span style={{ padding: "0 0 0 14px", color: "var(--text-400)", display: "flex" }}><FiUser size={15} /></span>
+            <input className="input" type="text" placeholder="Your full name" value={fullName}
+              onChange={e => setFullName(e.target.value)} required style={{ border: "none", boxShadow: "none", padding: "8px 0" }} />
           </div>
         </div>
 
-        {/* Right Form Section */}
-        <div className="p-6 sm:p-6 lg:p-8 flex flex-col justify-center">
-          <div className="text-center md:text-left mb-4">
-            <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-              Create Account ✨
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-slate-400 dark:text-gray-400 mt-1">
-              Sign up in seconds to start tracking deals
-            </p>
+        <div style={{ marginTop: 12 }}>
+          <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-400)", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 8 }}>Email Address</label>
+          <div className="input-group" style={{ borderRadius: "0", border: "none", borderBottom: "1px solid var(--border)", paddingBottom: 4 }}>
+            <span style={{ padding: "0 0 0 14px", color: "var(--text-400)", display: "flex" }}><FiMail size={15} /></span>
+            <input className="input" type="email" placeholder="you@example.com" value={email}
+              onChange={e => setEmail(e.target.value)} required style={{ border: "none", boxShadow: "none", padding: "8px 0" }} />
           </div>
+        </div>
 
-          {error && (
-            <div className="mb-4 p-3 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-300 text-xs font-medium">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
-                Full Name
-              </label>
-              <div className="relative">
-                <FaUser className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-400" />
-                <input
-                  type="text"
-                  name="fullName"
-                  required
-                  placeholder="e.g. Mohan Teja"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-2.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
-                Email Address
-              </label>
-              <div className="relative">
-                <FaEnvelope className="absolute top-1/2 -translate-y-1/2 left-4 text-gray-400" />
-                <input
-                  type="email"
-                  name="email"
-                  required
-                  placeholder="name@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full text-sm border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-2.5 pl-12 pr-4 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
-                  Password
-                </label>
-                <div className="relative">
-                  <FaLock className="absolute top-1/2 -translate-y-1/2 left-3 text-gray-400 text-xs" />
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    required
-                    placeholder="Password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="w-full text-xs border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-2.5 pl-9 pr-9 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
-                  >
-                    {showPassword ? <FaEyeSlash className="text-xs" /> : <FaEye className="text-xs" />}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
-                  Confirm
-                </label>
-                <div className="relative">
-                  <FaLock className="absolute top-1/2 -translate-y-1/2 left-3 text-gray-400 text-xs" />
-                  <input
-                    type={showConfirm ? "text" : "password"}
-                    name="confirmPassword"
-                    required
-                    placeholder="Confirm"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    className="w-full text-xs border border-gray-200 dark:border-slate-800 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-950/50 dark:bg-slate-950/50 dark:bg-slate-900/50 dark:bg-slate-800/80 rounded-2xl py-2.5 pl-9 pr-9 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirm(!showConfirm)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
-                  >
-                    {showConfirm ? <FaEyeSlash className="text-xs" /> : <FaEye className="text-xs" />}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 cursor-pointer pt-1">
-              <input
-                type="checkbox"
-                name="agreedToTerms"
-                checked={formData.agreedToTerms}
-                onChange={handleChange}
-                required
-                className="rounded border-gray-300 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500 w-4 h-4"
-              />
-              <span>I agree to the Terms of Service & Privacy Policy</span>
-            </label>
-
-            {/* Primary Sign Up Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 active:scale-[0.99] text-white font-bold py-2.5 rounded-2xl text-sm transition shadow-lg shadow-indigo-200 dark:shadow-none flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70"
-            >
-              {loading ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                "Sign Up"
-              )}
+        <div style={{ marginTop: 12 }}>
+          <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-400)", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 8 }}>Password</label>
+          <div className="input-group" style={{ borderRadius: "0", border: "none", borderBottom: "1px solid var(--border)", paddingBottom: 4 }}>
+            <span style={{ padding: "0 0 0 14px", color: "var(--text-400)", display: "flex" }}><FiLock size={15} /></span>
+            <input className="input" type={showPw ? "text" : "password"} placeholder="Min. 8 characters" value={password}
+              onChange={e => setPassword(e.target.value)} required style={{ border: "none", boxShadow: "none", padding: "8px 0" }} />
+            <button type="button" onClick={() => setShowPw(p => !p)}
+              style={{ padding: "0 14px", background: "none", border: "none", color: "var(--text-400)", cursor: "pointer", display: "flex" }}>
+              {showPw ? <FiEyeOff size={15} /> : <FiEye size={15} />}
             </button>
-          </form>
-
-          
-
-          <p className="text-center text-xs text-gray-600 dark:text-gray-400 mt-4">
-            Already have an account?
-            <Link to="/" className="text-indigo-600 dark:text-indigo-400 font-bold ml-1.5 hover:underline">
-              Sign In
-            </Link>
-          </p>
+          </div>
         </div>
-      </div>
-    </div>
+
+        <div style={{ marginTop: 12 }}>
+          <label style={{ fontSize: 11, fontWeight: 700, color: "var(--text-400)", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 8 }}>Confirm Password</label>
+          <div className="input-group" style={{ borderRadius: "0", border: "none", borderBottom: "1px solid var(--border)", paddingBottom: 4 }}>
+            <span style={{ padding: "0 0 0 14px", color: "var(--text-400)", display: "flex" }}><FiLock size={15} /></span>
+            <input className="input" type="password" placeholder="Repeat password" value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)} required style={{ border: "none", boxShadow: "none", padding: "8px 0" }} />
+          </div>
+        </div>
+
+        <button type="submit" className="btn btn-primary btn-full btn-lg" disabled={loading}
+          style={{ marginTop: 24, borderRadius: "0", textTransform: "uppercase", letterSpacing: "0.05em", fontWeight: 600, padding: "16px", opacity: loading ? 0.7 : 1 }}>
+          {loading ? "Creating account..." : (<>Create Account <FiArrowRight size={16} /></>)}
+        </button>
+      </form>
+    </AuthLayout>
   );
 }
 
-import ForgotPasswordComponent from "./ForgotPassword";
-
-// ==========================================
-// 3. FORGOT PASSWORD COMPONENT
-// ==========================================
-export function ForgotPassword() {
-  return <ForgotPasswordComponent />;
-}
-
-// ==========================================
-// 4. LOGOUT COMPONENT
-// ==========================================
+// ── LOGOUT ────────────────────────────────────
 export function Logout() {
   const navigate = useNavigate();
-  const [logoutState, setLogoutState] = useState("confirm");
-
-  const handleConfirmLogout = () => {
-    setLogoutState("logging_out");
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    sessionStorage.clear();
-    setTimeout(() => {
-      setLogoutState("logged_out");
-    }, 1200);
-  };
-
-  return (
-    <div className="h-[100dvh] w-full relative flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 p-4 sm:p-6 overflow-hidden">
-      {/* Particle Background */}
-      <ParticleBackground />
-
-      <div className="relative z-10 bg-white/95 dark:bg-slate-900/95 dark:bg-slate-900/90 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden max-w-md w-full p-8 text-center">
-        {logoutState === "confirm" && (
-          <div className="space-y-6 py-2 animate-fadeIn">
-            <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-800 rounded-full mx-auto flex items-center justify-center shadow-md">
-              <FiAlertTriangle className="text-indigo-600 dark:text-indigo-400 text-3xl stroke-[2] animate-bounce" />
-            </div>
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-                Confirm Sign Out
-              </h2>
-              <p className="text-gray-500 dark:text-slate-400 dark:text-gray-400 text-sm mt-2 leading-relaxed">
-                Are you sure you want to end your active session?
-              </p>
-            </div>
-            <div className="flex gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => navigate("/home")}
-                className="w-1/2 border border-gray-200 dark:border-slate-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-950 dark:hover:bg-slate-950 dark:hover:bg-slate-800 text-gray-700 dark:text-gray-300 font-bold py-2.5 rounded-2xl text-sm transition cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleConfirmLogout}
-                className="w-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-2.5 rounded-2xl text-sm transition cursor-pointer shadow-lg shadow-indigo-200 dark:shadow-none"
-              >
-                Sign Out
-              </button>
-            </div>
-          </div>
-        )}
-
-        {logoutState === "logging_out" && (
-          <div className="space-y-6 py-6 animate-fadeIn">
-            <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
-              <div className="absolute inset-0 rounded-full border-4 border-indigo-100 dark:border-indigo-950"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-t-indigo-600 animate-spin"></div>
-              <FiLogOut className="text-indigo-600 dark:text-indigo-400 text-2xl animate-pulse" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Signing Out...</h2>
-              <p className="text-xs text-gray-400 mt-1">Clearing local sessions and secure tokens</p>
-            </div>
-          </div>
-        )}
-
-        {logoutState === "logged_out" && (
-          <div className="space-y-6 py-4 animate-fadeIn">
-            <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-100 dark:border-emerald-800 rounded-full mx-auto flex items-center justify-center shadow-lg shadow-emerald-50">
-              <FiCheckCircle className="text-emerald-500 text-4xl stroke-[1.8] animate-bounce" />
-            </div>
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">
-                Signed Out Successfully
-              </h2>
-              <p className="text-gray-500 dark:text-slate-400 dark:text-gray-400 text-xs mt-2">
-                You have been safely disconnected from your account.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => navigate("/")}
-              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-2.5 rounded-2xl text-sm transition cursor-pointer shadow-lg shadow-indigo-200"
-            >
-              Sign In Again
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("searchHistory");
+  localStorage.removeItem("recentProducts");
+  localStorage.removeItem("wishlistItems");
+  localStorage.removeItem("price_scout_notifications");
+  localStorage.removeItem("profilePhoto");
+  navigate("/");
+  return null;
 }
-
-export default Login;

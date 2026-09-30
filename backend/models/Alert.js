@@ -9,7 +9,7 @@ const alertSchema = new mongoose.Schema(
       index: true,
     },
     productId: {
-      type: mongoose.Schema.Types.Mixed, // dummy catalog ids are numbers today
+      type: mongoose.Schema.Types.Mixed, 
     },
     productName: {
       type: String,
@@ -22,14 +22,17 @@ const alertSchema = new mongoose.Schema(
     },
     currentPrice: {
       type: Number,
+      min: 0,
       default: 0,
     },
     targetPrice: {
       type: Number,
+      min: 0,
       required: [true, "Target price is required"],
     },
     initialPrice: {
       type: Number,
+      min: 0,
       default: 0,
     },
     store: {
@@ -80,9 +83,9 @@ const alertSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
-    // Last time the background monitor actually checked a live price for
-    // this alert. Used to respect the Instant / Daily / Weekly frequency
-    // without re-checking (and spending API credits) too often.
+    
+    
+    
     lastCheckedAt: {
       type: Date,
       default: null,
@@ -91,7 +94,7 @@ const alertSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// One alert per user per product — creating again just refreshes it.
+
 alertSchema.index({ user: 1, productName: 1 }, { unique: true });
 
 module.exports = mongoose.model("Alert", alertSchema);

@@ -1,4 +1,5 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const router = express.Router();
 const { register, login, getMe } = require("../controllers/authController");
 const protect = require("../middleware/authMiddleware");
@@ -9,14 +10,20 @@ const {
   changePassword,
 } = require("../controllers/authController");
 
-router.post("/forgot-password", forgotPassword);
-router.post("/verify-otp", verifyResetOtp);
-router.post("/reset-password", resetPassword);
-router.post("/register", register);
-router.post("/login", login);
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 10, 
+  message: "Too many authentication attempts from this IP, please try again after 15 minutes",
+});
+
+router.post("/forgot-password", authLimiter, forgotPassword);
+router.post("/verify-otp", authLimiter, verifyResetOtp);
+router.post("/reset-password", authLimiter, resetPassword);
+router.post("/register", authLimiter, register);
+router.post("/login", authLimiter, login);
 router.get("/me", protect, getMe);
 
-// Change password for the logged-in user (requires current password).
+
 router.post("/change-password", protect, changePassword);
 
 module.exports = router;

@@ -2,7 +2,7 @@ const Alert = require("../models/Alert");
 const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
 const { sendPushToUser } = require("../utils/sendPush");
-const { searchSpecificLiveProduct } = require("./quickCommerceService");
+const { searchSpecificLiveProduct } = require("./serpApiService");
 
 const DEFAULT_LOCATION = {
   lat: Number(process.env.SEARCH_LAT) || 12.9021,
@@ -25,7 +25,7 @@ function isDue(alert, now = Date.now()) {
 
 async function fetchLivePrice(productName) {
   try {
-    console.log(`🔎 Fetching LIVE price for "${productName}"`);
+    console.log(`Fetching LIVE price for "${productName}"`);
 
     const result = await searchSpecificLiveProduct({
       query: productName,
@@ -35,18 +35,18 @@ async function fetchLivePrice(productName) {
     const product = result?.product;
 
     if (!product) {
-      console.log(`⚠️ No live product found for "${productName}"`);
+      console.log(`No live product found for "${productName}"`);
       return null;
     }
 
     const price = Number(product.price);
 
     if (!Number.isFinite(price) || price <= 0) {
-      console.log(`⚠️ Invalid live price for "${productName}":`, product.price);
+      console.log(`Invalid live price for "${productName}":`, product.price);
       return null;
     }
 
-    console.log(`💰 LIVE PRICE: "${productName}" = ₹${price}`);
+    console.log(`LIVE PRICE: "${productName}" = ₹${price}`);
 
     return {
       price,
@@ -55,7 +55,7 @@ async function fetchLivePrice(productName) {
       url: product.url || "",
     };
   } catch (error) {
-    console.error(`❌ Live price lookup failed for "${productName}"`);
+    console.error(`Live price lookup failed for "${productName}"`);
     console.error("Error:", error.message);
     return null;
   }
@@ -75,7 +75,7 @@ function buildAlertEmailHtml(alert, liveInfo) {
   return `
   <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;">
     <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed);padding:20px 24px;color:#fff;">
-      <p style="margin:0;font-size:13px;opacity:.85;">🎯 Price Alert Triggered</p>
+      <p style="margin:0;font-size:13px;opacity:.85;">Price Alert Triggered</p>
       <h2 style="margin:6px 0 0;font-size:18px;">${alert.productName}</h2>
     </div>
     <div style="padding:24px;background:#fff;">
@@ -97,17 +97,17 @@ async function notifyTriggeredAlert(alert, user, liveInfo) {
 
   if (alert.email && to) {
     try {
-      console.log(`📧 Price target reached. Sending email to ${to}...`);
+      console.log(`Price target reached. Sending email to ${to}...`);
 
       await sendEmail({
         to,
-        subject: `🎯 Price Alert: ${alert.productName} hit ${formatRupees(currentPrice)}`,
+        subject: `Price Alert: ${alert.productName} hit ${formatRupees(currentPrice)}`,
         html: buildAlertEmailHtml(alert, liveInfo),
       });
 
-      console.log(`✅ Price-alert email successfully sent to ${to}`);
+      console.log(`Price-alert email successfully sent to ${to}`);
     } catch (error) {
-      console.error("❌ PRICE ALERT EMAIL FAILED");
+      console.error("PRICE ALERT EMAIL FAILED");
       console.error("Recipient:", to);
       console.error("Product:", alert.productName);
       console.error("Current price:", currentPrice);
@@ -115,7 +115,7 @@ async function notifyTriggeredAlert(alert, user, liveInfo) {
       console.error("Error:", error.message);
     }
   } else {
-    console.log(`⚠️ Email skipped for "${alert.productName}".`);
+    console.log(`Email skipped for "${alert.productName}".`);
     console.log("Email enabled:", alert.email);
     console.log("Recipient:", to || "NO EMAIL");
   }
@@ -123,13 +123,13 @@ async function notifyTriggeredAlert(alert, user, liveInfo) {
   if (alert.push) {
     try {
       await sendPushToUser(String(alert.user), {
-        title: "🎯 Target price reached!",
+        title: "Target price reached!",
         body: `${alert.productName} is now ${formatRupees(currentPrice)} (target: ${formatRupees(alert.targetPrice)})`,
         url: `/comparison/${encodeURIComponent(alert.productName)}`,
       });
-      console.log("🔔 Browser push notification sent.");
+      console.log("Browser push notification sent.");
     } catch (error) {
-      console.error("❌ Browser push failed:", error.message);
+      console.error("Browser push failed:", error.message);
     }
   }
 
@@ -142,7 +142,7 @@ async function notifyTriggeredAlert(alert, user, liveInfo) {
 
 async function checkSingleAlert(alert) {
   console.log("======================================");
-  console.log(`🎯 CHECKING ALERT: ${alert.productName}`);
+  console.log(`CHECKING ALERT: ${alert.productName}`);
   console.log("Alert ID:", alert._id);
   console.log("Target:", formatRupees(alert.targetPrice));
   console.log("Stored current price:", formatRupees(alert.currentPrice));
@@ -163,7 +163,7 @@ async function checkSingleAlert(alert) {
   const reached = Number(newPrice) > 0 && Number(newPrice) <= Number(alert.targetPrice);
 
   console.log("======================================");
-  console.log(`🎯 ALERT RESULT: ${alert.productName}`);
+  console.log(`ALERT RESULT: ${alert.productName}`);
   console.log(`Current price: ₹${newPrice}`);
   console.log(`Target price: ₹${alert.targetPrice}`);
   console.log(`Reached: ${reached}`);
@@ -177,7 +177,7 @@ async function checkSingleAlert(alert) {
   await alert.save();
 
   if (reached) {
-    console.log(`🎯 TARGET REACHED for "${alert.productName}"`);
+    console.log(`TARGET REACHED for "${alert.productName}"`);
     const user = await User.findById(alert.user).select("email fullName");
     await notifyTriggeredAlert(alert, user, liveInfo);
   }
@@ -193,7 +193,7 @@ async function runAlertCheckCycle({ userId } = {}) {
   const now = Date.now();
   const dueAlerts = userId ? alerts : alerts.filter((alert) => isDue(alert, now));
 
-  console.log(`🔎 Alert monitor found ${alerts.length} active alert(s).`);
+  console.log(`Alert monitor found ${alerts.length} active alert(s).`);
 
   const results = [];
 
@@ -201,7 +201,7 @@ async function runAlertCheckCycle({ userId } = {}) {
     try {
       results.push(await checkSingleAlert(alert));
     } catch (error) {
-      console.error(`❌ Alert monitor: failed checking alert ${alert._id}:`, error.message);
+      console.error(`Alert monitor: failed checking alert ${alert._id}:`, error.message);
     }
 
     await new Promise((resolve) => setTimeout(resolve, 400));

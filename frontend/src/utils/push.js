@@ -1,7 +1,7 @@
-// Wires the browser's Push API to the backend's /api/push endpoints so the
-// "Browser Push" checkbox that already existed all over the UI actually
-// does something: register the service worker, ask permission, subscribe,
-// and hand the subscription to the backend so alertMonitor.js can push to it.
+
+
+
+
 import { getVapidPublicKey, subscribePush, unsubscribePush } from "./api";
 
 export function isPushSupported() {
@@ -13,7 +13,7 @@ export function isPushSupported() {
   );
 }
 
-// Web Push VAPID keys are URL-safe base64; PushManager wants a Uint8Array.
+
 function urlBase64ToUint8Array(base64String) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
@@ -26,14 +26,14 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 async function getServiceWorkerRegistration() {
-  // Reuse an existing registration if one is already active, otherwise
-  // register the minimal sw.js that ships in /public.
+  
+  
   const existing = await navigator.serviceWorker.getRegistration("/");
   if (existing) return existing;
   return navigator.serviceWorker.register("/sw.js");
 }
 
-/** Returns the current PushSubscription for this browser, or null. */
+
 export async function getExistingPushSubscription() {
   if (!isPushSupported()) return null;
   try {
@@ -44,14 +44,7 @@ export async function getExistingPushSubscription() {
   }
 }
 
-/**
- * Registers the service worker (if needed), asks the user for notification
- * permission, subscribes to Web Push, and saves the subscription on the
- * backend for the logged-in user. Safe to call more than once — an
- * already-subscribed browser just re-saves the same endpoint.
- *
- * Throws a human-readable Error on failure so callers can surface it.
- */
+
 export async function enableBrowserPush() {
   if (!isPushSupported()) {
     throw new Error("Browser push notifications aren't supported in this browser.");
@@ -92,7 +85,7 @@ export async function enableBrowserPush() {
   return subscription;
 }
 
-/** Unsubscribes this browser from push, both locally and on the backend. */
+
 export async function disableBrowserPush() {
   const subscription = await getExistingPushSubscription();
   if (!subscription) return;
@@ -101,8 +94,8 @@ export async function disableBrowserPush() {
   try {
     await subscription.unsubscribe();
   } finally {
-    // Still tell the backend even if the local unsubscribe throws, so we
-    // don't keep sending pushes to a subscription the browser dropped.
+    
+    
     await unsubscribePush(endpoint).catch(() => {});
   }
 }

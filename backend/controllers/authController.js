@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const Alert = require("../models/Alert");
 const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
 const sendEmail = require("../utils/sendEmail");
 
 function generateToken(userId) {
@@ -17,11 +18,14 @@ function sanitizeUser(user) {
     email: user.email,
     phone: user.phone || "",
     location: user.location || "",
+    searchHistory: user.searchHistory || [],
+    wishlist: user.wishlist || [],
+    recentProducts: user.recentProducts || [],
     createdAt: user.createdAt,
   };
 }
 
-// @route POST /api/auth/register
+
 exports.register = async (req, res) => {
   try {
     const { fullName, email, password, confirmPassword } = req.body;
@@ -61,12 +65,16 @@ exports.register = async (req, res) => {
         .status(409)
         .json({ message: "An account with this email already exists." });
     }
+    if (err.name === 'ValidationError') {
+      const messages = Object.values(err.errors).map(val => val.message);
+      return res.status(400).json({ message: messages[0] });
+    }
     console.error("Register error:", err);
     return res.status(500).json({ message: "Server error during registration." });
   }
 };
 
-// @route POST /api/auth/login
+
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -102,7 +110,7 @@ exports.login = async (req, res) => {
   }
 };
 
-// @route GET /api/auth/me  (protected)
+
 exports.getMe = async (req, res) => {
   try {
     const user = await User.findById(req.userId);
@@ -116,7 +124,7 @@ exports.getMe = async (req, res) => {
   }
 };
 
-// @route POST /api/auth/forgot-password
+
 exports.forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -129,10 +137,12 @@ exports.forgotPassword = async (req, res) => {
       return res.status(404).json({ message: "No account found with this email." });
     }
 
-    const otp = crypto.randomInt(1000, 9999).toString(); // 4-digit OTP // 6-digit OTP
-    const salt = await require("bcryptjs").genSalt(10);
-    user.resetOtp = await require("bcryptjs").hash(otp, salt);
-    user.resetOtpExpiry = Date.now() + 10 * 60 * 1000; // 10 minutes
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const salt = await bcrypt.genSalt(10);
+    user.resetOtp = await bcrypt.hash(otp, salt);
+    user.resetOtpExpiry = Date.now() + 10 * 60 * 1000; 
+    user.otpAttempts = 0;
+    user.otpLockUntil = undefined;
     await user.save();
 
     await sendEmail({
@@ -153,7 +163,7 @@ exports.forgotPassword = async (req, res) => {
   }
 };
 
-// @route POST /api/auth/verify-otp
+
 exports.verifyResetOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -162,23 +172,39 @@ exports.verifyResetOtp = async (req, res) => {
     }
 
     const user = await User.findOne({ email: email.toLowerCase() }).select(
-      "+resetOtp +resetOtpExpiry"
+      "+resetOtp +resetOtpExpiry +otpAttempts +otpLockUntil"
     );
     if (!user || !user.resetOtp || !user.resetOtpExpiry) {
       return res.status(400).json({ message: "Invalid or expired OTP." });
+    }
+
+    if (user.otpLockUntil && user.otpLockUntil > Date.now()) {
+      return res.status(429).json({ message: "Too many failed attempts. Try again later." });
     }
 
     if (Date.now() > user.resetOtpExpiry) {
       return res.status(400).json({ message: "OTP has expired. Please request a new one." });
     }
 
-    const isMatch = await require("bcryptjs").compare(otp, user.resetOtp);
+    const isMatch = await bcrypt.compare(otp, user.resetOtp);
     if (!isMatch) {
+      user.otpAttempts = (user.otpAttempts || 0) + 1;
+      if (user.otpAttempts >= 5) {
+        user.otpLockUntil = Date.now() + 15 * 60 * 1000; 
+        await user.save();
+        return res.status(429).json({ message: "Too many failed attempts. Account locked for 15 minutes." });
+      }
+      await user.save();
       return res.status(400).json({ message: "Invalid OTP." });
     }
+    
+    
+    user.otpAttempts = 0;
+    user.otpLockUntil = undefined;
+    await user.save();
 
-    // OTP correct — issue a short-lived reset token so the client doesn't
-    // need to resend the OTP on the final reset-password step.
+    
+    
     const resetToken = jwt.sign(
       { id: user._id, purpose: "password_reset" },
       process.env.JWT_SECRET,
@@ -192,7 +218,7 @@ exports.verifyResetOtp = async (req, res) => {
   }
 };
 
-// @route POST /api/auth/reset-password
+
 exports.resetPassword = async (req, res) => {
   try {
     const { resetToken, newPassword, confirmPassword } = req.body;
@@ -221,21 +247,25 @@ exports.resetPassword = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    user.password = newPassword; // pre-save hook hashes it
+    user.password = newPassword; 
     user.resetOtp = undefined;
     user.resetOtpExpiry = undefined;
     await user.save();
 
     return res.status(200).json({ message: "Password reset successful. Please sign in." });
   } catch (err) {
+    if (err.name === 'ValidationError') {
+      const messages = Object.values(err.errors).map(val => val.message);
+      return res.status(400).json({ message: messages[0] });
+    }
     console.error("Reset password error:", err);
     return res.status(500).json({ message: "Could not reset password." });
   }
 };
 
-// @route POST /api/auth/change-password (protected)
-// Changes the password for the SAME logged-in user's existing document
-// in the existing `users` collection. Never creates a new user/collection.
+
+
+
 exports.changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmPassword } = req.body;
@@ -254,8 +284,8 @@ exports.changePassword = async (req, res) => {
         .json({ message: "New password must be at least 6 characters long." });
     }
 
-    // req.userId comes from the existing JWT auth middleware — identifies
-    // the SAME user document, never trust an id from the request body.
+    
+    
     const user = await User.findById(req.userId).select("+password");
     if (!user) {
       return res.status(404).json({ message: "User not found." });
@@ -272,21 +302,25 @@ exports.changePassword = async (req, res) => {
         .json({ message: "New password must be different from the current password." });
     }
 
-    // Only the password field is touched; the pre-save hook hashes it.
-    // _id, email, fullName, phone and every other field stay untouched.
+    
+    
     user.password = newPassword;
     await user.save();
 
     return res.status(200).json({ message: "Password changed successfully." });
   } catch (err) {
+    if (err.name === 'ValidationError') {
+      const messages = Object.values(err.errors).map(val => val.message);
+      return res.status(400).json({ message: messages[0] });
+    }
     console.error("Change password error:", err);
     return res.status(500).json({ message: "Could not change password." });
   }
 };
 
-// @route PUT /api/profile (protected)
-// Partially updates ONLY the fields provided, on the SAME existing user
-// document identified via the JWT. Never creates a new user document.
+
+
+
 exports.updateProfile = async (req, res) => {
   try {
     const user = await User.findById(req.userId);
@@ -297,8 +331,8 @@ exports.updateProfile = async (req, res) => {
     const { name, fullName, email, phone, location } = req.body;
     const nextFullName = fullName !== undefined ? fullName : name;
 
-    // Only assign fields that were actually provided — never overwrite
-    // existing values with blank/undefined/null.
+    
+    
     if (nextFullName !== undefined && nextFullName !== null) {
       const trimmedName = String(nextFullName).trim();
       if (!trimmedName) {
@@ -336,6 +370,11 @@ exports.updateProfile = async (req, res) => {
       user.location = String(location).trim();
     }
 
+    const { searchHistory, wishlist, recentProducts } = req.body;
+    if (searchHistory !== undefined) user.searchHistory = searchHistory;
+    if (wishlist !== undefined) user.wishlist = wishlist;
+    if (recentProducts !== undefined) user.recentProducts = recentProducts;
+
     await user.save();
 
     return res.status(200).json({
@@ -354,11 +393,11 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// @route DELETE /api/profile (protected)
-// Permanently deletes the SAME logged-in user's document from the
-// existing `users` collection, plus everything owned by that user
-// (price alerts, etc.) so nothing is left orphaned in the database.
-// Requires the current password to confirm — deletion is irreversible.
+
+
+
+
+
 exports.deleteAccount = async (req, res) => {
   try {
     const { password } = req.body;
@@ -381,8 +420,8 @@ exports.deleteAccount = async (req, res) => {
 
     const userId = user._id;
 
-    // Cascade delete everything owned by this user before removing the
-    // account itself, so no orphaned documents are left behind.
+    
+    
     await Alert.deleteMany({ user: userId });
     await User.findByIdAndDelete(userId);
 
@@ -390,5 +429,7 @@ exports.deleteAccount = async (req, res) => {
   } catch (err) {
     console.error("Delete account error:", err);
     return res.status(500).json({ message: "Could not delete account." });
+  
   }
-};
+
+}

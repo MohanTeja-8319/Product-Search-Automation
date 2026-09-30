@@ -1,8 +1,8 @@
 const PushSubscription = require("../models/PushSubscription");
 
-// @route GET /api/push/vapid-public-key (public)
-// The frontend needs this to create a PushManager subscription. It is not
-// secret — only the matching private key (kept server-side) can decrypt.
+
+
+
 exports.getPublicKey = (req, res) => {
   const key = process.env.VAPID_PUBLIC_KEY || "";
 
@@ -16,9 +16,9 @@ exports.getPublicKey = (req, res) => {
   return res.status(200).json({ publicKey: key });
 };
 
-// @route POST /api/push/subscribe (protected)
-// Saves (or refreshes) the browser's push subscription for the logged-in
-// user so the alert monitor can send it notifications later.
+
+
+
 exports.subscribe = async (req, res) => {
   try {
     const { endpoint, keys } = req.body || {};
@@ -41,12 +41,16 @@ exports.subscribe = async (req, res) => {
 
     return res.status(201).json({ message: "Browser push notifications enabled." });
   } catch (err) {
+    if (err.name === 'ValidationError') {
+      const messages = Object.values(err.errors).map(val => val.message);
+      return res.status(400).json({ message: messages[0] });
+    }
     console.error("Push subscribe error:", err);
     return res.status(500).json({ message: "Could not enable push notifications." });
   }
 };
 
-// @route POST /api/push/unsubscribe (protected)
+
 exports.unsubscribe = async (req, res) => {
   try {
     const { endpoint } = req.body || {};

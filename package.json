@@ -1,0 +1,22 @@
+{
+  "name": "product-search-automation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Multi-store Product Search & Price Comparison Automation Fullstack Platform",
+  "scripts": {
+    "dev:backend": "npm run dev --prefix backend",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "build:frontend": "npm run build --prefix frontend",
+    "install:all": "npm install --prefix backend && npm install --prefix frontend"
+  },
+  "keywords": [
+    "product-search",
+    "price-comparison",
+    "e-commerce",
+    "react",
+    "express",
+    "fullstack"
+  ],
+  "author": "",
+  "license": "ISC"
+}

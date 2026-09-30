@@ -19,7 +19,11 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: 6,
+      minlength: [6, "Password must be at least 6 characters long"],
+      match: [
+        /^(?=.*[a-zA-Z])(?=.*\d).{6,}$/,
+        "Password must contain at least one letter and one number",
+      ],
       select: false,
     },
     phone: {
@@ -40,11 +44,34 @@ const userSchema = new mongoose.Schema(
       type: Date,
       select: false,
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    otpAttempts: {
+      type: Number,
+      default: 0,
+    },
+    otpLockUntil: {
+      type: Date,
+    },
+    searchHistory: {
+      type: [{ term: String, time: String }],
+      default: []
+    },
+    wishlist: {
+      type: Array,
+      default: []
+    },
+    recentProducts: {
+      type: Array,
+      default: []
+    }
   },
   { timestamps: true }
 );
 
-// Hash password before saving
+
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(10);
@@ -52,7 +79,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// Compare candidate password with hashed password
+
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };

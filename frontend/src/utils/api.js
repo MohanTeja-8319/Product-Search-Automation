@@ -18,7 +18,7 @@ async function request(path, options = {}) {
   try {
     data = await res.json();
   } catch {
-    // No JSON body
+    
   }
 
   if (!res.ok) {
@@ -31,8 +31,7 @@ async function request(path, options = {}) {
   return data;
 }
 
-/* Same as `request`, but attaches the logged-in user's JWT
-   (from localStorage) so the backend can identify them. */
+
 function authRequest(path, options = {}) {
   const token = localStorage.getItem("token");
 
@@ -46,9 +45,7 @@ function authRequest(path, options = {}) {
 }
 
 
-/* =========================
-   AUTH
-========================= */
+
 
 export function registerUser({
   fullName,
@@ -112,8 +109,34 @@ export function saveAuth({
     "user",
     JSON.stringify(payload)
   );
+
+  // Populate session data from database
+  if (user.searchHistory && user.searchHistory.length > 0) {
+    localStorage.setItem("searchHistory", JSON.stringify(user.searchHistory));
+  } else {
+    localStorage.removeItem("searchHistory");
+  }
+
+  if (user.recentProducts && user.recentProducts.length > 0) {
+    localStorage.setItem("recentProducts", JSON.stringify(user.recentProducts));
+  } else {
+    localStorage.removeItem("recentProducts");
+  }
+
+  if (user.wishlist && user.wishlist.length > 0) {
+    localStorage.setItem("wishlistItems", JSON.stringify(user.wishlist));
+  } else {
+    localStorage.removeItem("wishlistItems");
+  }
+
+  localStorage.removeItem("price_scout_notifications");
+  localStorage.removeItem("profilePhoto");
 }
 
+
+export function getProfile() {
+  return authRequest("/auth/me", { method: "GET" });
+}
 
 export function requestPasswordReset(
   email
@@ -164,20 +187,15 @@ export function resetPassword({
 }
 
 
-/* =========================
-   LOGGED-IN USER (change password / edit profile)
-========================= */
 
-/* Fetches the currently logged-in user's data from the backend
-   using the JWT — used to prefill the Edit Profile form so
-   fields are never blank if the data already exists. */
+
+
 export function getCurrentUser() {
   return authRequest("/auth/me");
 }
 
 
-/* Changes the password for the SAME existing user account.
-   Requires the current password to be verified server-side. */
+
 export function changePassword({
   currentPassword,
   newPassword,
@@ -194,8 +212,7 @@ export function changePassword({
 }
 
 
-/* Updates ONLY the profile fields provided. The backend identifies
-   the user from the JWT and preserves every other existing value. */
+
 export function updateProfile({ name, email, phone, location }) {
   return authRequest("/profile", {
     method: "PUT",
@@ -204,9 +221,7 @@ export function updateProfile({ name, email, phone, location }) {
 }
 
 
-/* Permanently deletes the logged-in user's account (and everything
-   owned by them, e.g. price alerts) from the database. Requires the
-   current password to confirm. */
+
 export function deleteAccount({ password }) {
   return authRequest("/profile", {
     method: "DELETE",
@@ -215,8 +230,7 @@ export function deleteAccount({ password }) {
 }
 
 
-/* Merges an updated user object into localStorage without wiping
-   out local-only fields (avatar, badge, accentRing, provider). */
+
 export function updateStoredUser(patch) {
   let existing = {};
   try {
@@ -230,19 +244,20 @@ export function updateStoredUser(patch) {
   return merged;
 }
 
+export function syncUserData(data) {
+  return authRequest("/profile", {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+}
 
-/* =========================
-   PRICE ALERTS
-========================= */
 
-/* Fetches every price alert that belongs to the logged-in user. */
 export function getAlerts() {
   return authRequest("/alerts");
 }
 
 
-/* Creates (or refreshes, if one already exists for the same product)
-   a price alert for the logged-in user. */
+
 export function createAlert(alert) {
   return authRequest("/alerts", {
     method: "POST",
@@ -251,8 +266,7 @@ export function createAlert(alert) {
 }
 
 
-/* Updates one alert (e.g. toggling active/paused, or simulating a
-   price drop). `id` is the alert's Mongo _id. */
+
 export function updateAlert(id, patch) {
   return authRequest(`/alerts/${id}`, {
     method: "PATCH",
@@ -261,7 +275,7 @@ export function updateAlert(id, patch) {
 }
 
 
-/* Deletes one alert belonging to the logged-in user. */
+
 export function deleteAlert(id) {
   return authRequest(`/alerts/${id}`, {
     method: "DELETE",
@@ -269,18 +283,14 @@ export function deleteAlert(id) {
 }
 
 
-/* =========================
-   BROWSER PUSH NOTIFICATIONS
-========================= */
 
-/* Public VAPID key the frontend needs to create a PushManager subscription.
-   Not auth-protected — it's not secret. */
+
+
 export function getVapidPublicKey() {
   return request("/push/vapid-public-key");
 }
 
-/* Saves this browser's push subscription for the logged-in user so the
-   alert monitor can send it real push notifications later. */
+
 export function subscribePush({ endpoint, keys }) {
   return authRequest("/push/subscribe", {
     method: "POST",
@@ -288,7 +298,7 @@ export function subscribePush({ endpoint, keys }) {
   });
 }
 
-/* Removes this browser's push subscription (e.g. user turned push off). */
+
 export function unsubscribePush(endpoint) {
   return authRequest("/push/unsubscribe", {
     method: "POST",
@@ -297,13 +307,9 @@ export function unsubscribePush(endpoint) {
 }
 
 
-/* =========================
-   CURRENT USER HELPERS
-========================= */
 
-/* Reads the logged-in user's registered email straight out of localStorage
-   (saved at login/registration) so alert forms can default to it instead
-   of a placeholder like "user@example.com". Returns "" if not logged in. */
+
+
 export function getStoredUserEmail() {
   try {
     const raw = localStorage.getItem("user");
@@ -316,9 +322,7 @@ export function getStoredUserEmail() {
 }
 
 
-/* =========================
-   LIVE SEARCH CACHE
-========================= */
+
 
 const LIVE_SEARCH_CACHE_PREFIX =
   "psa-live-search:";
@@ -365,24 +369,14 @@ function writeLiveSearchCache(
       })
     );
   } catch {
-    // Cache failure should never break search.
+    
   }
 }
 
 
-/* =========================
-   LIVE SEARCH
-========================= */
 
-/*
-  SearchPage uses this function.
 
-  IMPORTANT:
-  We call /products/search,
-  NOT /products/specific.
 
-  /search returns multiple products.
-*/
 export async function searchLiveProducts(
   query,
   { lat, lon, pincode } = {}
@@ -398,7 +392,7 @@ export async function searchLiveProducts(
   }
 
 
-  /* Browser cache */
+  
   const cached =
     readLiveSearchCache(cleanQuery);
 
@@ -410,7 +404,7 @@ export async function searchLiveProducts(
   }
 
 
-  /* Query parameters */
+  
   const params =
     new URLSearchParams();
 
@@ -432,13 +426,13 @@ export async function searchLiveProducts(
   }
 
 
-  /* Correct endpoint */
+  
   const data = await request(
     `/products/search?${params.toString()}`
   );
 
 
-  /* Save result */
+  
   writeLiveSearchCache(
     cleanQuery,
     data
@@ -449,14 +443,9 @@ export async function searchLiveProducts(
 }
 
 
-/* =========================
-   SPECIFIC PRODUCT
-========================= */
 
-/*
-  Used when we need ONE exact product
-  across Amazon + Flipkart + Myntra.
-*/
+
+
 export async function searchSpecificLiveProduct(
   productName,
   { lat, lon, pincode } = {}
@@ -525,19 +514,13 @@ export async function searchSpecificLiveProduct(
 }
 
 
-/* =========================
-   LIVE COMPARISON
-========================= */
+
 
 export async function getLiveComparison(
   productName,
   { lat, lon, pincode } = {}
 ) {
-  /*
-    Use the same specific-product
-    cache so clicking Compare does
-    not make another API request.
-  */
+  
 
   return searchSpecificLiveProduct(
     productName,
