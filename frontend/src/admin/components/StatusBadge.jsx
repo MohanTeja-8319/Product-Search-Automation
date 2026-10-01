@@ -1,76 +1,62 @@
 import React from "react";
+import { CircleCheck, Clock, AlertTriangle, XCircle, Power } from "lucide-react";
 
-export function StatusBadge({ status, size = "md" }) {
- if (!status) return null;
+export default function StatusBadge({ status = "Active", size = "normal" }) {
+  const normalized = String(status || "").toLowerCase();
 
- const normalized = status.toString().toLowerCase().trim();
+  let bg = "rgba(255, 255, 255, 0.06)";
+  let color = "var(--text-700, #d5cabd)";
+  let border = "var(--border, #222222)";
+  let Icon = null;
 
- let styles = "bg-slate-100 text-slate-700 border-slate-200 ";
- let dotColor = "bg-slate-500";
+  if (["active", "enabled", "healthy", "completed", "success", "optimal", "in stock"].includes(normalized)) {
+    bg = "rgba(16, 185, 129, 0.15)";
+    color = "#10b981";
+    border = "rgba(16, 185, 129, 0.3)";
+    Icon = CircleCheck;
+  } else if (["running", "processing", "syncing", "queued"].includes(normalized)) {
+    bg = "rgba(255, 255, 255, 0.1)";
+    color = "var(--text-900, #f4efe8)";
+    border = "rgba(255, 255, 255, 0.25)";
+    Icon = Clock;
+  } else if (["warning", "degraded", "pending", "paused", "limited stock"].includes(normalized)) {
+    bg = "rgba(245, 158, 11, 0.15)";
+    color = "#f59e0b";
+    border = "rgba(245, 158, 11, 0.3)";
+    Icon = AlertTriangle;
+  } else if (["failed", "error", "suspended", "stopped", "out of stock"].includes(normalized)) {
+    bg = "rgba(239, 68, 68, 0.15)";
+    color = "#ef4444";
+    border = "rgba(239, 68, 68, 0.3)";
+    Icon = XCircle;
+  } else if (["disabled", "inactive"].includes(normalized)) {
+    bg = "rgba(255, 255, 255, 0.05)";
+    color = "var(--text-500, #888888)";
+    border = "var(--border, #222222)";
+    Icon = Power;
+  }
 
- switch (normalized) {
- case "active":
- case "online":
- case "connected":
- case "running":
- case "completed":
- case "successful":
- case "enabled":
- case "healthy":
- case "resolved":
- case "in stock":
- styles = "bg-emerald-50 text-emerald-700 border-emerald-200/80";
- dotColor = "bg-emerald-600";
- break;
+  const isSmall = size === "small";
 
- case "inactive":
- case "disabled":
- case "stopped":
- case "out of stock":
- styles = "bg-slate-100 text-slate-600 border-slate-200 ";
- dotColor = "bg-slate-400";
- break;
-
- case "pending":
- case "warning":
- case "investigating":
- case "low stock":
- styles = "bg-amber-50 text-amber-700 border-amber-200/80";
- dotColor = "bg-amber-500";
- break;
-
- case "failed":
- case "error":
- case "critical":
- case "suspended":
- styles = "bg-rose-50 text-rose-700 border-rose-200/80";
- dotColor = "bg-rose-500";
- break;
-
- case "info":
- styles = "bg-blue-50 text-blue-700 border-blue-200/80";
- dotColor = "bg-blue-500";
- break;
-
- default:
- styles = "bg-slate-100 text-slate-700 border-slate-200 ";
- dotColor = "bg-slate-500";
- }
-
- const sizeClasses = {
- sm: "px-2 py-0.5 text-xs font-medium",
- md: "px-2.5 py-1 text-xs font-semibold",
- lg: "px-3 py-1.5 text-sm font-semibold"
- }[size] || "px-2.5 py-1 text-xs font-semibold";
-
- return (
- <span
- className={`inline-flex items-center gap-1.5 rounded-full border ${sizeClasses} ${styles} transition-colors select-none`}
- >
- <span className={`w-1.5 h-1.5 rounded-full ${dotColor} flex-shrink-0 animate-pulse`} />
- <span className="capitalize">{status}</span>
- </span>
- );
+  return (
+    <span
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 5,
+        padding: isSmall ? "2px 8px" : "4px 12px",
+        borderRadius: "var(--radius-full, 9999px)",
+        backgroundColor: bg,
+        color: color,
+        border: `1px solid ${border}`,
+        fontSize: isSmall ? 11 : 12,
+        fontWeight: 600,
+        letterSpacing: "0.01em",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {Icon && <Icon size={isSmall ? 11 : 12.5} strokeWidth={2.2} />}
+      <span>{status}</span>
+    </span>
+  );
 }
-
-export default StatusBadge;

@@ -3,6 +3,10 @@ const {
   searchLiveProducts,
   searchSpecificLiveProduct,
 } = require("../services/serpApiService");
+const SearchLog = require("../models/SearchLog");
+const Product = require("../models/Product");
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
@@ -78,10 +82,74 @@ router.get("/search", async (req, res) => {
   try {
     const location = getLocation(req);
 
+    const startTime = Date.now();
     const result = await searchLiveProducts({
       query,
       ...location,
     });
+
+    const durationStr = `${((Date.now() - startTime) / 1000).toFixed(1)}s`;
+
+    // Asynchronously record search in SearchLog
+    let userName = "Storefront Guest";
+    let userEmail = "";
+    let userId = null;
+    try {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret");
+        const u = await User.findById(decoded.id);
+        if (u) {
+          userName = u.fullName;
+          userEmail = u.email;
+          userId = u._id;
+        }
+      }
+    } catch (_) {}
+
+    SearchLog.create({
+      query,
+      user: userName,
+      userEmail,
+      userId,
+      platforms: result.platforms?.length || 4,
+      platformList: Array.isArray(result.platforms)
+        ? result.platforms.map((p) => p.name || p).join(", ")
+        : "Amazon, Flipkart, Myntra, Croma",
+      productsFound: result.products?.length || 0,
+      duration: durationStr,
+      status: "Completed",
+    }).catch(() => {});
+
+    // Cache products into Product model
+    if (Array.isArray(result.products) && result.products.length > 0) {
+      for (const p of result.products) {
+        if (!p.name && !p.title) continue;
+        Product.findOneAndUpdate(
+          { title: p.name || p.title },
+          {
+            $set: {
+              title: p.name || p.title,
+              category: p.category || "General",
+              brand: p.brand || "",
+              image: p.image || "",
+              currentPrice: p.price || 0,
+              originalPrice: p.originalPrice || 0,
+              discount: p.discount || "",
+              rating: p.rating || 4.5,
+              reviewsCount: p.reviewsCount || 120,
+              availability: p.inStock === false ? "Out of Stock" : "In Stock",
+              platforms: Array.isArray(p.platforms) && p.platforms.length > 0
+                ? p.platforms
+                : [{ name: p.store || "Amazon", price: p.price || 0, originalPrice: p.originalPrice || 0, inStock: true }],
+              searchQuery: query,
+            },
+          },
+          { upsert: true }
+        ).catch(() => {});
+      }
+    }
 
     return res.json({
       status: "success",

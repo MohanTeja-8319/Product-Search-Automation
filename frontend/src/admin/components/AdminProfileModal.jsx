@@ -1,177 +1,241 @@
 import React, { useState } from "react";
-import { FiX, FiShield, FiMail, FiCalendar, FiClock, FiKey, FiCheckCircle } from "react-icons/fi";
+import {
+  X,
+  Shield,
+  Mail,
+  Calendar,
+  Clock,
+  Key,
+  CheckCircle2,
+  Lock,
+} from "lucide-react";
 import { useAdminAuth } from "../context/AdminAuthContext";
-import { useAdminToast } from "../context/AdminToastContext";
 
-export function AdminProfileModal({ isOpen, onClose }) {
- const { adminUser, updateProfile } = useAdminAuth();
- const { addToast } = useAdminToast();
+export default function AdminProfileModal({ onClose = () => {} }) {
+  const { adminUser, updateProfile } = useAdminAuth();
 
- const [name, setName] = useState(adminUser?.name || "Mohan Teja");
- const [email, setEmail] = useState(adminUser?.email || "admin@productautomation.io");
- const [isEditing, setIsEditing] = useState(false);
+  const [name, setName] = useState(adminUser?.name || "Mohan Teja");
+  const [email, setEmail] = useState(adminUser?.email || "admin@comparely.io");
+  const [savedMessage, setSavedMessage] = useState("");
 
- if (!isOpen) return null;
+  const handleSave = (e) => {
+    e.preventDefault();
+    if (updateProfile) {
+      updateProfile({ name, email });
+    }
+    setSavedMessage("Admin credentials updated successfully!");
+    setTimeout(() => setSavedMessage(""), 3000);
+  };
 
- const handleSave = (e) => {
- e.preventDefault();
- updateProfile({ name, email });
- setIsEditing(false);
- addToast("Admin profile updated successfully", "success");
- };
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        backgroundColor: "rgba(15, 23, 42, 0.55)",
+        backdropFilter: "blur(4px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 100,
+        padding: 20,
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 500,
+          backgroundColor: "#FFFFFF",
+          borderRadius: 16,
+          boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.25)",
+          border: "1px solid #E2E8F0",
+          overflow: "hidden",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div
+          style={{
+            padding: "20px 24px",
+            borderBottom: "1px solid #E2E8F0",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                backgroundColor: "#EEF2FF",
+                color: "#4F46E5",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Shield size={18} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", margin: 0 }}>
+                Admin Profile & Credentials
+              </h3>
+              <p style={{ fontSize: 12, color: "#64748B", margin: 0 }}>
+                Comparely System Security Level 1
+              </p>
+            </div>
+          </div>
 
- return (
- <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
- {}
- <div
- className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
- onClick={onClose}
- />
+          <button
+            onClick={onClose}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#94A3B8",
+              cursor: "pointer",
+              padding: 4,
+            }}
+          >
+            <X size={18} />
+          </button>
+        </div>
 
- {}
- <div className="relative bg-white rounded-[16px] max-w-lg w-full p-6 shadow-2xl border border-slate-200 z-10 animate-scaleUp overflow-hidden">
- {}
- <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-700" />
+        {/* Form Body */}
+        <form onSubmit={handleSave} style={{ padding: "24px" }}>
+          {savedMessage && (
+            <div
+              style={{
+                padding: "10px 14px",
+                borderRadius: 8,
+                backgroundColor: "#D1FAE5",
+                color: "#059669",
+                fontSize: 13,
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 16,
+              }}
+            >
+              <CheckCircle2 size={16} /> {savedMessage}
+            </div>
+          )}
 
- <button
- onClick={onClose}
- className="absolute top-5 right-5 text-slate-400 hover:text-slate-700 :text-slate-300 p-1.5 rounded-[10px] hover:bg-slate-100 :bg-slate-800 transition-colors"
- >
- <FiX className="text-lg" />
- </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
+            <img
+              src={
+                adminUser?.avatar ||
+                "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80"
+              }
+              alt="Avatar"
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: "50%",
+                objectFit: "cover",
+                border: "3px solid #4F46E5",
+              }}
+            />
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: "#0F172A" }}>
+                {adminUser?.name || "Mohan Teja"}
+              </div>
+              <div style={{ fontSize: 12.5, color: "#64748B" }}>
+                Lead Systems Administrator
+              </div>
+              <span
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  backgroundColor: "#D1FAE5",
+                  color: "#059669",
+                  padding: "2px 8px",
+                  borderRadius: 4,
+                  marginTop: 6,
+                }}
+              >
+                <CheckCircle2 size={11} /> {adminUser?.accessLevel || "Full Access (Root)"}
+              </span>
+            </div>
+          </div>
 
- <div className="flex items-center gap-4 pt-2">
- <div className="relative">
- <img
- src={adminUser?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80"}
- alt={adminUser?.name}
- className="w-16 h-16 rounded-[16px] object-cover border-2 border-indigo-600 shadow-soft"
- />
- <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-600 border-2 border-white rounded-full"></span>
- </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: "#64748B", display: "block", marginBottom: 6 }}>
+                Full Name
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="adm-input"
+              />
+            </div>
 
- <div>
- <div className="flex items-center gap-2">
- <h2 className="text-xl font-bold text-slate-900 ">{adminUser?.name}</h2>
- <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
- ADMIN
- </span>
- </div>
- <p className="text-xs text-slate-500 ">{adminUser?.role}</p>
- <p className="text-[11px] text-slate-400 mt-0.5">{adminUser?.department}</p>
- </div>
- </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: "#64748B", display: "block", marginBottom: 6 }}>
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="adm-input"
+              />
+            </div>
 
- {}
- <div className="mt-6">
- {isEditing ? (
- <form onSubmit={handleSave} className="space-y-4">
- <div>
- <label className="block text-xs font-semibold text-slate-700 mb-1">
- Full Name
- </label>
- <input
- type="text"
- value={name}
- onChange={(e) => setName(e.target.value)}
- className="w-full px-3 py-2 text-sm border border-slate-300 rounded-[10px] focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
- required
- />
- </div>
+            <div
+              style={{
+                padding: "12px 14px",
+                borderRadius: 8,
+                backgroundColor: "#F8FAFC",
+                border: "1px solid #E2E8F0",
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: 12,
+                fontSize: 12,
+              }}
+            >
+              <div>
+                <span style={{ color: "#94A3B8", display: "block" }}>Admin ID:</span>
+                <span style={{ fontWeight: 600, color: "#0F172A" }}>ADM-8319</span>
+              </div>
+              <div>
+                <span style={{ color: "#94A3B8", display: "block" }}>Two-Factor Auth:</span>
+                <span style={{ fontWeight: 600, color: "#059669" }}>Enforced (TOTP)</span>
+              </div>
+            </div>
+          </div>
 
- <div>
- <label className="block text-xs font-semibold text-slate-700 mb-1">
- Email Address
- </label>
- <input
- type="email"
- value={email}
- onChange={(e) => setEmail(e.target.value)}
- className="w-full px-3 py-2 text-sm border border-slate-300 rounded-[10px] focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none"
- required
- />
- </div>
-
- <div className="flex justify-end gap-2 pt-2">
- <button
- type="button"
- onClick={() => setIsEditing(false)}
- className="px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 :bg-slate-800 rounded-[10px]"
- >
- Cancel
- </button>
- <button
- type="submit"
- className="px-4 py-1.5 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-[10px] shadow-xs"
- >
- Save Changes
- </button>
- </div>
- </form>
- ) : (
- <div className="space-y-3 bg-slate-50 p-4 rounded-[16px] border border-slate-200 text-xs">
- <div className="flex items-center justify-between py-1 border-b border-slate-200/60 ">
- <span className="flex items-center gap-2 text-slate-500 ">
- <FiMail className="text-slate-400 text-sm" /> Email Address
- </span>
- <span className="font-semibold text-slate-800 ">{adminUser?.email}</span>
- </div>
-
- <div className="flex items-center justify-between py-1 border-b border-slate-200/60 ">
- <span className="flex items-center gap-2 text-slate-500 ">
- <FiShield className="text-slate-400 text-sm" /> Access Level
- </span>
- <span className="font-semibold text-emerald-600 flex items-center gap-1">
- <FiCheckCircle className="text-xs" /> {adminUser?.accessLevel}
- </span>
- </div>
-
- <div className="flex items-center justify-between py-1 border-b border-slate-200/60 ">
- <span className="flex items-center gap-2 text-slate-500 ">
- <FiClock className="text-slate-400 text-sm" /> Last Active Session
- </span>
- <span className="font-medium text-slate-700 ">{adminUser?.lastLogin}</span>
- </div>
-
- <div className="flex items-center justify-between py-1">
- <span className="flex items-center gap-2 text-slate-500 ">
- <FiKey className="text-slate-400 text-sm" /> Two-Factor Authentication
- </span>
- <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold text-[10px]">
- ENFORCED
- </span>
- </div>
- </div>
- )}
- </div>
-
- {}
- {!isEditing && (
- <div className="mt-6 flex items-center justify-between pt-4 border-t border-slate-200 ">
- <span className="text-[11px] text-slate-400">
- Admin Node ID: <strong className="font-mono text-slate-600 ">AUTH-NODE-01</strong>
- </span>
- <div className="flex gap-2">
- <button
- type="button"
- onClick={() => setIsEditing(true)}
- className="px-3 py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-[10px] transition-colors"
- >
- Edit Profile
- </button>
- <button
- type="button"
- onClick={onClose}
- className="px-4 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-[10px] transition-colors"
- >
- Close
- </button>
- </div>
- </div>
- )}
- </div>
- </div>
- );
+          <div
+            style={{
+              marginTop: 24,
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 10,
+            }}
+          >
+            <button
+              type="button"
+              onClick={onClose}
+              className="adm-btn adm-btn-outline"
+            >
+              Cancel
+            </button>
+            <button type="submit" className="adm-btn adm-btn-primary">
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 }
-
-export default AdminProfileModal;

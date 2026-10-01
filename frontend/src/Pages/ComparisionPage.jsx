@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   FiArrowLeft, FiCheck, FiX, FiExternalLink, FiBell,
-  FiTrendingDown, FiShield, FiAlertCircle
+  FiTrendingDown, FiShield, FiAlertCircle, FiHeart
 } from "react-icons/fi";
-import { FaStar, FaStore } from "react-icons/fa";
+import { FaStar, FaStore, FaHeart } from "react-icons/fa";
 
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
+import WishlistButton from "../Components/WishlistButton";
 import { getLiveComparison } from "../utils/api";
+import { savePriceAlert } from "../utils/alertHelper";
 import toast from "react-hot-toast";
 
 const STORE_COLORS = {
@@ -30,6 +32,8 @@ export default function ComparisonPage() {
   const [error, setError] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [alertProduct, setAlertProduct] = useState(null);
+  const [targetPriceInput, setTargetPriceInput] = useState("");
+  const [inWishlist, setInWishlist] = useState(false);
 
   const location = useLocation();
   const stateProduct = location.state?.product;
@@ -40,6 +44,7 @@ export default function ComparisonPage() {
     if (stateProduct && stateProduct.name === decodedName) {
       setProductData(stateProduct);
       setComparisonList(stateProduct.comparison || []);
+      setInWishlist(isProductInWishlist(stateProduct.name));
       setLoading(false);
       return;
     }
@@ -51,6 +56,7 @@ export default function ComparisonPage() {
         if (res?.product) {
           setProductData(res.product);
           setComparisonList(res.product.comparison || []);
+          setInWishlist(isProductInWishlist(res.product.name));
         } else {
           setError("No exact matches found across our supported retailers.");
         }
@@ -148,10 +154,28 @@ export default function ComparisonPage() {
                       </div>
                     </div>
                     
-                    <button onClick={() => setAlertProduct(productData)}
-                      className="btn btn-primary" style={{ marginLeft: "auto" }}>
-                      <FiBell size={14} /> Set Alert
-                    </button>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: "auto" }}>
+                      <WishlistButton
+                        product={{
+                          name: productData.name,
+                          price: bestPrice,
+                          image: productData.image,
+                        }}
+                        size={38}
+                        iconSize={15}
+                        showText={true}
+                      />
+
+                      <button
+                        onClick={() => {
+                          setAlertProduct(productData);
+                          setTargetPriceInput(Math.round((bestPrice || 0) * 0.9));
+                        }}
+                        className="btn btn-primary"
+                      >
+                        <FiBell size={14} /> Set Alert
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -252,23 +276,74 @@ export default function ComparisonPage() {
       `}</style>
       
       {alertProduct && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)" }}>
-          <div className="card" style={{ width: "100%", maxWidth: 400, padding: 32, position: "relative", background: "var(--bg)" }}>
-            <button onClick={() => setAlertProduct(null)} style={{ position: "absolute", top: 16, right: 16, background: "transparent", border: "none", cursor: "pointer", color: "var(--text-500)" }}><FiX size={20} /></button>
-            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "var(--primary-light)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-              <FiBell size={20} color="var(--primary)" />
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)", padding: 16 }}>
+          <div className="card" style={{ width: "100%", maxWidth: 420, padding: 32, position: "relative", background: "var(--surface)", borderRadius: "var(--radius-lg)" }}>
+            <button onClick={() => setAlertProduct(null)} style={{ position: "absolute", top: 16, right: 16, background: "transparent", border: "none", cursor: "pointer", color: "var(--text-400)" }}><FiX size={20} /></button>
+            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "var(--primary-light)", color: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+              <FiBell size={22} />
             </div>
-            <h2 className="font-heading" style={{ fontSize: 24, fontWeight: 400, color: "var(--text-900)", marginBottom: 8 }}>Track Price Drop</h2>
-            <p style={{ fontSize: 13, color: "var(--text-500)", marginBottom: 24 }}>We'll notify you when <strong>{alertProduct.name}</strong> drops below your target price.</p>
+            <h2 className="font-heading" style={{ fontSize: 22, fontWeight: 400, color: "var(--text-900)", marginBottom: 8 }}>Track Price Drop</h2>
+            <p style={{ fontSize: 13, color: "var(--text-500)", marginBottom: 20 }}>We'll notify you when <strong>{alertProduct.name}</strong> drops below your target price.</p>
             
-            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--text-500)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8, display: "block" }}>Target Price (Current: ₹{bestPrice?.toLocaleString()})</label>
-            <div className="input-group" style={{ marginBottom: 24, padding: "4px 12px" }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--text-700)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8, display: "block" }}>
+              Target Price (Current: ₹{(bestPrice || 0).toLocaleString()})
+            </label>
+            <div className="input-group" style={{ marginBottom: 16, padding: "4px 12px" }}>
               <span style={{ fontSize: 18, fontWeight: 700, color: "var(--text-400)" }}>₹</span>
-              <input type="number" className="input" defaultValue={Math.round((bestPrice || 0) * 0.9)} style={{ fontSize: 18, fontWeight: 700, padding: "8px 12px" }} />
+              <input
+                type="number"
+                className="input"
+                value={targetPriceInput}
+                onChange={(e) => setTargetPriceInput(e.target.value)}
+                style={{ fontSize: 18, fontWeight: 700, padding: "8px 12px" }}
+              />
             </div>
 
-            <button className="btn btn-primary btn-full" style={{ padding: 14 }} onClick={() => { toast.success("Price alert created successfully!"); setAlertProduct(null); }}>
-              Set Alert
+            <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
+              {[5, 10, 15, 20].map((pct) => {
+                const calculated = Math.round((bestPrice || 0) * (1 - pct / 100));
+                return (
+                  <button
+                    key={pct}
+                    type="button"
+                    onClick={() => setTargetPriceInput(calculated)}
+                    style={{
+                      flex: 1,
+                      padding: "6px 0",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      borderRadius: "var(--radius-sm)",
+                      border: "1px solid var(--border)",
+                      background: Number(targetPriceInput) === calculated ? "var(--primary-light)" : "transparent",
+                      color: Number(targetPriceInput) === calculated ? "var(--primary)" : "var(--text-600)",
+                      cursor: "pointer",
+                      transition: "var(--transition)"
+                    }}
+                  >
+                    -{pct}%
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              className="btn btn-primary btn-full"
+              style={{ padding: 14 }}
+              onClick={async () => {
+                const target = Number(targetPriceInput) || Math.round((bestPrice || 0) * 0.9);
+                await savePriceAlert({
+                  productName: alertProduct.name,
+                  productId: alertProduct.id,
+                  image: alertProduct.image,
+                  currentPrice: bestPrice || 0,
+                  targetPrice: target,
+                  store: "Lowest Retailer",
+                });
+                toast.success(`Price alert set for ₹${target.toLocaleString()}! We'll track it.`);
+                setAlertProduct(null);
+              }}
+            >
+              Set Price Alert
             </button>
           </div>
         </div>

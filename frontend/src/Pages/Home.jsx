@@ -10,8 +10,8 @@ import {
 import { FaHeart, FaStar, FaExchangeAlt, FaGamepad } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
+import WishlistButton from "../Components/WishlistButton";
 import { searchLiveProducts } from "../utils/api";
-import { toggleWishlistItem, isProductInWishlist } from "../utils/wishlistHelper";
 
 const CATEGORIES = [
   { name: "Mobiles",    icon: FiSmartphone, key: "Smartphones",     color: "#4F46E5", bg: "#EEF2FF" },
@@ -33,42 +33,15 @@ const FEATURES = [
 
 
 function ProductCard({ product, onClick }) {
-  const [inWishlist, setInWishlist] = useState(false);
-
-  useEffect(() => {
-    setInWishlist(isProductInWishlist(product.name));
-  }, [product.name]);
-
-  const handleWishlist = (e) => {
-    e.stopPropagation();
-    toggleWishlistItem(product);
-    setInWishlist(prev => !prev);
-  };
-
   return (
     <div
       onClick={onClick}
       className="card card-hover animate-fade-in-up"
       style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12, position: "relative" }}
     >
-      {}
-      <button
-        onClick={handleWishlist}
-        style={{
-          position: "absolute", top: 14, right: 14,
-          width: 32, height: 32, borderRadius: "50%",
-          background: "var(--surface)", border: "1px solid var(--border)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          cursor: "pointer", zIndex: 2,
-          color: inWishlist ? "#EF4444" : "var(--text-400)",
-          transition: "var(--transition)",
-          boxShadow: "var(--shadow-xs)"
-        }}
-        onMouseEnter={e => e.currentTarget.style.borderColor = "#EF4444"}
-        onMouseLeave={e => e.currentTarget.style.borderColor = "var(--border)"}
-      >
-        {inWishlist ? <FaHeart size={13} /> : <FiHeart size={13} />}
-      </button>
+      <div style={{ position: "absolute", top: 14, right: 14, zIndex: 3 }}>
+        <WishlistButton product={product} size={32} iconSize={13} />
+      </div>
 
       {}
       {product.discount && (

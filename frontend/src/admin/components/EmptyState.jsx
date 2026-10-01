@@ -1,34 +1,64 @@
 import React from "react";
-import { FiInbox, FiSearch, FiRefreshCw } from "react-icons/fi";
+import { Inbox, Search, Package, AlertCircle } from "lucide-react";
 
-export function EmptyState({
- title = "No data found",
- description = "There are no records matching your current filter criteria.",
- icon: Icon = FiInbox,
- actionText,
- onAction
+export default function EmptyState({
+  title = "No data available",
+  description = "There are no records found to display at this moment.",
+  icon: Icon = Inbox,
+  action = null,
 }) {
- return (
- <div className="flex flex-col items-center justify-center text-center py-12 px-4 rounded-[16px] bg-white border border-dashed border-slate-200 ">
- <div className="w-14 h-14 rounded-[16px] bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 mb-3 shadow-xs">
- <Icon className="text-2xl" />
- </div>
- <h3 className="text-base font-semibold text-slate-800 ">{title}</h3>
- <p className="text-xs text-slate-500 max-w-sm mt-1 mb-4 leading-relaxed">
- {description}
- </p>
- {actionText && onAction && (
- <button
- type="button"
- onClick={onAction}
- className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-[10px] hover:bg-indigo-100 transition-colors shadow-xs"
- >
- <FiRefreshCw className="text-xs" />
- {actionText}
- </button>
- )}
- </div>
- );
-}
+  return (
+    <div
+      style={{
+        padding: "48px 24px",
+        textAlign: "center",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <div
+        style={{
+          width: 52,
+          height: 52,
+          borderRadius: 14,
+          backgroundColor: "#F1F5F9",
+          border: "1px solid #E2E8F0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#94A3B8",
+          marginBottom: 16,
+        }}
+      >
+        <Icon size={24} strokeWidth={1.75} />
+      </div>
 
-export default EmptyState;
+      <h3
+        style={{
+          fontSize: 15,
+          fontWeight: 700,
+          color: "#0F172A",
+          marginBottom: 6,
+        }}
+      >
+        {title}
+      </h3>
+
+      <p
+        style={{
+          fontSize: 13,
+          color: "#64748B",
+          maxWidth: 380,
+          lineHeight: 1.5,
+          margin: "0 auto",
+        }}
+      >
+        {description}
+      </p>
+
+      {action && <div style={{ marginTop: 18 }}>{action}</div>}
+    </div>
+  );
+}

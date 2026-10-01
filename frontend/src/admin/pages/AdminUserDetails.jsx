@@ -1,220 +1,289 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
- FiArrowLeft,
- FiUser,
- FiMail,
- FiCalendar,
- FiClock,
- FiSearch,
- FiCheckCircle,
- FiAlertCircle,
- FiPhone,
- FiMapPin,
- FiExternalLink,
- FiToggleLeft,
- FiToggleRight
-} from "react-icons/fi";
+  ArrowLeft,
+  User,
+  Mail,
+  Calendar,
+  Clock,
+  Search,
+  CheckCircle2,
+  AlertCircle,
+  Phone,
+  MapPin,
+  UserCheck,
+  UserX,
+  Heart,
+  Bell,
+  ExternalLink,
+} from "lucide-react";
 import { useAdminData } from "../context/AdminDataContext";
 import StatusBadge from "../components/StatusBadge";
+import EmptyState from "../components/EmptyState";
+import { API_BASE_URL } from "../../utils/api";
 
-export function AdminUserDetails() {
- const { id } = useParams();
- const navigate = useNavigate();
- const { getUserById, toggleUserStatus } = useAdminData();
+export default function AdminUserDetails() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { getUserById, toggleUserStatus } = useAdminData();
 
- const user = getUserById(id);
+  const [liveUser, setLiveUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
- if (!user) {
- return (
- <div className="bg-white rounded-[16px] border border-slate-200 p-8 text-center max-w-lg mx-auto my-12 shadow-soft">
- <div className="w-12 h-12 rounded-[16px] bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-3 text-xl">
- <FiAlertCircle />
- </div>
- <h3 className="text-lg font-bold text-slate-800 ">User Not Found</h3>
- <p className="text-xs text-slate-500 mt-1 mb-5">
- No account found matching user ID <strong className="font-mono">{id}</strong>.
- </p>
- <Link
- to="/admin/users"
- className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-[10px] text-xs font-bold hover:bg-indigo-700"
- >
- <FiArrowLeft /> Back to Users List
- </Link>
- </div>
- );
- }
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    fetch(`${API_BASE_URL}/admin/users/${id}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (mounted && data) setLiveUser(data);
+      })
+      .catch((err) => console.error("Error fetching live user details:", err))
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [id]);
 
- return (
- <div className="space-y-6">
- {}
- <div className="flex items-center justify-between">
- <button
- type="button"
- onClick={() => navigate("/admin/users")}
- className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-slate-900 :text-white bg-white border border-slate-200 px-3 py-1.5 rounded-[10px] shadow-xs transition-colors"
- >
- <FiArrowLeft /> Back to Users
- </button>
+  const contextUser = getUserById ? getUserById(id) : null;
+  const user = liveUser || contextUser;
 
- <button
- type="button"
- onClick={() => toggleUserStatus(user.id)}
- className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-[10px] text-xs font-semibold border transition-all shadow-xs ${
- user.status === "Active"
- ? "bg-rose-50 text-rose-700 border-rose-200 hover:bg-rose-100"
- : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
- }`}
- >
- {user.status === "Active" ? <FiToggleRight className="text-base" /> : <FiToggleLeft className="text-base" />}
- {user.status === "Active" ? "Deactivate User" : "Activate User"}
- </button>
- </div>
+  if (loading && !user) {
+    return (
+      <div style={{ padding: 40, textAlign: "center", color: "#64748B" }}>
+        Loading user account details...
+      </div>
+    );
+  }
 
- {}
- <div className="bg-white rounded-[16px] border border-slate-200/90 shadow-soft p-6">
- <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-200 ">
- <div className="flex items-center gap-4">
- <img
- src={user.avatar}
- alt={user.name}
- className="w-16 h-16 rounded-[16px] object-cover border-2 border-slate-200 shadow-soft"
- />
- <div>
- <div className="flex items-center gap-2.5">
- <h2 className="text-xl font-bold text-slate-900 ">{user.name}</h2>
- <StatusBadge status={user.status} size="sm" />
- </div>
- <p className="text-xs text-slate-500 font-medium mt-0.5">{user.email}</p>
- <div className="flex items-center gap-4 mt-2 text-[11px] text-slate-400">
- <span className="font-mono font-semibold text-slate-600 ">{user.id}</span>
- <span>•</span>
- <span className="flex items-center gap-1">
- <FiMapPin className="text-xs" /> {user.location}
- </span>
- </div>
- </div>
- </div>
- </div>
+  if (!user) {
+    return (
+      <div style={{ maxWidth: 500, margin: "60px auto" }} className="adm-card">
+        <EmptyState
+          title="User Account Not Found"
+          description={`No user found matching identifier "${id}". The user may have been deleted.`}
+          action={
+            <button onClick={() => navigate("/admin/users")} className="adm-btn adm-btn-primary">
+              <ArrowLeft size={14} /> Back to Users
+            </button>
+          }
+        />
+      </div>
+    );
+  }
 
- {}
- <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
- {}
- <div className="p-3.5 rounded-[10px] bg-slate-50 border border-slate-200 ">
- <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">
- Registration Date
- </span>
- <div className="flex items-center gap-2 text-xs font-bold text-slate-800 ">
- <FiCalendar className="text-indigo-600 " />
- <span>{user.registrationDate}</span>
- </div>
- </div>
+  const isActive = user.status === "Active" || !user.status;
 
- {}
- <div className="p-3.5 rounded-[10px] bg-slate-50 border border-slate-200 ">
- <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">
- Last Login
- </span>
- <div className="flex items-center gap-2 text-xs font-bold text-slate-800 ">
- <FiClock className="text-indigo-600 " />
- <span>{user.lastActive}</span>
- </div>
- </div>
+  const handleToggle = () => {
+    if (toggleUserStatus) {
+      toggleUserStatus(user.id);
+      setLiveUser((prev) => (prev ? { ...prev, status: isActive ? "Suspended" : "Active" } : prev));
+    }
+  };
 
- {}
- <div className="p-3.5 rounded-[10px] bg-indigo-50/50 border border-indigo-100/60">
- <span className="text-[11px] font-semibold uppercase tracking-wider text-indigo-700 block mb-1">
- Total Searches
- </span>
- <div className="flex items-center gap-2 text-base font-extrabold text-indigo-900 ">
- <FiSearch className="text-indigo-600 " />
- <span>{user.totalSearches}</span>
- </div>
- </div>
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 1100, margin: "0 auto" }}>
+      {/* Top Navigation */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <button
+          onClick={() => navigate("/admin/users")}
+          className="adm-btn adm-btn-outline"
+        >
+          <ArrowLeft size={15} /> Back to Users
+        </button>
 
- {}
- <div className="p-3.5 rounded-[10px] bg-slate-50 border border-slate-200 ">
- <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">
- Search Health
- </span>
- <div className="flex items-center gap-3 text-xs">
- <span className="font-bold text-emerald-600 flex items-center gap-1">
- <FiCheckCircle className="text-[11px]" /> {user.successfulSearches || user.totalSearches - 4} OK
- </span>
- <span className="text-slate-300">|</span>
- <span className="font-bold text-rose-600 flex items-center gap-1">
- <FiAlertCircle className="text-[11px]" /> {user.failedSearches || 4} Failed
- </span>
- </div>
- </div>
- </div>
- </div>
+        <button
+          onClick={handleToggle}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "8px 16px",
+            borderRadius: 8,
+            border: "1px solid",
+            borderColor: isActive ? "#FEE2E2" : "#D1FAE5",
+            backgroundColor: isActive ? "#FFFFFF" : "#D1FAE5",
+            color: isActive ? "#DC2626" : "#059669",
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
+          {isActive ? <UserX size={15} /> : <UserCheck size={15} />}
+          <span>{isActive ? "Suspend User" : "Activate User"}</span>
+        </button>
+      </div>
 
- {}
- <div className="bg-white rounded-[16px] border border-slate-200/90 shadow-soft overflow-hidden">
- <div className="p-5 border-b border-slate-200 flex items-center justify-between">
- <div>
- <h3 className="text-base font-bold text-slate-900 ">User's Recent Searches</h3>
- <p className="text-xs text-slate-500 mt-0.5">
- Historical queries triggered by {user.name}
- </p>
- </div>
- <span className="text-xs font-semibold px-2.5 py-1 rounded-[10px] bg-slate-100 text-slate-700 ">
- {user.searches?.length || 0} Recorded Queries
- </span>
- </div>
+      {/* Main Profile Card */}
+      <div className="adm-card" style={{ padding: 28 }}>
+        <div style={{ display: "flex", gap: 24, alignItems: "center", flexWrap: "wrap", marginBottom: 24 }}>
+          <img
+            src={
+              user.avatar ||
+              `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.name || "User")}`
+            }
+            alt={user.name}
+            style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", border: "2px solid #4F46E5" }}
+          />
 
- <div className="overflow-x-auto">
- <table className="w-full text-left text-xs sm:text-sm">
- <thead>
- <tr className="border-b border-slate-200 bg-slate-50/75 text-slate-500 text-[11px] uppercase tracking-wider font-semibold">
- <th className="px-4 py-3">Search Query</th>
- <th className="px-4 py-3">Date</th>
- <th className="px-4 py-3">Status</th>
- <th className="px-4 py-3 text-right">Results Count</th>
- <th className="px-4 py-3 text-center">Action</th>
- </tr>
- </thead>
- <tbody className="divide-y divide-slate-100">
- {(user.searches || []).length === 0 ? (
- <tr>
- <td colSpan={5} className="p-6 text-center text-xs text-slate-400">
- No recent searches recorded for this user.
- </td>
- </tr>
- ) : (
- user.searches.map((s, idx) => (
- <tr key={s.id || idx} className="hover:bg-slate-50 :bg-slate-950 :bg-slate-800 transition-colors">
- <td className="px-4 py-3.5 font-medium text-slate-900 max-w-sm truncate">
- "{s.query}"
- </td>
- <td className="px-4 py-3.5 text-slate-500 whitespace-nowrap">
- {s.date}
- </td>
- <td className="px-4 py-3.5 whitespace-nowrap">
- <StatusBadge status={s.status} size="sm" />
- </td>
- <td className="px-4 py-3.5 text-right font-bold text-slate-800 ">
- {s.resultsCount}
- </td>
- <td className="px-4 py-3.5 text-center">
- <Link
- to={`/admin/searches/${s.id || "SCH-8821"}`}
- className="inline-flex items-center justify-center p-1.5 text-slate-400 hover:text-indigo-600 :text-indigo-400 hover:bg-indigo-50 :bg-indigo-950 rounded-[10px] transition-colors"
- title="View Search Detail"
- >
- <FiExternalLink className="text-sm" />
- </Link>
- </td>
- </tr>
- ))
- )}
- </tbody>
- </table>
- </div>
- </div>
- </div>
- );
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <h2 style={{ fontSize: 22, fontWeight: 800, color: "#0F172A", margin: 0 }}>
+                {user.name}
+              </h2>
+              <StatusBadge status={user.status || "Active"} />
+            </div>
+            <div style={{ fontSize: 13, color: "#64748B", marginTop: 4 }}>
+              Account ID: <code style={{ color: "#0F172A", fontWeight: 600 }}>{user.id}</code>
+            </div>
+          </div>
+        </div>
+
+        {/* User Info Details Grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: 16,
+            padding: 20,
+            borderRadius: 12,
+            backgroundColor: "#F8FAFC",
+            border: "1px solid #E2E8F0",
+          }}
+        >
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#94A3B8", fontSize: 11.5, textTransform: "uppercase", fontWeight: 700 }}>
+              <Mail size={13} /> Email Address
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#0F172A", marginTop: 4 }}>
+              {user.email}
+            </div>
+          </div>
+
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#94A3B8", fontSize: 11.5, textTransform: "uppercase", fontWeight: 700 }}>
+              <Calendar size={13} /> Member Since
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#0F172A", marginTop: 4 }}>
+              {user.registrationDate || "September 2026"}
+            </div>
+          </div>
+
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#94A3B8", fontSize: 11.5, textTransform: "uppercase", fontWeight: 700 }}>
+              <Search size={13} /> Lifetime Queries
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#0F172A", marginTop: 4 }}>
+              {user.searches ?? 0} searches executed
+            </div>
+          </div>
+
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, color: "#94A3B8", fontSize: 11.5, textTransform: "uppercase", fontWeight: 700 }}>
+              <Clock size={13} /> Recent Activity
+            </div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: "#0F172A", marginTop: 4 }}>
+              {user.lastActive || "Active Today"}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Live User Wishlist Items from User Panel */}
+      <div className="adm-card" style={{ padding: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Heart size={18} color="#EF4444" />
+            <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", margin: 0 }}>
+              User Wishlist Items ({user.wishlist?.length || 0})
+            </h3>
+          </div>
+          <span style={{ fontSize: 12, color: "#64748B" }}>Direct from consumer panel</span>
+        </div>
+
+        {Array.isArray(user.wishlist) && user.wishlist.length > 0 ? (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 14 }}>
+            {user.wishlist.map((item, idx) => (
+              <div
+                key={item.id || idx}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: 12,
+                  borderRadius: 10,
+                  backgroundColor: "#F8FAFC",
+                  border: "1px solid #E2E8F0",
+                }}
+              >
+                {item.image && (
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    onError={(e) => { e.currentTarget.style.display = "none"; }}
+                    style={{ width: 44, height: 44, borderRadius: 6, objectFit: "contain", backgroundColor: "#FFFFFF" }}
+                  />
+                )}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#0F172A", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    {item.name}
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "#059669" }}>₹{Number(item.price).toLocaleString()}</span>
+                    <span style={{ fontSize: 11, color: "#64748B" }}>Store: {item.store || "Verified"}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ padding: "20px 0", color: "#94A3B8", fontSize: 13, textAlign: "center" }}>
+            No saved wishlist items for this user.
+          </div>
+        )}
+      </div>
+
+      {/* Live User Search History */}
+      <div className="adm-card" style={{ padding: 24 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+          <Search size={18} color="#4F46E5" />
+          <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", margin: 0 }}>
+            Recent Search Queries ({user.searchHistory?.length || 0})
+          </h3>
+        </div>
+
+        {Array.isArray(user.searchHistory) && user.searchHistory.length > 0 ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {user.searchHistory.map((s, idx) => (
+              <div
+                key={idx}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "10px 14px",
+                  borderRadius: 8,
+                  backgroundColor: "#F8FAFC",
+                  border: "1px solid #E2E8F0",
+                }}
+              >
+                <span style={{ fontSize: 13.5, fontWeight: 600, color: "#0F172A" }}>
+                  "{s.term || s}"
+                </span>
+                <span style={{ fontSize: 11.5, color: "#64748B" }}>
+                  {s.time ? new Date(s.time).toLocaleDateString() : "Recent"}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ padding: "20px 0", color: "#94A3B8", fontSize: 13, textAlign: "center" }}>
+            No search history recorded for this user yet.
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
-
-export default AdminUserDetails;

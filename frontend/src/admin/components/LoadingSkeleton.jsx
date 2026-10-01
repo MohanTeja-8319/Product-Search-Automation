@@ -1,111 +1,89 @@
 import React from "react";
 
-export function TableSkeleton({ rows = 5, columns = 6 }) {
- return (
- <div className="w-full bg-white rounded-[16px] border border-slate-200 p-4 shadow-soft animate-pulse">
- {}
- <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-5">
- <div className="h-10 w-72 bg-slate-200 rounded-[10px]"></div>
- <div className="flex gap-2 w-full sm:w-auto">
- <div className="h-10 w-32 bg-slate-200 rounded-[10px]"></div>
- <div className="h-10 w-28 bg-slate-200 rounded-[10px]"></div>
- </div>
- </div>
-
- {}
- <div className="grid grid-cols-6 gap-4 pb-3 border-b border-slate-200 ">
- {Array.from({ length: columns }).map((_, i) => (
- <div key={i} className="h-4 bg-slate-200 rounded"></div>
- ))}
- </div>
-
- {}
- <div className="divide-y divide-slate-100">
- {Array.from({ length: rows }).map((_, r) => (
- <div key={r} className="grid grid-cols-6 gap-4 py-4 items-center">
- {Array.from({ length: columns }).map((_, c) => (
- <div
- key={c}
- className={`h-4 bg-slate-100 rounded ${c === 0 ? "w-4/5 font-semibold" : c === columns - 1 ? "w-1/2" : "w-3/4"}`}
- ></div>
- ))}
- </div>
- ))}
- </div>
-
- {}
- <div className="mt-5 pt-4 border-t border-slate-200 flex items-center justify-between">
- <div className="h-4 w-40 bg-slate-200 rounded"></div>
- <div className="flex gap-2">
- <div className="h-8 w-20 bg-slate-200 rounded-[10px]"></div>
- <div className="h-8 w-20 bg-slate-200 rounded-[10px]"></div>
- </div>
- </div>
- </div>
- );
+export function SkeletonBox({ width = "100%", height = 20, radius = 8, style = {} }) {
+  return (
+    <div
+      className="adm-skeleton"
+      style={{
+        width,
+        height,
+        borderRadius: radius,
+        ...style,
+      }}
+    />
+  );
 }
 
-export function StatCardsSkeleton() {
- return (
- <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 animate-pulse">
- {Array.from({ length: 6 }).map((_, i) => (
- <div key={i} className="bg-white rounded-[16px] p-5 border border-slate-200 shadow-soft flex flex-col justify-between h-32">
- <div className="flex justify-between items-center">
- <div className="h-4 w-20 bg-slate-200 rounded"></div>
- <div className="h-8 w-8 bg-slate-200 rounded-[10px]"></div>
- </div>
- <div>
- <div className="h-7 w-24 bg-slate-200 rounded mb-2"></div>
- <div className="h-3 w-32 bg-slate-100 rounded"></div>
- </div>
- </div>
- ))}
- </div>
- );
-}
+export default function LoadingSkeleton({ type = "table", rows = 5 }) {
+  if (type === "card") {
+    return (
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 20,
+        }}
+      >
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            style={{
+              backgroundColor: "#FFFFFF",
+              border: "1px solid #E2E8F0",
+              borderRadius: 16,
+              padding: 24,
+              display: "flex",
+              flexDirection: "column",
+              gap: 16,
+            }}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <SkeletonBox width={90} height={14} />
+              <SkeletonBox width={36} height={36} radius={10} />
+            </div>
+            <SkeletonBox width={120} height={28} />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
-export function ChartsSkeleton() {
- return (
- <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-pulse">
- <div className="lg:col-span-2 bg-white rounded-[16px] border border-slate-200 p-5 h-80 flex flex-col justify-between">
- <div className="flex justify-between">
- <div className="h-5 w-40 bg-slate-200 rounded"></div>
- <div className="h-7 w-32 bg-slate-200 rounded-[10px]"></div>
- </div>
- <div className="h-48 bg-slate-100 rounded-[10px]"></div>
- </div>
- <div className="bg-white rounded-[16px] border border-slate-200 p-5 h-80 flex flex-col justify-between">
- <div className="h-5 w-32 bg-slate-200 rounded"></div>
- <div className="h-40 w-40 rounded-full bg-slate-100 mx-auto"></div>
- <div className="h-8 bg-slate-100 rounded"></div>
- </div>
- </div>
- );
-}
+  // Default table skeleton
+  return (
+    <div
+      style={{
+        backgroundColor: "#FFFFFF",
+        border: "1px solid #E2E8F0",
+        borderRadius: 16,
+        padding: 20,
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
+        <SkeletonBox width={220} height={36} radius={8} />
+        <SkeletonBox width={100} height={36} radius={8} />
+      </div>
 
-export function DetailsSkeleton() {
- return (
- <div className="bg-white rounded-[16px] border border-slate-200 p-6 shadow-soft animate-pulse space-y-6">
- <div className="flex items-center gap-4">
- <div className="w-16 h-16 rounded-[16px] bg-slate-200"></div>
- <div className="space-y-2 flex-1">
- <div className="h-6 w-60 bg-slate-200 rounded"></div>
- <div className="h-4 w-40 bg-slate-100 rounded"></div>
- </div>
- </div>
- <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-200 ">
- <div className="h-24 bg-slate-100 rounded-[10px]"></div>
- <div className="h-24 bg-slate-100 rounded-[10px]"></div>
- <div className="h-24 bg-slate-100 rounded-[10px]"></div>
- </div>
- <div className="h-48 bg-slate-100 rounded-[10px]"></div>
- </div>
- );
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {[...Array(rows)].map((_, i) => (
+          <div
+            key={i}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 16,
+              padding: "12px 0",
+              borderBottom: i !== rows - 1 ? "1px solid #F1F5F9" : "none",
+            }}
+          >
+            <SkeletonBox width={36} height={36} radius={8} />
+            <SkeletonBox width="30%" height={16} />
+            <SkeletonBox width="20%" height={16} />
+            <SkeletonBox width="15%" height={16} />
+            <SkeletonBox width="15%" height={16} />
+            <SkeletonBox width={60} height={24} radius={9999} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
-
-export default {
- TableSkeleton,
- StatCardsSkeleton,
- ChartsSkeleton,
- DetailsSkeleton
-};

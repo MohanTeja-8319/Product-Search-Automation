@@ -1,217 +1,206 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
- FiUser,
- FiEye,
- FiTrash2,
- FiToggleLeft,
- FiToggleRight,
- FiSearch,
- FiPlus,
- FiUserCheck,
- FiUserX
-} from "react-icons/fi";
+  Users,
+  Eye,
+  Trash2,
+  UserCheck,
+  UserX,
+  Search,
+  CheckCircle2,
+} from "lucide-react";
 import { useAdminData } from "../context/AdminDataContext";
 import DataTable from "../components/DataTable";
 import StatusBadge from "../components/StatusBadge";
 import ConfirmDialog from "../components/ConfirmDialog";
+import { useAdminToast } from "../context/AdminToastContext";
 
-export function AdminUsers() {
- const { users, toggleUserStatus, deleteUser } = useAdminData();
- const navigate = useNavigate();
+export default function AdminUsers() {
+  const { users = [], toggleUserStatus, deleteUser } = useAdminData();
+  const { addToast } = useAdminToast();
+  const navigate = useNavigate();
 
- const [userToDelete, setUserToDelete] = useState(null);
- const [isDeleting, setIsDeleting] = useState(false);
+  const [userToSuspend, setUserToSuspend] = useState(null);
+  const [userToDelete, setUserToDelete] = useState(null);
 
- const handleDeleteConfirm = () => {
- if (!userToDelete) return;
- setIsDeleting(true);
- setTimeout(() => {
- deleteUser(userToDelete.id);
- setUserToDelete(null);
- setIsDeleting(false);
- }, 400);
- };
+  const handleToggleStatus = (u) => {
+    if (toggleUserStatus) {
+      toggleUserStatus(u.id);
+    } else {
+      const nextStatus = u.status === "Active" ? "Suspended" : "Active";
+      addToast(`User ${u.name} status updated to ${nextStatus}.`, nextStatus === "Active" ? "success" : "warning");
+    }
+    setUserToSuspend(null);
+  };
 
- const columns = [
- {
- header: "User ID",
- key: "id",
- sortKey: "id",
- width: "w-28",
- render: (item) => (
- <span className="font-mono text-xs font-semibold text-slate-500 ">
- {item.id}
- </span>
- )
- },
- {
- header: "Name",
- key: "name",
- sortKey: "name",
- render: (item) => (
- <div className="flex items-center gap-3">
- <img
- src={item.avatar}
- alt={item.name}
- className="w-8 h-8 rounded-full object-cover border border-slate-200 "
- />
- <div>
- <Link
- to={`/admin/users/${item.id}`}
- className="font-bold text-slate-900 hover:text-indigo-600 :text-indigo-400 transition-colors block"
- >
- {item.name}
- </Link>
- <span className="text-[11px] text-slate-400">{item.location}</span>
- </div>
- </div>
- )
- },
- {
- header: "Email",
- key: "email",
- sortKey: "email",
- render: (item) => (
- <span className="text-slate-600 text-xs sm:text-sm font-medium">{item.email}</span>
- )
- },
- {
- header: "Registration Date",
- key: "registrationDate",
- sortKey: "registrationDate",
- render: (item) => (
- <span className="text-slate-500 text-xs whitespace-nowrap">
- {item.registrationDate}
- </span>
- )
- },
- {
- header: "Status",
- key: "status",
- sortKey: "status",
- render: (item) => <StatusBadge status={item.status} size="sm" />
- },
- {
- header: "Total Searches",
- key: "totalSearches",
- sortKey: "totalSearches",
- align: "center",
- render: (item) => (
- <span className="font-bold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-[10px] text-xs">
- {item.totalSearches}
- </span>
- )
- },
- {
- header: "Last Active",
- key: "lastActive",
- sortKey: "lastActive",
- render: (item) => (
- <span className="text-slate-500 text-xs whitespace-nowrap">{item.lastActive}</span>
- )
- },
- {
- header: "Actions",
- align: "right",
- render: (item) => (
- <div className="flex items-center justify-end gap-1.5">
- {}
- <Link
- to={`/admin/users/${item.id}`}
- className="p-1.5 rounded-[10px] text-slate-400 hover:text-indigo-600 :text-indigo-400 hover:bg-indigo-50 :bg-indigo-950 transition-colors"
- title="View User Details"
- >
- <FiEye className="text-base" />
- </Link>
+  const columns = [
+    {
+      header: "User",
+      key: "name",
+      sortable: true,
+      render: (row) => (
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <img
+            src={
+              row.avatar ||
+              `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(row.name || "User")}`
+            }
+            alt={row.name}
+            style={{ width: 34, height: 34, borderRadius: "50%", objectFit: "cover", border: "1px solid var(--adm-border, #222222)" }}
+          />
+          <div>
+            <Link
+              to={`/admin/users/${row.id}`}
+              style={{ fontWeight: 700, color: "var(--adm-text, #f4efe8)", textDecoration: "none", fontSize: 13.5 }}
+              className="adm-link-hover"
+            >
+              {row.name}
+            </Link>
+            <div style={{ fontSize: 11.5, color: "var(--adm-muted, #888888)" }}>ID: {row.id?.slice(0, 8)}</div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      header: "Email Address",
+      key: "email",
+      sortable: true,
+      render: (row) => (
+        <span style={{ color: "var(--adm-muted, #888888)", fontSize: 13, fontWeight: 500 }}>
+          {row.email}
+        </span>
+      ),
+    },
+    {
+      header: "Registration Date",
+      key: "registrationDate",
+      sortable: true,
+      render: (row) => (
+        <span style={{ color: "var(--adm-muted, #888888)", fontSize: 13 }}>
+          {row.registrationDate || row.joinedDate || "2026-08-15"}
+        </span>
+      ),
+    },
+    {
+      header: "Searches",
+      key: "searches",
+      sortable: true,
+      align: "center",
+      render: (row) => (
+        <span style={{ fontWeight: 700, color: "var(--adm-text, #f4efe8)", fontSize: 13 }}>
+          {row.searches ?? row.totalSearches ?? 0}
+        </span>
+      ),
+    },
+    {
+      header: "Status",
+      key: "status",
+      sortable: true,
+      render: (row) => <StatusBadge status={row.status || "Active"} />,
+    },
+    {
+      header: "Last Active",
+      key: "lastActive",
+      sortable: true,
+      render: (row) => (
+        <span style={{ color: "var(--adm-muted, #888888)", fontSize: 12.5 }}>
+          {row.lastActive || "Today"}
+        </span>
+      ),
+    },
+    {
+      header: "Actions",
+      align: "right",
+      render: (row) => {
+        const isActive = row.status === "Active" || !row.status;
 
- {}
- <button
- type="button"
- onClick={() => toggleUserStatus(item.id)}
- className={`p-1.5 rounded-[10px] transition-colors ${
- item.status === "Active"
- ? "text-emerald-600 hover:bg-emerald-50 :bg-emerald-950"
- : "text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 :bg-emerald-950"
- }`}
- title={item.status === "Active" ? "Deactivate User" : "Activate User"}
- >
- {item.status === "Active" ? (
- <FiToggleRight className="text-xl text-emerald-600" />
- ) : (
- <FiToggleLeft className="text-xl text-slate-400" />
- )}
- </button>
+        return (
+          <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+            <button
+              onClick={() => navigate(`/admin/users/${row.id}`)}
+              title="View User Details"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                padding: "6px 12px",
+                borderRadius: 9999,
+                border: "1px solid var(--adm-border, #222222)",
+                backgroundColor: "transparent",
+                color: "var(--adm-text, #f4efe8)",
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+              }}
+            >
+              <Eye size={13} /> View
+            </button>
 
- {}
- <button
- type="button"
- onClick={() => setUserToDelete(item)}
- className="p-1.5 rounded-[10px] text-slate-400 hover:text-rose-600 hover:bg-rose-50 :bg-rose-950 transition-colors"
- title="Delete User"
- >
- <FiTrash2 className="text-base" />
- </button>
- </div>
- )
- }
- ];
+            <button
+              onClick={() => handleToggleStatus(row)}
+              title={isActive ? "Suspend User" : "Activate User"}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                padding: "6px 12px",
+                borderRadius: 9999,
+                border: "1px solid",
+                borderColor: isActive ? "rgba(239, 68, 68, 0.3)" : "rgba(16, 185, 129, 0.3)",
+                backgroundColor: isActive ? "rgba(239, 68, 68, 0.1)" : "rgba(16, 185, 129, 0.1)",
+                color: isActive ? "#f87171" : "#10b981",
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "all 0.15s ease",
+              }}
+            >
+              {isActive ? <UserX size={13} /> : <UserCheck size={13} />}
+              <span>{isActive ? "Suspend" : "Activate"}</span>
+            </button>
+          </div>
+        );
+      },
+    },
+  ];
 
- return (
- <div className="space-y-6">
- {}
- <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
- <div>
- <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
- User Management
- </h2>
- <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
- Monitor registered platform members, search activity, and access state
- </p>
- </div>
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 1400, margin: "0 auto" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+        <div>
+          <h2 style={{ fontSize: 28, fontWeight: 800, fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: "var(--adm-text, #f4efe8)", margin: 0, letterSpacing: "-0.02em" }}>
+            Registered Users
+          </h2>
+          <p style={{ fontSize: 13.5, color: "var(--adm-muted, #888888)", margin: "6px 0 0" }}>
+            Monitor accounts, search queries, active status, and security compliance.
+          </p>
+        </div>
 
- <div className="flex items-center gap-3">
- <div className="px-3 py-1.5 rounded-[10px] bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-xs">
- Total Users: <span className="text-indigo-600 font-bold">{users.length}</span>
- </div>
- </div>
- </div>
+        <div style={{ fontSize: 13, color: "var(--adm-muted, #888888)", backgroundColor: "var(--adm-card, #111111)", padding: "7px 16px", borderRadius: 9999, border: "1px solid var(--adm-border, #222222)", fontWeight: 600 }}>
+          Total Users: <strong style={{ color: "var(--adm-text, #f4efe8)" }}>{users.length} accounts</strong>
+        </div>
+      </div>
 
- {}
- <DataTable
- columns={columns}
- data={users}
- searchKey="name"
- searchPlaceholder="Search users by name, email, or ID..."
- filterOptions={{
- label: "Status",
- key: "status",
- options: [
- { label: "Active", value: "active" },
- { label: "Inactive", value: "inactive" }
- ]
- }}
- defaultSortKey="registrationDate"
- defaultSortDir="desc"
- pageSize={8}
- emptyTitle="No users found"
- emptyDescription="We couldn't find any registered accounts matching your filters."
- />
+      {/* Users Table */}
+      <DataTable
+        columns={columns}
+        data={users}
+        searchKey="name"
+        searchPlaceholder="Search users by name or email..."
+      />
 
- {}
- <ConfirmDialog
- isOpen={!!userToDelete}
- title="Delete User Account"
- message={`Are you sure you want to permanently delete user "${userToDelete?.name}" (${userToDelete?.email})? This action cannot be undone and will purge their search history.`}
- confirmText="Delete User"
- cancelText="Cancel"
- variant="danger"
- isLoading={isDeleting}
- onConfirm={handleDeleteConfirm}
- onCancel={() => setUserToDelete(null)}
- />
- </div>
- );
+      {/* Suspend Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={Boolean(userToSuspend)}
+        title={userToSuspend?.status === "Active" ? "Suspend User Account" : "Activate User Account"}
+        message={`Are you sure you want to change the status of ${userToSuspend?.name} (${userToSuspend?.email})?`}
+        confirmLabel={userToSuspend?.status === "Active" ? "Suspend Account" : "Activate Account"}
+        isDanger={userToSuspend?.status === "Active"}
+        onConfirm={() => handleToggleStatus(userToSuspend)}
+        onCancel={() => setUserToSuspend(null)}
+      />
+    </div>
+  );
 }
-
-export default AdminUsers;

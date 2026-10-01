@@ -362,25 +362,23 @@ exports.updateProfile = async (req, res) => {
       }
     }
 
-    if (phone !== undefined && phone !== null) {
-      user.phone = String(phone).trim();
-    }
-
-    if (location !== undefined && location !== null) {
-      user.location = String(location).trim();
-    }
+    const updateData = {};
+    if (trimmedName && trimmedName !== user.fullName) updateData.fullName = trimmedName;
+    if (trimmedEmail && trimmedEmail.toLowerCase() !== user.email) updateData.email = trimmedEmail.toLowerCase();
+    if (phone !== undefined && phone !== null) updateData.phone = String(phone).trim();
+    if (location !== undefined && location !== null) updateData.location = String(location).trim();
 
     const { searchHistory, wishlist, recentProducts } = req.body;
-    if (searchHistory !== undefined) user.searchHistory = searchHistory;
-    if (wishlist !== undefined) user.wishlist = wishlist;
-    if (recentProducts !== undefined) user.recentProducts = recentProducts;
+    if (searchHistory !== undefined) updateData.searchHistory = searchHistory;
+    if (wishlist !== undefined) updateData.wishlist = wishlist;
+    if (recentProducts !== undefined) updateData.recentProducts = recentProducts;
 
-    await user.save();
+    const updatedUser = await User.findByIdAndUpdate(user._id, { $set: updateData }, { new: true });
 
     return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
-      user: sanitizeUser(user),
+      user: sanitizeUser(updatedUser || user),
     });
   } catch (err) {
     if (err.code === 11000) {

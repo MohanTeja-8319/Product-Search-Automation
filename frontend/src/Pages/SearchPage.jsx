@@ -8,8 +8,10 @@ import {
 import { FaHeart, FaStar, FaExchangeAlt } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
+import WishlistButton from "../Components/WishlistButton";
 import { searchLiveProducts, syncUserData } from "../utils/api";
-import { toggleWishlistItem, isProductInWishlist } from "../utils/wishlistHelper";
+import { isProductInWishlist } from "../utils/wishlistHelper";
+import { savePriceAlert } from "../utils/alertHelper";
 import toast from "react-hot-toast";
 
 const SORT_OPTIONS = [
@@ -21,13 +23,6 @@ const SORT_OPTIONS = [
 ];
 
 function ProductCard({ product, view, onCompare, onTrack }) {
-  const [inWishlist, setInWishlist] = useState(isProductInWishlist(product.name));
-
-  const handleWishlist = (e) => {
-    e.stopPropagation();
-    toggleWishlistItem(product);
-    setInWishlist(p => !p);
-  };
 
   if (view === "list") {
     return (
@@ -60,11 +55,8 @@ function ProductCard({ product, view, onCompare, onTrack }) {
             {product.discount && <span className="badge badge-success">{product.discount} OFF</span>}
           </div>
         </div>
-        <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
-          <button onClick={handleWishlist} className="btn btn-outline btn-sm"
-            style={{ padding: "7px 10px", color: inWishlist ? "#EF4444" : "var(--text-400)", borderColor: inWishlist ? "#FCA5A5" : "var(--border)" }}>
-            {inWishlist ? <FaHeart size={13} /> : <FiHeart size={13} />}
-          </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          <WishlistButton product={product} size={32} iconSize={13} />
           <button onClick={onCompare} className="btn btn-primary btn-sm">
             <FaExchangeAlt size={11} /> Compare
           </button>
@@ -79,15 +71,9 @@ function ProductCard({ product, view, onCompare, onTrack }) {
   return (
     <div className="card card-hover animate-fade-in-up" onClick={onCompare}
       style={{ padding: 18, display: "flex", flexDirection: "column", gap: 10, position: "relative" }}>
-      <button onClick={handleWishlist} style={{
-        position: "absolute", top: 12, right: 12, width: 30, height: 30,
-        borderRadius: "50%", background: "var(--surface)", border: "1px solid var(--border)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        cursor: "pointer", zIndex: 2, color: inWishlist ? "#EF4444" : "var(--text-400)",
-        transition: "var(--transition)", boxShadow: "var(--shadow-xs)"
-      }}>
-        {inWishlist ? <FaHeart size={12} /> : <FiHeart size={12} />}
-      </button>
+      <div style={{ position: "absolute", top: 12, right: 12, zIndex: 3 }}>
+        <WishlistButton product={product} size={30} iconSize={12} />
+      </div>
 
       <button onClick={(e) => { e.stopPropagation(); onTrack(); }} style={{
         position: "absolute", top: 12, right: 48, width: 30, height: 30,
@@ -160,6 +146,7 @@ export default function SearchPage() {
   const [minDiscount, setMinDiscount] = useState("");
   const [selectedStores, setSelectedStores] = useState([]);
   const [alertProduct, setAlertProduct] = useState(null);
+  const [targetPriceInput, setTargetPriceInput] = useState("");
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -180,18 +167,36 @@ export default function SearchPage() {
         setProducts(res?.products || []);
         
         // Save history with parsed query and timestamp
-        const finalQuery = res?.query || query;
-        try {
-          const stored = localStorage.getItem("searchHistory");
-          let hist = stored ? JSON.parse(stored) : [];
-          hist = hist.filter(item => item.term.toLowerCase() !== finalQuery.toLowerCase()); 
-          hist.unshift({ term: finalQuery, time: new Date().toISOString() }); 
-          if (hist.length > 10) hist.pop(); 
-          localStorage.setItem("searchHistory", JSON.stringify(hist));
-          if (localStorage.getItem("token")) {
-            syncUserData({ searchHistory: hist }).catch(() => {});
+        const finalQuery = (res?.query || query || "").trim();
+        if (finalQuery) {
+          try {
+            const stored = localStorage.getItem("searchHistory");
+            let hist = [];
+            if (stored) {
+              const parsed = JSON.parse(stored);
+              if (Array.isArray(parsed)) {
+                hist = parsed
+                  .map(item => {
+                    if (typeof item === "string") return { term: item, time: new Date().toISOString() };
+                    return {
+                      term: item?.term || item?.query || "",
+                      time: item?.time || new Date().toISOString(),
+                    };
+                  })
+                  .filter(item => item.term && item.term.trim());
+              }
+            }
+            hist = hist.filter(item => item.term.toLowerCase() !== finalQuery.toLowerCase()); 
+            hist.unshift({ term: finalQuery, time: new Date().toISOString() }); 
+            if (hist.length > 25) hist = hist.slice(0, 25); 
+            localStorage.setItem("searchHistory", JSON.stringify(hist));
+            if (localStorage.getItem("token")) {
+              syncUserData({ searchHistory: hist }).catch(() => {});
+            }
+          } catch(err) {
+            console.error("Failed to save search history:", err);
           }
-        } catch(err) {}
+        }
       })
       .catch(err => setError(err.message || "Search failed."))
       .finally(() => setLoading(false));
@@ -445,7 +450,10 @@ export default function SearchPage() {
                       product={product}
                       view={view}
                       onCompare={() => navigate(`/comparison/${encodeURIComponent(product.name)}`, { state: { product } })}
-                      onTrack={() => setAlertProduct(product)}
+                      onTrack={() => {
+                        setAlertProduct(product);
+                        setTargetPriceInput(Math.round((product.price || 0) * 0.9));
+                      }}
                     />
                   ))}
                 </div>
@@ -466,23 +474,74 @@ export default function SearchPage() {
       `}</style>
 
       {alertProduct && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.5)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)" }}>
-          <div className="card" style={{ width: "100%", maxWidth: 400, padding: 32, position: "relative", background: "var(--bg)" }}>
-            <button onClick={() => setAlertProduct(null)} style={{ position: "absolute", top: 16, right: 16, background: "transparent", border: "none", cursor: "pointer", color: "var(--text-500)" }}><FiX size={20} /></button>
-            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "var(--primary-light)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
-              <FiBell size={20} color="var(--primary)" />
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)", padding: 16 }}>
+          <div className="card" style={{ width: "100%", maxWidth: 420, padding: 32, position: "relative", background: "var(--surface)", borderRadius: "var(--radius-lg)" }}>
+            <button onClick={() => setAlertProduct(null)} style={{ position: "absolute", top: 16, right: 16, background: "transparent", border: "none", cursor: "pointer", color: "var(--text-400)" }}><FiX size={20} /></button>
+            <div style={{ width: 48, height: 48, borderRadius: "50%", background: "var(--primary-light)", color: "var(--primary)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+              <FiBell size={22} />
             </div>
-            <h2 className="font-heading" style={{ fontSize: 24, fontWeight: 400, color: "var(--text-900)", marginBottom: 8 }}>Track Price Drop</h2>
-            <p style={{ fontSize: 13, color: "var(--text-500)", marginBottom: 24 }}>We'll notify you when <strong>{alertProduct.name}</strong> drops below your target price.</p>
+            <h2 className="font-heading" style={{ fontSize: 22, fontWeight: 400, color: "var(--text-900)", marginBottom: 8 }}>Track Price Drop</h2>
+            <p style={{ fontSize: 13, color: "var(--text-500)", marginBottom: 20 }}>We'll notify you when <strong>{alertProduct.name}</strong> drops below your target price.</p>
             
-            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--text-500)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8, display: "block" }}>Target Price (Current: ₹{alertProduct.price?.toLocaleString()})</label>
-            <div className="input-group" style={{ marginBottom: 24, padding: "4px 12px" }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "var(--text-700)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8, display: "block" }}>
+              Target Price (Current: ₹{alertProduct.price?.toLocaleString()})
+            </label>
+            <div className="input-group" style={{ marginBottom: 16, padding: "4px 12px" }}>
               <span style={{ fontSize: 18, fontWeight: 700, color: "var(--text-400)" }}>₹</span>
-              <input type="number" className="input" defaultValue={Math.round(alertProduct.price * 0.9)} style={{ fontSize: 18, fontWeight: 700, padding: "8px 12px" }} />
+              <input
+                type="number"
+                className="input"
+                value={targetPriceInput}
+                onChange={(e) => setTargetPriceInput(e.target.value)}
+                style={{ fontSize: 18, fontWeight: 700, padding: "8px 12px" }}
+              />
             </div>
 
-            <button className="btn btn-primary btn-full" style={{ padding: 14 }} onClick={() => { toast.success("Price alert created successfully!"); setAlertProduct(null); }}>
-              Set Alert
+            <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
+              {[5, 10, 15, 20].map((pct) => {
+                const calculated = Math.round((alertProduct.price || 0) * (1 - pct / 100));
+                return (
+                  <button
+                    key={pct}
+                    type="button"
+                    onClick={() => setTargetPriceInput(calculated)}
+                    style={{
+                      flex: 1,
+                      padding: "6px 0",
+                      fontSize: 12,
+                      fontWeight: 600,
+                      borderRadius: "var(--radius-sm)",
+                      border: "1px solid var(--border)",
+                      background: Number(targetPriceInput) === calculated ? "var(--primary-light)" : "transparent",
+                      color: Number(targetPriceInput) === calculated ? "var(--primary)" : "var(--text-600)",
+                      cursor: "pointer",
+                      transition: "var(--transition)"
+                    }}
+                  >
+                    -{pct}%
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              className="btn btn-primary btn-full"
+              style={{ padding: 14 }}
+              onClick={async () => {
+                const target = Number(targetPriceInput) || Math.round((alertProduct.price || 0) * 0.9);
+                await savePriceAlert({
+                  productName: alertProduct.name,
+                  productId: alertProduct.id,
+                  image: alertProduct.image,
+                  currentPrice: alertProduct.price,
+                  targetPrice: target,
+                  store: alertProduct.store || "Amazon",
+                });
+                toast.success(`Price alert set for ₹${target.toLocaleString()}! We'll track it.`);
+                setAlertProduct(null);
+              }}
+            >
+              Set Price Alert
             </button>
           </div>
         </div>

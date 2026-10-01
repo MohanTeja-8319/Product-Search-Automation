@@ -1,303 +1,262 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
- FiSearch,
- FiX,
- FiUser,
- FiPackage,
- FiActivity,
- FiServer,
- FiArrowRight,
- FiFileText
-} from "react-icons/fi";
+  Search,
+  Users,
+  Package,
+  Layers,
+  Globe,
+  Activity,
+  BarChart3,
+  MessageSquare,
+  Settings,
+  ArrowRight,
+  X,
+} from "lucide-react";
 import { useAdminData } from "../context/AdminDataContext";
 
-export function GlobalSearchModal({ isOpen, onClose }) {
- const [query, setQuery] = useState("");
- const inputRef = useRef(null);
- const navigate = useNavigate();
- const { users, products, searches, automationJobs } = useAdminData();
+export default function GlobalSearchModal({ onClose = () => {} }) {
+  const navigate = useNavigate();
+  const { users = [], products = [], sources = [], automationJobs = [] } = useAdminData();
+  const [query, setQuery] = useState("");
+  const inputRef = useRef(null);
 
- useEffect(() => {
- if (isOpen) {
- setTimeout(() => inputRef.current?.focus(), 50);
- } else {
- setQuery("");
- }
- }, [isOpen]);
+  useEffect(() => {
+    inputRef.current?.focus();
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
- useEffect(() => {
- const handleKeyDown = (e) => {
- if ((e.ctrlKey || e.metaKey) && e.key === "k") {
- e.preventDefault();
- if (isOpen) onClose();
- else onClose(false); 
- }
- if (e.key === "Escape" && isOpen) {
- onClose();
- }
- };
- window.addEventListener("keydown", handleKeyDown);
- return () => window.removeEventListener("keydown", handleKeyDown);
- }, [isOpen, onClose]);
+  const q = query.trim().toLowerCase();
 
- if (!isOpen) return null;
+  // Search through navigation pages
+  const navSuggestions = [
+    { title: "Dashboard", desc: "Overview & key metrics", path: "/admin/dashboard", icon: BarChart3 },
+    { title: "Users", desc: "Manage registered accounts", path: "/admin/users", icon: Users },
+    { title: "Products", desc: "Product catalog and prices", path: "/admin/products", icon: Package },
+    { title: "Categories", desc: "Product collections & taxonomy", path: "/admin/categories", icon: Layers },
+    { title: "Searches", desc: "User search queries", path: "/admin/searches", icon: Search },
+    { title: "Sources / Platforms", desc: "Amazon, Flipkart, Myntra connectors", path: "/admin/sources", icon: Globe },
+    { title: "Jobs & Automation", desc: "Scrapers and sync tasks", path: "/admin/jobs", icon: Activity },
+    { title: "Analytics", desc: "Search trends and price savings", path: "/admin/analytics", icon: BarChart3 },
+    { title: "Reviews", desc: "Ratings & sentiment moderation", path: "/admin/reviews", icon: MessageSquare },
+    { title: "Settings", desc: "System and API configuration", path: "/admin/settings", icon: Settings },
+  ].filter((item) => !q || item.title.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q));
 
- const trimmed = query.trim().toLowerCase();
+  // Search users
+  const matchedUsers = users
+    .filter((u) => q && (u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q)))
+    .slice(0, 3);
 
- 
- const matchedUsers = trimmed
- ? users.filter(
- (u) =>
- u.name.toLowerCase().includes(trimmed) ||
- u.email.toLowerCase().includes(trimmed) ||
- u.id.toLowerCase().includes(trimmed)
- ).slice(0, 3)
- : [];
+  // Search products
+  const matchedProducts = products
+    .filter((p) => q && (p.name?.toLowerCase().includes(q) || p.category?.toLowerCase().includes(q)))
+    .slice(0, 3);
 
- const matchedProducts = trimmed
- ? products.filter(
- (p) =>
- p.name.toLowerCase().includes(trimmed) ||
- p.category.toLowerCase().includes(trimmed) ||
- p.id.toLowerCase().includes(trimmed)
- ).slice(0, 3)
- : [];
+  const handleSelect = (path) => {
+    onClose();
+    navigate(path);
+  };
 
- const matchedSearches = trimmed
- ? searches.filter(
- (s) =>
- s.query.toLowerCase().includes(trimmed) ||
- s.userName.toLowerCase().includes(trimmed) ||
- s.id.toLowerCase().includes(trimmed)
- ).slice(0, 3)
- : [];
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        backgroundColor: "rgba(15, 23, 42, 0.6)",
+        backdropFilter: "blur(4px)",
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        zIndex: 100,
+        padding: "80px 20px 20px",
+      }}
+      onClick={onClose}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 600,
+          backgroundColor: "#FFFFFF",
+          borderRadius: 16,
+          boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.25)",
+          border: "1px solid #E2E8F0",
+          overflow: "hidden",
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Search Input Box */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: "16px 20px",
+            borderBottom: "1px solid #E2E8F0",
+            gap: 12,
+          }}
+        >
+          <Search size={20} color="#4F46E5" />
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Type a page, user, product, or source..."
+            style={{
+              flex: 1,
+              border: "none",
+              outline: "none",
+              fontSize: 16,
+              color: "#0F172A",
+              background: "transparent",
+            }}
+          />
+          <kbd
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              padding: "2px 6px",
+              borderRadius: 4,
+              backgroundColor: "#F1F5F9",
+              border: "1px solid #CBD5E1",
+              color: "#64748B",
+            }}
+          >
+            ESC
+          </kbd>
+        </div>
 
- const matchedJobs = trimmed
- ? automationJobs.filter(
- (j) =>
- j.jobId.toLowerCase().includes(trimmed) ||
- j.sourceWebsite.toLowerCase().includes(trimmed) ||
- j.searchId.toLowerCase().includes(trimmed)
- ).slice(0, 2)
- : [];
+        {/* Results List */}
+        <div style={{ maxHeight: 380, overflowY: "auto", padding: "12px 10px" }}>
+          {/* Quick Pages */}
+          <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "#94A3B8", padding: "8px 12px 4px" }}>
+            Navigation Pages
+          </div>
+          {navSuggestions.map((item) => {
+            const Icon = item.icon;
+            return (
+              <button
+                key={item.path}
+                onClick={() => handleSelect(item.path)}
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "10px 14px",
+                  borderRadius: 8,
+                  border: "none",
+                  background: "none",
+                  cursor: "pointer",
+                  textAlign: "left",
+                }}
+                className="adm-menu-item-hover"
+              >
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 8,
+                      backgroundColor: "#EEF2FF",
+                      color: "#4F46E5",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Icon size={16} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 13.5, fontWeight: 600, color: "#0F172A" }}>
+                      {item.title}
+                    </div>
+                    <div style={{ fontSize: 12, color: "#64748B" }}>{item.desc}</div>
+                  </div>
+                </div>
+                <ArrowRight size={14} color="#94A3B8" />
+              </button>
+            );
+          })}
 
- const handleSelect = (path) => {
- navigate(path);
- onClose();
- };
+          {/* Matched Users */}
+          {matchedUsers.length > 0 && (
+            <>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "#94A3B8", padding: "12px 12px 4px" }}>
+                Users
+              </div>
+              {matchedUsers.map((u) => (
+                <button
+                  key={u.id}
+                  onClick={() => handleSelect(`/admin/users/${u.id}`)}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "8px 14px",
+                    borderRadius: 8,
+                    border: "none",
+                    background: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                  }}
+                  className="adm-menu-item-hover"
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <Users size={16} color="#4F46E5" />
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#0F172A" }}>
+                      {u.name} ({u.email})
+                    </span>
+                  </div>
+                  <span style={{ fontSize: 11, color: "#94A3B8" }}>User ID: {u.id.slice(0, 8)}</span>
+                </button>
+              ))}
+            </>
+          )}
 
- const navShortcuts = [
- { label: "Dashboard", path: "/admin/dashboard", icon: FiActivity },
- { label: "User Management", path: "/admin/users", icon: FiUser },
- { label: "Products Catalog", path: "/admin/products", icon: FiPackage },
- { label: "Search History", path: "/admin/searches", icon: FiSearch },
- { label: "Automation Jobs", path: "/admin/automation", icon: FiServer },
- { label: "Source Connectors", path: "/admin/sources", icon: FiServer },
- { label: "System Logs", path: "/admin/logs", icon: FiFileText }
- ];
-
- const totalResults = matchedUsers.length + matchedProducts.length + matchedSearches.length + matchedJobs.length;
-
- return (
- <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 p-4">
- {}
- <div
- className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity"
- onClick={onClose}
- />
-
- {}
- <div className="relative bg-white rounded-[16px] max-w-2xl w-full shadow-2xl border border-slate-200 z-10 overflow-hidden animate-scaleUp">
- {}
- <div className="flex items-center px-4 py-3.5 border-b border-slate-200 bg-white ">
- <FiSearch className="text-slate-400 text-lg mr-3 flex-shrink-0" />
- <input
- ref={inputRef}
- type="text"
- value={query}
- onChange={(e) => setQuery(e.target.value)}
- placeholder="Search users, products, search queries, automation jobs..."
- className="w-full text-sm text-slate-800 placeholder-slate-400 bg-transparent outline-none"
- />
- {query && (
- <button
- onClick={() => setQuery("")}
- className="text-slate-400 hover:text-slate-600 :text-slate-400 p-1 mr-1"
- >
- <FiX className="text-sm" />
- </button>
- )}
- <kbd className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-mono text-slate-500 bg-slate-100 border border-slate-200 rounded">
- ESC
- </kbd>
- </div>
-
- {}
- <div className="max-h-[60vh] overflow-y-auto p-3 space-y-4">
- {trimmed && totalResults === 0 && (
- <div className="py-8 text-center text-xs text-slate-400">
- No matches found for <strong className="text-slate-600 ">"{query}"</strong>
- </div>
- )}
-
- {}
- {matchedUsers.length > 0 && (
- <div>
- <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 mb-1">
- Users
- </div>
- <div className="space-y-1">
- {matchedUsers.map((u) => (
- <button
- key={u.id}
- onClick={() => handleSelect(`/admin/users/${u.id}`)}
- className="w-full text-left p-2.5 rounded-[10px] hover:bg-indigo-50/50 :bg-indigo-950/50 flex items-center justify-between transition-colors group"
- >
- <div className="flex items-center gap-3">
- <img src={u.avatar} alt={u.name} className="w-7 h-7 rounded-full object-cover" />
- <div>
- <div className="text-xs font-semibold text-slate-800 group-hover:text-indigo-600 :text-indigo-400">
- {u.name}
- </div>
- <div className="text-[11px] text-slate-400">{u.email} • {u.id}</div>
- </div>
- </div>
- <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 :text-indigo-400 text-xs" />
- </button>
- ))}
- </div>
- </div>
- )}
-
- {}
- {matchedProducts.length > 0 && (
- <div>
- <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 mb-1">
- Products
- </div>
- <div className="space-y-1">
- {matchedProducts.map((p) => (
- <button
- key={p.id}
- onClick={() => handleSelect(`/admin/products/${p.id}`)}
- className="w-full text-left p-2.5 rounded-[10px] hover:bg-indigo-50/50 :bg-indigo-950/50 flex items-center justify-between transition-colors group"
- >
- <div className="flex items-center gap-3">
- <img src={p.image} alt={p.name} className="w-7 h-7 rounded-[10px] object-cover" />
- <div className="max-w-md truncate">
- <div className="text-xs font-semibold text-slate-800 truncate group-hover:text-indigo-600 :text-indigo-400">
- {p.name}
- </div>
- <div className="text-[11px] text-slate-400">
- ₹{p.price.toLocaleString()} • {p.sourceWebsite} • {p.id}
- </div>
- </div>
- </div>
- <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 :text-indigo-400 text-xs" />
- </button>
- ))}
- </div>
- </div>
- )}
-
- {}
- {matchedSearches.length > 0 && (
- <div>
- <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 mb-1">
- Searches
- </div>
- <div className="space-y-1">
- {matchedSearches.map((s) => (
- <button
- key={s.id}
- onClick={() => handleSelect(`/admin/searches/${s.id}`)}
- className="w-full text-left p-2.5 rounded-[10px] hover:bg-indigo-50/50 :bg-indigo-950/50 flex items-center justify-between transition-colors group"
- >
- <div className="flex items-center gap-3">
- <div className="w-7 h-7 rounded-[10px] bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs font-bold">
- <FiSearch />
- </div>
- <div>
- <div className="text-xs font-semibold text-slate-800 group-hover:text-indigo-600 :text-indigo-400">
- "{s.query}"
- </div>
- <div className="text-[11px] text-slate-400">
- by {s.userName} • {s.dateTime}
- </div>
- </div>
- </div>
- <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 :text-indigo-400 text-xs" />
- </button>
- ))}
- </div>
- </div>
- )}
-
- {}
- {matchedJobs.length > 0 && (
- <div>
- <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 mb-1">
- Automation Jobs
- </div>
- <div className="space-y-1">
- {matchedJobs.map((j) => (
- <button
- key={j.jobId}
- onClick={() => handleSelect(`/admin/automation`)}
- className="w-full text-left p-2.5 rounded-[10px] hover:bg-indigo-50/50 :bg-indigo-950/50 flex items-center justify-between transition-colors group"
- >
- <div className="flex items-center gap-3">
- <div className="w-7 h-7 rounded-[10px] bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold">
- <FiServer />
- </div>
- <div>
- <div className="text-xs font-semibold text-slate-800 group-hover:text-indigo-600 :text-indigo-400">
- {j.jobId} — {j.sourceWebsite}
- </div>
- <div className="text-[11px] text-slate-400">
- Status: {j.status} • Search: {j.searchId}
- </div>
- </div>
- </div>
- <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 :text-indigo-400 text-xs" />
- </button>
- ))}
- </div>
- </div>
- )}
-
- {}
- <div>
- <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 px-3 mb-1">
- Admin Sections
- </div>
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
- {navShortcuts.map((item) => {
- const Icon = item.icon;
- return (
- <button
- key={item.path}
- onClick={() => handleSelect(item.path)}
- className="w-full text-left p-2 rounded-[10px] hover:bg-slate-100 :bg-slate-800 flex items-center gap-2.5 text-xs text-slate-700 transition-colors"
- >
- <Icon className="text-slate-400 text-sm" />
- <span>{item.label}</span>
- </button>
- );
- })}
- </div>
- </div>
- </div>
-
- {}
- <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-200 text-[11px] text-slate-400 flex items-center justify-between">
- <span>Navigate with mouse or Tab</span>
- <span className="font-mono text-slate-500 ">Product Search Automation Admin</span>
- </div>
- </div>
- </div>
- );
+          {/* Matched Products */}
+          {matchedProducts.length > 0 && (
+            <>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "#94A3B8", padding: "12px 12px 4px" }}>
+                Products
+              </div>
+              {matchedProducts.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => handleSelect(`/admin/products/${p.id}`)}
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "8px 14px",
+                    borderRadius: 8,
+                    border: "none",
+                    background: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                  }}
+                  className="adm-menu-item-hover"
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <Package size={16} color="#10B981" />
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "#0F172A" }}>
+                      {p.name}
+                    </span>
+                  </div>
+                  <span style={{ fontSize: 11.5, fontWeight: 600, color: "#059669" }}>
+                    ₹{p.price?.toLocaleString()}
+                  </span>
+                </button>
+              ))}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
-
-export default GlobalSearchModal;

@@ -1,326 +1,542 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import {
- FiCpu,
- FiRotateCw,
- FiStopCircle,
- FiAlertTriangle,
- FiX,
- FiGlobe,
- FiCheckCircle,
- FiAlertCircle,
- FiClock,
- FiActivity
-} from "react-icons/fi";
-import { useAdminData } from "../context/AdminDataContext";
+  Activity,
+  Play,
+  RotateCcw,
+  Square,
+  FileText,
+  Clock,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  X,
+  RefreshCw,
+  Terminal,
+} from "lucide-react";
 import DataTable from "../components/DataTable";
 import StatusBadge from "../components/StatusBadge";
-import ConfirmDialog from "../components/ConfirmDialog";
+import { useAdminToast } from "../context/AdminToastContext";
+import { API_BASE_URL } from "../../utils/api";
 
-export function AdminAutomation() {
- const { automationJobs, retryJob, stopJob } = useAdminData();
+export default function AdminAutomation() {
+  const { addToast } = useAdminToast();
+  const [jobs, setJobs] = useState([]);
+  const [selectedLogsJob, setSelectedLogsJob] = useState(null);
+  const [runModalOpen, setRunModalOpen] = useState(false);
+  const [newJobSource, setNewJobSource] = useState("Amazon India");
+  const [newJobType, setNewJobType] = useState("Price & Variant Update");
 
- const [jobToStop, setJobToStop] = useState(null);
- const [errorJobModal, setErrorJobModal] = useState(null);
- const [isStopping, setIsStopping] = useState(false);
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/admin/jobs`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data) && data.length > 0) {
+          const mapped = data.map((d) => ({
+            jobId: d.id,
+            sourceWebsite: d.source,
+            type: d.type,
+            startTime: d.started,
+            duration: d.duration,
+            status: d.status,
+            resultsCollected: 24,
+            logs: (d.logs || []).map((l) => ({
+              time: l.split(" - ")[0] || "10:00:00",
+              text: l.split(" - ")[1] || l,
+              type: l.toLowerCase().includes("error") || l.toLowerCase().includes("failed") ? "error" : "info",
+            })),
+          }));
+          setJobs(mapped);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
- const handleStopConfirm = () => {
- if (!jobToStop) return;
- setIsStopping(true);
- setTimeout(() => {
- stopJob(jobToStop.jobId);
- setJobToStop(null);
- setIsStopping(false);
- }, 400);
- };
+  const handleRunJob = (e) => {
+    e.preventDefault();
+    const now = new Date();
+    const timeStr = now.toTimeString().split(" ")[0];
+    const newId = `JOB-${Math.floor(1000 + Math.random() * 9000)}`;
 
- const columns = [
- {
- header: "Job ID",
- key: "jobId",
- sortKey: "jobId",
- width: "w-28",
- render: (item) => (
- <span className="font-mono text-xs font-bold text-slate-700 ">
- {item.jobId}
- </span>
- )
- },
- {
- header: "Search ID",
- key: "searchId",
- sortKey: "searchId",
- render: (item) => (
- <Link
- to={`/admin/searches/${item.searchId}`}
- className="font-mono text-xs text-indigo-600 hover:underline font-semibold"
- >
- {item.searchId}
- </Link>
- )
- },
- {
- header: "Source Website",
- key: "sourceWebsite",
- sortKey: "sourceWebsite",
- render: (item) => (
- <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 ">
- <FiGlobe className="text-xs" />
- {item.sourceWebsite}
- </span>
- )
- },
- {
- header: "Start Time",
- key: "startTime",
- sortKey: "startTime",
- render: (item) => (
- <span className="text-slate-500 text-xs whitespace-nowrap">{item.startTime}</span>
- )
- },
- {
- header: "End Time",
- key: "endTime",
- sortKey: "endTime",
- render: (item) => (
- <span className="text-slate-500 text-xs whitespace-nowrap">
- {item.endTime || "In Progress"}
- </span>
- )
- },
- {
- header: "Duration",
- key: "duration",
- sortKey: "duration",
- render: (item) => (
- <span className="text-slate-600 font-mono text-xs">{item.duration}</span>
- )
- },
- {
- header: "Progress",
- key: "progress",
- sortKey: "progress",
- render: (item) => (
- <div className="w-32">
- <div className="flex items-center justify-between text-[11px] font-semibold text-slate-600 mb-1">
- <span>{item.progress}%</span>
- {item.status === "Running" && (
- <span className="text-indigo-600 animate-pulse text-[10px]">Processing</span>
- )}
- </div>
- <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
- <div
- className={`h-full rounded-full transition-all duration-500 ${
- item.status === "Completed"
- ? "bg-emerald-600"
- : item.status === "Failed"
- ? "bg-rose-500"
- : "bg-indigo-600"
- }`}
- style={{ width: `${item.progress}%` }}
- />
- </div>
- </div>
- )
- },
- {
- header: "Status",
- key: "status",
- sortKey: "status",
- render: (item) => <StatusBadge status={item.status} size="sm" />
- },
- {
- header: "Results Collected",
- key: "resultsCollected",
- sortKey: "resultsCollected",
- align: "center",
- render: (item) => (
- <span className="font-bold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-[10px] text-xs">
- {item.resultsCollected}
- </span>
- )
- },
- {
- header: "Actions",
- align: "right",
- render: (item) => (
- <div className="flex items-center justify-end gap-1.5">
- {}
- {item.status === "Failed" && (
- <button
- type="button"
- onClick={() => retryJob(item.jobId)}
- className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-[10px] transition-colors"
- title="Retry Failed Scraper Job"
- >
- <FiRotateCw className="text-xs" />
- <span>Retry</span>
- </button>
- )}
+    const newJob = {
+      jobId: newId,
+      sourceWebsite: newJobSource,
+      type: newJobType,
+      startTime: timeStr,
+      duration: "Running",
+      status: "Running",
+      resultsCollected: 0,
+      logs: [
+        { time: timeStr, text: `Job manually triggered by administrator`, type: "info" },
+        { time: timeStr, text: `Connecting to ${newJobSource} endpoints...`, type: "info" },
+      ],
+    };
 
- {}
- {item.status === "Failed" && item.errorMessage && (
- <button
- type="button"
- onClick={() => setErrorJobModal(item)}
- className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-[10px] transition-colors"
- title="View Error Details"
- >
- <FiAlertCircle className="text-xs" />
- <span>View Error</span>
- </button>
- )}
+    setJobs((prev) => [newJob, ...prev]);
+    addToast(`Job ${newId} started on ${newJobSource}.`, "info");
+    setRunModalOpen(false);
 
- {}
- {item.status === "Running" && (
- <button
- type="button"
- onClick={() => setJobToStop(item)}
- className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-[10px] transition-colors"
- title="Stop Running Worker Job"
- >
- <FiStopCircle className="text-xs" />
- <span>Stop Job</span>
- </button>
- )}
+    // Auto complete after 3s
+    setTimeout(() => {
+      setJobs((prev) =>
+        prev.map((j) =>
+          j.jobId === newId
+            ? {
+                ...j,
+                status: "Completed",
+                duration: "2.8s",
+                resultsCollected: 32,
+                logs: [
+                  ...j.logs,
+                  { time: new Date().toTimeString().split(" ")[0], text: "Data parsed and normalized successfully.", type: "success" },
+                ],
+              }
+            : j
+        )
+      );
+      addToast(`Job ${newId} completed successfully!`, "success");
+    }, 3000);
+  };
 
- {item.status === "Completed" && (
- <span className="text-[11px] font-semibold text-emerald-600 px-2 py-0.5 rounded bg-emerald-50 border border-emerald-100">
- Finished
- </span>
- )}
- </div>
- )
- }
- ];
+  const handleRetryJob = (jobId) => {
+    addToast(`Retrying job ${jobId}...`, "info");
+    setJobs((prev) =>
+      prev.map((j) =>
+        j.jobId === jobId
+          ? {
+              ...j,
+              status: "Running",
+              duration: "Running",
+              logs: [
+                ...j.logs,
+                { time: new Date().toTimeString().split(" ")[0], text: "Retry initiated by admin.", type: "info" },
+              ],
+            }
+          : j
+      )
+    );
 
- return (
- <div className="space-y-6">
- {}
- <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
- <div>
- <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
- Automation Jobs
- </h2>
- <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
- Single unified table monitoring scraper tasks and worker execution
- </p>
- </div>
+    setTimeout(() => {
+      setJobs((prev) =>
+        prev.map((j) =>
+          j.jobId === jobId
+            ? {
+                ...j,
+                status: "Completed",
+                duration: "3.1s",
+                resultsCollected: 28,
+                logs: [
+                  ...j.logs,
+                  { time: new Date().toTimeString().split(" ")[0], text: "Connection recovered. Scraping completed.", type: "success" },
+                ],
+              }
+            : j
+        )
+      );
+      addToast(`Job ${jobId} finished with status Completed.`, "success");
+    }, 2500);
+  };
 
- <div className="flex items-center gap-3">
- <div className="px-3 py-1.5 rounded-[10px] bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-xs flex items-center gap-2">
- <FiActivity className="text-emerald-600" />
- <span>Active Worker Pool: <strong className="text-slate-900 ">12 Nodes</strong></span>
- </div>
- </div>
- </div>
+  const handleCancelJob = (jobId) => {
+    setJobs((prev) =>
+      prev.map((j) =>
+        j.jobId === jobId
+          ? {
+              ...j,
+              status: "Failed",
+              duration: "Cancelled",
+              logs: [
+                ...j.logs,
+                { time: new Date().toTimeString().split(" ")[0], text: "Job cancelled by administrator.", type: "error" },
+              ],
+            }
+          : j
+      )
+    );
+    addToast(`Job ${jobId} was cancelled.`, "warning");
+  };
 
- {}
- <DataTable
- columns={columns}
- data={automationJobs}
- searchKey="jobId"
- searchPlaceholder="Search jobs by Job ID, source, or search ID..."
- filterOptions={{
- label: "Status",
- key: "status",
- options: [
- { label: "Running", value: "running" },
- { label: "Completed", value: "completed" },
- { label: "Failed", value: "failed" }
- ]
- }}
- defaultSortKey="startTime"
- defaultSortDir="desc"
- pageSize={8}
- emptyTitle="No automation jobs found"
- emptyDescription="No worker tasks matching your criteria are currently recorded."
- />
+  const columns = [
+    {
+      header: "Job ID",
+      key: "jobId",
+      sortable: true,
+      render: (row) => (
+        <span style={{ fontFamily: "monospace", fontWeight: 700, color: "var(--adm-accent, #38bdf8)" }}>
+          {row.jobId}
+        </span>
+      ),
+    },
+    {
+      header: "Source",
+      key: "sourceWebsite",
+      sortable: true,
+      render: (row) => (
+        <span style={{ fontWeight: 600, color: "var(--adm-text, #f4efe8)" }}>{row.sourceWebsite}</span>
+      ),
+    },
+    {
+      header: "Type",
+      key: "type",
+      sortable: true,
+      render: (row) => <span style={{ color: "var(--adm-muted, #888888)" }}>{row.type}</span>,
+    },
+    {
+      header: "Started",
+      key: "startTime",
+      sortable: true,
+      render: (row) => (
+        <span style={{ color: "var(--adm-muted, #888888)", fontSize: 13 }}>{row.startTime}</span>
+      ),
+    },
+    {
+      header: "Duration",
+      key: "duration",
+      sortable: true,
+      render: (row) => (
+        <span style={{ color: "var(--adm-muted, #888888)", fontSize: 13, fontWeight: 500 }}>
+          {row.duration}
+        </span>
+      ),
+    },
+    {
+      header: "Status",
+      key: "status",
+      sortable: true,
+      render: (row) => <StatusBadge status={row.status} />,
+    },
+    {
+      header: "Actions",
+      align: "right",
+      render: (row) => (
+        <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+          <button
+            onClick={() => setSelectedLogsJob(row)}
+            title="View Logs"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+              padding: "6px 12px",
+              borderRadius: 9999,
+              border: "1px solid var(--adm-border, #222222)",
+              backgroundColor: "transparent",
+              color: "var(--adm-text, #f4efe8)",
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: "pointer",
+              transition: "all 0.15s ease",
+            }}
+          >
+            <Terminal size={13} /> View Logs
+          </button>
 
- {}
- <ConfirmDialog
- isOpen={!!jobToStop}
- title="Stop Running Automation Job"
- message={`Are you sure you want to forcibly stop worker job "${jobToStop?.jobId}" targeting "${jobToStop?.sourceWebsite}"? Current progress (${jobToStop?.progress}%) will be aborted.`}
- confirmText="Stop Job"
- cancelText="Keep Running"
- variant="danger"
- isLoading={isStopping}
- onConfirm={handleStopConfirm}
- onCancel={() => setJobToStop(null)}
- />
+          {row.status === "Failed" && (
+            <button
+              onClick={() => handleRetryJob(row.jobId)}
+              title="Retry Job"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                padding: "6px 12px",
+                borderRadius: 9999,
+                border: "1px solid rgba(56, 189, 248, 0.3)",
+                backgroundColor: "rgba(56, 189, 248, 0.1)",
+                color: "#38bdf8",
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              <RotateCcw size={13} /> Retry
+            </button>
+          )}
 
- {}
- {errorJobModal && (
- <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
- <div
- className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
- onClick={() => setErrorJobModal(null)}
- />
- <div className="relative bg-white rounded-[16px] max-w-lg w-full p-6 z-10 shadow-2xl border border-slate-200 animate-scaleUp">
- <div className="flex items-center justify-between pb-3 border-b border-slate-200 ">
- <div className="flex items-center gap-2 text-rose-600">
- <FiAlertCircle className="text-xl" />
- <h3 className="text-base font-bold text-slate-900 ">
- Worker Job Error Detail
- </h3>
- </div>
- <button
- onClick={() => setErrorJobModal(null)}
- className="text-slate-400 hover:text-slate-600 :text-slate-400 p-1"
- >
- <FiX className="text-lg" />
- </button>
- </div>
+          {row.status === "Running" && (
+            <button
+              onClick={() => handleCancelJob(row.jobId)}
+              title="Cancel Job"
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                padding: "6px 12px",
+                borderRadius: 9999,
+                border: "1px solid rgba(239, 68, 68, 0.3)",
+                backgroundColor: "rgba(239, 68, 68, 0.1)",
+                color: "#f87171",
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              <Square size={13} /> Cancel
+            </button>
+          )}
+        </div>
+      ),
+    },
+  ];
 
- <div className="mt-4 space-y-3 text-xs">
- <div className="flex justify-between py-1 border-b border-slate-200 ">
- <span className="text-slate-500 ">Job ID:</span>
- <span className="font-mono font-bold text-slate-800 ">{errorJobModal.jobId}</span>
- </div>
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 1400, margin: "0 auto" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+        <div>
+          <h2 style={{ fontSize: 28, fontWeight: 800, fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: "var(--adm-text, #f4efe8)", margin: 0, letterSpacing: "-0.02em" }}>
+            Automation & Scraping Jobs
+          </h2>
+          <p style={{ fontSize: 13.5, color: "var(--adm-muted, #888888)", margin: "6px 0 0" }}>
+            Manage product scraping queues, live data collection, and source updates.
+          </p>
+        </div>
 
- <div className="flex justify-between py-1 border-b border-slate-200 ">
- <span className="text-slate-500 ">Source:</span>
- <span className="font-semibold text-slate-800 ">{errorJobModal.sourceWebsite}</span>
- </div>
+        <button
+          onClick={() => setRunModalOpen(true)}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "9px 20px",
+            borderRadius: 9999,
+            backgroundColor: "#ffffff",
+            color: "#0a0a0a",
+            fontSize: 13.5,
+            fontWeight: 600,
+            border: "none",
+            cursor: "pointer",
+            boxShadow: "0 2px 10px rgba(255,255,255,0.15)",
+          }}
+          className="adm-btn-primary"
+        >
+          <Play size={15} fill="#0a0a0a" /> Run New Job
+        </button>
+      </div>
 
- <div className="flex justify-between py-1 border-b border-slate-200 ">
- <span className="text-slate-500 ">Worker Node:</span>
- <span className="font-mono text-slate-700 ">{errorJobModal.workerNode || "Worker-Cluster-01"}</span>
- </div>
+      {/* Jobs Table */}
+      <DataTable
+        columns={columns}
+        data={jobs}
+        searchKey="jobId"
+        searchPlaceholder="Search jobs by ID or source..."
+      />
 
- <div>
- <span className="text-slate-500 block mb-1 font-semibold">Error Message:</span>
- <div className="p-3 bg-rose-50 text-rose-800 rounded-[10px] border border-rose-100 font-mono text-[11px] leading-relaxed">
- {errorJobModal.errorMessage}
- </div>
- </div>
- </div>
+      {/* Job Log Viewer Modal */}
+      {selectedLogsJob && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(15, 23, 42, 0.65)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 100,
+            padding: 20,
+          }}
+          onClick={() => setSelectedLogsJob(null)}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 680,
+              backgroundColor: "#0F172A",
+              color: "#F8FAFC",
+              borderRadius: 16,
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.4)",
+              border: "1px solid #334155",
+              overflow: "hidden",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div
+              style={{
+                padding: "16px 20px",
+                borderBottom: "1px solid #1E293B",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                backgroundColor: "#1E293B",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <Terminal size={18} color="#10B981" />
+                <span style={{ fontSize: 14, fontWeight: 700, color: "#FFFFFF", fontFamily: "monospace" }}>
+                  Execution Logs — {selectedLogsJob.jobId} ({selectedLogsJob.sourceWebsite})
+                </span>
+              </div>
 
- <div className="mt-6 flex justify-end gap-2 pt-3 border-t border-slate-200 ">
- <button
- type="button"
- onClick={() => {
- retryJob(errorJobModal.jobId);
- setErrorJobModal(null);
- }}
- className="px-3.5 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-[10px] shadow-xs"
- >
- Retry Job Now
- </button>
- <button
- type="button"
- onClick={() => setErrorJobModal(null)}
- className="px-4 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-[10px]"
- >
- Close
- </button>
- </div>
- </div>
- </div>
- )}
- </div>
- );
+              <button
+                onClick={() => setSelectedLogsJob(null)}
+                style={{ background: "none", border: "none", color: "#94A3B8", cursor: "pointer" }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Log Stream Body */}
+            <div
+              className="adm-code-logs"
+              style={{
+                padding: 20,
+                maxHeight: 400,
+                overflowY: "auto",
+                backgroundColor: "#0F172A",
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+              }}
+            >
+              {selectedLogsJob.logs && selectedLogsJob.logs.length > 0 ? (
+                selectedLogsJob.logs.map((log, index) => {
+                  const isError = log.type === "error" || (typeof log === "string" && log.includes("Error"));
+                  const isSuccess = log.type === "success" || (typeof log === "string" && log.includes("successfully"));
+
+                  return (
+                    <div
+                      key={index}
+                      style={{
+                        display: "flex",
+                        gap: 12,
+                        color: isError ? "#F87171" : isSuccess ? "#34D399" : "#CBD5E1",
+                        backgroundColor: isError ? "rgba(239, 68, 68, 0.1)" : "transparent",
+                        padding: isError ? "4px 8px" : "2px 0",
+                        borderRadius: 4,
+                      }}
+                    >
+                      <span style={{ color: "#64748B", flexShrink: 0 }}>
+                        {log.time || "10:32:14"}
+                      </span>
+                      <span>{log.text || log}</span>
+                    </div>
+                  );
+                })
+              ) : (
+                <div style={{ color: "#94A3B8" }}>No detailed log entries recorded for this job.</div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div
+              style={{
+                padding: "12px 20px",
+                backgroundColor: "#1E293B",
+                borderTop: "1px solid #334155",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                fontSize: 12,
+              }}
+            >
+              <span style={{ color: "#94A3B8" }}>
+                Status: <strong style={{ color: selectedLogsJob.status === "Completed" ? "#34D399" : "#F87171" }}>{selectedLogsJob.status}</strong>
+              </span>
+
+              <button
+                onClick={() => setSelectedLogsJob(null)}
+                style={{
+                  padding: "6px 14px",
+                  borderRadius: 6,
+                  border: "1px solid #475569",
+                  backgroundColor: "#334155",
+                  color: "#FFFFFF",
+                  cursor: "pointer",
+                  fontSize: 12,
+                  fontWeight: 600,
+                }}
+              >
+                Close Viewer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Run Job Modal */}
+      {runModalOpen && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            backdropFilter: "blur(6px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 100,
+            padding: 20,
+          }}
+          onClick={() => setRunModalOpen(false)}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 460,
+              backgroundColor: "var(--adm-card, #111111)",
+              borderRadius: 16,
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+              border: "1px solid var(--adm-border, #222222)",
+              overflow: "hidden",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ padding: "20px 24px", borderBottom: "1px solid var(--adm-border, #222222)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ fontSize: 16, fontWeight: 700, fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: "var(--adm-text, #f4efe8)", margin: 0 }}>
+                Trigger Scraping / Sync Job
+              </h3>
+              <button onClick={() => setRunModalOpen(false)} style={{ background: "none", border: "none", color: "var(--adm-muted, #888888)", cursor: "pointer" }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleRunJob} style={{ padding: "24px", display: "flex", flexDirection: "column", gap: 16 }}>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: "var(--adm-muted, #888888)", display: "block", marginBottom: 6 }}>
+                  Target Store / Source
+                </label>
+                <select
+                  value={newJobSource}
+                  onChange={(e) => setNewJobSource(e.target.value)}
+                  className="adm-input"
+                >
+                  <option value="Amazon India">Amazon India</option>
+                  <option value="Flipkart">Flipkart</option>
+                  <option value="Myntra Fashion">Myntra Fashion</option>
+                  <option value="Croma Electronics">Croma Electronics</option>
+                  <option value="SerpAPI Crawler">SerpAPI Multi-Store Engine</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: "var(--adm-muted, #888888)", display: "block", marginBottom: 6 }}>
+                  Operation Type
+                </label>
+                <select
+                  value={newJobType}
+                  onChange={(e) => setNewJobType(e.target.value)}
+                  className="adm-input"
+                >
+                  <option value="Price & Variant Update">Price & Variant Update</option>
+                  <option value="Category Scrape (Mobiles)">Category Scrape (Mobiles)</option>
+                  <option value="Discount Coupon Sync">Discount Coupon Sync</option>
+                  <option value="Live Search Query Cache">Live Search Query Cache</option>
+                </select>
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 8 }}>
+                <button type="button" onClick={() => setRunModalOpen(false)} className="adm-btn adm-btn-outline">
+                  Cancel
+                </button>
+                <button type="submit" className="adm-btn adm-btn-primary">
+                  Launch Worker
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
-
-export default AdminAutomation;

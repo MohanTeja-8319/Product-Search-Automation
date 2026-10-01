@@ -1,209 +1,358 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useMemo } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
- FiPackage,
- FiEye,
- FiStar,
- FiExternalLink,
- FiGlobe,
- FiLayers,
- FiFilter
-} from "react-icons/fi";
-import { useAdminData } from "../context/AdminDataContext";
+  Package,
+  Eye,
+  Star,
+  ExternalLink,
+  Filter,
+  CheckCircle2,
+  XCircle,
+  SlidersHorizontal,
+  RotateCcw,
+} from "lucide-react";
 import DataTable from "../components/DataTable";
 import StatusBadge from "../components/StatusBadge";
+import { useAdminData } from "../context/AdminDataContext";
 
-export function AdminProducts() {
- const { products } = useAdminData();
- const [sourceFilter, setSourceFilter] = useState("all");
+import { API_BASE_URL } from "../../utils/api";
 
- const filteredProducts = sourceFilter === "all"
- ? products
- : products.filter((p) => p.sourceWebsite.toLowerCase() === sourceFilter.toLowerCase());
+function ProductThumbnail({ src, alt, size = 44 }) {
+  const [error, setError] = useState(!src);
 
- const columns = [
- {
- header: "Product Image",
- key: "image",
- width: "w-20",
- render: (item) => (
- <div className="w-12 h-12 rounded-[10px] bg-slate-100 p-1 border border-slate-200 flex-shrink-0 flex items-center justify-center overflow-hidden">
- <img
- src={item.image}
- alt={item.name}
- className="w-full h-full object-cover rounded-[10px]"
- />
- </div>
- )
- },
- {
- header: "Product Name",
- key: "name",
- sortKey: "name",
- render: (item) => (
- <div className="max-w-xs sm:max-w-sm truncate">
- <Link
- to={`/admin/products/${item.id}`}
- className="font-bold text-slate-900 hover:text-indigo-600 :text-indigo-400 transition-colors block truncate"
- >
- {item.name}
- </Link>
- <span className="text-[11px] font-mono text-slate-400 block">{item.id}</span>
- </div>
- )
- },
- {
- header: "Category",
- key: "category",
- sortKey: "category",
- render: (item) => (
- <span className="px-2.5 py-1 rounded-[10px] text-xs font-semibold bg-slate-100 text-slate-700 ">
- {item.category}
- </span>
- )
- },
- {
- header: "Price",
- key: "price",
- sortKey: "price",
- align: "right",
- render: (item) => (
- <div className="text-right">
- <div className="font-bold text-slate-900 text-xs sm:text-sm">
- ₹{item.price.toLocaleString("en-IN")}
- </div>
- {item.discount && (
- <span className="text-[10px] text-emerald-600 font-semibold">{item.discount}</span>
- )}
- </div>
- )
- },
- {
- header: "Rating",
- key: "rating",
- sortKey: "rating",
- align: "center",
- render: (item) => (
- <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-[10px] bg-amber-50 text-amber-800 font-bold text-xs border border-amber-200/60">
- <FiStar className="text-amber-500 fill-amber-500 text-[10px]" />
- <span>{item.rating}</span>
- </div>
- )
- },
- {
- header: "Reviews",
- key: "reviews",
- sortKey: "reviews",
- align: "right",
- render: (item) => (
- <span className="text-slate-500 text-xs font-medium">
- {item.reviews.toLocaleString()}
- </span>
- )
- },
- {
- header: "Source Website",
- key: "sourceWebsite",
- sortKey: "sourceWebsite",
- render: (item) => (
- <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
- <FiGlobe className="text-xs" />
- {item.sourceWebsite}
- </span>
- )
- },
- {
- header: "Availability",
- key: "availability",
- sortKey: "availability",
- render: (item) => <StatusBadge status={item.availability} size="sm" />
- },
- {
- header: "Last Updated",
- key: "lastUpdated",
- sortKey: "lastUpdated",
- render: (item) => (
- <span className="text-slate-400 text-xs whitespace-nowrap">{item.lastUpdated}</span>
- )
- },
- {
- header: "Actions",
- align: "center",
- render: (item) => (
- <Link
- to={`/admin/products/${item.id}`}
- className="inline-flex items-center justify-center p-2 rounded-[10px] text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition-colors"
- title="View Details"
- >
- <FiEye className="text-sm" />
- </Link>
- )
- }
- ];
+  if (error || !src) {
+    return (
+      <div
+        style={{
+          width: size,
+          height: size,
+          borderRadius: 8,
+          backgroundColor: "rgba(255, 255, 255, 0.04)",
+          border: "1px solid var(--adm-border, #222222)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "var(--adm-accent, #38bdf8)",
+          flexShrink: 0,
+        }}
+        title={alt}
+      >
+        <Package size={Math.round(size * 0.52)} />
+      </div>
+    );
+  }
 
- return (
- <div className="space-y-6">
- {}
- <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
- <div>
- <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
- Scraped Products Catalog
- </h2>
- <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
- Auto-indexed products collected across supported shopping engines
- </p>
- </div>
-
- <div className="flex items-center gap-3">
- <div className="px-3 py-1.5 rounded-[10px] bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-xs">
- Catalog Size: <span className="text-indigo-600 font-bold">{products.length} Products</span>
- </div>
- </div>
- </div>
-
- {}
- <DataTable
- columns={columns}
- data={filteredProducts}
- searchKey="name"
- searchPlaceholder="Search products by title, SKU, or category..."
- filterOptions={{
- label: "Category",
- key: "category",
- options: [
- { label: "Smartphones", value: "smartphones" },
- { label: "Laptops", value: "laptops" },
- { label: "Audio", value: "audio" },
- { label: "Smartwatches", value: "smartwatches" },
- { label: "Cameras", value: "cameras" },
- { label: "Appliances", value: "appliances" }
- ]
- }}
- extraControls={
- <div className="relative">
- <select
- value={sourceFilter}
- onChange={(e) => setSourceFilter(e.target.value)}
- className="pl-3 pr-8 py-2 text-xs md:text-sm font-medium bg-white border border-slate-200 rounded-[10px] text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 cursor-pointer appearance-none"
- >
- <option value="all">All Stores</option>
- <option value="amazon">Amazon</option>
- <option value="flipkart">Flipkart</option>
- <option value="myntra">Myntra</option>
- <option value="croma">Croma</option>
- <option value="reliance digital">Reliance Digital</option>
- </select>
- <FiGlobe className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs" />
- </div>
- }
- defaultSortKey="price"
- defaultSortDir="desc"
- pageSize={8}
- emptyTitle="No products match your criteria"
- emptyDescription="Try selecting a different category or clearing the store filter."
- />
- </div>
- );
+  return (
+    <img
+      src={src}
+      alt={alt}
+      onError={() => setError(true)}
+      style={{
+        width: size,
+        height: size,
+        borderRadius: 8,
+        objectFit: "cover",
+        border: "1px solid var(--adm-border, #222222)",
+        flexShrink: 0,
+        backgroundColor: "var(--adm-card, #111111)",
+      }}
+    />
+  );
 }
 
-export default AdminProducts;
+export default function AdminProducts() {
+  const { products: contextProducts = [] } = useAdminData();
+  const navigate = useNavigate();
+  const [liveProducts, setLiveProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    fetch(`${API_BASE_URL}/admin/products`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (mounted && Array.isArray(data)) {
+          setLiveProducts(data);
+        }
+      })
+      .catch((err) => console.error("Error fetching live products:", err))
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const allProducts = liveProducts.length > 0 ? liveProducts : contextProducts;
+
+  // Filter States
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedPlatform, setSelectedPlatform] = useState("all");
+  const [selectedAvailability, setSelectedAvailability] = useState("all");
+  const [priceSort, setPriceSort] = useState("default");
+
+  const filteredData = useMemo(() => {
+    return allProducts.filter((p) => {
+      if (selectedCategory !== "all" && p.category?.toLowerCase() !== selectedCategory.toLowerCase()) {
+        return false;
+      }
+      if (selectedPlatform !== "all" && !p.platform?.toLowerCase().includes(selectedPlatform.toLowerCase())) {
+        return false;
+      }
+      if (selectedAvailability !== "all" && p.availability?.toLowerCase() !== selectedAvailability.toLowerCase()) {
+        return false;
+      }
+      return true;
+    });
+  }, [allProducts, selectedCategory, selectedPlatform, selectedAvailability]);
+
+  const handleResetFilters = () => {
+    setSelectedCategory("all");
+    setSelectedPlatform("all");
+    setSelectedAvailability("all");
+  };
+
+  const columns = [
+    {
+      header: "Product",
+      key: "name",
+      sortable: true,
+      render: (row) => (
+        <div style={{ display: "flex", alignItems: "center", gap: 12, maxWidth: 300, minWidth: 200 }}>
+          <ProductThumbnail src={row.image} alt={row.name} size={44} />
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <Link
+              to={`/admin/products/${row.id}`}
+              style={{
+                fontWeight: 700,
+                color: "var(--adm-text, #f4efe8)",
+                textDecoration: "none",
+                fontSize: 13.5,
+                display: "block",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+              title={row.name}
+              className="adm-link-hover"
+            >
+              {row.name}
+            </Link>
+            <span style={{ fontSize: 11.5, color: "var(--adm-muted, #888888)", display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              Brand: {row.brand || "Comparely Index"}
+            </span>
+          </div>
+        </div>
+      ),
+    },
+    {
+      header: "Category",
+      key: "category",
+      sortable: true,
+      render: (row) => (
+        <span
+          style={{
+            fontSize: 12,
+            fontWeight: 600,
+            padding: "3px 10px",
+            borderRadius: 9999,
+            backgroundColor: "rgba(255, 255, 255, 0.05)",
+            border: "1px solid var(--adm-border, #222222)",
+            color: "var(--adm-text, #f4efe8)",
+          }}
+        >
+          {row.category}
+        </span>
+      ),
+    },
+    {
+      header: "Platform",
+      key: "platform",
+      sortable: true,
+      render: (row) => (
+        <span style={{ fontSize: 12.5, fontWeight: 600, color: "var(--adm-accent, #38bdf8)" }}>
+          {row.platform}
+        </span>
+      ),
+    },
+    {
+      header: "Best Price",
+      key: "price",
+      sortable: true,
+      align: "right",
+      render: (row) => (
+        <div style={{ textAlign: "right" }}>
+          <div style={{ fontWeight: 800, color: "var(--adm-text, #f4efe8)", fontSize: 14 }}>
+            ₹{row.price?.toLocaleString()}
+          </div>
+          {row.discount && (
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#10b981" }}>
+              {row.discount}
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
+      header: "Rating & Reviews",
+      key: "rating",
+      sortable: true,
+      render: (row) => (
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 3, color: "#fbbf24", fontWeight: 700, fontSize: 13 }}>
+            <Star size={13} fill="#fbbf24" color="#fbbf24" /> {row.rating}
+          </div>
+          <span style={{ fontSize: 11, color: "var(--adm-muted, #888888)" }}>({row.reviews?.toLocaleString()} reviews)</span>
+        </div>
+      ),
+    },
+    {
+      header: "Availability",
+      key: "availability",
+      sortable: true,
+      render: (row) => <StatusBadge status={row.availability || "In Stock"} size="small" />,
+    },
+    {
+      header: "Last Updated",
+      key: "lastUpdated",
+      sortable: true,
+      render: (row) => (
+        <span style={{ fontSize: 12, color: "var(--adm-muted, #888888)" }}>{row.lastUpdated || "Recently"}</span>
+      ),
+    },
+    {
+      header: "Actions",
+      align: "right",
+      render: (row) => (
+        <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
+          <button
+            onClick={() => navigate(`/admin/products/${row.id}`)}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+              padding: "6px 14px",
+              borderRadius: 9999,
+              border: "1px solid var(--adm-border, #222222)",
+              backgroundColor: "transparent",
+              color: "var(--adm-text, #f4efe8)",
+              fontSize: 12.5,
+              fontWeight: 600,
+              cursor: "pointer",
+              transition: "all 0.15s ease",
+            }}
+          >
+            <Eye size={13} /> View Details
+          </button>
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 1400, margin: "0 auto" }}>
+      {/* Page Header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+        <div>
+          <h2 style={{ fontSize: 28, fontWeight: 800, fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: "var(--adm-text, #f4efe8)", margin: 0, letterSpacing: "-0.02em" }}>
+            Product Catalog & Multi-Store Inventory
+          </h2>
+          <p style={{ fontSize: 13.5, color: "var(--adm-muted, #888888)", margin: "6px 0 0" }}>
+            Manage scraped product variants, matched platform offers, and live price histories.
+          </p>
+        </div>
+
+        <div style={{ fontSize: 13, color: "var(--adm-muted, #888888)", backgroundColor: "var(--adm-card, #111111)", padding: "7px 16px", borderRadius: 9999, border: "1px solid var(--adm-border, #222222)", fontWeight: 600 }}>
+          Catalog Index: <strong style={{ color: "var(--adm-text, #f4efe8)" }}>{allProducts.length} items</strong>
+        </div>
+      </div>
+
+      {/* Filter Toolbar (Category, Platform, Availability, Price) */}
+      <div
+        className="adm-card"
+        style={{
+          padding: "16px 20px",
+          display: "flex",
+          alignItems: "center",
+          gap: 14,
+          flexWrap: "wrap",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 700, color: "var(--adm-text, #f4efe8)" }}>
+          <Filter size={15} color="var(--adm-accent, #38bdf8)" /> Filters:
+        </div>
+
+        {/* Category Filter */}
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="adm-input"
+          style={{ width: "auto", minWidth: 140, padding: "6px 12px", borderRadius: 9999, fontSize: 13 }}
+        >
+          <option value="all">All Categories</option>
+          <option value="mobiles">Mobiles</option>
+          <option value="laptops">Laptops</option>
+          <option value="headphones">Headphones</option>
+          <option value="shoes">Shoes</option>
+          <option value="home appliances">Home Appliances</option>
+        </select>
+
+        {/* Platform Filter */}
+        <select
+          value={selectedPlatform}
+          onChange={(e) => setSelectedPlatform(e.target.value)}
+          className="adm-input"
+          style={{ width: "auto", minWidth: 140, padding: "6px 12px", borderRadius: 9999, fontSize: 13 }}
+        >
+          <option value="all">All Platforms</option>
+          <option value="multi-store">Multi-Store Matched</option>
+          <option value="amazon">Amazon Only</option>
+          <option value="flipkart">Flipkart Only</option>
+          <option value="myntra">Myntra Only</option>
+        </select>
+
+        {/* Availability Filter */}
+        <select
+          value={selectedAvailability}
+          onChange={(e) => setSelectedAvailability(e.target.value)}
+          className="adm-input"
+          style={{ width: "auto", minWidth: 140, padding: "6px 12px", borderRadius: 9999, fontSize: 13 }}
+        >
+          <option value="all">All Stock Status</option>
+          <option value="in stock">In Stock</option>
+          <option value="limited stock">Limited Stock</option>
+          <option value="out of stock">Out of Stock</option>
+        </select>
+
+        {(selectedCategory !== "all" || selectedPlatform !== "all" || selectedAvailability !== "all") && (
+          <button
+            onClick={handleResetFilters}
+            style={{
+              background: "none",
+              border: "none",
+              color: "#f87171",
+              fontSize: 12.5,
+              fontWeight: 600,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            <RotateCcw size={12} /> Reset Filters
+          </button>
+        )}
+      </div>
+
+      {/* Products Table */}
+      <DataTable
+        columns={columns}
+        data={filteredData}
+        searchKey="name"
+        searchPlaceholder="Search products by title or brand..."
+      />
+    </div>
+  );
+}

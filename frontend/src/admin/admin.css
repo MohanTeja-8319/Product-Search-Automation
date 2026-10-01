@@ -1,0 +1,296 @@
+/* ==================================================
+   COMPARELY ADMIN CONTROL CENTER DESIGN SYSTEM
+   Synchronized with Comparely Landing Page Aesthetic
+   Theme: Luxury Dark Editorial + High-Contrast SaaS
+   ================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+:root {
+  --adm-bg: var(--bg, #0a0a0a);
+  --adm-card: var(--surface, #111111);
+  --adm-card-hover: var(--surface-hover, #1a1a1a);
+  --adm-sidebar: var(--surface, #111111);
+  --adm-border: var(--border, #222222);
+  --adm-border-hover: var(--border-hover, #333333);
+  --adm-border-primary: var(--border-primary, #ffffff);
+
+  --adm-heading: var(--text-900, #f4efe8);
+  --adm-body: var(--text-700, #d5cabd);
+  --adm-muted: var(--text-500, #888888);
+  --adm-text: var(--text-900, #f4efe8);
+  --adm-accent: #38bdf8;
+
+  --adm-primary: var(--primary, #ffffff);
+  --adm-primary-content: var(--primary-content, #0a0a0a);
+  --adm-primary-light: var(--primary-light, rgba(255, 255, 255, 0.08));
+
+  --adm-indigo: #ffffff;
+  --adm-indigo-hover: #e5e5e5;
+  --adm-indigo-light: rgba(255, 255, 255, 0.08);
+  --adm-indigo-muted: rgba(255, 255, 255, 0.15);
+
+  --adm-mint: #10b981;
+  --adm-mint-light: rgba(16, 185, 129, 0.15);
+  --adm-mint-hover: #059669;
+
+  --adm-success: #10b981;
+  --adm-success-light: rgba(16, 185, 129, 0.15);
+  --adm-warning: #f59e0b;
+  --adm-warning-light: rgba(245, 158, 11, 0.15);
+  --adm-error: #ef4444;
+  --adm-error-light: rgba(239, 68, 68, 0.15);
+
+  --adm-radius-sm: 8px;
+  --adm-radius-md: 12px;
+  --adm-radius-lg: 14px;
+  --adm-radius-full: 9999px;
+
+  --adm-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --adm-shadow-dropdown: 0 10px 35px rgba(0, 0, 0, 0.7);
+  --adm-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="light"] {
+  --adm-bg: var(--bg, #f4efe8);
+  --adm-card: var(--surface, #ffffff);
+  --adm-card-hover: var(--surface-hover, #fafafa);
+  --adm-sidebar: #ffffff;
+  --adm-border: var(--border, #e6dfd5);
+  --adm-border-hover: var(--border-hover, #d5cabd);
+  --adm-border-primary: var(--border-primary, #111111);
+
+  --adm-heading: var(--text-900, #111111);
+  --adm-body: var(--text-700, #333333);
+  --adm-muted: var(--text-500, #666666);
+  --adm-text: var(--text-900, #111111);
+  --adm-accent: #2563eb;
+
+  --adm-primary: #111111;
+  --adm-primary-content: #ffffff;
+  --adm-primary-light: #e5e5e5;
+
+  --adm-indigo: #111111;
+  --adm-indigo-hover: #222222;
+  --adm-indigo-light: #e5e5e5;
+
+  --adm-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --adm-shadow-dropdown: 0 10px 30px rgba(0, 0, 0, 0.12);
+  --adm-shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Base Admin Container */
+.admin-root {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--adm-bg);
+  color: var(--adm-body);
+  min-height: 100vh;
+  display: flex;
+}
+
+.font-heading {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* Custom Scrollbars */
+.admin-root ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.admin-root ::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-root ::-webkit-scrollbar-thumb {
+  background: var(--adm-border);
+  border-radius: 9999px;
+}
+.admin-root ::-webkit-scrollbar-thumb:hover {
+  background: var(--adm-border-hover);
+}
+
+/* Cards */
+.adm-card {
+  background-color: var(--adm-card);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius-lg);
+  box-shadow: var(--adm-shadow-card);
+  padding: 24px;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.adm-card-hover:hover {
+  box-shadow: var(--adm-shadow-hover);
+  border-color: var(--adm-border-hover);
+  transform: translateY(-1px);
+}
+
+/* Buttons */
+.adm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: var(--adm-radius-full);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+}
+
+.adm-btn-primary {
+  background-color: var(--adm-primary);
+  color: var(--adm-primary-content);
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.15);
+}
+.adm-btn-primary:hover {
+  background-color: #e5e5e5;
+  transform: translateY(-1px);
+}
+
+.adm-btn-outline {
+  background-color: transparent;
+  border-color: var(--adm-border);
+  color: var(--adm-heading);
+}
+.adm-btn-outline:hover {
+  background-color: var(--adm-card-hover);
+  border-color: var(--adm-border-hover);
+  color: var(--adm-heading);
+}
+
+.adm-btn-danger {
+  background-color: var(--adm-error);
+  color: #FFFFFF;
+}
+.adm-btn-danger:hover {
+  background-color: #dc2626;
+}
+
+.adm-btn-mint {
+  background-color: var(--adm-mint);
+  color: #FFFFFF;
+}
+.adm-btn-mint:hover {
+  background-color: var(--adm-mint-hover);
+}
+
+/* Inputs */
+.adm-input {
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 13.5px;
+  color: var(--adm-heading);
+  background-color: var(--adm-card);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius-full);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.adm-input:focus {
+  border-color: var(--adm-primary);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+/* Table */
+.adm-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.adm-table th {
+  background-color: var(--adm-card-hover);
+  color: var(--adm-muted);
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 13px 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--adm-border);
+  white-space: nowrap;
+}
+
+.adm-table td {
+  padding: 15px 18px;
+  font-size: 13.5px;
+  color: var(--adm-body);
+  border-bottom: 1px solid var(--adm-border);
+  background-color: var(--adm-card);
+  vertical-align: middle;
+}
+
+.adm-table tr:hover td {
+  background-color: var(--adm-card-hover);
+  color: var(--adm-heading);
+}
+
+/* Links */
+.adm-link-hover {
+  transition: color 0.15s ease;
+}
+.adm-link-hover:hover {
+  color: var(--adm-primary) !important;
+  text-decoration: underline;
+}
+
+/* Pagination */
+.adm-page-btn {
+  min-width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: var(--adm-radius-full);
+  border: 1px solid var(--adm-border);
+  background-color: transparent;
+  color: var(--adm-body);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.adm-page-btn.active {
+  background-color: var(--adm-primary);
+  color: var(--adm-primary-content);
+  border-color: var(--adm-primary);
+}
+
+.adm-page-btn:hover:not(.active):not(:disabled) {
+  background-color: var(--adm-card-hover);
+  border-color: var(--adm-border-hover);
+  color: var(--adm-heading);
+}
+
+.adm-page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Shimmer Loading Skeleton */
+@keyframes adm-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.adm-skeleton {
+  background: linear-gradient(90deg, var(--adm-border) 25%, var(--adm-card-hover) 50%, var(--adm-border) 75%);
+  background-size: 200% 100%;
+  animation: adm-shimmer 1.5s infinite;
+  border-radius: var(--adm-radius-sm);
+}
+
+/* Monospace logs */
+.adm-code-logs {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12.5px;
+  line-height: 1.6;
+}

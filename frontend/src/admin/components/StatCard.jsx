@@ -1,72 +1,113 @@
 import React from "react";
+import { TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
-export function StatCard({ title, value, icon: Icon, supportingText, isPositive, color = "indigo" }) {
- const colorThemes = {
- indigo: {
- iconBg: "bg-indigo-50 text-indigo-600 border-indigo-100",
- accent: "hover:border-indigo-200"
- },
- emerald: {
- iconBg: "bg-emerald-50 text-emerald-600 border-emerald-100",
- accent: "hover:border-emerald-200"
- },
- blue: {
- iconBg: "bg-blue-50 text-blue-600 border-blue-100",
- accent: "hover:border-blue-200"
- },
- amber: {
- iconBg: "bg-amber-50 text-amber-600 border-amber-100",
- accent: "hover:border-amber-200"
- },
- rose: {
- iconBg: "bg-rose-50 text-rose-600 border-rose-100",
- accent: "hover:border-rose-200"
- },
- slate: {
- iconBg: "bg-slate-100 text-slate-700 border-slate-200 ",
- accent: "hover:border-slate-300 :border-slate-700"
- }
- }[color] || {
- iconBg: "bg-indigo-50 text-indigo-600 border-indigo-100",
- accent: "hover:border-indigo-200"
- };
+export default function StatCard({
+  title,
+  value,
+  growth,
+  isPositive = true,
+  status,
+  icon: Icon,
+  iconTheme = "indigo",
+}) {
+  return (
+    <div
+      style={{
+        backgroundColor: "var(--surface, #111111)",
+        border: "1px solid var(--border, #222222)",
+        borderRadius: "var(--radius-lg, 14px)",
+        padding: "22px 24px",
+        boxShadow: "0 4px 20px rgba(0, 0, 0, 0.4)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        gap: 14,
+        flex: 1,
+        minWidth: 200,
+        transition: "border-color 0.2s ease, transform 0.15s ease",
+      }}
+      className="adm-card-hover"
+    >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <span
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: "var(--text-500, #888888)",
+            letterSpacing: "-0.01em",
+          }}
+        >
+          {title}
+        </span>
+        {Icon && (
+          <div
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: "var(--radius-full, 9999px)",
+              backgroundColor: "var(--surface-hover, #1a1a1a)",
+              border: "1px solid var(--border, #222222)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              color: "var(--text-900, #f4efe8)",
+            }}
+          >
+            <Icon size={18} strokeWidth={2} />
+          </div>
+        )}
+      </div>
 
- return (
- <div
- className={`bg-white rounded-[16px] p-5 border border-slate-200 shadow-soft transition-all duration-200 hover:shadow-soft ${colorThemes.accent}`}
- >
- <div className="flex items-center justify-between">
- <span className="text-sm font-medium text-slate-500 tracking-tight">{title}</span>
- {Icon && (
- <div className={`p-2.5 rounded-[10px] border ${colorThemes.iconBg} transition-transform`}>
- <Icon className="text-lg" />
- </div>
- )}
- </div>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
+        <div
+          className="font-heading"
+          style={{
+            fontSize: 30,
+            fontWeight: 700,
+            color: "var(--text-900, #f4efe8)",
+            lineHeight: 1,
+            letterSpacing: "-0.02em",
+          }}
+        >
+          {value}
+        </div>
 
- <div className="mt-3">
- <div className="text-2xl lg:text-3xl font-bold text-slate-900 tracking-tight">
- {value}
- </div>
+        {growth && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 3,
+              fontSize: 12,
+              fontWeight: 700,
+              padding: "3px 8px",
+              borderRadius: "var(--radius-full, 9999px)",
+              backgroundColor: isPositive ? "rgba(16, 185, 129, 0.15)" : "rgba(239, 68, 68, 0.15)",
+              color: isPositive ? "#10b981" : "#ef4444",
+            }}
+          >
+            {isPositive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
+            <span>{growth}</span>
+          </div>
+        )}
 
- {supportingText && (
- <div className="mt-2 flex items-center gap-1.5 text-xs">
- <span
- className={`font-medium ${
- isPositive === true
- ? "text-emerald-600"
- : isPositive === false
- ? "text-rose-600"
- : "text-slate-500 "
- }`}
- >
- {supportingText}
- </span>
- </div>
- )}
- </div>
- </div>
- );
+        {status && (
+          <span
+            style={{
+              fontSize: 11.5,
+              fontWeight: 700,
+              padding: "3px 10px",
+              borderRadius: "var(--radius-full, 9999px)",
+              backgroundColor: "rgba(16, 185, 129, 0.15)",
+              color: "#10b981",
+              border: "1px solid rgba(16, 185, 129, 0.3)",
+            }}
+          >
+            {status}
+          </span>
+        )}
+      </div>
+    </div>
+  );
 }
-
-export default StatCard;

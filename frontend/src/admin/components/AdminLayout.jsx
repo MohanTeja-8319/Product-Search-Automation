@@ -1,89 +1,37 @@
 import React, { useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import AdminSidebar from "./AdminSidebar";
 import AdminNavbar from "./AdminNavbar";
-import AdminProfileModal from "./AdminProfileModal";
-import GlobalSearchModal from "./GlobalSearchModal";
-import ConfirmDialog from "./ConfirmDialog";
-import { useAdminAuth } from "../context/AdminAuthContext";
-import { useAdminToast } from "../context/AdminToastContext";
+import "../admin.css";
 
-export function AdminLayout() {
- const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
- const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
- const [isProfileOpen, setIsProfileOpen] = useState(false);
- const [isSearchOpen, setIsSearchOpen] = useState(false);
- const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
+export default function AdminLayout() {
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
- const { logout } = useAdminAuth();
- const { addToast } = useAdminToast();
- const navigate = useNavigate();
+  return (
+    <div className="admin-root" style={{ display: "flex", width: "100%", minHeight: "100vh", backgroundColor: "var(--adm-bg, #0a0a0a)" }}>
+      {/* Fixed Left Sidebar */}
+      <AdminSidebar
+        mobileOpen={mobileSidebarOpen}
+        onCloseMobile={() => setMobileSidebarOpen(false)}
+      />
 
- const handleLogout = () => {
- logout();
- setIsLogoutConfirmOpen(false);
- addToast("Logged out of Admin Portal", "info");
- navigate("/admin/login");
- };
+      {/* Main Content Area */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, backgroundColor: "var(--adm-bg, #0a0a0a)" }}>
+        {/* Top Navbar */}
+        <AdminNavbar onToggleMobile={() => setMobileSidebarOpen(!mobileSidebarOpen)} />
 
- return (
- <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex flex-col antialiased transition-colors duration-200">
- {}
- <AdminSidebar
- isCollapsed={isSidebarCollapsed}
- setIsCollapsed={setIsSidebarCollapsed}
- isMobileOpen={isMobileSidebarOpen}
- setIsMobileOpen={setIsMobileSidebarOpen}
- onOpenProfile={() => setIsProfileOpen(true)}
- onOpenLogoutConfirm={() => setIsLogoutConfirmOpen(true)}
- />
-
- {}
- <div
- className={`flex-1 flex flex-col transition-all duration-300 ${
- isSidebarCollapsed ? "lg:ml-20" : "lg:ml-64"
- }`}
- >
- {}
- <AdminNavbar
- onToggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
- onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
- onOpenSearch={() => setIsSearchOpen(true)}
- onOpenProfile={() => setIsProfileOpen(true)}
- onOpenLogoutConfirm={() => setIsLogoutConfirmOpen(true)}
- />
-
- {}
- <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
- <Outlet />
- </main>
- </div>
-
- {}
- <AdminProfileModal
- isOpen={isProfileOpen}
- onClose={() => setIsProfileOpen(false)}
- />
-
- {}
- <GlobalSearchModal
- isOpen={isSearchOpen}
- onClose={() => setIsSearchOpen(false)}
- />
-
- {}
- <ConfirmDialog
- isOpen={isLogoutConfirmOpen}
- title="Confirm Admin Logout"
- message="Are you sure you want to log out of the Product Search Automation Admin Console?"
- confirmText="Logout"
- cancelText="Stay Logged In"
- variant="danger"
- onConfirm={handleLogout}
- onCancel={() => setIsLogoutConfirmOpen(false)}
- />
- </div>
- );
+        {/* Dynamic Page Outlet */}
+        <main
+          style={{
+            flex: 1,
+            padding: "28px 32px 60px",
+            backgroundColor: "var(--adm-bg, #0a0a0a)",
+            overflowY: "auto",
+          }}
+        >
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
 }
-
-export default AdminLayout;

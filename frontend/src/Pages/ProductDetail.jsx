@@ -13,11 +13,10 @@ import ShareProduct from "./ShareProduct";
 
 import StickyBuyBar from "./StickyBuyBar";
 import RelatedProducts from "./RelatedProducts";
+import WishlistButton from "../Components/WishlistButton";
 
 import dummyProducts from "../data/products";
 import comparisonProducts from "../data/comparisionProducts";
-import { toggleWishlistItem, isProductInWishlist } from "../utils/wishlistHelper";
-import { syncUserData } from "../utils/api";
 
 const ProductDetails = () => {
  const navigate = useNavigate();
@@ -148,26 +147,20 @@ const ProductDetails = () => {
  </p>
  </div>
 
- <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8">
+ <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8 items-center">
  <button
  onClick={() => window.open(product.url || "https://amazon.in", "_blank")}
- className="bg-purple-600 hover:bg-purple-700 text-white px-6 sm:px-8 py-3 rounded-[10px] cursor-pointer text-sm sm:text-base"
+ className="bg-purple-600 hover:bg-purple-700 text-white px-6 sm:px-8 py-3 rounded-[10px] cursor-pointer text-sm sm:text-base font-semibold transition"
  >
  Buy Now
  </button>
- <button
- onClick={() => {
- const { added } = toggleWishlistItem(product);
- setInWishlist(added);
- }}
- className={`px-6 sm:px-8 py-3 rounded-[10px] cursor-pointer font-semibold transition text-sm sm:text-base ${
- inWishlist
- ? "bg-red-500 text-white hover:bg-red-600 border border-red-500"
- : "border border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white"
- }`}
- >
- {inWishlist ? "❤️ Saved" : "♡ Add to Wishlist"}
- </button>
+ <WishlistButton
+ product={product}
+ size={44}
+ iconSize={16}
+ showText={true}
+ style={{ borderRadius: "10px", height: "46px" }}
+ />
  </div>
  </div>
  </div>

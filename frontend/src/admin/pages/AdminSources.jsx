@@ -1,279 +1,430 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
- FiGlobe,
- FiExternalLink,
- FiCheckCircle,
- FiXCircle,
- FiAlertTriangle,
- FiToggleLeft,
- FiToggleRight,
- FiInfo,
- FiX,
- FiActivity,
- FiShield
-} from "react-icons/fi";
-import { useAdminData } from "../context/AdminDataContext";
-import DataTable from "../components/DataTable";
+  Globe,
+  RefreshCw,
+  Power,
+  ExternalLink,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  Sliders,
+  Radio,
+  Clock,
+  Zap,
+} from "lucide-react";
 import StatusBadge from "../components/StatusBadge";
+import { useAdminToast } from "../context/AdminToastContext";
+import { API_BASE_URL } from "../../utils/api";
 
-export function AdminSources() {
- const { sources, toggleSourceStatus } = useAdminData();
- const [selectedSourceModal, setSelectedSourceModal] = useState(null);
+const INITIAL_SOURCES = [
+  {
+    id: "src-1",
+    name: "Amazon India",
+    code: "amazon",
+    status: "Enabled",
+    productsCollected: 5230,
+    lastSync: "2 min ago",
+    successRate: 98.2,
+    syncInterval: "15 min",
+    apiType: "SerpAPI / Organic Scraper",
+    endpoint: "https://api.serpapi.com/search?engine=amazon",
+    rateLimit: "100 req / min",
+  },
+  {
+    id: "src-2",
+    name: "Flipkart",
+    code: "flipkart",
+    status: "Enabled",
+    productsCollected: 4812,
+    lastSync: "4 min ago",
+    successRate: 96.8,
+    syncInterval: "15 min",
+    apiType: "QuickCommerce / SerpAPI",
+    endpoint: "https://api.quickcommerce.in/v1/flipkart",
+    rateLimit: "60 req / min",
+  },
+  {
+    id: "src-3",
+    name: "Myntra Fashion",
+    code: "myntra",
+    status: "Enabled",
+    productsCollected: 3104,
+    lastSync: "6 min ago",
+    successRate: 94.5,
+    syncInterval: "30 min",
+    apiType: "Fashion REST Gateway",
+    endpoint: "https://api.quickcommerce.in/v1/myntra",
+    rateLimit: "45 req / min",
+  },
+  {
+    id: "src-4",
+    name: "Croma Electronics",
+    code: "croma",
+    status: "Enabled",
+    productsCollected: 1420,
+    lastSync: "12 min ago",
+    successRate: 92.1,
+    syncInterval: "1 hour",
+    apiType: "Direct Scraper",
+    endpoint: "https://api.croma.com/v2/search",
+    rateLimit: "30 req / min",
+  },
+  {
+    id: "src-5",
+    name: "Reliance Digital",
+    code: "reliancedigital",
+    status: "Disabled",
+    productsCollected: 0,
+    lastSync: "Never",
+    successRate: 0,
+    syncInterval: "Manual",
+    apiType: "Pending Merchant Agreement",
+    endpoint: "https://api.reliancedigital.in/v1",
+    rateLimit: "0 req / min",
+  },
+  {
+    id: "src-6",
+    name: "Blinkit Quick Deals",
+    code: "blinkit",
+    status: "Disabled",
+    productsCollected: 0,
+    lastSync: "Never",
+    successRate: 0,
+    syncInterval: "Manual",
+    apiType: "Quick Commerce API",
+    endpoint: "https://api.blinkit.com/v1",
+    rateLimit: "0 req / min",
+  },
+];
 
- const columns = [
- {
- header: "Website Name",
- key: "name",
- sortKey: "name",
- render: (item) => (
- <div className="flex items-center gap-3">
- <div className="w-8 h-8 rounded-[10px] bg-indigo-50 text-indigo-700 flex items-center justify-center font-bold text-xs border border-indigo-100">
- {item.name.substring(0, 2).toUpperCase()}
- </div>
- <div>
- <span className="font-bold text-slate-900 block text-xs sm:text-sm">
- {item.name}
- </span>
- <span className="text-[11px] text-slate-400 font-mono">{item.id}</span>
- </div>
- </div>
- )
- },
- {
- header: "Website URL",
- key: "websiteUrl",
- sortKey: "websiteUrl",
- render: (item) => (
- <a
- href={item.websiteUrl}
- target="_blank"
- rel="noopener noreferrer"
- className="inline-flex items-center gap-1 text-xs text-indigo-600 hover:underline font-mono"
- >
- <span>{item.websiteUrl}</span>
- <FiExternalLink className="text-[10px]" />
- </a>
- )
- },
- {
- header: "Status",
- key: "status",
- sortKey: "status",
- render: (item) => <StatusBadge status={item.status} size="sm" />
- },
- {
- header: "Last Successful Run",
- key: "lastSuccessfulRun",
- sortKey: "lastSuccessfulRun",
- render: (item) => (
- <span className="text-slate-500 text-xs whitespace-nowrap">
- {item.lastSuccessfulRun}
- </span>
- )
- },
- {
- header: "Products Collected",
- key: "productsCollected",
- sortKey: "productsCollected",
- align: "right",
- render: (item) => (
- <span className="font-bold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-[10px] text-xs">
- {item.productsCollected.toLocaleString()}
- </span>
- )
- },
- {
- header: "Actions",
- align: "center",
- render: (item) => (
- <div className="flex items-center justify-center gap-2">
- {}
- <button
- type="button"
- onClick={() => toggleSourceStatus(item.id)}
- className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-[10px] text-xs font-semibold border transition-all ${
- item.status === "Enabled"
- ? "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 :bg-slate-800"
- : "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
- }`}
- title={item.status === "Enabled" ? "Disable Connector" : "Enable Connector"}
- >
- {item.status === "Enabled" ? (
- <>
- <FiToggleRight className="text-sm text-emerald-600" />
- <span>Disable</span>
- </>
- ) : (
- <>
- <FiToggleLeft className="text-sm text-slate-400" />
- <span>Enable</span>
- </>
- )}
- </button>
+export default function AdminSources() {
+  const { addToast } = useAdminToast();
+  const [sources, setSources] = useState(INITIAL_SOURCES);
+  const [syncingId, setSyncingId] = useState(null);
+  const [selectedSource, setSelectedSource] = useState(null);
 
- {}
- <button
- type="button"
- onClick={() => setSelectedSourceModal(item)}
- className="p-1.5 rounded-[10px] text-slate-400 hover:text-indigo-600 :text-indigo-400 hover:bg-indigo-50 :bg-indigo-950 transition-colors"
- title="View Source Status"
- >
- <FiInfo className="text-base" />
- </button>
- </div>
- )
- }
- ];
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/admin/sources`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data && Array.isArray(data) && data.length > 0) {
+          setSources(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
- return (
- <div className="space-y-6">
- {}
- <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
- <div>
- <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
- Source Connectors
- </h2>
- <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
- Supported e-commerce platforms and automated scraper integration endpoints
- </p>
- </div>
+  const handleToggle = (id) => {
+    setSources((prev) =>
+      prev.map((s) => {
+        if (s.id === id) {
+          const next = s.status === "Enabled" ? "Disabled" : "Enabled";
+          addToast(
+            `${s.name} connector has been ${next.toLowerCase()}.`,
+            next === "Enabled" ? "success" : "warning"
+          );
+          return { ...s, status: next };
+        }
+        return s;
+      })
+    );
+  };
 
- <div className="flex items-center gap-3">
- <div className="px-3 py-1.5 rounded-[10px] bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-xs">
- Operational Sources:{" "}
- <span className="text-emerald-600 font-bold">
- {sources.filter((s) => s.status === "Enabled").length} / {sources.length} Active
- </span>
- </div>
- </div>
- </div>
+  const handleSync = (s) => {
+    setSyncingId(s.id);
+    addToast(`Triggering manual sync for ${s.name}...`, "info");
 
- {}
- <DataTable
- columns={columns}
- data={sources}
- searchKey="name"
- searchPlaceholder="Search e-commerce sources..."
- filterOptions={{
- label: "Status",
- key: "status",
- options: [
- { label: "Enabled", value: "enabled" },
- { label: "Disabled", value: "disabled" },
- { label: "Error", value: "error" }
- ]
- }}
- defaultSortKey="productsCollected"
- defaultSortDir="desc"
- pageSize={8}
- emptyTitle="No sources found"
- emptyDescription="No e-commerce connectors match the specified filter."
- />
+    setTimeout(() => {
+      setSyncingId(null);
+      setSources((prev) =>
+        prev.map((item) =>
+          item.id === s.id ? { ...item, lastSync: "Just now", productsCollected: item.productsCollected + 14 } : item
+        )
+      );
+      addToast(`Sync completed for ${s.name}: 14 new product quotes saved.`, "success");
+    }, 1500);
+  };
 
- {}
- {selectedSourceModal && (
- <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
- <div
- className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs"
- onClick={() => setSelectedSourceModal(null)}
- />
- <div className="relative bg-white rounded-[16px] max-w-md w-full p-6 z-10 shadow-2xl border border-slate-200 animate-scaleUp">
- <div className="flex items-center justify-between pb-3 border-b border-slate-200 ">
- <div className="flex items-center gap-3">
- <div className="w-8 h-8 rounded-[10px] bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
- <FiGlobe />
- </div>
- <div>
- <h3 className="text-base font-bold text-slate-900 ">
- {selectedSourceModal.name} Connector
- </h3>
- <span className="text-[11px] text-slate-400 font-mono">
- {selectedSourceModal.websiteUrl}
- </span>
- </div>
- </div>
- <button
- onClick={() => setSelectedSourceModal(null)}
- className="text-slate-400 hover:text-slate-600 :text-slate-400 p-1"
- >
- <FiX className="text-lg" />
- </button>
- </div>
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 1400, margin: "0 auto" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+        <div>
+          <h2 style={{ fontSize: 28, fontWeight: 800, fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: "var(--adm-text, #f4efe8)", margin: 0, letterSpacing: "-0.02em" }}>
+            Sources & Platforms
+          </h2>
+          <p style={{ fontSize: 13.5, color: "var(--adm-muted, #888888)", margin: "6px 0 0" }}>
+            Monitor e-commerce data connectors, rate limits, and synchronization health.
+          </p>
+        </div>
 
- <div className="mt-4 space-y-3 text-xs">
- <div className="flex justify-between py-1.5 border-b border-slate-200 ">
- <span className="text-slate-500 ">Connector Status:</span>
- <StatusBadge status={selectedSourceModal.status} size="sm" />
- </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#10b981", backgroundColor: "rgba(16, 185, 129, 0.12)", border: "1px solid rgba(16, 185, 129, 0.25)", padding: "7px 16px", borderRadius: 9999, fontWeight: 600 }}>
+          <CheckCircle2 size={16} /> 4 of 6 Platforms Active
+        </div>
+      </div>
 
- <div className="flex justify-between py-1.5 border-b border-slate-200 ">
- <span className="text-slate-500 ">Connector Engine:</span>
- <span className="font-mono font-semibold text-slate-800 ">
- {selectedSourceModal.connectorVersion || "v3.0.0"}
- </span>
- </div>
+      {/* Grid of Source Cards */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))",
+          gap: 20,
+        }}
+      >
+        {sources.map((s) => {
+          const isEnabled = s.status === "Enabled";
+          const isSyncing = syncingId === s.id;
 
- <div className="flex justify-between py-1.5 border-b border-slate-200 ">
- <span className="text-slate-500 ">Average Scrape Latency:</span>
- <span className="font-bold text-slate-800 ">
- {selectedSourceModal.avgLatency || "1.2s"}
- </span>
- </div>
+          return (
+            <div
+              key={s.id}
+              className="adm-card adm-card-hover"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                padding: "24px",
+                borderLeft: isEnabled ? "4px solid #10B981" : "4px solid #444444",
+              }}
+            >
+              <div>
+                {/* Card Top */}
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <div
+                      style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 10,
+                        backgroundColor: isEnabled ? "rgba(56, 189, 248, 0.1)" : "rgba(255, 255, 255, 0.04)",
+                        color: isEnabled ? "var(--adm-accent, #38bdf8)" : "var(--adm-muted, #888888)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Globe size={20} />
+                    </div>
+                    <div>
+                      <h3 style={{ fontSize: 16, fontWeight: 700, fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: "var(--adm-text, #f4efe8)", margin: 0 }}>
+                        {s.name}
+                      </h3>
+                      <span style={{ fontSize: 11.5, color: "var(--adm-muted, #888888)" }}>{s.apiType}</span>
+                    </div>
+                  </div>
 
- <div className="flex justify-between py-1.5 border-b border-slate-200 ">
- <span className="text-slate-500 ">Health Reliability:</span>
- <span className="font-bold text-emerald-600">
- {selectedSourceModal.healthRate || "99.0%"}
- </span>
- </div>
+                  <StatusBadge status={s.status} />
+                </div>
 
- <div className="flex justify-between py-1.5 border-b border-slate-200 ">
- <span className="text-slate-500 ">Total Products Indexed:</span>
- <span className="font-bold text-slate-800 ">
- {selectedSourceModal.productsCollected.toLocaleString()}
- </span>
- </div>
+                {/* Metrics Grid */}
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: 12,
+                    padding: "14px 16px",
+                    borderRadius: 10,
+                    backgroundColor: "rgba(255, 255, 255, 0.03)",
+                    border: "1px solid var(--adm-border, #222222)",
+                    marginBottom: 16,
+                  }}
+                >
+                  <div>
+                    <span style={{ fontSize: 11, color: "var(--adm-muted, #888888)", textTransform: "uppercase", fontWeight: 700, display: "block" }}>
+                      Products Indexed
+                    </span>
+                    <span style={{ fontSize: 16, fontWeight: 800, color: "var(--adm-text, #f4efe8)" }}>
+                      {s.productsCollected ? s.productsCollected.toLocaleString() : "0"}
+                    </span>
+                  </div>
 
- {selectedSourceModal.errorDetail && (
- <div className="pt-2">
- <span className="text-rose-600 font-semibold block mb-1">
- Connector Error:
- </span>
- <div className="p-2.5 bg-rose-50 border border-rose-100 text-rose-800 rounded-[10px] text-[11px]">
- {selectedSourceModal.errorDetail}
- </div>
- </div>
- )}
- </div>
+                  <div>
+                    <span style={{ fontSize: 11, color: "var(--adm-muted, #888888)", textTransform: "uppercase", fontWeight: 700, display: "block" }}>
+                      Success Rate
+                    </span>
+                    <span
+                      style={{
+                        fontSize: 16,
+                        fontWeight: 800,
+                        color: s.successRate > 95 ? "#10b981" : s.successRate > 0 ? "#fbbf24" : "var(--adm-muted, #888888)",
+                      }}
+                    >
+                      {s.successRate > 0 ? `${s.successRate}%` : "—"}
+                    </span>
+                  </div>
 
- <div className="mt-6 flex justify-between items-center pt-3 border-t border-slate-200 ">
- <button
- type="button"
- onClick={() => {
- toggleSourceStatus(selectedSourceModal.id);
- setSelectedSourceModal((prev) => ({
- ...prev,
- status: prev.status === "Enabled" ? "Disabled" : "Enabled"
- }));
- }}
- className="px-3.5 py-1.5 text-xs font-semibold rounded-[10px] border border-slate-200 hover:bg-slate-50 :bg-slate-950 :bg-slate-800"
- >
- {selectedSourceModal.status === "Enabled" ? "Disable Connector" : "Enable Connector"}
- </button>
+                  <div>
+                    <span style={{ fontSize: 11, color: "var(--adm-muted, #888888)", textTransform: "uppercase", fontWeight: 700, display: "block" }}>
+                      Last Synced
+                    </span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "var(--adm-text, #f4efe8)" }}>
+                      {s.lastSync}
+                    </span>
+                  </div>
 
- <button
- type="button"
- onClick={() => setSelectedSourceModal(null)}
- className="px-4 py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-[10px] shadow-xs"
- >
- Close
- </button>
- </div>
- </div>
- </div>
- )}
- </div>
- );
+                  <div>
+                    <span style={{ fontSize: 11, color: "var(--adm-muted, #888888)", textTransform: "uppercase", fontWeight: 700, display: "block" }}>
+                      Sync Cycle
+                    </span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: "var(--adm-text, #f4efe8)" }}>
+                      {s.syncInterval || "15 min"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 14, borderTop: "1px solid var(--adm-border, #222222)" }}>
+                <button
+                  onClick={() => handleToggle(s.id)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    padding: "6px 14px",
+                    borderRadius: 9999,
+                    border: "1px solid var(--adm-border, #222222)",
+                    backgroundColor: isEnabled ? "transparent" : "rgba(16, 185, 129, 0.1)",
+                    color: isEnabled ? "var(--adm-text, #f4efe8)" : "#10b981",
+                    fontSize: 12.5,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  <Power size={13} /> {isEnabled ? "Disable Source" : "Enable Source"}
+                </button>
+
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button
+                    onClick={() => setSelectedSource(s)}
+                    style={{
+                      padding: "6px 14px",
+                      borderRadius: 9999,
+                      border: "1px solid var(--adm-border, #222222)",
+                      backgroundColor: "transparent",
+                      color: "var(--adm-text, #f4efe8)",
+                      fontSize: 12.5,
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    Details
+                  </button>
+
+                  <button
+                    onClick={() => handleSync(s)}
+                    disabled={!isEnabled || isSyncing}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 4,
+                      padding: "6px 16px",
+                      borderRadius: 9999,
+                      border: "none",
+                      backgroundColor: isEnabled ? "#ffffff" : "rgba(255, 255, 255, 0.05)",
+                      color: isEnabled ? "#0a0a0a" : "var(--adm-muted, #888888)",
+                      fontSize: 12.5,
+                      fontWeight: 600,
+                      cursor: isEnabled && !isSyncing ? "pointer" : "not-allowed",
+                      transition: "all 0.15s ease",
+                    }}
+                  >
+                    <RefreshCw size={13} className={isSyncing ? "spin-animation" : ""} />
+                    <span>{isSyncing ? "Syncing..." : "Sync"}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Source Details Modal */}
+      {selectedSource && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.75)",
+            backdropFilter: "blur(6px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 100,
+            padding: 20,
+          }}
+          onClick={() => setSelectedSource(null)}
+        >
+          <div
+            style={{
+              width: "100%",
+              maxWidth: 520,
+              backgroundColor: "var(--adm-card, #111111)",
+              borderRadius: 16,
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+              border: "1px solid var(--adm-border, #222222)",
+              overflow: "hidden",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ padding: "20px 24px", borderBottom: "1px solid var(--adm-border, #222222)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <Globe size={20} color="var(--adm-accent, #38bdf8)" />
+                <h3 style={{ fontSize: 16, fontWeight: 700, fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: "var(--adm-text, #f4efe8)", margin: 0 }}>
+                  {selectedSource.name} Integration
+                </h3>
+              </div>
+              <StatusBadge status={selectedSource.status} />
+            </div>
+
+            <div style={{ padding: 24, display: "flex", flexDirection: "column", gap: 14 }}>
+              <div>
+                <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "var(--adm-muted, #888888)", display: "block" }}>
+                  Endpoint URL
+                </span>
+                <code style={{ fontSize: 13, color: "var(--adm-text, #f4efe8)", backgroundColor: "rgba(255, 255, 255, 0.04)", padding: "8px 12px", borderRadius: 8, display: "block", marginTop: 6, border: "1px solid var(--adm-border, #222222)" }}>
+                  {selectedSource.endpoint || "Internal scraper connector"}
+                </code>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "var(--adm-muted, #888888)", display: "block" }}>
+                    Rate Limit
+                  </span>
+                  <span style={{ fontSize: 13.5, fontWeight: 600, color: "var(--adm-text, #f4efe8)" }}>
+                    {selectedSource.rateLimit || "100 req / min"}
+                  </span>
+                </div>
+                <div>
+                  <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "var(--adm-muted, #888888)", display: "block" }}>
+                    Integration Driver
+                  </span>
+                  <span style={{ fontSize: 13.5, fontWeight: 600, color: "var(--adm-text, #f4efe8)" }}>
+                    {selectedSource.apiType}
+                  </span>
+                </div>
+              </div>
+
+              <div style={{ padding: 14, borderRadius: 10, backgroundColor: "rgba(56, 189, 248, 0.08)", border: "1px solid rgba(56, 189, 248, 0.2)", fontSize: 12.5, color: "#7dd3fc", lineHeight: 1.5 }}>
+                <Zap size={14} style={{ display: "inline", marginRight: 6 }} />
+                Real-time price normalization and currency formatting are active for this store connector.
+              </div>
+            </div>
+
+            <div style={{ padding: "16px 24px", backgroundColor: "rgba(255, 255, 255, 0.02)", borderTop: "1px solid var(--adm-border, #222222)", display: "flex", justifyContent: "flex-end" }}>
+              <button
+                onClick={() => setSelectedSource(null)}
+                className="adm-btn adm-btn-primary"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
-
-export default AdminSources;

@@ -1,32 +1,71 @@
 import React from "react";
-import { FiAlertOctagon, FiRotateCw } from "react-icons/fi";
+import { AlertCircle, RefreshCw } from "lucide-react";
 
-export function ErrorState({
- title = "Something went wrong",
- message = "An unexpected error occurred while loading this section. Please try again.",
- onRetry
+export default function ErrorState({
+  title = "Something went wrong",
+  message = "Failed to load data from the server. Please try again.",
+  onRetry = null,
 }) {
- return (
- <div className="flex flex-col items-center justify-center text-center py-14 px-6 rounded-[16px] bg-white border border-rose-100 shadow-soft my-4">
- <div className="w-14 h-14 rounded-[16px] bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-500 mb-3 shadow-xs">
- <FiAlertOctagon className="text-2xl" />
- </div>
- <h3 className="text-base font-bold text-slate-800 ">{title}</h3>
- <p className="text-xs text-slate-500 max-w-sm mt-1 mb-5 leading-relaxed">
- {message}
- </p>
- {onRetry && (
- <button
- type="button"
- onClick={onRetry}
- className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-slate-900 rounded-[10px] hover:bg-slate-800 transition-all shadow-soft active:scale-95"
- >
- <FiRotateCw className="text-xs" />
- Try Again
- </button>
- )}
- </div>
- );
-}
+  return (
+    <div
+      style={{
+        padding: "40px 24px",
+        textAlign: "center",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#FFFFFF",
+        borderRadius: 16,
+        border: "1px solid #FEE2E2",
+      }}
+    >
+      <div
+        style={{
+          width: 48,
+          height: 48,
+          borderRadius: 12,
+          backgroundColor: "#FEE2E2",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#EF4444",
+          marginBottom: 14,
+        }}
+      >
+        <AlertCircle size={24} />
+      </div>
 
-export default ErrorState;
+      <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0F172A", marginBottom: 6 }}>
+        {title}
+      </h3>
+
+      <p style={{ fontSize: 13, color: "#64748B", maxWidth: 360, margin: "0 auto 18px", lineHeight: 1.5 }}>
+        {message}
+      </p>
+
+      {onRetry && (
+        <button
+          onClick={onRetry}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "8px 18px",
+            borderRadius: 8,
+            backgroundColor: "#4F46E5",
+            color: "#FFFFFF",
+            fontSize: 13,
+            fontWeight: 600,
+            border: "none",
+            cursor: "pointer",
+            transition: "background-color 0.15s ease",
+          }}
+          className="adm-btn-primary"
+        >
+          <RefreshCw size={14} /> Retry Request
+        </button>
+      )}
+    </div>
+  );
+}

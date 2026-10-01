@@ -1,194 +1,327 @@
-import React from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
- FiArrowLeft,
- FiExternalLink,
- FiStar,
- FiGlobe,
- FiClock,
- FiCheckCircle,
- FiLayers,
- FiTag,
- FiShield,
- FiAlertCircle
-} from "react-icons/fi";
-import { useAdminData } from "../context/AdminDataContext";
+  ArrowLeft,
+  Star,
+  ExternalLink,
+  Shield,
+  TrendingDown,
+  Clock,
+  Layers,
+  CheckCircle2,
+  AlertCircle,
+  ShoppingBag,
+  Package,
+} from "lucide-react";
 import StatusBadge from "../components/StatusBadge";
+import { useAdminData } from "../context/AdminDataContext";
+import { API_BASE_URL } from "../../utils/api";
 
-export function AdminProductDetails() {
- const { id } = useParams();
- const navigate = useNavigate();
- const { getProductById } = useAdminData();
+export default function AdminProductDetails() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { getProductById } = useAdminData();
+  const [liveProduct, setLiveProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [imgError, setImgError] = useState(false);
 
- const product = getProductById(id);
+  useEffect(() => {
+    let mounted = true;
+    setLoading(true);
+    setImgError(false);
+    fetch(`${API_BASE_URL}/admin/products/${id}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((item) => {
+        if (mounted && item) {
+          setLiveProduct(item);
+        }
+      })
+      .catch((err) => console.error("Error fetching product details:", err))
+      .finally(() => {
+        if (mounted) setLoading(false);
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [id]);
 
- if (!product) {
- return (
- <div className="bg-white rounded-[16px] border border-slate-200 p-8 text-center max-w-lg mx-auto my-12 shadow-soft">
- <div className="w-12 h-12 rounded-[16px] bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-3 text-xl">
- <FiAlertCircle />
- </div>
- <h3 className="text-lg font-bold text-slate-800 ">Product Not Found</h3>
- <p className="text-xs text-slate-500 mt-1 mb-5">
- No catalog entry found matching ID <strong className="font-mono">{id}</strong>.
- </p>
- <Link
- to="/admin/products"
- className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-[10px] text-xs font-bold hover:bg-indigo-700"
- >
- <FiArrowLeft /> Back to Products Catalog
- </Link>
- </div>
- );
- }
+  const contextProduct = getProductById ? getProductById(id) : null;
+  const data = liveProduct || contextProduct;
 
- return (
- <div className="space-y-6">
- {}
- <div className="flex items-center justify-between">
- <button
- type="button"
- onClick={() => navigate("/admin/products")}
- className="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-slate-900 :text-white bg-white border border-slate-200 px-3 py-1.5 rounded-[10px] shadow-xs transition-colors"
- >
- <FiArrowLeft /> Back to Products
- </button>
+  if (loading && !data) {
+    return (
+      <div style={{ padding: 60, textAlign: "center", color: "#64748B" }}>
+        <div style={{ display: "inline-block", width: 32, height: 32, border: "3px solid #E2E8F0", borderTopColor: "#4F46E5", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+        <div style={{ marginTop: 12, fontSize: 14, fontWeight: 500 }}>Loading product telemetry & store comparisons...</div>
+      </div>
+    );
+  }
 
- {}
- <a
- href={product.productUrl}
- target="_blank"
- rel="noopener noreferrer"
- className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-[10px] shadow-soft transition-all active:scale-95"
- >
- <span>Open Original Website</span>
- <FiExternalLink className="text-sm" />
- </a>
- </div>
+  if (!data) {
+    return (
+      <div style={{ maxWidth: 500, margin: "60px auto" }} className="adm-card">
+        <h3 style={{ color: "#0F172A", margin: 0 }}>Product Not Found</h3>
+        <p style={{ color: "#64748B", fontSize: 13.5 }}>No product was found matching identifier "{id}".</p>
+        <button onClick={() => navigate("/admin/products")} className="adm-btn adm-btn-primary" style={{ marginTop: 16 }}>
+          <ArrowLeft size={14} /> Back to Products
+        </button>
+      </div>
+    );
+  }
 
- {}
- <div className="bg-white rounded-[16px] border border-slate-200/90 shadow-soft p-6">
- <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
- {}
- <div className="md:col-span-4 lg:col-span-4 bg-slate-50 border border-slate-200 rounded-[16px] p-4 flex items-center justify-center">
- <img
- src={product.image}
- alt={product.name}
- className="max-h-72 w-auto object-contain rounded-[10px] shadow-xs"
- />
- </div>
+  // Safe normalized comparison list
+  const comparisonList = (
+    (Array.isArray(data.platformComparison) && data.platformComparison.length > 0 ? data.platformComparison : null) ||
+    (Array.isArray(data.platforms) && data.platforms.length > 0 ? data.platforms : null) ||
+    []
+  ).map((p, idx) => ({
+    platform: p.platform || p.name || `Store #${idx + 1}`,
+    price: p.price ?? data.currentPrice ?? data.price ?? 0,
+    stock: p.stock ?? (p.inStock === false ? "Out of Stock" : "In Stock"),
+    delivery: p.delivery || "Standard 2-3 Business Days",
+    rating: p.rating || 4.5,
+    deal: p.deal || (idx === 0 ? "Best Price" : "Standard Price"),
+    url: p.url || "#",
+  }));
 
- {}
- <div className="md:col-span-8 lg:col-span-8 space-y-4">
- {}
- <div>
- <div className="flex items-center gap-2 flex-wrap mb-2">
- <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
- {product.category}
- </span>
- <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 ">
- <FiGlobe className="text-xs" /> {product.sourceWebsite}
- </span>
- <StatusBadge status={product.availability} size="sm" />
- </div>
+  // Safe specifications matrix
+  const specsList = (Array.isArray(data.specifications) && data.specifications.length > 0)
+    ? data.specifications
+    : [
+        { key: "Brand", value: data.brand || "Comparely Verified" },
+        { key: "Category", value: data.category || "General" },
+        { key: "Stock Status", value: data.availability || "In Stock" },
+        { key: "Stores Monitored", value: `${comparisonList.length || 3} Active Portals` },
+      ];
 
- <h2 className="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
- {product.name}
- </h2>
- <span className="font-mono text-xs text-slate-400">ID: {product.id}</span>
- </div>
+  const displayPrice = data.currentPrice ?? data.price ?? 0;
 
- {}
- <div className="p-4 rounded-[10px] bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-4">
- <div>
- <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
- Scraped Price
- </span>
- <div className="flex items-baseline gap-2 mt-0.5">
- <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 ">
- ₹{product.price.toLocaleString("en-IN")}
- </span>
- {product.originalPrice && (
- <span className="text-sm line-through text-slate-400">
- ₹{product.originalPrice.toLocaleString("en-IN")}
- </span>
- )}
- {product.discount && (
- <span className="text-xs font-bold text-emerald-600 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200">
- {product.discount}
- </span>
- )}
- </div>
- </div>
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 1200, margin: "0 auto" }}>
+      {/* Top Breadcrumb & Back Button */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <button
+          onClick={() => navigate("/admin/products")}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "8px 16px",
+            borderRadius: 9999,
+            border: "1px solid var(--adm-border, #222222)",
+            backgroundColor: "transparent",
+            color: "var(--adm-text, #f4efe8)",
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+          }}
+          className="adm-btn-outline"
+        >
+          <ArrowLeft size={15} /> Back to Products
+        </button>
 
- {}
- <div className="text-right">
- <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
- User Rating & Reviews
- </span>
- <div className="flex items-center gap-2 mt-1 justify-end">
- <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-[10px] bg-amber-50 text-amber-900 font-extrabold text-sm border border-amber-200">
- <FiStar className="text-amber-500 fill-amber-500 text-xs" />
- <span>{product.rating}</span>
- </div>
- <span className="text-xs text-slate-500 font-medium">
- ({product.reviews.toLocaleString()} reviews)
- </span>
- </div>
- </div>
- </div>
+        <span style={{ fontSize: 13, color: "var(--adm-muted, #888888)" }}>/</span>
+        <span style={{ fontSize: 13, color: "var(--adm-muted, #888888)" }}>Product Details</span>
+        <span style={{ fontSize: 13, color: "var(--adm-muted, #888888)" }}>/</span>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "var(--adm-text, #f4efe8)" }}>{data.name || data.title}</span>
+      </div>
 
- {}
- <div>
- <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">
- Description
- </h3>
- <p className="text-xs sm:text-sm text-slate-600 leading-relaxed bg-slate-50/50 p-3.5 rounded-[10px] border border-slate-200 ">
- {product.description}
- </p>
- </div>
+      {/* Main Info Card */}
+      <div className="adm-card" style={{ padding: 28 }}>
+        <div style={{ display: "flex", gap: 32, flexWrap: "wrap" }}>
+          {/* Product Image with Fallback */}
+          <div
+            style={{
+              width: 260,
+              height: 260,
+              borderRadius: 14,
+              backgroundColor: "rgba(255, 255, 255, 0.03)",
+              border: "1px solid var(--adm-border, #222222)",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            {imgError || !data.image ? (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, color: "var(--adm-muted, #888888)" }}>
+                <div style={{ width: 68, height: 68, borderRadius: 16, backgroundColor: "rgba(56, 189, 248, 0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--adm-accent, #38bdf8)" }}>
+                  <Package size={34} />
+                </div>
+                <span style={{ fontSize: 12, fontWeight: 600, color: "var(--adm-muted, #888888)" }}>Comparely Product</span>
+              </div>
+            ) : (
+              <img
+                src={data.image}
+                alt={data.name || data.title}
+                onError={() => setImgError(true)}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            )}
+          </div>
 
- {}
- <div className="flex items-center gap-6 pt-2 text-xs text-slate-500 border-t border-slate-200 ">
- <span className="flex items-center gap-1.5">
- <FiClock className="text-indigo-600 " /> Last Updated: <strong className="text-slate-700 ">{product.lastUpdated}</strong>
- </span>
- <span className="flex items-center gap-1.5">
- <FiTag className="text-indigo-600 " /> Verified Crawler SKU
- </span>
- </div>
- </div>
- </div>
- </div>
+          {/* Core Info */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                <span
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 700,
+                    padding: "3px 10px",
+                    borderRadius: 9999,
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    border: "1px solid var(--adm-border, #222222)",
+                    color: "var(--adm-text, #f4efe8)",
+                  }}
+                >
+                  {data.category || "General"}
+                </span>
+                <span style={{ fontSize: 12, color: "var(--adm-muted, #888888)" }}>Brand: <strong style={{ color: "var(--adm-text, #f4efe8)" }}>{data.brand || "Verified Brand"}</strong></span>
+                <StatusBadge status={data.availability || "In Stock"} size="small" />
+              </div>
 
- {}
- <div className="bg-white rounded-[16px] border border-slate-200/90 shadow-soft p-6">
- <div className="pb-4 mb-4 border-b border-slate-200 flex items-center justify-between">
- <div>
- <h3 className="text-base font-bold text-slate-900 ">Technical Specifications</h3>
- <p className="text-xs text-slate-500 mt-0.5">
- Structured properties extracted by automated scraper engine
- </p>
- </div>
- <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-[10px]">
- {Object.keys(product.specifications || {}).length} Parameters
- </span>
- </div>
+              <h1 style={{ fontSize: 24, fontWeight: 800, fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: "var(--adm-text, #f4efe8)", margin: "0 0 12px", lineHeight: 1.3 }}>
+                {data.name || data.title}
+              </h1>
 
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
- {Object.entries(product.specifications || {}).map(([key, value]) => (
- <div
- key={key}
- className="p-3 rounded-[10px] bg-slate-50/80 border border-slate-200 flex items-center justify-between text-xs"
- >
- <span className="font-semibold text-slate-500 ">{key}</span>
- <span className="font-bold text-slate-800 text-right max-w-xs">{value}</span>
- </div>
- ))}
- </div>
- </div>
- </div>
- );
+              <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 18 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 4, color: "#fbbf24", fontWeight: 700, fontSize: 14 }}>
+                  <Star size={16} fill="#fbbf24" color="#fbbf24" /> {data.rating || 4.5}
+                  <span style={{ color: "var(--adm-muted, #888888)", fontWeight: 400, fontSize: 13 }}>
+                    ({(data.reviews || data.reviewsCount || 0).toLocaleString()} reviews across stores)
+                  </span>
+                </div>
+                <span style={{ fontSize: 12, color: "var(--adm-muted, #888888)" }}>• Last synced {data.lastUpdated || "Just now"}</span>
+              </div>
+
+              {/* Price Details */}
+              <div style={{ display: "flex", alignItems: "baseline", gap: 12, padding: "14px 18px", borderRadius: 12, backgroundColor: "rgba(255, 255, 255, 0.03)", border: "1px solid var(--adm-border, #222222)" }}>
+                <div>
+                  <span style={{ fontSize: 11, color: "var(--adm-muted, #888888)", textTransform: "uppercase", fontWeight: 700, display: "block" }}>
+                    Best Available Price
+                  </span>
+                  <div style={{ fontSize: 32, fontWeight: 900, fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: "var(--adm-text, #f4efe8)" }}>
+                    ₹{displayPrice.toLocaleString()}
+                  </div>
+                </div>
+
+                {data.originalPrice && data.originalPrice > displayPrice && (
+                  <div>
+                    <span style={{ fontSize: 13, color: "var(--adm-muted, #888888)", textDecoration: "line-through" }}>
+                      MRP ₹{data.originalPrice?.toLocaleString()}
+                    </span>
+                    <span style={{ marginLeft: 8, fontSize: 12, fontWeight: 700, color: "#10b981", backgroundColor: "rgba(16, 185, 129, 0.15)", padding: "2px 8px", borderRadius: 9999 }}>
+                      {data.discount || `${Math.round(((data.originalPrice - displayPrice) / data.originalPrice) * 100)}% OFF`}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
+              <a
+                href="/comparison"
+                target="_blank"
+                rel="noreferrer"
+                className="adm-btn adm-btn-primary"
+                style={{ borderRadius: 9999, padding: "9px 20px" }}
+              >
+                <ExternalLink size={14} /> Open Live Compare View
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Two Columns: Platform Comparison Table & Specifications */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(460px, 1fr))", gap: 24 }}>
+        {/* Platform Comparison */}
+        <div className="adm-card" style={{ padding: 24 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 700, fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: "var(--adm-text, #f4efe8)", margin: 0 }}>
+              Live Platform Comparison
+            </h3>
+            <span style={{ fontSize: 12, color: "var(--adm-muted, #888888)" }}>
+              {comparisonList.length} store offers tracked
+            </span>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {comparisonList.length === 0 ? (
+              <div style={{ padding: 24, textAlign: "center", color: "var(--adm-muted, #888888)", fontSize: 13 }}>
+                No active store prices tracked yet.
+              </div>
+            ) : (
+              comparisonList.map((p, idx) => {
+                const isBest = p.deal === "Best Price" || idx === 0;
+                return (
+                  <div
+                    key={p.platform + idx}
+                    style={{
+                      padding: "14px 16px",
+                      borderRadius: 10,
+                      backgroundColor: isBest ? "rgba(16, 185, 129, 0.08)" : "rgba(255, 255, 255, 0.03)",
+                      border: isBest ? "1px solid rgba(16, 185, 129, 0.3)" : "1px solid var(--adm-border, #222222)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{ fontWeight: 700, color: "var(--adm-text, #f4efe8)", fontSize: 14 }}>{p.platform}</span>
+                        {isBest && (
+                          <span style={{ fontSize: 10, fontWeight: 700, backgroundColor: "#10b981", color: "#000000", padding: "1px 6px", borderRadius: 4 }}>
+                            BEST DEAL
+                          </span>
+                        )}
+                      </div>
+                      <span style={{ fontSize: 12, color: "var(--adm-muted, #888888)" }}>Delivery: {p.delivery}</span>
+                    </div>
+
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: isBest ? "#10b981" : "var(--adm-text, #f4efe8)" }}>
+                        ₹{Number(p.price || 0).toLocaleString()}
+                      </div>
+                      <span style={{ fontSize: 11.5, color: "var(--adm-muted, #888888)" }}>{p.stock}</span>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        {/* Specifications Matrix */}
+        <div className="adm-card" style={{ padding: 24 }}>
+          <h3 style={{ fontSize: 16, fontWeight: 700, fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: "var(--adm-text, #f4efe8)", margin: "0 0 16px" }}>
+            Normalized Technical Specifications
+          </h3>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {specsList.map((spec, i) => (
+              <div
+                key={spec.key || i}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  padding: "10px 14px",
+                  borderRadius: 8,
+                  backgroundColor: i % 2 === 0 ? "rgba(255, 255, 255, 0.02)" : "transparent",
+                  fontSize: 13,
+                }}
+              >
+                <span style={{ color: "var(--adm-muted, #888888)", fontWeight: 500 }}>{spec.key}</span>
+                <strong style={{ color: "var(--adm-text, #f4efe8)" }}>{spec.value}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
-
-export default AdminProductDetails;

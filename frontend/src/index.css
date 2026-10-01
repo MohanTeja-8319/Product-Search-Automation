@@ -581,3 +581,133 @@ body {
   
   .card { border-radius: var(--radius-md); }
 }
+
+/* ==========================================================================
+   WISHLIST / LIKE HEART ANIMATIONS
+   ========================================================================== */
+
+@keyframes heartBounce {
+  0% {
+    transform: scale(1);
+  }
+  15% {
+    transform: scale(0.68) rotate(-14deg);
+  }
+  40% {
+    transform: scale(1.48) rotate(10deg);
+  }
+  65% {
+    transform: scale(0.88) rotate(-5deg);
+  }
+  85% {
+    transform: scale(1.15) rotate(2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes heartRingBurst {
+  0% {
+    transform: scale(0.4);
+    opacity: 1;
+    border-width: 3px;
+  }
+  60% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+    border-width: 1px;
+  }
+}
+
+@keyframes sparklePop {
+  0% {
+    transform: translate(0, 0) scale(0);
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+    transform: translate(var(--dx), var(--dy)) scale(1.2);
+  }
+  100% {
+    transform: translate(calc(var(--dx) * 1.5), calc(var(--dy) * 1.5)) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes floatMiniHeart {
+  0% {
+    transform: translate(0, 0) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+    transform: translate(var(--fx), -12px) scale(1.1) rotate(var(--rot));
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(calc(var(--fx) * 1.8), -38px) scale(0.3) rotate(calc(var(--rot) * 2));
+    opacity: 0;
+  }
+}
+
+.heart-btn-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.heart-pop-active {
+  animation: heartBounce 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+}
+
+.heart-burst-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  margin-top: -14px;
+  margin-left: -14px;
+  border-radius: 50%;
+  border: 2px solid #ef4444;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+  pointer-events: none;
+  animation: heartRingBurst 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  z-index: 10;
+}
+
+.heart-sparkle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  margin-left: -3px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: sparklePop 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  z-index: 10;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.heart-floating-mini {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -8px;
+  margin-left: -8px;
+  pointer-events: none;
+  animation: floatMiniHeart 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  z-index: 12;
+  font-size: 14px;
+}
+

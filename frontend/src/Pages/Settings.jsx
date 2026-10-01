@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FiUser, FiMail, FiTrash2,
-  FiAlertTriangle, FiCheckCircle, FiLock, FiBell,
+  FiAlertTriangle, FiLock, FiBell,
   FiSave, FiSmartphone, FiCamera, FiX
 } from "react-icons/fi";
 
@@ -188,12 +188,6 @@ export default function Settings() {
       <div className="main-content">
         <Navbar onMenuToggle={() => setSidebarOpen(o => !o)} />
         <div className="page-body">
-
-          {toast && (
-            <div style={{ position: "fixed", top: 24, right: 24, padding: "16px 24px", background: toast.type === "error" ? "var(--danger)" : "var(--success)", color: "white", borderRadius: "var(--radius-md)", boxShadow: "var(--shadow-lg)", zIndex: 1000, fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}>
-              {toast.type === "error" ? <FiAlertTriangle /> : <FiCheckCircle />} {toast.message}
-            </div>
-          )}
 
           <div style={{ marginBottom: 32 }}>
             <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 28, fontWeight: 800, color: "var(--text-900)", marginBottom: 8 }}>Settings</h1>
