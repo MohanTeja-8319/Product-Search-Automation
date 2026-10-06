@@ -10,8 +10,7 @@ mongoose.connection.on("connected", () => {
 });
 
 mongoose.connection.on("disconnected", () => {
-  console.warn("MongoDB connection lost. Retrying in 5 seconds...");
-  scheduleReconnect();
+  console.warn("MongoDB disconnected.");
 });
 
 mongoose.connection.on("error", (err) => {
@@ -72,8 +71,7 @@ async function connectDB() {
       }
     }
 
-    console.error("Warning: Could not connect to any MongoDB instance. Retrying in 5 seconds...");
-    scheduleReconnect();
+    console.warn("[DB] Could not connect to MongoDB Atlas or local MongoDB. Running in fault-tolerant mode using in-memory live catalog.");
     return false;
   } finally {
     isConnecting = false;

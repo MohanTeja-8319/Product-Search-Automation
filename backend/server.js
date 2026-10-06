@@ -154,18 +154,7 @@ async function startServer() {
   }
 
   if (!server) {
-    for (let offset = 1; offset < 5; offset++) {
-      try {
-        server = await listenOnPort(targetPort + offset);
-        break;
-      } catch (err) {
-        if (err.code === "EADDRINUSE") continue;
-      }
-    }
-  }
-
-  if (!server) {
-    console.error("Could not bind port", targetPort);
+    console.error(`Could not bind port ${targetPort}. Retrying port ${targetPort}...`);
     return;
   }
 
