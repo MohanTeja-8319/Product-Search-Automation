@@ -17,7 +17,7 @@ const STORE_STYLES = {
  JioMart: "bg-[#0078ad] text-white font-bold",
 };
 
-const ComparisonTable = ({ comparison = [], lowestPrice }) => {
+const ComparisonTable = ({ comparison = [], lowestPrice, productName = "" }) => {
  if (!comparison || comparison.length === 0) return null;
 
  return (
@@ -106,7 +106,7 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
  </div>
 
  <a
- href={getDirectStoreUrl(store.store, store.name, store.url)}
+ href={getDirectStoreUrl(store.store, store.name || productName, store.url)}
  target="_blank"
  rel="noreferrer"
  className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-[10px] text-xs font-bold transition shadow-xs ${
@@ -204,7 +204,7 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
 
  <td className="px-6 py-4 text-right">
  <a
- href={getDirectStoreUrl(store.store, store.name, store.url)}
+ href={getDirectStoreUrl(store.store, store.name || productName, store.url)}
  target="_blank"
  rel="noreferrer"
  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-xs font-bold transition shadow-xs cursor-pointer ${

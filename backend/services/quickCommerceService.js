@@ -68,33 +68,101 @@ function createProductSlug(name) {
   );
 }
 
-function getDeterministicNumber(seed, min = 100000, max = 999999) {
-  let hash = 0;
-  const s = String(seed || "");
-  for (let i = 0; i < s.length; i++) {
-    hash = (hash << 5) - hash + s.charCodeAt(i);
-    hash |= 0;
-  }
-  const positive = Math.abs(hash);
-  return min + (positive % (max - min));
+const VERIFIED_ASIN_MAP = {
+  "apple iphone 16": "B0DGH8BGCF",
+  "iphone 16": "B0DGH8BGCF",
+  "samsung galaxy s24 ultra": "B0CQ236S7C",
+  "galaxy s24 ultra": "B0CQ236S7C",
+  "s24 ultra": "B0CQ236S7C",
+  "oneplus 12": "B0CS5XDP9C",
+  "apple iphone 15": "B0CHX1W1XY",
+  "iphone 15": "B0CHX1W1XY",
+  "apple macbook air m3": "B0CX21CBPJ",
+  "macbook air m3": "B0CX21CBPJ",
+  "macbook air": "B0CX21CBPJ",
+  "sony wh-1000xm5": "B09XS7JWHH",
+  "wh-1000xm5": "B09XS7JWHH",
+  "sony xm5": "B09XS7JWHH",
+  "apple airpods pro": "B0CHWRXH8B",
+  "airpods pro": "B0CHWRXH8B",
+  "jbl flip 6": "B09RM53Y5B",
+  "oneplus bullets wireless z2": "B09TVVGXWS",
+  "hp pavilion 15": "B0BH4WFL2X",
+  "lenovo ideapad slim 3": "B0B56CRWDF",
+  "asus rog strix g16": "B0BWX2B4F2",
+  "dell xps 13": "B0CRVJ8Y2M",
+};
+
+function cleanProductNameForStore(name) {
+  if (!name || typeof name !== "string") return "";
+  return name
+    .replace(/\(Comparely Verified\)/gi, "")
+    .replace(/\bComparely Verified\b/gi, "")
+    .replace(/\s*-\s*Edition\s*\d+/gi, "")
+    .replace(/\s*-\s*Variant\s*\d+/gi, "")
+    .replace(/\s*-\s*Option\s*\d+/gi, "")
+    .replace(/\s*-\s*Pack\s+of\s+\d+/gi, "")
+    .replace(/[()[\]{},;]/g, " ")
+    .replace(/["'’]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
-function getDeterministicAsin(seed) {
-  let hash = 0;
-  const s = String(seed || "");
-  for (let i = 0; i < s.length; i++) {
-    hash = (hash << 5) - hash + s.charCodeAt(i);
-    hash |= 0;
+function isSyntheticBrokenUrl(url = "") {
+  if (!url || typeof url !== "string") return true;
+  const u = url.toLowerCase();
+
+  // Explicit known synthetic broken values
+  if (u.includes("b05qn8by2r") || u.includes("629327")) return true;
+
+  // Check if Amazon URL has a synthetic / unverified ASIN
+  if (u.includes("amazon.") && /\/(?:[a-z0-9-]+\/)?dp\/([a-z0-9]{10})/i.test(u)) {
+    const m = u.match(/\/dp\/([a-z0-9]{10})/i);
+    const asin = m ? m[1].toUpperCase() : "";
+    const knownGoodAsins = Object.values(VERIFIED_ASIN_MAP).map((a) => a.toUpperCase());
+    if (asin && !knownGoodAsins.includes(asin)) {
+      return true;
+    }
   }
-  const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  let asin = "B0";
-  let val = Math.abs(hash);
-  for (let i = 0; i < 8; i++) {
-    asin += chars[val % chars.length];
-    val = Math.floor(val / chars.length) || (val + 19 * (i + 1));
+
+  // Synthetic Flipkart itm patterns (e.g. itm001, itm600, itm700, etc.)
+  if (u.includes("flipkart.com") && /\/p\/itm\d+([/?#]|$)/i.test(u)) {
+    return true;
   }
-  return asin;
+
+  // Synthetic BlinkIt paths (e.g. /prn/.../prid/\d+ or /prn/... without valid route)
+  if (u.includes("blinkit.com") && (/\/prn\/[^/]+\/prid\/\d+/i.test(u) || /\/prn\/[^/]+$/i.test(u))) {
+    return true;
+  }
+
+  // Synthetic Zepto paths (e.g. /pn/.../pvid/\d+)
+  if (u.includes("zeptonow.com") && /\/pn\/[^/]+\/pvid\/\d+/i.test(u)) {
+    return true;
+  }
+
+  // Synthetic Swiggy paths
+  if (u.includes("swiggy.com") && /\/instamart\/item\/[^/]+-\d{5,7}$/i.test(u)) {
+    return true;
+  }
+
+  // Synthetic BigBasket paths
+  if (u.includes("bigbasket.com") && /\/pd\/\d{5,7}\/[^/]+$/i.test(u)) {
+    return true;
+  }
+
+  // Synthetic Myntra paths
+  if (u.includes("myntra.com") && /\/[^/]+\/\d{5,7}\/buy$/i.test(u)) {
+    return true;
+  }
+
+  // Synthetic Nykaa paths
+  if (u.includes("nykaa.com") && /\/[^/]+\/p\/\d{5,7}$/i.test(u)) {
+    return true;
+  }
+
+  return false;
 }
+
 
 function isDirectProductUrl(url = "") {
   if (!url || typeof url !== "string") return false;
@@ -203,37 +271,57 @@ function canonicalizeProductUrl(url, platform = "") {
 }
 
 function generateDirectStoreUrl(platform, productName) {
-  const p = String(platform || "").toLowerCase();
-  const slug = createProductSlug(productName);
-  const hashKey = `${p}-${slug}`;
-  const id = getDeterministicNumber(hashKey, 100000, 999999);
-  const asin = getDeterministicAsin(hashKey);
+  const p = String(platform || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const cleanName = cleanProductNameForStore(productName);
+  const q = encodeURIComponent(cleanName || "product");
 
   if (p.includes("amazon")) {
-    return `https://www.amazon.in/${slug}/dp/${asin}`;
+    const norm = cleanName.toLowerCase();
+    for (const [key, asin] of Object.entries(VERIFIED_ASIN_MAP)) {
+      if (norm.includes(key)) {
+        return `https://www.amazon.in/dp/${asin}`;
+      }
+    }
+    return `https://www.amazon.in/s?k=${q}`;
   }
+
   if (p.includes("flipkart")) {
-    return `https://www.flipkart.com/${slug}/p/itm${id}`;
+    return `https://www.flipkart.com/search?q=${q}`;
   }
+
   if (p.includes("blinkit")) {
-    return `https://blinkit.com/prn/${slug}/prid/${id}`;
+    return `https://blinkit.com/s/?q=${q}`;
   }
+
   if (p.includes("zepto")) {
-    return `https://www.zeptonow.com/pn/${slug}/pvid/${id}`;
+    return `https://www.zeptonow.com/search?query=${q}`;
   }
+
   if (p.includes("swiggy")) {
-    return `https://www.swiggy.com/instamart/item/${slug}-${id}`;
+    return `https://www.swiggy.com/instamart/search?custom_back=true&query=${q}`;
   }
+
   if (p.includes("bigbasket")) {
-    return `https://www.bigbasket.com/pd/${id}/${slug}`;
+    return `https://www.bigbasket.com/ps/?q=${q}`;
   }
+
   if (p.includes("myntra")) {
-    return `https://www.myntra.com/${slug}/${id}/buy`;
+    return `https://www.myntra.com/search?rawQuery=${q}`;
   }
+
   if (p.includes("nykaa")) {
-    return `https://www.nykaa.com/${slug}/p/${id}`;
+    return `https://www.nykaa.com/search/result/?q=${q}`;
   }
-  return `https://www.amazon.in/${slug}/dp/${asin}`;
+
+  if (p.includes("dmart")) {
+    return `https://www.dmart.in/search?searchTerm=${q}`;
+  }
+
+  if (p.includes("jiomart")) {
+    return `https://www.jiomart.com/search/${q}`;
+  }
+
+  return `https://www.amazon.in/s?k=${q}`;
 }
 
 const KNOWN_BRANDS = [
@@ -1000,6 +1088,9 @@ function buildMultiStoreCatalog() {
   return catalog.map((item) => {
     const sortedComp = [...item.comparison].sort((a, b) => a.price - b.price);
     const cheapest = sortedComp[0];
+    const itemUrl = isSyntheticBrokenUrl(item.url)
+      ? generateDirectStoreUrl(item.store, item.name)
+      : item.url;
 
     return {
       id: `qc-${crypto.randomUUID()}`,
@@ -1014,7 +1105,7 @@ function buildMultiStoreCatalog() {
       reviews: item.reviews,
       availability: "In Stock",
       image: item.image,
-      url: item.url,
+      url: itemUrl,
       store: item.store, // Preserves the designated primary store!
       storeCount: item.comparison.length,
       comparison: sortedComp.map((c) => ({
@@ -1029,7 +1120,9 @@ function buildMultiStoreCatalog() {
         reviews: c.reviews,
         availability: c.inStock ? "In Stock" : "Out of Stock",
         image: item.image,
-        url: c.url,
+        url: isSyntheticBrokenUrl(c.url)
+          ? generateDirectStoreUrl(c.store, item.name)
+          : c.url,
         delivery: c.delivery,
       })),
       lowestPrice: cheapest.price,
@@ -1100,6 +1193,17 @@ function groupProducts(rawProducts) {
       const designatedItem = comparison[idx % comparison.length] || comparison[0];
       const cheapest = comparison[0];
 
+      const desUrl = isSyntheticBrokenUrl(designatedItem.url)
+        ? generateDirectStoreUrl(designatedItem.store, designatedItem.name)
+        : designatedItem.url;
+
+      const sanitizedComparison = comparison.map((c) => ({
+        ...c,
+        url: isSyntheticBrokenUrl(c.url)
+          ? generateDirectStoreUrl(c.store, designatedItem.name)
+          : c.url,
+      }));
+
       return {
         id: `qc-${crypto.randomUUID()}`,
         name: designatedItem.name,
@@ -1113,10 +1217,10 @@ function groupProducts(rawProducts) {
         reviews: designatedItem.reviews,
         availability: designatedItem.availability,
         image: designatedItem.image,
-        url: designatedItem.url,
+        url: desUrl,
         store: designatedItem.store, // Diverse store representation!
         storeCount: comparison.length,
-        comparison,
+        comparison: sanitizedComparison,
         lowestPrice: cheapest.price,
         stores: comparison.map((item) => item.store),
         live: true,
@@ -1169,8 +1273,8 @@ function synthesizeDynamicProducts(query) {
       const pPrice = Math.max(10, basePrice + pVar);
       return {
         id: `qc-${p}-${crypto.randomUUID()}`,
-        name: `${titleQ} (Comparely Verified)`,
-        brand: "Verified Brand",
+        name: titleQ,
+        brand: extractBrand(titleQ) || "Comparely Verified",
         store: p,
         price: pPrice,
         originalPrice: Math.round(pPrice * 1.2),
@@ -1186,7 +1290,7 @@ function synthesizeDynamicProducts(query) {
 
     results.push({
       id: `qc-${store}-${crypto.randomUUID()}`,
-      name: `${titleQ} - Edition ${idx + 1}`,
+      name: idx === 0 ? titleQ : `${titleQ} - Option ${idx + 1}`,
       brand: extractBrand(titleQ) || "Comparely Verified",
       quantity: "",
       category: isGrocery ? "Groceries" : isFashion ? "Fashion" : isBeauty ? "Beauty" : "Electronics",
@@ -1410,9 +1514,9 @@ async function searchSpecificLiveProduct({ query, lat, lon, pincode }) {
 }
 
 async function resolveExactProductUrl(store = "", productName = "", rawUrl = "") {
-  if (rawUrl && isDirectProductUrl(rawUrl)) {
+  if (rawUrl && !isSyntheticBrokenUrl(rawUrl)) {
     const canonical = canonicalizeProductUrl(rawUrl, store);
-    if (canonical && isDirectProductUrl(canonical)) return canonical;
+    if (canonical && !isSyntheticBrokenUrl(canonical)) return canonical;
     return rawUrl;
   }
   return generateDirectStoreUrl(store, productName);
@@ -1427,6 +1531,8 @@ module.exports = {
   groupProducts,
   resolveExactProductUrl,
   isDirectProductUrl,
+  isSyntheticBrokenUrl,
+  cleanProductNameForStore,
   canonicalizeProductUrl,
   generateDirectStoreUrl,
 };

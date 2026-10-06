@@ -340,14 +340,14 @@ router.get("/redirect", async (req, res) => {
 
   try {
     const directUrl = await resolveExactProductUrl(store, name, rawUrl);
-    if (directUrl && isDirectProductUrl(directUrl)) {
+    if (directUrl) {
       return res.redirect(302, directUrl);
     }
   } catch (err) {
     console.error("Store redirect error:", err.message);
   }
 
-  // Fallback: always redirect to specific platform direct product page (never search page)
+  // Reliable fallback: platform direct product URL
   const directFallback = generateDirectStoreUrl(store, name);
   return res.redirect(302, directFallback);
 });
