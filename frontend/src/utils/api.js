@@ -324,9 +324,8 @@ export function getStoredUserEmail() {
 
 
 
-const LIVE_SEARCH_CACHE_PREFIX =
-  "psa-live-search:";
-
+const LIVE_SEARCH_CACHE_PREFIX = "psa-live-search:";
+const LIVE_SEARCH_CACHE_TTL_MS = 30 * 1000; // 30 seconds fresh TTL
 
 function normalizeCacheQuery(value = "") {
   return String(value)
@@ -335,66 +334,58 @@ function normalizeCacheQuery(value = "") {
     .replace(/\s+/g, " ");
 }
 
+export function clearLiveSearchCache() {
+  try {
+    Object.keys(sessionStorage).forEach((key) => {
+      if (key.startsWith(LIVE_SEARCH_CACHE_PREFIX)) {
+        sessionStorage.removeItem(key);
+      }
+    });
+  } catch {}
+}
 
 function readLiveSearchCache(query) {
   try {
-    const raw =
-      sessionStorage.getItem(
-        `${LIVE_SEARCH_CACHE_PREFIX}${normalizeCacheQuery(
-          query
-        )}`
-      );
-
-    return raw
-      ? JSON.parse(raw)
-      : null;
+    const raw = sessionStorage.getItem(`${LIVE_SEARCH_CACHE_PREFIX}${normalizeCacheQuery(query)}`);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !parsed.savedAt || Date.now() - parsed.savedAt > LIVE_SEARCH_CACHE_TTL_MS) {
+      return null;
+    }
+    return parsed;
   } catch {
     return null;
   }
 }
 
-
-function writeLiveSearchCache(
-  query,
-  data
-) {
+function writeLiveSearchCache(query, data) {
   try {
     sessionStorage.setItem(
-      `${LIVE_SEARCH_CACHE_PREFIX}${normalizeCacheQuery(
-        query
-      )}`,
+      `${LIVE_SEARCH_CACHE_PREFIX}${normalizeCacheQuery(query)}`,
       JSON.stringify({
         savedAt: Date.now(),
         data,
       })
     );
-  } catch {
-    
-  }
+  } catch {}
 }
-
-
-
-
 
 export async function searchLiveProducts(
   query,
-  { lat, lon, pincode } = {}
+  { lat, lon, pincode, category } = {}
 ) {
-  const cleanQuery =
-    String(query || "").trim();
+  const cleanQuery = String(query || "").trim();
+  const cleanCategory = String(category || "").trim();
 
-  if (!cleanQuery) {
+  if (!cleanQuery && !cleanCategory) {
     return {
       status: "success",
       products: [],
     };
   }
 
-
-  
-  const cached =
-    readLiveSearchCache(cleanQuery);
+  const cacheKey = `${cleanQuery}::${cleanCategory}`;
+  const cached = readLiveSearchCache(cacheKey);
 
   if (cached?.data) {
     return {
@@ -403,48 +394,19 @@ export async function searchLiveProducts(
     };
   }
 
+  const params = new URLSearchParams();
+  if (cleanQuery) params.set("q", cleanQuery);
+  if (cleanCategory && cleanCategory !== "all") params.set("category", cleanCategory);
 
-  
-  const params =
-    new URLSearchParams();
+  if (lat != null) params.set("lat", lat);
+  if (lon != null) params.set("lon", lon);
+  if (pincode) params.set("pincode", pincode);
 
-  params.set("q", cleanQuery);
-
-  if (lat != null) {
-    params.set("lat", lat);
-  }
-
-  if (lon != null) {
-    params.set("lon", lon);
-  }
-
-  if (pincode) {
-    params.set(
-      "pincode",
-      pincode
-    );
-  }
-
-
-  
-  const data = await request(
-    `/products/search?${params.toString()}`
-  );
-
-
-  
-  writeLiveSearchCache(
-    cleanQuery,
-    data
-  );
-
+  const data = await request(`/products/search?${params.toString()}`);
+  writeLiveSearchCache(cacheKey, data);
 
   return data;
 }
-
-
-
-
 
 export async function searchSpecificLiveProduct(
   productName,

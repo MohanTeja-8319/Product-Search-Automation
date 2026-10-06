@@ -129,9 +129,10 @@ function mapDbProduct(p) {
 
 router.get("/search", async (req, res) => {
   let query = String(req.query.q || "").trim();
+  const category = String(req.query.category || "").trim();
   query = extractProductFromUrl(query);
 
-  if (!query) {
+  if (!query && !category) {
     query = "popular";
   }
 
@@ -141,6 +142,7 @@ router.get("/search", async (req, res) => {
     const startTime = Date.now();
     const result = await searchLiveProducts({
       query,
+      category,
       ...location,
     });
 
@@ -220,23 +222,21 @@ router.get("/search", async (req, res) => {
 
     let returnedProducts = result.products || [];
 
-    // If API returned 0 products, check database cache
+    // If API returned 0 products, check database cache matching query or category
     if (returnedProducts.length === 0 && mongoose.connection.readyState === 1) {
       try {
-        const dbMatches = await Product.find({
-          $or: [
-            { title: { $regex: query, $options: "i" } },
-            { brand: { $regex: query, $options: "i" } },
-            { category: { $regex: query, $options: "i" } },
-          ],
-        }).limit(20);
-
-        if (dbMatches.length > 0) {
-          returnedProducts = dbMatches.map(mapDbProduct);
-        } else {
-          const recentDb = await Product.find({}).sort({ updatedAt: -1 }).limit(16);
-          if (recentDb.length > 0) {
-            returnedProducts = recentDb.map(mapDbProduct);
+        const orConditions = [];
+        if (query && query !== "popular") {
+          orConditions.push({ title: { $regex: query, $options: "i" } });
+          orConditions.push({ brand: { $regex: query, $options: "i" } });
+        }
+        if (category && category !== "all") {
+          orConditions.push({ category: { $regex: category, $options: "i" } });
+        }
+        if (orConditions.length > 0) {
+          const dbMatches = await Product.find({ $or: orConditions }).limit(20);
+          if (dbMatches.length > 0) {
+            returnedProducts = dbMatches.map(mapDbProduct);
           }
         }
       } catch (_) {}

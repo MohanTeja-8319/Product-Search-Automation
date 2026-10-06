@@ -3,9 +3,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   FiSearch, FiFilter, FiGrid, FiList, FiHeart, FiStar,
   FiChevronRight, FiChevronLeft, FiChevronDown, FiX, FiSliders, FiArrowUp, FiArrowDown,
-  FiLoader, FiAlertCircle, FiShoppingBag, FiBell, FiRotateCcw, FiTag, FiExternalLink
+  FiLoader, FiAlertCircle, FiShoppingBag, FiBell, FiRotateCcw, FiTag, FiExternalLink,
+  FiSmartphone, FiMonitor, FiHeadphones, FiTv, FiWatch, FiPackage, FiSmile
 } from "react-icons/fi";
-import { FaHeart, FaStar, FaExchangeAlt } from "react-icons/fa";
+import { FaHeart, FaStar, FaExchangeAlt, FaGamepad } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import WishlistButton from "../Components/WishlistButton";
@@ -24,16 +25,16 @@ const SORT_OPTIONS = [
 ];
 
 const FILTER_CATEGORIES = [
-  { id: "all", label: "All Categories" },
-  { id: "smartphones", label: "Smartphones & Mobiles" },
-  { id: "laptops", label: "Laptops & PCs" },
-  { id: "headphones", label: "Headphones & Audio" },
-  { id: "televisions", label: "Televisions" },
-  { id: "smartwatches", label: "Smartwatches" },
-  { id: "groceries", label: "Groceries & Essentials" },
-  { id: "fashion", label: "Fashion & Shoes" },
-  { id: "beauty", label: "Beauty & Personal Care" },
-  { id: "gaming", label: "Gaming Consoles" },
+  { id: "all", label: "All Categories", icon: <FiGrid size={13} /> },
+  { id: "smartphones", label: "Smartphones & Mobiles", icon: <FiSmartphone size={13} /> },
+  { id: "laptops", label: "Laptops & PCs", icon: <FiMonitor size={13} /> },
+  { id: "headphones", label: "Headphones & Audio", icon: <FiHeadphones size={13} /> },
+  { id: "televisions", label: "Televisions", icon: <FiTv size={13} /> },
+  { id: "smartwatches", label: "Smartwatches", icon: <FiWatch size={13} /> },
+  { id: "gaming", label: "Gaming Consoles", icon: <FaGamepad size={13} /> },
+  { id: "groceries", label: "Groceries & Essentials", icon: <FiPackage size={13} /> },
+  { id: "fashion", label: "Fashion & Shoes", icon: <FiShoppingBag size={13} /> },
+  { id: "beauty", label: "Beauty & Personal Care", icon: <FiSmile size={13} /> },
 ];
 
 const ALL_STORES = [
@@ -385,19 +386,55 @@ export default function SearchPage() {
   const [alertProduct, setAlertProduct] = useState(null);
   const [targetPriceInput, setTargetPriceInput] = useState("");
 
+  // Handle switching categories cleanly with full URL synchronization
+  const handleCategoryChange = (newCat) => {
+    setSelectedCategory(newCat);
+    setCurrentPage(1);
+
+    const newParams = new URLSearchParams(searchParams);
+    if (newCat === "all") {
+      newParams.delete("category");
+      const isCatQuery = FILTER_CATEGORIES.some(c => 
+        c.label.toLowerCase().includes(query.toLowerCase()) || 
+        c.id.toLowerCase() === query.toLowerCase()
+      );
+      if (isCatQuery) {
+        newParams.delete("q");
+        setSearchInput("");
+      }
+    } else {
+      newParams.set("category", newCat);
+      const isCatQuery = !query || FILTER_CATEGORIES.some(c => 
+        c.label.toLowerCase().includes(query.toLowerCase()) || 
+        c.id.toLowerCase() === query.toLowerCase()
+      );
+      if (isCatQuery) {
+        const catObj = FILTER_CATEGORIES.find(c => c.id === newCat);
+        const term = catObj ? catObj.label.split(" ")[0] : newCat;
+        newParams.set("q", term);
+        setSearchInput(term);
+      }
+    }
+    setSearchParams(newParams);
+  };
+
   // Reset to page 1 whenever any filter, store, or query changes
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedStores, minPrice, maxPrice, minRating, minDiscount, selectedCategory, sort, query]);
 
+  // Keep searchInput in sync when query changes from external URL
   useEffect(() => {
     setSearchInput(query);
   }, [query]);
 
+  // Sync category state from URL parameters
   useEffect(() => {
     if (paramCategory) {
       setSelectedCategory(paramCategory);
-    } else if (query) {
+    } else if (!query) {
+      setSelectedCategory("all");
+    } else {
       const qLower = query.toLowerCase();
       if (/tv|television/i.test(qLower)) setSelectedCategory("televisions");
       else if (/watch|smartwatch/i.test(qLower)) setSelectedCategory("smartwatches");
@@ -409,10 +446,27 @@ export default function SearchPage() {
       else if (/fashion|shoe|sneaker|cloth|jean/i.test(qLower)) setSelectedCategory("fashion");
       else if (/beauty|cosmetic|skin|serum/i.test(qLower)) setSelectedCategory("beauty");
       else setSelectedCategory("all");
-    } else {
-      setSelectedCategory("all");
     }
   }, [paramCategory, query]);
+
+  // Real-time search debounce (350ms) as user types in search bar
+  useEffect(() => {
+    const trimmedInput = searchInput.trim();
+    const trimmedQuery = query.trim();
+    if (trimmedInput === trimmedQuery) return;
+
+    const timer = setTimeout(() => {
+      const newParams = new URLSearchParams(searchParams);
+      if (trimmedInput) {
+        newParams.set("q", trimmedInput);
+      } else {
+        newParams.delete("q");
+      }
+      setSearchParams(newParams);
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -424,11 +478,14 @@ export default function SearchPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Real-time live product fetch: watches BOTH query and paramCategory
   useEffect(() => {
-    const q = (query || "popular").trim();
+    const q = (query || "").trim();
+    const cat = (paramCategory || selectedCategory || "all").trim();
+
     setLoading(true);
     setError("");
-    searchLiveProducts(q)
+    searchLiveProducts(q || "popular", { category: cat !== "all" ? cat : undefined })
       .then(res => {
         const list = res?.products || [];
         setProducts(list);
@@ -486,14 +543,18 @@ export default function SearchPage() {
         setError(err.message || "Search failed.");
       })
       .finally(() => setLoading(false));
-  }, [query]);
+  }, [query, paramCategory]);
 
   const handleSearch = (e) => {
     e?.preventDefault();
-    if (searchInput.trim()) {
-      const q = searchInput.trim();
-      setSearchParams({ q });
+    const q = searchInput.trim();
+    const newParams = new URLSearchParams(searchParams);
+    if (q) {
+      newParams.set("q", q);
+    } else {
+      newParams.delete("q");
     }
+    setSearchParams(newParams);
   };
 
   const toggleStore = (storeId) => {
@@ -507,9 +568,9 @@ export default function SearchPage() {
     setMaxPrice("");
     setMinRating("");
     setMinDiscount("");
-    setSelectedCategory("all");
     setSelectedStores([]);
     setCurrentPage(1);
+    handleCategoryChange("all");
   };
 
   const activeFilterCount = (
@@ -647,6 +708,59 @@ export default function SearchPage() {
             </div>
           </form>
 
+          {/* Real-time Interactive Category Navigation Pills Bar */}
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            overflowX: "auto",
+            paddingBottom: 10,
+            marginBottom: 20,
+            scrollbarWidth: "none",
+            WebkitOverflowScrolling: "touch",
+          }}>
+            {FILTER_CATEGORIES.map(cat => {
+              const isActive = (selectedCategory === cat.id);
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => handleCategoryChange(cat.id)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 7,
+                    padding: "8px 16px",
+                    borderRadius: "var(--radius-full)",
+                    fontSize: 13,
+                    fontWeight: isActive ? 700 : 500,
+                    background: isActive ? "var(--text-900)" : "var(--surface)",
+                    color: isActive ? "var(--bg)" : "var(--text-800)",
+                    border: isActive ? "1px solid var(--text-900)" : "1px solid var(--border)",
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                    transition: "all 0.15s ease",
+                    boxShadow: isActive ? "0 2px 6px rgba(0,0,0,0.12)" : "none",
+                    flexShrink: 0,
+                  }}
+                  onMouseEnter={e => {
+                    if (!isActive) {
+                      e.currentTarget.style.borderColor = "var(--text-900)";
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!isActive) {
+                      e.currentTarget.style.borderColor = "var(--border)";
+                    }
+                  }}
+                >
+                  <span style={{ display: "inline-flex", alignItems: "center" }}>{cat.icon}</span>
+                  <span>{cat.label}</span>
+                </button>
+              );
+            })}
+          </div>
+
           {/* Mobile Filter Toggle Button */}
           <div className="mobile-filter-bar" style={{ display: "none", marginBottom: 16 }}>
             <button
@@ -724,7 +838,7 @@ export default function SearchPage() {
                   </label>
                   <select
                     value={selectedCategory}
-                    onChange={e => setSelectedCategory(e.target.value)}
+                    onChange={e => handleCategoryChange(e.target.value)}
                     className="input"
                     style={{ fontSize: 13, padding: "8px 10px", width: "100%", cursor: "pointer", background: "var(--surface)", color: "var(--text-900)" }}
                   >
@@ -1019,7 +1133,7 @@ export default function SearchPage() {
                   {selectedCategory !== "all" && (
                     <span style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 8px", fontSize: 12, color: "var(--text-800)" }}>
                       Category: <strong>{FILTER_CATEGORIES.find(c => c.id === selectedCategory)?.label || selectedCategory}</strong>
-                      <FiX style={{ cursor: "pointer", color: "var(--text-400)" }} onClick={() => setSelectedCategory("all")} />
+                      <FiX style={{ cursor: "pointer", color: "var(--text-400)" }} onClick={() => handleCategoryChange("all")} />
                     </span>
                   )}
 

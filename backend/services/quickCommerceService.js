@@ -41,9 +41,7 @@ function tokens(value) {
 }
 
 const STOP_WORDS = new Set([
-  "for", "with", "and", "the", "a", "an", "of", "on", "in",
-  "men", "mens", "women", "womens", "unisex", "shoe", "shoes",
-  "footwear", "running", "casual", "original", "latest"
+  "for", "with", "and", "the", "a", "an", "of", "on", "in", "to", "by", "at"
 ]);
 
 function meaningfulTokens(value) {
@@ -394,6 +392,21 @@ function mapPlatformProduct(item, platform) {
  * Builds the comprehensive multi-store fallback catalog.
  * Covers all 8 QuickCommerce stores: Amazon, Flipkart, BlinkIt, Zepto, Swiggy, BigBasket, Myntra, Nykaa.
  */
+function normalizeCategoryName(cat = "") {
+  if (!cat) return "";
+  const c = String(cat).toLowerCase().trim();
+  if (c === "smartphones" || c === "mobiles" || c === "mobile" || c === "phone") return "Smartphones";
+  if (c === "laptops" || c === "laptop" || c === "computers" || c === "pc") return "Laptops";
+  if (c === "headphones" || c === "headphone" || c === "audio" || c === "earphones") return "Headphones";
+  if (c === "televisions" || c === "television" || c === "tv" || c === "tvs") return "Televisions";
+  if (c === "smartwatches" || c === "smartwatch" || c === "watches" || c === "watch") return "Smartwatches";
+  if (c === "gaming" || c === "gaming consoles" || c === "consoles" || c === "console") return "Gaming Consoles";
+  if (c === "groceries" || c === "grocery" || c === "essentials") return "Groceries";
+  if (c === "fashion" || c === "clothing" || c === "shoes" || c === "apparel") return "Fashion";
+  if (c === "beauty" || c === "personal care" || c === "skincare" || c === "cosmetics") return "Beauty";
+  return "";
+}
+
 function buildMultiStoreCatalog() {
   const catalog = [
     // ── 1. Mobiles & Smartphones ──────────────────────────────────────
@@ -1279,6 +1292,540 @@ function buildMultiStoreCatalog() {
         { store: "Amazon", price: 599, originalPrice: 649, discount: "8% OFF", rating: 4.6, reviews: 7800, inStock: true, url: "https://www.amazon.in/dp/B08F9XGLG2", delivery: "Free Delivery Tomorrow" },
       ],
     },
+    // ── Additional Laptops ──────────────────────────────────────────
+    {
+      name: "Apple MacBook Pro 14 (M3 Pro chip, 18GB Memory, 512GB SSD)",
+      brand: "Apple",
+      category: "Laptops",
+      store: "Amazon",
+      price: 199900,
+      originalPrice: 209900,
+      discount: "5% OFF",
+      rating: 4.9,
+      reviews: 980,
+      image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500&q=80",
+      url: "https://www.amazon.in/s?k=Apple+MacBook+Pro+14+M3+Pro",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 199900, originalPrice: 209900, discount: "5% OFF", rating: 4.9, reviews: 980, inStock: true, url: "https://www.amazon.in/s?k=Apple+MacBook+Pro+14+M3+Pro", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 202900, originalPrice: 209900, discount: "3% OFF", rating: 4.8, reviews: 420, inStock: true, url: "https://www.flipkart.com/search?q=Apple+MacBook+Pro+14+M3+Pro", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Acer Predator Helios Neo 16 Gaming Laptop (Intel i7, RTX 4050)",
+      brand: "Acer",
+      category: "Laptops",
+      store: "Flipkart",
+      price: 104990,
+      originalPrice: 129999,
+      discount: "19% OFF",
+      rating: 4.6,
+      reviews: 1450,
+      image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500&q=80",
+      url: "https://www.flipkart.com/search?q=Acer+Predator+Helios+Neo+16",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Flipkart", price: 104990, originalPrice: 129999, discount: "19% OFF", rating: 4.6, reviews: 1450, inStock: true, url: "https://www.flipkart.com/search?q=Acer+Predator+Helios+Neo+16", delivery: "Free Delivery Tomorrow" },
+        { store: "Amazon", price: 106990, originalPrice: 129999, discount: "18% OFF", rating: 4.5, reviews: 2100, inStock: true, url: "https://www.amazon.in/s?k=Acer+Predator+Helios+Neo+16", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "ASUS ZenBook 14 OLED (Intel Core Ultra 7, 16GB RAM, 1TB SSD)",
+      brand: "Asus",
+      category: "Laptops",
+      store: "Amazon",
+      price: 109990,
+      originalPrice: 124990,
+      discount: "12% OFF",
+      rating: 4.7,
+      reviews: 620,
+      image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500&q=80",
+      url: "https://www.amazon.in/s?k=ASUS+ZenBook+14+OLED",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 109990, originalPrice: 124990, discount: "12% OFF", rating: 4.7, reviews: 620, inStock: true, url: "https://www.amazon.in/s?k=ASUS+ZenBook+14+OLED", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 111490, originalPrice: 124990, discount: "11% OFF", rating: 4.6, reviews: 380, inStock: true, url: "https://www.flipkart.com/search?q=ASUS+ZenBook+14+OLED", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+
+    // ── Additional Headphones ───────────────────────────────────────
+    {
+      name: "Bose QuietComfort 45 Bluetooth Wireless Noise Cancelling Headphones",
+      brand: "Bose",
+      category: "Headphones",
+      store: "Amazon",
+      price: 24900,
+      originalPrice: 29900,
+      discount: "17% OFF",
+      rating: 4.7,
+      reviews: 3200,
+      image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=500&q=80",
+      url: "https://www.amazon.in/s?k=Bose+QuietComfort+45",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 24900, originalPrice: 29900, discount: "17% OFF", rating: 4.7, reviews: 3200, inStock: true, url: "https://www.amazon.in/s?k=Bose+QuietComfort+45", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 25499, originalPrice: 29900, discount: "15% OFF", rating: 4.6, reviews: 1120, inStock: true, url: "https://www.flipkart.com/search?q=Bose+QuietComfort+45", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Sennheiser Momentum 4 Wireless ANC Headphones (60Hr Battery)",
+      brand: "Sennheiser",
+      category: "Headphones",
+      store: "Flipkart",
+      price: 27990,
+      originalPrice: 34990,
+      discount: "20% OFF",
+      rating: 4.8,
+      reviews: 1840,
+      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80",
+      url: "https://www.flipkart.com/search?q=Sennheiser+Momentum+4",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Flipkart", price: 27990, originalPrice: 34990, discount: "20% OFF", rating: 4.8, reviews: 1840, inStock: true, url: "https://www.flipkart.com/search?q=Sennheiser+Momentum+4", delivery: "Free Delivery Tomorrow" },
+        { store: "Amazon", price: 28490, originalPrice: 34990, discount: "19% OFF", rating: 4.7, reviews: 2950, inStock: true, url: "https://www.amazon.in/s?k=Sennheiser+Momentum+4", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Marshall Emberton II Portable Bluetooth Speaker (Black & Steel)",
+      brand: "Marshall",
+      category: "Headphones",
+      store: "Amazon",
+      price: 14999,
+      originalPrice: 17499,
+      discount: "14% OFF",
+      rating: 4.8,
+      reviews: 2100,
+      image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=500&q=80",
+      url: "https://www.amazon.in/s?k=Marshall+Emberton+II",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 14999, originalPrice: 17499, discount: "14% OFF", rating: 4.8, reviews: 2100, inStock: true, url: "https://www.amazon.in/s?k=Marshall+Emberton+II", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 15499, originalPrice: 17499, discount: "11% OFF", rating: 4.7, reviews: 920, inStock: true, url: "https://www.flipkart.com/search?q=Marshall+Emberton+II", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+
+    // ── Additional Televisions ──────────────────────────────────────
+    {
+      name: "TCL 55 inches 4K Ultra HD Smart QLED Google TV (55C645)",
+      brand: "TCL",
+      category: "Televisions",
+      store: "Amazon",
+      price: 36990,
+      originalPrice: 77990,
+      discount: "53% OFF",
+      rating: 4.4,
+      reviews: 2890,
+      image: "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=500&q=80",
+      url: "https://www.amazon.in/s?k=TCL+55+inches+4K+QLED+Google+TV",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 36990, originalPrice: 77990, discount: "53% OFF", rating: 4.4, reviews: 2890, inStock: true, url: "https://www.amazon.in/s?k=TCL+55+inches+4K+QLED+Google+TV", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 37499, originalPrice: 77990, discount: "52% OFF", rating: 4.3, reviews: 1450, inStock: true, url: "https://www.flipkart.com/search?q=TCL+55+inches+4K+QLED", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Acer 50 inches Advanced I Series 4K Ultra HD Smart LED Google TV",
+      brand: "Acer",
+      category: "Televisions",
+      store: "Flipkart",
+      price: 27999,
+      originalPrice: 45999,
+      discount: "39% OFF",
+      rating: 4.3,
+      reviews: 3820,
+      image: "https://images.unsplash.com/photo-1461151304267-38535e780c79?w=500&q=80",
+      url: "https://www.flipkart.com/search?q=Acer+50+inches+4K+Google+TV",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Flipkart", price: 27999, originalPrice: 45999, discount: "39% OFF", rating: 4.3, reviews: 3820, inStock: true, url: "https://www.flipkart.com/search?q=Acer+50+inches+4K+Google+TV", delivery: "Free Delivery Tomorrow" },
+        { store: "Amazon", price: 28499, originalPrice: 45999, discount: "38% OFF", rating: 4.3, reviews: 4900, inStock: true, url: "https://www.amazon.in/s?k=Acer+50+inches+4K+Google+TV", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Hisense 65 inches 4K Ultra HD Smart Mini-LED Google TV (65U6K)",
+      brand: "Hisense",
+      category: "Televisions",
+      store: "Amazon",
+      price: 59990,
+      originalPrice: 89990,
+      discount: "33% OFF",
+      rating: 4.5,
+      reviews: 1240,
+      image: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=500&q=80",
+      url: "https://www.amazon.in/s?k=Hisense+65+inches+Mini-LED+Google+TV",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 59990, originalPrice: 89990, discount: "33% OFF", rating: 4.5, reviews: 1240, inStock: true, url: "https://www.amazon.in/s?k=Hisense+65+inches+Mini-LED+Google+TV", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 61499, originalPrice: 89990, discount: "32% OFF", rating: 4.4, reviews: 620, inStock: true, url: "https://www.flipkart.com/search?q=Hisense+65+inches+Mini-LED", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+
+    // ── Additional Smartwatches ──────────────────────────────────────
+    {
+      name: "Fire-Boltt Gladiator 1.96-inch HD Display Bluetooth Smartwatch",
+      brand: "Fire-Boltt",
+      category: "Smartwatches",
+      store: "Amazon",
+      price: 1499,
+      originalPrice: 9999,
+      discount: "85% OFF",
+      rating: 4.2,
+      reviews: 15400,
+      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80",
+      url: "https://www.amazon.in/s?k=Fire-Boltt+Gladiator+Smartwatch",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 1499, originalPrice: 9999, discount: "85% OFF", rating: 4.2, reviews: 15400, inStock: true, url: "https://www.amazon.in/s?k=Fire-Boltt+Gladiator+Smartwatch", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 1599, originalPrice: 9999, discount: "84% OFF", rating: 4.2, reviews: 9800, inStock: true, url: "https://www.flipkart.com/search?q=Fire-Boltt+Gladiator+Smartwatch", delivery: "Free Delivery Tomorrow" },
+        { store: "BlinkIt", price: 1699, originalPrice: 9999, discount: "83% OFF", rating: 4.1, reviews: 1100, inStock: true, url: "https://blinkit.com/s/?q=Fire+Boltt+Gladiator", delivery: "10 mins delivery" },
+      ],
+    },
+    {
+      name: "Amazfit GTR 4 Smart Watch with Dual-Band GPS & AMOLED Display",
+      brand: "Amazfit",
+      category: "Smartwatches",
+      store: "Amazon",
+      price: 15999,
+      originalPrice: 19999,
+      discount: "20% OFF",
+      rating: 4.6,
+      reviews: 3400,
+      image: "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500&q=80",
+      url: "https://www.amazon.in/s?k=Amazfit+GTR+4+Smart+Watch",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 15999, originalPrice: 19999, discount: "20% OFF", rating: 4.6, reviews: 3400, inStock: true, url: "https://www.amazon.in/s?k=Amazfit+GTR+4+Smart+Watch", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 16499, originalPrice: 19999, discount: "18% OFF", rating: 4.5, reviews: 1820, inStock: true, url: "https://www.flipkart.com/search?q=Amazfit+GTR+4", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Garmin Forerunner 55 GPS Running Smartwatch (Black)",
+      brand: "Garmin",
+      category: "Smartwatches",
+      store: "Amazon",
+      price: 19990,
+      originalPrice: 22490,
+      discount: "11% OFF",
+      rating: 4.7,
+      reviews: 1920,
+      image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=500&q=80",
+      url: "https://www.amazon.in/s?k=Garmin+Forerunner+55+Smartwatch",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 19990, originalPrice: 22490, discount: "11% OFF", rating: 4.7, reviews: 1920, inStock: true, url: "https://www.amazon.in/s?k=Garmin+Forerunner+55+Smartwatch", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 20490, originalPrice: 22490, discount: "9% OFF", rating: 4.6, reviews: 750, inStock: true, url: "https://www.flipkart.com/search?q=Garmin+Forerunner+55", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "OnePlus Watch 2 with Wear OS by Google (Radiant Silver)",
+      brand: "OnePlus",
+      category: "Smartwatches",
+      store: "Amazon",
+      price: 21999,
+      originalPrice: 27999,
+      discount: "21% OFF",
+      rating: 4.6,
+      reviews: 2100,
+      image: "https://images.unsplash.com/photo-1544117519-31a4b719223d?w=500&q=80",
+      url: "https://www.amazon.in/s?k=OnePlus+Watch+2",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 21999, originalPrice: 27999, discount: "21% OFF", rating: 4.6, reviews: 2100, inStock: true, url: "https://www.amazon.in/s?k=OnePlus+Watch+2", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 22499, originalPrice: 27999, discount: "20% OFF", rating: 4.5, reviews: 1250, inStock: true, url: "https://www.flipkart.com/search?q=OnePlus+Watch+2", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+
+    // ── Additional Gaming Consoles ───────────────────────────────────
+    {
+      name: "Nintendo Switch OLED Model (Neon Red & Neon Blue Joy-Con)",
+      brand: "Nintendo",
+      category: "Gaming Consoles",
+      store: "Amazon",
+      price: 31999,
+      originalPrice: 34999,
+      discount: "9% OFF",
+      rating: 4.8,
+      reviews: 5800,
+      image: "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=500&q=80",
+      url: "https://www.amazon.in/s?k=Nintendo+Switch+OLED+Model",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 31999, originalPrice: 34999, discount: "9% OFF", rating: 4.8, reviews: 5800, inStock: true, url: "https://www.amazon.in/s?k=Nintendo+Switch+OLED+Model", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 32499, originalPrice: 34999, discount: "7% OFF", rating: 4.7, reviews: 2100, inStock: true, url: "https://www.flipkart.com/search?q=Nintendo+Switch+OLED", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Sony PlayStation VR2 Virtual Reality Headset for PS5",
+      brand: "Sony",
+      category: "Gaming Consoles",
+      store: "Amazon",
+      price: 54990,
+      originalPrice: 57999,
+      discount: "5% OFF",
+      rating: 4.6,
+      reviews: 940,
+      image: "https://images.unsplash.com/photo-1622979135225-d2ba269bc1df?w=500&q=80",
+      url: "https://www.amazon.in/s?k=Sony+PlayStation+VR2",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 54990, originalPrice: 57999, discount: "5% OFF", rating: 4.6, reviews: 940, inStock: true, url: "https://www.amazon.in/s?k=Sony+PlayStation+VR2", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 55990, originalPrice: 57999, discount: "3% OFF", rating: 4.5, reviews: 420, inStock: true, url: "https://www.flipkart.com/search?q=PlayStation+VR2", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Sony DualSense Wireless Controller for PlayStation 5 (White)",
+      brand: "Sony",
+      category: "Gaming Consoles",
+      store: "Amazon",
+      price: 5790,
+      originalPrice: 6390,
+      discount: "9% OFF",
+      rating: 4.7,
+      reviews: 7800,
+      image: "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=500&q=80",
+      url: "https://www.amazon.in/s?k=Sony+DualSense+Wireless+Controller+PS5",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 5790, originalPrice: 6390, discount: "9% OFF", rating: 4.7, reviews: 7800, inStock: true, url: "https://www.amazon.in/s?k=Sony+DualSense+Wireless+Controller+PS5", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 5899, originalPrice: 6390, discount: "8% OFF", rating: 4.6, reviews: 4300, inStock: true, url: "https://www.flipkart.com/search?q=Sony+DualSense+Controller", delivery: "Free Delivery Tomorrow" },
+        { store: "BlinkIt", price: 5999, originalPrice: 6390, discount: "6% OFF", rating: 4.7, reviews: 540, inStock: true, url: "https://blinkit.com/s/?q=PS5+DualSense+Controller", delivery: "10 mins delivery" },
+      ],
+    },
+    {
+      name: "Microsoft Xbox Wireless Controller (Carbon Black)",
+      brand: "Microsoft",
+      category: "Gaming Consoles",
+      store: "Flipkart",
+      price: 5390,
+      originalPrice: 5990,
+      discount: "10% OFF",
+      rating: 4.6,
+      reviews: 4900,
+      image: "https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=500&q=80",
+      url: "https://www.flipkart.com/search?q=Xbox+Wireless+Controller+Carbon+Black",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Flipkart", price: 5390, originalPrice: 5990, discount: "10% OFF", rating: 4.6, reviews: 4900, inStock: true, url: "https://www.flipkart.com/search?q=Xbox+Wireless+Controller+Carbon+Black", delivery: "Free Delivery Tomorrow" },
+        { store: "Amazon", price: 5490, originalPrice: 5990, discount: "8% OFF", rating: 4.6, reviews: 6200, inStock: true, url: "https://www.amazon.in/s?k=Xbox+Wireless+Controller+Carbon+Black", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "ASUS ROG Ally 7-inch FHD 120Hz Gaming Handheld Console (Z1 Extreme)",
+      brand: "Asus",
+      category: "Gaming Consoles",
+      store: "Amazon",
+      price: 54990,
+      originalPrice: 69990,
+      discount: "21% OFF",
+      rating: 4.5,
+      reviews: 1650,
+      image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500&q=80",
+      url: "https://www.amazon.in/s?k=ASUS+ROG+Ally+Gaming+Handheld",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 54990, originalPrice: 69990, discount: "21% OFF", rating: 4.5, reviews: 1650, inStock: true, url: "https://www.amazon.in/s?k=ASUS+ROG+Ally+Gaming+Handheld", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 56490, originalPrice: 69990, discount: "19% OFF", rating: 4.4, reviews: 780, inStock: true, url: "https://www.flipkart.com/search?q=ASUS+ROG+Ally", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Nintendo Switch Lite Handheld Gaming Console (Turquoise)",
+      brand: "Nintendo",
+      category: "Gaming Consoles",
+      store: "Amazon",
+      price: 18499,
+      originalPrice: 19999,
+      discount: "8% OFF",
+      rating: 4.7,
+      reviews: 3900,
+      image: "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=500&q=80",
+      url: "https://www.amazon.in/s?k=Nintendo+Switch+Lite+Turquoise",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Amazon", price: 18499, originalPrice: 19999, discount: "8% OFF", rating: 4.7, reviews: 3900, inStock: true, url: "https://www.amazon.in/s?k=Nintendo+Switch+Lite+Turquoise", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 18999, originalPrice: 19999, discount: "5% OFF", rating: 4.6, reviews: 1420, inStock: true, url: "https://www.flipkart.com/search?q=Nintendo+Switch+Lite", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+
+    // ── Additional Groceries ─────────────────────────────────────────
+    {
+      name: "Happilo 100% Natural Premium California Almonds 500g",
+      brand: "Happilo",
+      category: "Groceries",
+      store: "BlinkIt",
+      price: 449,
+      originalPrice: 625,
+      discount: "28% OFF",
+      rating: 4.6,
+      reviews: 4800,
+      image: "https://images.unsplash.com/photo-1508061252966-f72fb8f77feb?w=500&q=80",
+      url: "https://blinkit.com/s/?q=Happilo+California+Almonds",
+      delivery: "10 mins delivery",
+      comparison: [
+        { store: "BlinkIt", price: 449, originalPrice: 625, discount: "28% OFF", rating: 4.6, reviews: 4800, inStock: true, url: "https://blinkit.com/s/?q=Happilo+California+Almonds", delivery: "10 mins delivery" },
+        { store: "Zepto", price: 459, originalPrice: 625, discount: "27% OFF", rating: 4.5, reviews: 2900, inStock: true, url: "https://www.zeptonow.com/search?query=Happilo+Almonds", delivery: "10 mins delivery" },
+        { store: "BigBasket", price: 465, originalPrice: 625, discount: "26% OFF", rating: 4.6, reviews: 3200, inStock: true, url: "https://www.bigbasket.com/ps/?q=Happilo+Almonds", delivery: "Free Delivery Tomorrow" },
+        { store: "Amazon", price: 475, originalPrice: 625, discount: "24% OFF", rating: 4.5, reviews: 6800, inStock: true, url: "https://www.amazon.in/s?k=Happilo+California+Almonds", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Epigamia Greek Yogurt Natural 400g Tub",
+      brand: "Epigamia",
+      category: "Groceries",
+      store: "Zepto",
+      price: 135,
+      originalPrice: 150,
+      discount: "10% OFF",
+      rating: 4.5,
+      reviews: 1820,
+      image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=500&q=80",
+      url: "https://www.zeptonow.com/search?query=Epigamia+Greek+Yogurt",
+      delivery: "10 mins delivery",
+      comparison: [
+        { store: "Zepto", price: 135, originalPrice: 150, discount: "10% OFF", rating: 4.5, reviews: 1820, inStock: true, url: "https://www.zeptonow.com/search?query=Epigamia+Greek+Yogurt", delivery: "10 mins delivery" },
+        { store: "BlinkIt", price: 138, originalPrice: 150, discount: "8% OFF", rating: 4.5, reviews: 2400, inStock: true, url: "https://blinkit.com/s/?q=Epigamia+Greek+Yogurt", delivery: "10 mins delivery" },
+        { store: "Swiggy", price: 140, originalPrice: 150, discount: "7% OFF", rating: 4.4, reviews: 920, inStock: true, url: "https://www.swiggy.com/instamart/search?custom_back=true&query=Epigamia+Greek+Yogurt", delivery: "10 mins delivery" },
+        { store: "BigBasket", price: 142, originalPrice: 150, discount: "5% OFF", rating: 4.5, reviews: 1400, inStock: true, url: "https://www.bigbasket.com/ps/?q=Epigamia+Greek+Yogurt", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+
+    // ── Additional Fashion ───────────────────────────────────────────
+    {
+      name: "Skechers Men D'Lites Memory Foam Casual Sneakers",
+      brand: "Skechers",
+      category: "Fashion",
+      store: "Myntra",
+      price: 3899,
+      originalPrice: 6499,
+      discount: "40% OFF",
+      rating: 4.6,
+      reviews: 2840,
+      image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=500&q=80",
+      url: "https://www.myntra.com/search?rawQuery=Skechers+DLites+Sneakers",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Myntra", price: 3899, originalPrice: 6499, discount: "40% OFF", rating: 4.6, reviews: 2840, inStock: true, url: "https://www.myntra.com/search?rawQuery=Skechers+DLites+Sneakers", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 3999, originalPrice: 6499, discount: "38% OFF", rating: 4.5, reviews: 1950, inStock: true, url: "https://www.flipkart.com/search?q=Skechers+DLites+Sneakers", delivery: "Free Delivery Tomorrow" },
+        { store: "Amazon", price: 4199, originalPrice: 6499, discount: "35% OFF", rating: 4.5, reviews: 3100, inStock: true, url: "https://www.amazon.in/s?k=Skechers+DLites+Sneakers", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Allen Solly Men Regular Fit Solid Casual Cotton Shirt",
+      brand: "Allen Solly",
+      category: "Fashion",
+      store: "Myntra",
+      price: 1199,
+      originalPrice: 1999,
+      discount: "40% OFF",
+      rating: 4.4,
+      reviews: 5200,
+      image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&q=80",
+      url: "https://www.myntra.com/search?rawQuery=Allen+Solly+Casual+Shirt",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Myntra", price: 1199, originalPrice: 1999, discount: "40% OFF", rating: 4.4, reviews: 5200, inStock: true, url: "https://www.myntra.com/search?rawQuery=Allen+Solly+Casual+Shirt", delivery: "Free Delivery Tomorrow" },
+        { store: "Amazon", price: 1249, originalPrice: 1999, discount: "38% OFF", rating: 4.4, reviews: 4300, inStock: true, url: "https://www.amazon.in/s?k=Allen+Solly+Casual+Shirt", delivery: "Free Delivery Tomorrow" },
+        { store: "Flipkart", price: 1299, originalPrice: 1999, discount: "35% OFF", rating: 4.3, reviews: 2900, inStock: true, url: "https://www.flipkart.com/search?q=Allen+Solly+Casual+Shirt", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Bata Men Formal Derby Leather Shoes (Black Lace-Up)",
+      brand: "Bata",
+      category: "Fashion",
+      store: "Flipkart",
+      price: 1499,
+      originalPrice: 2499,
+      discount: "40% OFF",
+      rating: 4.3,
+      reviews: 6400,
+      image: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=500&q=80",
+      url: "https://www.flipkart.com/search?q=Bata+Men+Formal+Derby+Shoes",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Flipkart", price: 1499, originalPrice: 2499, discount: "40% OFF", rating: 4.3, reviews: 6400, inStock: true, url: "https://www.flipkart.com/search?q=Bata+Men+Formal+Derby+Shoes", delivery: "Free Delivery Tomorrow" },
+        { store: "Amazon", price: 1549, originalPrice: 2499, discount: "38% OFF", rating: 4.3, reviews: 5100, inStock: true, url: "https://www.amazon.in/s?k=Bata+Men+Formal+Derby+Shoes", delivery: "Free Delivery Tomorrow" },
+        { store: "Myntra", price: 1599, originalPrice: 2499, discount: "36% OFF", rating: 4.4, reviews: 3400, inStock: true, url: "https://www.myntra.com/search?rawQuery=Bata+Formal+Derby+Shoes", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+
+    // ── Additional Beauty ────────────────────────────────────────────
+    {
+      name: "Cetaphil Gentle Skin Cleanser for All Skin Types (250ml)",
+      brand: "Cetaphil",
+      category: "Beauty",
+      store: "Nykaa",
+      price: 520,
+      originalPrice: 650,
+      discount: "20% OFF",
+      rating: 4.8,
+      reviews: 9800,
+      image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=500&q=80",
+      url: "https://www.nykaa.com/search/result/?q=Cetaphil+Gentle+Skin+Cleanser",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Nykaa", price: 520, originalPrice: 650, discount: "20% OFF", rating: 4.8, reviews: 9800, inStock: true, url: "https://www.nykaa.com/search/result/?q=Cetaphil+Gentle+Skin+Cleanser", delivery: "Free Delivery Tomorrow" },
+        { store: "BlinkIt", price: 535, originalPrice: 650, discount: "18% OFF", rating: 4.7, reviews: 4200, inStock: true, url: "https://blinkit.com/s/?q=Cetaphil+Gentle+Cleanser", delivery: "10 mins delivery" },
+        { store: "Amazon", price: 540, originalPrice: 650, discount: "17% OFF", rating: 4.7, reviews: 12400, inStock: true, url: "https://www.amazon.in/s?k=Cetaphil+Gentle+Skin+Cleanser", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Nivea Soft Light Moisturizer Cream with Vitamin E (200ml)",
+      brand: "Nivea",
+      category: "Beauty",
+      store: "BlinkIt",
+      price: 249,
+      originalPrice: 350,
+      discount: "29% OFF",
+      rating: 4.6,
+      reviews: 14200,
+      image: "https://images.unsplash.com/photo-1608248597359-597561937402?w=500&q=80",
+      url: "https://blinkit.com/s/?q=Nivea+Soft+Light+Moisturizer",
+      delivery: "10 mins delivery",
+      comparison: [
+        { store: "BlinkIt", price: 249, originalPrice: 350, discount: "29% OFF", rating: 4.6, reviews: 14200, inStock: true, url: "https://blinkit.com/s/?q=Nivea+Soft+Light+Moisturizer", delivery: "10 mins delivery" },
+        { store: "Zepto", price: 255, originalPrice: 350, discount: "27% OFF", rating: 4.6, reviews: 8900, inStock: true, url: "https://www.zeptonow.com/search?query=Nivea+Soft+Cream", delivery: "10 mins delivery" },
+        { store: "Nykaa", price: 260, originalPrice: 350, discount: "26% OFF", rating: 4.6, reviews: 7500, inStock: true, url: "https://www.nykaa.com/search/result/?q=Nivea+Soft+Cream", delivery: "Free Delivery Tomorrow" },
+        { store: "Amazon", price: 265, originalPrice: 350, discount: "24% OFF", rating: 4.5, reviews: 19800, inStock: true, url: "https://www.amazon.in/s?k=Nivea+Soft+Cream", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "Plum Green Tea Alcohol-Free Face Toner (200ml)",
+      brand: "Plum",
+      category: "Beauty",
+      store: "Nykaa",
+      price: 349,
+      originalPrice: 425,
+      discount: "18% OFF",
+      rating: 4.5,
+      reviews: 4600,
+      image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=500&q=80",
+      url: "https://www.nykaa.com/search/result/?q=Plum+Green+Tea+Face+Toner",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Nykaa", price: 349, originalPrice: 425, discount: "18% OFF", rating: 4.5, reviews: 4600, inStock: true, url: "https://www.nykaa.com/search/result/?q=Plum+Green+Tea+Face+Toner", delivery: "Free Delivery Tomorrow" },
+        { store: "BlinkIt", price: 360, originalPrice: 425, discount: "15% OFF", rating: 4.5, reviews: 2100, inStock: true, url: "https://blinkit.com/s/?q=Plum+Green+Tea+Toner", delivery: "10 mins delivery" },
+        { store: "Amazon", price: 370, originalPrice: 425, discount: "13% OFF", rating: 4.4, reviews: 6800, inStock: true, url: "https://www.amazon.in/s?k=Plum+Green+Tea+Toner", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+    {
+      name: "L'Oreal Paris Extraordinary Oil Hair Serum (100ml)",
+      brand: "L'Oreal",
+      category: "Beauty",
+      store: "Nykaa",
+      price: 549,
+      originalPrice: 699,
+      discount: "21% OFF",
+      rating: 4.7,
+      reviews: 11500,
+      image: "https://images.unsplash.com/photo-1608248597359-597561937402?w=500&q=80",
+      url: "https://www.nykaa.com/search/result/?q=LOreal+Paris+Hair+Serum",
+      delivery: "Free Delivery Tomorrow",
+      comparison: [
+        { store: "Nykaa", price: 549, originalPrice: 699, discount: "21% OFF", rating: 4.7, reviews: 11500, inStock: true, url: "https://www.nykaa.com/search/result/?q=LOreal+Paris+Hair+Serum", delivery: "Free Delivery Tomorrow" },
+        { store: "BlinkIt", price: 565, originalPrice: 699, discount: "19% OFF", rating: 4.6, reviews: 4800, inStock: true, url: "https://blinkit.com/s/?q=LOreal+Hair+Serum", delivery: "10 mins delivery" },
+        { store: "Amazon", price: 579, originalPrice: 699, discount: "17% OFF", rating: 4.6, reviews: 15400, inStock: true, url: "https://www.amazon.in/s?k=LOreal+Hair+Serum", delivery: "Free Delivery Tomorrow" },
+      ],
+    },
+
   ];
 
   return catalog.map((item) => {
@@ -1579,8 +2126,9 @@ async function fetchGroupSearch({ query, lat, lon, pincode }) {
  * Searches for products across all supported QuickCommerce stores.
  * Guaranteed to return multi-store products (Amazon, Flipkart, BlinkIt, Zepto, Swiggy, BigBasket, Myntra, Nykaa).
  */
-async function searchLiveProducts({ query, lat, lon, pincode }) {
+async function searchLiveProducts({ query, category, lat, lon, pincode }) {
   const cleanQ = (query || "").trim();
+  const cleanCat = (category || "").trim().toLowerCase();
   const payload = await fetchGroupSearch({ query: cleanQ || "popular", lat, lon, pincode });
   const raw = [];
 
@@ -1607,27 +2155,66 @@ async function searchLiveProducts({ query, lat, lon, pincode }) {
 
   // If live API returned items, group and return them
   if (raw.length > 0) {
+    let grouped = groupProducts(raw);
+    const targetCat = normalizeCategoryName(cleanCat);
+    if (targetCat) {
+      const filtered = grouped.filter(p => p.category === targetCat);
+      if (filtered.length > 0) grouped = filtered;
+    }
     return {
       query: cleanQ,
       platforms: queriedPlatforms,
       creditCost: payload?.data?.credit_cost ?? queriedPlatforms.length,
       creditsRemaining: payload?.credits_remaining ?? null,
       fromCache: Boolean(payload?._fromCache),
-      products: groupProducts(raw),
+      products: grouped,
     };
   }
 
   // Graceful multi-store fallback catalog
   const catalog = buildMultiStoreCatalog();
   const qNorm = normalizeText(cleanQ);
+  const targetCategory = normalizeCategoryName(cleanCat || cleanQ);
 
   let matched = [];
 
-  if (!qNorm || qNorm === "popular" || qNorm === "all") {
-    // Return balanced mix representing ALL stores
+  // Case A: A specific category is targeted (either via category param or query is a category name)
+  if (targetCategory && (cleanCat || normalizeCategoryName(cleanQ))) {
+    const inCat = catalog.filter(p => p.category === targetCategory);
+    
+    // Check if query is just the category name itself, or "popular", "all", or empty
+    const isGenericCatSearch = !qNorm || qNorm === "popular" || qNorm === "all" || 
+      normalizeCategoryName(qNorm) === targetCategory;
+
+    if (isGenericCatSearch) {
+      matched = inCat;
+    } else {
+      // User is searching for a keyword inside this category (e.g. "sony" in "Televisions")
+      const qTokens = meaningfulTokens(qNorm);
+      matched = inCat
+        .map(p => {
+          const itemText = normalizeText(`${p.name} ${p.brand} ${p.store}`);
+          let score = 0;
+          if (itemText.includes(qNorm)) score += 10;
+          for (const t of qTokens) {
+            if (itemText.includes(t)) score += 3;
+          }
+          return { product: p, score };
+        })
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(item => item.product);
+
+      // If specific search keyword found nothing in category, return all products for that category
+      if (matched.length === 0) {
+        matched = inCat;
+      }
+    }
+  } else if (!qNorm || qNorm === "popular" || qNorm === "all") {
+    // Case B: No category specified and query is generic -> return entire catalog
     matched = catalog;
   } else {
-    // Check if query is a store name (e.g. "blinkit", "zepto", "flipkart", "myntra", "nykaa", "swiggy", "bigbasket")
+    // Case C: Check if query is a store name (e.g. "blinkit", "zepto", "flipkart")
     const isStoreQuery = BASE_PLATFORMS.some((p) => p.toLowerCase() === qNorm);
 
     if (isStoreQuery) {
@@ -1637,7 +2224,7 @@ async function searchLiveProducts({ query, lat, lon, pincode }) {
         return storeMatch || inComparison;
       });
     } else {
-      // Keyword matching across title, brand, category
+      // Case D: General keyword search across title, brand, category, store
       const qTokens = meaningfulTokens(qNorm);
       matched = catalog
         .map((p) => {
@@ -1655,13 +2242,20 @@ async function searchLiveProducts({ query, lat, lon, pincode }) {
     }
   }
 
+  // If still no matches, gracefully return first word match or popular catalog (never synthetic dummy)
   if (matched.length === 0) {
-    // Dynamic synthesis for custom queries
-    matched = synthesizeDynamicProducts(cleanQ);
+    const firstWord = qNorm.split(" ")[0];
+    if (firstWord && firstWord.length > 2) {
+      matched = catalog.filter(p => normalizeText(p.name).includes(firstWord));
+    }
+    if (matched.length === 0) {
+      matched = catalog.slice(0, 16);
+    }
   }
 
   return {
     query: cleanQ,
+    category: targetCategory || cleanCat || "all",
     platforms: queriedPlatforms,
     creditCost: queriedPlatforms.length,
     creditsRemaining: null,

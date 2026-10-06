@@ -5,7 +5,7 @@ import {
   FiChevronRight, FiStar, FiShoppingBag, FiZap,
   FiShield, FiClock, FiCheckCircle, FiPercent,
   FiSmartphone, FiMonitor, FiHeadphones, FiWatch,
-  FiCamera, FiHome, FiGrid, FiRefreshCw,
+  FiCamera, FiHome, FiGrid, FiRefreshCw, FiTv, FiPackage, FiSmile
 } from "react-icons/fi";
 import { FaHeart, FaStar, FaExchangeAlt, FaGamepad } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
@@ -14,14 +14,15 @@ import WishlistButton from "../Components/WishlistButton";
 import { searchLiveProducts } from "../utils/api";
 
 const CATEGORIES = [
-  { name: "Mobiles",    icon: FiSmartphone, key: "Smartphones",     color: "#4F46E5", bg: "#EEF2FF" },
-  { name: "Laptops",    icon: FiMonitor,    key: "Laptops",          color: "#7C3AED", bg: "#F5F3FF" },
-  { name: "Audio",      icon: FiHeadphones, key: "Headphones",       color: "#DB2777", bg: "#FDF2F8" },
-  { name: "Wearables",  icon: FiWatch,      key: "Smartwatches",     color: "#0891B2", bg: "#ECFEFF" },
-  { name: "Cameras",    icon: FiCamera,     key: "Camera",           color: "#059669", bg: "#ECFDF5" },
-  { name: "Gaming",     icon: FaGamepad,    key: "Gaming",           color: "#DC2626", bg: "#FEF2F2" },
-  { name: "Home",       icon: FiHome,       key: "Home Appliances",  color: "#D97706", bg: "#FFFBEB" },
-  { name: "Fashion",    icon: FiShoppingBag,key: "Clothing",         color: "#BE185D", bg: "#FDF2F8" },
+  { name: "Mobiles",     icon: FiSmartphone,  searchKey: "Smartphones",      categoryKey: "smartphones",  color: "#4F46E5", bg: "#EEF2FF" },
+  { name: "Laptops",     icon: FiMonitor,     searchKey: "Laptops",          categoryKey: "laptops",      color: "#7C3AED", bg: "#F5F3FF" },
+  { name: "Audio",       icon: FiHeadphones,  searchKey: "Headphones",       categoryKey: "headphones",   color: "#DB2777", bg: "#FDF2F8" },
+  { name: "TVs",         icon: FiTv,          searchKey: "Televisions",      categoryKey: "televisions",  color: "#0891B2", bg: "#ECFEFF" },
+  { name: "Wearables",   icon: FiWatch,       searchKey: "Smartwatches",     categoryKey: "smartwatches", color: "#059669", bg: "#ECFDF5" },
+  { name: "Gaming",      icon: FaGamepad,     searchKey: "Gaming Consoles",  categoryKey: "gaming",       color: "#DC2626", bg: "#FEF2F2" },
+  { name: "Groceries",   icon: FiPackage,     searchKey: "Groceries",        categoryKey: "groceries",    color: "#16A34A", bg: "#F0FDF4" },
+  { name: "Fashion",     icon: FiShoppingBag, searchKey: "Fashion",          categoryKey: "fashion",      color: "#BE185D", bg: "#FDF2F8" },
+  { name: "Beauty",      icon: FiSmile,       searchKey: "Beauty",           categoryKey: "beauty",       color: "#D97706", bg: "#FFFBEB" },
 ];
 
 const FEATURES = [
@@ -334,11 +335,11 @@ export default function HomePage() {
               </button>
             </div>
 
-            <div className="categories-grid" style={{ display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gap: 12 }}>
+            <div className="categories-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: 12 }}>
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.name}
-                  onClick={() => navigate(`/search?q=${encodeURIComponent(cat.key)}`)}
+                  onClick={() => navigate(`/search?q=${encodeURIComponent(cat.searchKey)}&category=${cat.categoryKey}`)}
                   style={{
                     display: "flex", flexDirection: "column", alignItems: "center",
                     gap: 10, padding: "20px 8px",
