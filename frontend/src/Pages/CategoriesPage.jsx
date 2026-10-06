@@ -13,54 +13,63 @@ const CATEGORIES = [
   {
     name: "Smartphones",
     searchKey: "Smartphones",
+    categoryKey: "smartphones",
     icon: <FiSmartphone />,
     desc: "Compare flagships, 5G smartphones & budget champions across Amazon, Flipkart & quick stores."
   },
   {
     name: "Laptops",
     searchKey: "Laptops",
+    categoryKey: "laptops",
     icon: <FiMonitor />,
     desc: "MacBooks, ultrabooks, gaming laptops & everyday work machines."
   },
   {
     name: "Headphones",
     searchKey: "Headphones",
+    categoryKey: "headphones",
     icon: <FiHeadphones />,
     desc: "True wireless earbuds, over-ear ANC, and audiophile gear with live store deals."
   },
   {
     name: "Groceries",
     searchKey: "Groceries",
+    categoryKey: "groceries",
     icon: <FiPackage />,
     desc: "Daily essentials, cooking oils, snacks, milk & tea from BlinkIt, Zepto & BigBasket."
   },
   {
     name: "Fashion & Shoes",
     searchKey: "Fashion",
+    categoryKey: "fashion",
     icon: <FiShoppingBag />,
     desc: "Trending sneakers, sportswear, casual clothing & apparel from Myntra & Flipkart."
   },
   {
     name: "Beauty & Personal Care",
     searchKey: "Beauty",
+    categoryKey: "beauty",
     icon: <FiSmile />,
     desc: "Skincare serums, cosmetics, sunscreens & haircare from Nykaa, BlinkIt & Amazon."
   },
   {
     name: "Smartwatches",
     searchKey: "Smartwatches",
+    categoryKey: "smartwatches",
     icon: <FiWatch />,
     desc: "Fitness trackers, Apple Watches & Wear OS devices at lowest prices."
   },
   {
     name: "Televisions",
     searchKey: "Televisions",
+    categoryKey: "televisions",
     icon: <FiTv />,
     desc: "4K OLEDs, QLEDs, and budget smart TVs for every home."
   },
   {
     name: "Gaming",
     searchKey: "Gaming Consoles",
+    categoryKey: "gaming",
     icon: <FaGamepad />,
     desc: "PlayStation, Xbox, Nintendo Switch and gaming accessories."
   }
@@ -97,7 +106,7 @@ export default function CategoriesPage() {
           {/* Grid */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24, paddingBottom: 40 }}>
             {CATEGORIES.map((cat, idx) => (
-              <div key={idx} className="card-hover" onClick={() => navigate(`/search?q=${encodeURIComponent(cat.searchKey)}`)}
+              <div key={idx} className="card-hover" onClick={() => navigate(`/search?q=${encodeURIComponent(cat.searchKey)}&category=${cat.categoryKey}`)}
                 style={{
                   cursor: "pointer", display: "flex", flexDirection: "column",
                   padding: 32, textAlign: "center",

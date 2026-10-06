@@ -41,6 +41,13 @@ export const VERIFIED_ASIN_MAP = {
   "lenovo ideapad slim 3": "B0B56CRWDF",
   "asus rog strix g16": "B0BWX2B4F2",
   "dell xps 13": "B0CRVJ8Y2M",
+  "sony bravia": "B0C5MC45FR",
+  "samsung 43": "B0D3GKPRG8",
+  "lg 55": "B0C46FR1R1",
+  "apple watch": "B0DGJGZ83J",
+  "galaxy watch": "B0CC9H5W3M",
+  "playstation 5": "B0CY5J8424",
+  "xbox series x": "B08H734791",
 };
 
 /**

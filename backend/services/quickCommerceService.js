@@ -1239,79 +1239,101 @@ function synthesizeDynamicProducts(query) {
     .join(" ");
 
   const qLower = normQ.toLowerCase();
-  const isTech = /phone|laptop|earphone|headphone|audio|charger|watch|camera|tv/i.test(qLower);
+  const isTv      = /television|smart tv|oled|qled|4k tv|\btv\b/i.test(qLower);
+  const isWatch   = /smartwatch|\bwatch\b|wearable|fitbit|apple watch|wear os|galaxy watch/i.test(qLower);
+  const isGaming  = /gaming|playstation|xbox|nintendo|\bps5\b|\bps4\b|console/i.test(qLower);
+  const isTech    = !isTv && !isWatch && !isGaming && /phone|laptop|earphone|headphone|audio|charger|camera/i.test(qLower);
   const isGrocery = /milk|oil|tea|coffee|atta|rice|sugar|snack|chocolate|bread|vegetable|fruit/i.test(qLower);
   const isFashion = /shoe|shirt|pant|jeans|dress|jacket|sneaker|tshirt/i.test(qLower);
-  const isBeauty = /serum|cream|shampoo|lipstick|sunscreen|lotion|soap|perfume|mascara/i.test(qLower);
+  const isBeauty  = /serum|cream|shampoo|lipstick|sunscreen|lotion|soap|perfume|mascara/i.test(qLower);
 
-  let platforms = ["Flipkart", "Amazon", "BlinkIt", "Zepto"];
+  let platforms = ["Amazon", "Flipkart"];
   let basePrice = 1499;
+  let category  = "Electronics";
+  let image     = "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80";
 
-  if (isTech) {
+  if (isTv) {
+    platforms = ["Amazon", "Flipkart"];
+    basePrice = 34999;
+    category  = "Televisions";
+    image     = "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=500&q=80";
+  } else if (isWatch) {
+    platforms = ["Amazon", "Flipkart", "BlinkIt"];
+    basePrice = 4999;
+    category  = "Smartwatches";
+    image     = "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=500&q=80";
+  } else if (isGaming) {
+    platforms = ["Amazon", "Flipkart"];
+    basePrice = 49999;
+    category  = "Gaming";
+    image     = "https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=500&q=80";
+  } else if (isTech) {
     platforms = ["Amazon", "Flipkart", "BlinkIt", "Zepto"];
     basePrice = 14999;
+    category  = "Electronics";
+    image     = "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&q=80";
   } else if (isGrocery) {
     platforms = ["BlinkIt", "Zepto", "Swiggy", "BigBasket"];
     basePrice = 185;
+    category  = "Groceries";
+    image     = "https://images.unsplash.com/photo-1542838132-92c53300491e?w=500&q=80";
   } else if (isFashion) {
     platforms = ["Myntra", "Flipkart", "Amazon"];
     basePrice = 2499;
+    category  = "Fashion";
+    image     = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80";
   } else if (isBeauty) {
     platforms = ["Nykaa", "BlinkIt", "Myntra", "Amazon"];
     basePrice = 549;
+    category  = "Beauty";
+    image     = "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=500&q=80";
   }
 
-  const results = [];
-  platforms.forEach((store, idx) => {
-    const priceVariance = (idx - 1) * Math.round(basePrice * 0.04);
-    const storePrice = Math.max(10, basePrice + priceVariance);
-    const origPrice = Math.round(storePrice * 1.2);
-    const discPct = Math.round(((origPrice - storePrice) / origPrice) * 100);
-
-    const comparisonList = platforms.map((p, pIdx) => {
-      const pVar = (pIdx - 1) * Math.round(basePrice * 0.04);
-      const pPrice = Math.max(10, basePrice + pVar);
-      return {
-        id: `qc-${p}-${crypto.randomUUID()}`,
-        name: titleQ,
-        brand: extractBrand(titleQ) || "Comparely Verified",
-        store: p,
-        price: pPrice,
-        originalPrice: Math.round(pPrice * 1.2),
-        discount: `${Math.round(((Math.round(pPrice * 1.2) - pPrice) / Math.round(pPrice * 1.2)) * 100)}% OFF`,
-        rating: 4.5,
-        reviews: 320,
-        availability: "In Stock",
-        image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80",
-        url: generateDirectStoreUrl(p, titleQ),
-        delivery: ["BlinkIt", "Zepto", "Swiggy"].includes(p) ? "10 mins delivery" : "Free Delivery Tomorrow",
-      };
-    });
-
-    results.push({
-      id: `qc-${store}-${crypto.randomUUID()}`,
-      name: idx === 0 ? titleQ : `${titleQ} - Option ${idx + 1}`,
-      brand: extractBrand(titleQ) || "Comparely Verified",
-      quantity: "",
-      category: isGrocery ? "Groceries" : isFashion ? "Fashion" : isBeauty ? "Beauty" : "Electronics",
-      price: storePrice,
-      originalPrice: origPrice,
-      discount: `${discPct}% OFF`,
-      rating: Number((4.4 + (idx % 4) * 0.1).toFixed(1)),
-      reviews: 240 + idx * 180,
+  // One consolidated product with all platforms as comparison entries (no "Option 2" duplicates)
+  const comparisonList = platforms.map((p, pIdx) => {
+    const pPrice = Math.max(10, basePrice + pIdx * Math.round(basePrice * 0.03));
+    const pOrig  = Math.round(pPrice * 1.2);
+    return {
+      id: `qc-${p}-${crypto.randomUUID()}`,
+      name: titleQ,
+      brand: extractBrand(titleQ) || "Comparely",
+      store: p,
+      price: pPrice,
+      originalPrice: pOrig,
+      discount: `${Math.round(((pOrig - pPrice) / pOrig) * 100)}% OFF`,
+      rating: 4.5,
+      reviews: 320 + pIdx * 80,
       availability: "In Stock",
-      image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80",
-      url: generateDirectStoreUrl(store, titleQ),
-      store: store,
-      storeCount: comparisonList.length,
-      comparison: comparisonList,
-      lowestPrice: Math.min(...comparisonList.map((c) => c.price)),
-      stores: platforms,
-      live: true,
-    });
+      image,
+      url: generateDirectStoreUrl(p, titleQ),
+      delivery: ["BlinkIt", "Zepto", "Swiggy"].includes(p) ? "10 mins delivery" : "Free Delivery Tomorrow",
+    };
   });
 
-  return results;
+  const lowestPrice = Math.min(...comparisonList.map((c) => c.price));
+  const origPrice   = Math.round(lowestPrice * 1.2);
+
+  return [{
+    id: `qc-${platforms[0]}-${crypto.randomUUID()}`,
+    name: titleQ,
+    brand: extractBrand(titleQ) || "Comparely",
+    quantity: "",
+    category,
+    price: lowestPrice,
+    originalPrice: origPrice,
+    discount: `${Math.round(((origPrice - lowestPrice) / origPrice) * 100)}% OFF`,
+    rating: 4.5,
+    reviews: comparisonList[0] ? comparisonList[0].reviews : 320,
+    availability: "In Stock",
+    image,
+    url: generateDirectStoreUrl(platforms[0], titleQ),
+    store: platforms[0],
+    storeCount: comparisonList.length,
+    comparison: comparisonList,
+    lowestPrice,
+    stores: platforms,
+    live: true,
+  }];
 }
 
 async function fetchGroupSearch({ query, lat, lon, pincode }) {

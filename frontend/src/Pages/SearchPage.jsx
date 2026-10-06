@@ -28,6 +28,8 @@ const FILTER_CATEGORIES = [
   { id: "smartphones", label: "Smartphones & Mobiles" },
   { id: "laptops", label: "Laptops & PCs" },
   { id: "headphones", label: "Headphones & Audio" },
+  { id: "televisions", label: "Televisions" },
+  { id: "smartwatches", label: "Smartwatches" },
   { id: "groceries", label: "Groceries & Essentials" },
   { id: "fashion", label: "Fashion & Shoes" },
   { id: "beauty", label: "Beauty & Personal Care" },
@@ -88,6 +90,15 @@ function matchesCategory(prodCategory = "", filterCat = "") {
   }
   if (f === "headphones" || f === "audio") {
     return p.includes("headphone") || p.includes("audio") || p.includes("earphone") || p.includes("airpod") || p.includes("sound");
+  }
+  if (f === "televisions") {
+    return p.includes("television") || p.includes("tv");
+  }
+  if (f === "smartwatches") {
+    return p.includes("watch") || p.includes("wearable");
+  }
+  if (f === "gaming") {
+    return p.includes("gaming") || p.includes("console");
   }
   if (f === "groceries") {
     return p.includes("grocer") || p.includes("food") || p.includes("snack") || p.includes("oil") || p.includes("milk") || p.includes("tea") || p.includes("coffee") || p.includes("atta");
@@ -361,8 +372,22 @@ export default function SearchPage() {
   useEffect(() => {
     if (paramCategory) {
       setSelectedCategory(paramCategory);
+    } else if (query) {
+      const qLower = query.toLowerCase();
+      if (/tv|television/i.test(qLower)) setSelectedCategory("televisions");
+      else if (/watch|smartwatch/i.test(qLower)) setSelectedCategory("smartwatches");
+      else if (/gaming|console|ps5|xbox|switch/i.test(qLower)) setSelectedCategory("gaming");
+      else if (/phone|mobile|smartphone/i.test(qLower)) setSelectedCategory("smartphones");
+      else if (/laptop|macbook|computer/i.test(qLower)) setSelectedCategory("laptops");
+      else if (/headphone|earphone|audio|airpod/i.test(qLower)) setSelectedCategory("headphones");
+      else if (/grocer|food|milk|snack|tea/i.test(qLower)) setSelectedCategory("groceries");
+      else if (/fashion|shoe|sneaker|cloth|jean/i.test(qLower)) setSelectedCategory("fashion");
+      else if (/beauty|cosmetic|skin|serum/i.test(qLower)) setSelectedCategory("beauty");
+      else setSelectedCategory("all");
+    } else {
+      setSelectedCategory("all");
     }
-  }, [paramCategory]);
+  }, [paramCategory, query]);
 
   useEffect(() => {
     function handleClickOutside(event) {
