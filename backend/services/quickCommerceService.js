@@ -337,6 +337,59 @@ function extractBrand(title) {
   return first.length > 1 ? first : "";
 }
 
+function normalizeCategoryName(cat = "") {
+  if (!cat) return "";
+  const c = String(cat).toLowerCase().trim();
+  if (c === "smartphones" || c === "mobiles" || c === "mobile" || c === "phone") return "Smartphones";
+  if (c === "laptops" || c === "laptop" || c === "computers" || c === "pc") return "Laptops";
+  if (c === "headphones" || c === "headphone" || c === "audio" || c === "earphones") return "Headphones";
+  if (c === "televisions" || c === "television" || c === "tv" || c === "tvs") return "Televisions";
+  if (c === "smartwatches" || c === "smartwatch" || c === "watches" || c === "watch") return "Smartwatches";
+  if (c === "gaming" || c === "gaming consoles" || c === "consoles" || c === "console") return "Gaming Consoles";
+  if (c === "groceries" || c === "grocery" || c === "essentials") return "Groceries";
+  if (c === "fashion" || c === "clothing" || c === "shoes" || c === "apparel" || c === "fashion & shoes") return "Fashion";
+  if (c === "beauty" || c === "personal care" || c === "skincare" || c === "cosmetics" || c === "beauty & care" || c === "beauty & personal care") return "Beauty";
+  return "";
+}
+
+function inferProductCategory(name = "", explicitCat = "") {
+  if (explicitCat) {
+    const norm = normalizeCategoryName(explicitCat);
+    if (norm) return norm;
+  }
+  const n = String(name).toLowerCase();
+  if (/\b(smartphone|smartphones|phone|phones|mobile|mobiles|iphone|galaxy s|galaxy z|galaxy a|oneplus|realme|redmi|pixel|poco|motorola)\b/i.test(n) &&
+      !/\b(watch|tv|television|headphone|earphone|neckband|earbud|airpod)\b/i.test(n)) {
+    return "Smartphones";
+  }
+  if (/\b(laptop|laptops|macbook|thinkpad|ideapad|pavilion|zenbook|vivobook|legion|chromebook|notebook)\b/i.test(n)) {
+    return "Laptops";
+  }
+  if (/\b(headphone|headphones|earphone|earphones|airpod|airpods|earbud|earbuds|tws|neckband|soundbar|speaker|speakers|audiophile|anc|wh-1000|airdopes|sennheiser)\b/i.test(n)) {
+    return "Headphones";
+  }
+  if (/\b(tv|tvs|television|televisions|oled|qled|bravia|smart led|4k uhd)\b/i.test(n)) {
+    return "Televisions";
+  }
+  if (/\b(smartwatch|smartwatches|watch|watches|wearable|fitness band|apple watch|galaxy watch|colorfit|fitbit)\b/i.test(n)) {
+    return "Smartwatches";
+  }
+  if (/\b(playstation|ps5|ps4|xbox|nintendo switch|dualsense|controller|gaming console)\b/i.test(n) && !/\b(laptop|laptops)\b/i.test(n)) {
+    return "Gaming Consoles";
+  }
+  if (/\b(shoe|shoes|sneaker|sneakers|jeans|shirt|t-shirt|kurta|trousers|jacket|hoodie|saree|sandals|boots|clothing|apparel|footwear|nike|adidas|puma|levis)\b/i.test(n) &&
+      !/\b(watch|tv|television)\b/i.test(n)) {
+    return "Fashion";
+  }
+  if (/\b(serum|sunscreen|shampoo|lipstick|mascara|moisturizer|face wash|lotion|conditioner|perfume|deodorant|cosmetic|cosmetics|skincare|lakme|maybelline|derma co)\b/i.test(n)) {
+    return "Beauty";
+  }
+  if (/\b(milk|tea|coffee|atta|oil|ghee|butter|paneer|bread|biscuit|snack|snacks|chips|chocolate|dal|rice|masala|sugar|detergent|grocery|groceries|anjeer|almond|dry fruit|amul|tata|fortune)\b/i.test(n)) {
+    return "Groceries";
+  }
+  return "General";
+}
+
 /**
  * Standardizes a product offer into our unified model.
  */
@@ -366,11 +419,17 @@ function mapPlatformProduct(item, platform) {
       ? "10 mins delivery"
       : "Free Delivery Tomorrow");
 
+  const prodCat = inferProductCategory(
+    item.name || item.title || "",
+    item.category || item.department || item.category_name || ""
+  );
+
   return {
     id: `qc-${crypto.randomUUID()}`,
     name: item.name || item.title || "Product",
     brand: item.brand || extractBrand(item.name || item.title || ""),
     quantity: item.quantity || "",
+    category: prodCat,
     price,
     originalPrice: mrp > price ? mrp : Math.round(price * 1.15),
     discount:
@@ -386,25 +445,6 @@ function mapPlatformProduct(item, platform) {
     source: "QuickCommerce API",
     delivery: deliveryStr,
   };
-}
-
-/**
- * Builds the comprehensive multi-store fallback catalog.
- * Covers all 8 QuickCommerce stores: Amazon, Flipkart, BlinkIt, Zepto, Swiggy, BigBasket, Myntra, Nykaa.
- */
-function normalizeCategoryName(cat = "") {
-  if (!cat) return "";
-  const c = String(cat).toLowerCase().trim();
-  if (c === "smartphones" || c === "mobiles" || c === "mobile" || c === "phone") return "Smartphones";
-  if (c === "laptops" || c === "laptop" || c === "computers" || c === "pc") return "Laptops";
-  if (c === "headphones" || c === "headphone" || c === "audio" || c === "earphones") return "Headphones";
-  if (c === "televisions" || c === "television" || c === "tv" || c === "tvs") return "Televisions";
-  if (c === "smartwatches" || c === "smartwatch" || c === "watches" || c === "watch") return "Smartwatches";
-  if (c === "gaming" || c === "gaming consoles" || c === "consoles" || c === "console") return "Gaming Consoles";
-  if (c === "groceries" || c === "grocery" || c === "essentials") return "Groceries";
-  if (c === "fashion" || c === "clothing" || c === "shoes" || c === "apparel") return "Fashion";
-  if (c === "beauty" || c === "personal care" || c === "skincare" || c === "cosmetics") return "Beauty";
-  return "";
 }
 
 function buildMultiStoreCatalog() {
@@ -1952,7 +1992,7 @@ function groupProducts(rawProducts) {
         name: designatedItem.name,
         brand: designatedItem.brand,
         quantity: designatedItem.quantity,
-        category: "Live Results",
+        category: designatedItem.category || "General",
         price: designatedItem.price,
         originalPrice: designatedItem.originalPrice,
         discount: designatedItem.discount,
@@ -2129,7 +2169,14 @@ async function fetchGroupSearch({ query, lat, lon, pincode }) {
 async function searchLiveProducts({ query, category, lat, lon, pincode }) {
   const cleanQ = (query || "").trim();
   const cleanCat = (category || "").trim().toLowerCase();
-  const payload = await fetchGroupSearch({ query: cleanQ || "popular", lat, lon, pincode });
+  const targetCat = normalizeCategoryName(cleanCat || cleanQ);
+
+  // If query is generic or empty, but category is specified, search live API for the category term!
+  const apiQuery = cleanQ && cleanQ.toLowerCase() !== "popular" && cleanQ.toLowerCase() !== "all"
+    ? cleanQ
+    : (targetCat || "popular");
+
+  const payload = await fetchGroupSearch({ query: apiQuery, lat, lon, pincode });
   const raw = [];
 
   const results = payload?.data?.results || payload?.results || {};
@@ -2153,22 +2200,32 @@ async function searchLiveProducts({ query, category, lat, lon, pincode }) {
 
   const queriedPlatforms = pincode ? ALL_SUPPORTED_PLATFORMS : BASE_PLATFORMS;
 
-  // If live API returned items, group and return them
+  // If live API returned items, group and isolate by category
   if (raw.length > 0) {
     let grouped = groupProducts(raw);
-    const targetCat = normalizeCategoryName(cleanCat);
     if (targetCat) {
-      const filtered = grouped.filter(p => p.category === targetCat);
-      if (filtered.length > 0) grouped = filtered;
+      const filtered = grouped.filter(p => normalizeCategoryName(p.category) === targetCat);
+      if (filtered.length > 0) {
+        return {
+          query: cleanQ,
+          platforms: queriedPlatforms,
+          creditCost: payload?.data?.credit_cost ?? queriedPlatforms.length,
+          creditsRemaining: payload?.credits_remaining ?? null,
+          fromCache: Boolean(payload?._fromCache),
+          products: filtered,
+        };
+      }
+      // If live API returned items but none matched targetCat, fall through to authentic multi-store catalog below!
+    } else {
+      return {
+        query: cleanQ,
+        platforms: queriedPlatforms,
+        creditCost: payload?.data?.credit_cost ?? queriedPlatforms.length,
+        creditsRemaining: payload?.credits_remaining ?? null,
+        fromCache: Boolean(payload?._fromCache),
+        products: grouped,
+      };
     }
-    return {
-      query: cleanQ,
-      platforms: queriedPlatforms,
-      creditCost: payload?.data?.credit_cost ?? queriedPlatforms.length,
-      creditsRemaining: payload?.credits_remaining ?? null,
-      fromCache: Boolean(payload?._fromCache),
-      products: grouped,
-    };
   }
 
   // Graceful multi-store fallback catalog

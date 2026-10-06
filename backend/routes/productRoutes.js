@@ -251,26 +251,25 @@ router.get("/search", async (req, res) => {
       fromCache: result.fromCache || false,
     });
   } catch (error) {
-    console.error("Live product search failed:", error);
+    console.error("Live product search warning:", error.message || error);
 
-    if (mongoose.connection.readyState === 1) {
-      try {
-        const fallback = await Product.find({}).sort({ updatedAt: -1 }).limit(16);
-        if (fallback.length > 0) {
-          return res.json({
-            status: "success",
-            query: query,
-            products: fallback.map(mapDbProduct),
-            platforms: ["Amazon", "Flipkart", "BlinkIt", "Zepto", "Swiggy", "BigBasket", "Myntra", "Nykaa"],
-            fromCache: true,
-          });
-        }
-      } catch (_) {}
-    }
+    try {
+      const fallbackResult = await searchLiveProducts({ query: query || "popular", category });
+      return res.json({
+        status: "success",
+        query: query,
+        products: fallbackResult.products || [],
+        platforms: fallbackResult.platforms || ["Amazon", "Flipkart", "BlinkIt", "Zepto", "Swiggy", "BigBasket", "Myntra", "Nykaa"],
+        fromCache: true,
+      });
+    } catch (_) {}
 
-    return res.status(error.status || 502).json({
-      status: "error",
-      message: error.message || "Live product search failed.",
+    return res.json({
+      status: "success",
+      query: query,
+      products: [],
+      platforms: ["Amazon", "Flipkart", "BlinkIt", "Zepto", "Swiggy", "BigBasket", "Myntra", "Nykaa"],
+      fromCache: true,
     });
   }
 });

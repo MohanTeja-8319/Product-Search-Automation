@@ -121,14 +121,39 @@ mongoose.connection.on("connected", () => {
   setupAlertMonitoring();
 });
 
+let activeServer = null;
+
+function gracefulShutdown(signal) {
+  if (activeServer) {
+    activeServer.close(() => {
+      console.log(`Server closed gracefully on ${signal}`);
+      if (signal === "SIGUSR2") {
+        process.kill(process.pid, "SIGUSR2");
+      } else {
+        process.exit(0);
+      }
+    });
+  } else {
+    if (signal === "SIGUSR2") {
+      process.kill(process.pid, "SIGUSR2");
+    } else {
+      process.exit(0);
+    }
+  }
+}
+
+process.once("SIGUSR2", () => gracefulShutdown("SIGUSR2"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+
 function listenOnPort(port) {
   return new Promise((resolve, reject) => {
-    const server = app.listen(port, "0.0.0.0", () => {
+    const s = app.listen(port, "0.0.0.0", () => {
       console.log(`Server running on http://localhost:${port}`);
-      resolve(server);
+      resolve(s);
     });
 
-    server.on("error", (error) => {
+    s.on("error", (error) => {
       reject(error);
     });
   });
@@ -138,14 +163,15 @@ async function startServer() {
   const targetPort = Number(PORT) || 5000;
   let server = null;
 
-  for (let attempt = 1; attempt <= 5; attempt++) {
+  for (let attempt = 1; attempt <= 15; attempt++) {
     try {
       server = await listenOnPort(targetPort);
+      activeServer = server;
       break;
     } catch (error) {
       if (error.code === "EADDRINUSE") {
-        console.warn(`Port ${targetPort} is in use, retrying attempt ${attempt}/5 in 1s...`);
-        await new Promise((r) => setTimeout(r, 1000));
+        console.warn(`Port ${targetPort} is in use, retrying attempt ${attempt}/15 in 400ms...`);
+        await new Promise((r) => setTimeout(r, 400));
         continue;
       }
       console.error("Server listener error:", error.message);

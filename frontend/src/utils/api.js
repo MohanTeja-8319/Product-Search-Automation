@@ -24,6 +24,7 @@ async function request(path, options = {}) {
   if (!res.ok) {
     throw new Error(
       data?.message ||
+        data?.error ||
         "Something went wrong. Please try again."
     );
   }

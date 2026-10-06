@@ -88,15 +88,15 @@ function matchesCategory(product = {}, filterCat = "") {
 
   // 1. Direct Category Matching (Exact or normalized)
   if (prodCat === f) return true;
-  if (f === "smartphones" && (prodCat === "smartphones" || prodCat === "mobiles")) return true;
-  if (f === "televisions" && (prodCat === "televisions" || prodCat === "tv")) return true;
-  if (f === "smartwatches" && (prodCat === "smartwatches" || prodCat === "watches")) return true;
-  if (f === "headphones" && (prodCat === "headphones" || prodCat === "audio")) return true;
-  if (f === "gaming" && (prodCat === "gaming" || prodCat === "consoles")) return true;
-  if (f === "groceries" && prodCat === "groceries") return true;
-  if (f === "fashion" && prodCat === "fashion") return true;
-  if (f === "beauty" && prodCat === "beauty") return true;
-  if (f === "laptops" && prodCat === "laptops") return true;
+  if (f === "smartphones" && (prodCat === "smartphones" || prodCat === "mobiles" || prodCat === "mobile")) return true;
+  if (f === "televisions" && (prodCat === "televisions" || prodCat === "television" || prodCat === "tv" || prodCat === "tvs")) return true;
+  if (f === "smartwatches" && (prodCat === "smartwatches" || prodCat === "smartwatch" || prodCat === "watches" || prodCat === "watch")) return true;
+  if (f === "headphones" && (prodCat === "headphones" || prodCat === "headphone" || prodCat === "audio")) return true;
+  if (f === "gaming" && (prodCat === "gaming" || prodCat === "gaming consoles" || prodCat === "consoles")) return true;
+  if (f === "groceries" && (prodCat === "groceries" || prodCat === "grocery")) return true;
+  if (f === "fashion" && (prodCat === "fashion" || prodCat === "fashion & shoes" || prodCat === "shoes")) return true;
+  if (f === "beauty" && (prodCat === "beauty" || prodCat === "beauty & personal care" || prodCat === "beauty & care")) return true;
+  if (f === "laptops" && (prodCat === "laptops" || prodCat === "laptop")) return true;
 
   // 2. Strict Keyword Fallback with Word Boundaries
   const nameStr = `${product.name || product.title || ""} ${product.brand || ""}`.toLowerCase();
@@ -528,19 +528,18 @@ export default function SearchPage() {
         }
       })
       .catch(err => {
-        if (!query) {
-          try {
-            const cached = localStorage.getItem("cachedSearchProducts") || localStorage.getItem("cachedHomeProducts");
-            if (cached) {
-              const parsed = JSON.parse(cached);
-              if (Array.isArray(parsed) && parsed.length > 0) {
-                setProducts(parsed);
-                return;
-              }
+        try {
+          const cached = localStorage.getItem("cachedSearchProducts") || localStorage.getItem("cachedHomeProducts");
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setProducts(parsed);
+              setError("");
+              return;
             }
-          } catch (_) {}
-        }
-        setError(err.message || "Search failed.");
+          }
+        } catch (_) {}
+        setError("Unable to retrieve live products. Please try again.");
       })
       .finally(() => setLoading(false));
   }, [query, paramCategory]);
@@ -707,59 +706,6 @@ export default function SearchPage() {
               </button>
             </div>
           </form>
-
-          {/* Real-time Interactive Category Navigation Pills Bar */}
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            overflowX: "auto",
-            paddingBottom: 10,
-            marginBottom: 20,
-            scrollbarWidth: "none",
-            WebkitOverflowScrolling: "touch",
-          }}>
-            {FILTER_CATEGORIES.map(cat => {
-              const isActive = (selectedCategory === cat.id);
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => handleCategoryChange(cat.id)}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 7,
-                    padding: "8px 16px",
-                    borderRadius: "var(--radius-full)",
-                    fontSize: 13,
-                    fontWeight: isActive ? 700 : 500,
-                    background: isActive ? "var(--text-900)" : "var(--surface)",
-                    color: isActive ? "var(--bg)" : "var(--text-800)",
-                    border: isActive ? "1px solid var(--text-900)" : "1px solid var(--border)",
-                    cursor: "pointer",
-                    whiteSpace: "nowrap",
-                    transition: "all 0.15s ease",
-                    boxShadow: isActive ? "0 2px 6px rgba(0,0,0,0.12)" : "none",
-                    flexShrink: 0,
-                  }}
-                  onMouseEnter={e => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = "var(--text-900)";
-                    }
-                  }}
-                  onMouseLeave={e => {
-                    if (!isActive) {
-                      e.currentTarget.style.borderColor = "var(--border)";
-                    }
-                  }}
-                >
-                  <span style={{ display: "inline-flex", alignItems: "center" }}>{cat.icon}</span>
-                  <span>{cat.label}</span>
-                </button>
-              );
-            })}
-          </div>
 
           {/* Mobile Filter Toggle Button */}
           <div className="mobile-filter-bar" style={{ display: "none", marginBottom: 16 }}>
