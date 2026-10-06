@@ -81,39 +81,60 @@ function getDiscountPercent(p) {
 
 function matchesCategory(product = {}, filterCat = "") {
   if (!filterCat || filterCat === "all") return true;
-  const p = typeof product === "string" 
-    ? product.toLowerCase() 
-    : `${product.category || ""} ${product.name || product.title || ""} ${product.brand || ""}`.toLowerCase();
+
   const f = filterCat.toLowerCase();
-  
+  const prodCat = String(product.category || "").toLowerCase();
+
+  // 1. Direct Category Matching (Exact or normalized)
+  if (prodCat === f) return true;
+  if (f === "smartphones" && (prodCat === "smartphones" || prodCat === "mobiles")) return true;
+  if (f === "televisions" && (prodCat === "televisions" || prodCat === "tv")) return true;
+  if (f === "smartwatches" && (prodCat === "smartwatches" || prodCat === "watches")) return true;
+  if (f === "headphones" && (prodCat === "headphones" || prodCat === "audio")) return true;
+  if (f === "gaming" && (prodCat === "gaming" || prodCat === "consoles")) return true;
+  if (f === "groceries" && prodCat === "groceries") return true;
+  if (f === "fashion" && prodCat === "fashion") return true;
+  if (f === "beauty" && prodCat === "beauty") return true;
+  if (f === "laptops" && prodCat === "laptops") return true;
+
+  // 2. Strict Keyword Fallback with Word Boundaries
+  const nameStr = `${product.name || product.title || ""} ${product.brand || ""}`.toLowerCase();
+
   if (f === "mobiles" || f === "smartphones") {
-    return (p.includes("phone") || p.includes("mobile") || p.includes("smartphone") || p.includes("iphone") || p.includes("galaxy") || p.includes("oneplus") || p.includes("realme") || p.includes("vivo")) && !p.includes("watch") && !p.includes("tv");
+    return (
+      /\b(smartphone|smartphones|mobile|mobiles|iphone|galaxy|oneplus|realme|vivo|pixel)\b/i.test(nameStr) &&
+      !/\b(watch|watches|tv|tvs|headphone|headphones|earphone|earphones|neckband|earbuds|airpods)\b/i.test(nameStr)
+    );
   }
   if (f === "laptops") {
-    return p.includes("laptop") || p.includes("macbook") || p.includes("computer") || p.includes("pc") || p.includes("ideapad") || p.includes("pavilion") || p.includes("strix");
+    return /\b(laptop|laptops|macbook|computer|pc|ideapad|pavilion|strix|thinkpad|zenbook|swift)\b/i.test(nameStr);
   }
   if (f === "headphones" || f === "audio") {
-    return p.includes("headphone") || p.includes("audio") || p.includes("earphone") || p.includes("airpod") || p.includes("sound") || p.includes("speaker") || p.includes("airdopes") || p.includes("neckband");
+    return /\b(headphone|headphones|earphone|earphones|airpod|airpods|speaker|speakers|airdopes|neckband|tws|earbuds|sennheiser|marshall)\b/i.test(nameStr);
   }
   if (f === "televisions" || f === "tv") {
-    return p.includes("television") || p.includes("tv") || p.includes("oled") || p.includes("qled") || p.includes("bravia");
+    return /\b(television|televisions|tv|tvs|oled|qled|bravia)\b/i.test(nameStr);
   }
   if (f === "smartwatches" || f === "watches") {
-    return p.includes("watch") || p.includes("wearable") || p.includes("smartwatch") || p.includes("colorfit");
+    return /\b(smartwatch|smartwatches|watch|watches|wearable|colorfit|fitbit)\b/i.test(nameStr);
   }
   if (f === "gaming") {
-    return p.includes("gaming") || p.includes("console") || p.includes("playstation") || p.includes("xbox") || p.includes("nintendo") || p.includes("switch");
+    return /\b(gaming|console|consoles|playstation|ps5|ps4|xbox|nintendo|switch|dualsense|handheld)\b/i.test(nameStr) && !/\b(laptop|laptops)\b/i.test(nameStr);
   }
   if (f === "groceries") {
-    return p.includes("grocer") || p.includes("food") || p.includes("snack") || p.includes("oil") || p.includes("milk") || p.includes("tea") || p.includes("coffee") || p.includes("atta") || p.includes("noodle") || p.includes("detergent") || p.includes("amul") || p.includes("tata") || p.includes("cadbury") || p.includes("fortune") || p.includes("nescafe") || p.includes("aashirvaad") || p.includes("surf") || p.includes("nandini") || p.includes("delight");
+    return /\b(grocery|groceries|food|snack|snacks|oil|milk|tea|coffee|atta|noodle|noodles|detergent|amul|tata|cadbury|fortune|nescafe|aashirvaad|surf|nandini|delight|almonds|yogurt|epigamia|happilo)\b/i.test(nameStr);
   }
   if (f === "fashion") {
-    return p.includes("fashion") || p.includes("shoe") || p.includes("cloth") || p.includes("apparel") || p.includes("shirt") || p.includes("sneaker") || p.includes("jeans") || p.includes("nike") || p.includes("puma") || p.includes("adidas") || p.includes("levi");
+    return (
+      /\b(fashion|shoe|shoes|cloth|clothing|apparel|shirt|shirts|sneaker|sneakers|jeans|nike|puma|adidas|levis|boot|boots|polo|formal|skechers|bata|woodland|allen solly)\b/i.test(nameStr) &&
+      !/\b(watch|watches|tv|tvs|television|televisions)\b/i.test(nameStr)
+    );
   }
   if (f === "beauty") {
-    return p.includes("beauty") || p.includes("cosmetic") || p.includes("serum") || p.includes("skin") || p.includes("hair") || p.includes("lakme") || p.includes("maybelline") || p.includes("sunscreen") || p.includes("niacinamide");
+    return /\b(beauty|cosmetic|cosmetics|serum|skincare|skin|hair|lakme|maybelline|sunscreen|niacinamide|lotion|cleanser|toner|derma|nivea|cetaphil|plum)\b/i.test(nameStr);
   }
-  return p.includes(f);
+
+  return false;
 }
 
 function getDisplayProduct(p, selectedStores) {
