@@ -1,4 +1,5 @@
 import { createAlert as createAlertApi, deleteAlert as deleteAlertApi } from "./api";
+import { addNotification } from "./notificationHelper";
 
 /**
  * Retrieve local price alerts array safely.
@@ -94,6 +95,18 @@ export const savePriceAlert = async (alertData) => {
       console.warn("Backend alert sync failed, saved locally:", err?.message || err);
     }
   }
+
+  // Add to live notifications
+  try {
+    addNotification({
+      type: "target_reached",
+      title: `Price Alert Active: ${cleanAlert.productName}`,
+      message: `We are monitoring ${cleanAlert.productName} for price drops below ₹${cleanAlert.targetPrice.toLocaleString()}.`,
+      productName: cleanAlert.productName,
+      store: cleanAlert.store,
+      link: `/comparison/${encodeURIComponent(cleanAlert.productName)}`,
+    });
+  } catch {}
 
   // Notify listeners
   window.dispatchEvent(new CustomEvent("priceAlertsUpdated", { detail: cleanAlert }));

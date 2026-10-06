@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  FiSearch, FiBell, FiHeart, FiChevronDown, FiLogOut,
+  FiSearch, FiHeart, FiChevronDown, FiLogOut,
   FiSettings, FiMenu, FiSun, FiMoon
 } from "react-icons/fi";
+import Notification from "./Notification";
 
 export default function Navbar({ onMenuToggle }) {
   const navigate = useNavigate();
@@ -162,22 +163,8 @@ export default function Navbar({ onMenuToggle }) {
         >
           {theme === "dark" ? <FiSun size={18} /> : <FiMoon size={18} />}
         </button>
-        {}
-        <button
-          onClick={() => navigate("/pricealerts")}
-          className="btn btn-ghost"
-          style={{ padding: "10px", borderRadius: "var(--radius-full)", position: "relative" }}
-          title="Price Alerts"
-        >
-          <FiBell size={18} />
-          <span style={{
-            position: "absolute", top: 6, right: 6,
-            width: 8, height: 8,
-            background: "var(--danger)",
-            borderRadius: "50%",
-            border: "2px solid white"
-          }} />
-        </button>
+        {/* Live Notification Dropdown */}
+        <Notification />
         {/* Wishlist */}
         <button
           onClick={() => navigate("/wishlist")}
