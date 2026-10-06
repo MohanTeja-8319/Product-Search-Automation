@@ -78,36 +78,39 @@ function getDiscountPercent(p) {
   return 0;
 }
 
-function matchesCategory(prodCategory = "", filterCat = "") {
+function matchesCategory(product = {}, filterCat = "") {
   if (!filterCat || filterCat === "all") return true;
-  const p = String(prodCategory || "").toLowerCase();
+  const p = typeof product === "string" 
+    ? product.toLowerCase() 
+    : `${product.category || ""} ${product.name || product.title || ""} ${product.brand || ""}`.toLowerCase();
   const f = filterCat.toLowerCase();
+  
   if (f === "mobiles" || f === "smartphones") {
-    return p.includes("phone") || p.includes("mobile") || p.includes("smart");
+    return (p.includes("phone") || p.includes("mobile") || p.includes("smartphone") || p.includes("iphone") || p.includes("galaxy") || p.includes("oneplus") || p.includes("realme") || p.includes("vivo")) && !p.includes("watch") && !p.includes("tv");
   }
   if (f === "laptops") {
-    return p.includes("laptop") || p.includes("macbook") || p.includes("computer") || p.includes("pc");
+    return p.includes("laptop") || p.includes("macbook") || p.includes("computer") || p.includes("pc") || p.includes("ideapad") || p.includes("pavilion") || p.includes("strix");
   }
   if (f === "headphones" || f === "audio") {
-    return p.includes("headphone") || p.includes("audio") || p.includes("earphone") || p.includes("airpod") || p.includes("sound");
+    return p.includes("headphone") || p.includes("audio") || p.includes("earphone") || p.includes("airpod") || p.includes("sound") || p.includes("speaker") || p.includes("airdopes") || p.includes("neckband");
   }
-  if (f === "televisions") {
-    return p.includes("television") || p.includes("tv");
+  if (f === "televisions" || f === "tv") {
+    return p.includes("television") || p.includes("tv") || p.includes("oled") || p.includes("qled") || p.includes("bravia");
   }
-  if (f === "smartwatches") {
-    return p.includes("watch") || p.includes("wearable");
+  if (f === "smartwatches" || f === "watches") {
+    return p.includes("watch") || p.includes("wearable") || p.includes("smartwatch") || p.includes("colorfit");
   }
   if (f === "gaming") {
-    return p.includes("gaming") || p.includes("console");
+    return p.includes("gaming") || p.includes("console") || p.includes("playstation") || p.includes("xbox") || p.includes("nintendo") || p.includes("switch");
   }
   if (f === "groceries") {
-    return p.includes("grocer") || p.includes("food") || p.includes("snack") || p.includes("oil") || p.includes("milk") || p.includes("tea") || p.includes("coffee") || p.includes("atta");
+    return p.includes("grocer") || p.includes("food") || p.includes("snack") || p.includes("oil") || p.includes("milk") || p.includes("tea") || p.includes("coffee") || p.includes("atta") || p.includes("noodle") || p.includes("detergent") || p.includes("amul") || p.includes("tata") || p.includes("cadbury") || p.includes("fortune") || p.includes("nescafe") || p.includes("aashirvaad") || p.includes("surf") || p.includes("nandini") || p.includes("delight");
   }
   if (f === "fashion") {
-    return p.includes("fashion") || p.includes("shoe") || p.includes("cloth") || p.includes("apparel") || p.includes("shirt") || p.includes("sneaker");
+    return p.includes("fashion") || p.includes("shoe") || p.includes("cloth") || p.includes("apparel") || p.includes("shirt") || p.includes("sneaker") || p.includes("jeans") || p.includes("nike") || p.includes("puma") || p.includes("adidas") || p.includes("levi");
   }
   if (f === "beauty") {
-    return p.includes("beauty") || p.includes("cosmetic") || p.includes("serum") || p.includes("skin") || p.includes("hair");
+    return p.includes("beauty") || p.includes("cosmetic") || p.includes("serum") || p.includes("skin") || p.includes("hair") || p.includes("lakme") || p.includes("maybelline") || p.includes("sunscreen") || p.includes("niacinamide");
   }
   return p.includes(f);
 }
@@ -517,7 +520,7 @@ export default function SearchPage() {
 
         // 5. Category
         if (selectedCategory && selectedCategory !== "all") {
-          if (!matchesCategory(p.category, selectedCategory)) return false;
+          if (!matchesCategory(p, selectedCategory)) return false;
         }
 
         // 6. Retailers / Stores
