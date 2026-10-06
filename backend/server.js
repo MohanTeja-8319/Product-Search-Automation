@@ -135,18 +135,17 @@ function listenOnPort(port) {
 }
 
 async function startServer() {
-  const startPort = Number(PORT) || 5000;
+  const targetPort = Number(PORT) || 5000;
   let server = null;
-  let boundPort = startPort;
 
-  for (let offset = 0; offset < 10; offset += 1) {
-    boundPort = startPort + offset;
+  for (let attempt = 1; attempt <= 5; attempt++) {
     try {
-      server = await listenOnPort(boundPort);
+      server = await listenOnPort(targetPort);
       break;
     } catch (error) {
       if (error.code === "EADDRINUSE") {
-        console.warn(`Port ${boundPort} is in use, trying ${boundPort + 1}...`);
+        console.warn(`Port ${targetPort} is in use, retrying attempt ${attempt}/5 in 1s...`);
+        await new Promise((r) => setTimeout(r, 1000));
         continue;
       }
       console.error("Server listener error:", error.message);
@@ -155,7 +154,18 @@ async function startServer() {
   }
 
   if (!server) {
-    console.error("Could not bind any port in range", startPort, "-", startPort + 9);
+    for (let offset = 1; offset < 5; offset++) {
+      try {
+        server = await listenOnPort(targetPort + offset);
+        break;
+      } catch (err) {
+        if (err.code === "EADDRINUSE") continue;
+      }
+    }
+  }
+
+  if (!server) {
+    console.error("Could not bind port", targetPort);
     return;
   }
 

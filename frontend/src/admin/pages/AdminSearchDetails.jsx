@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useAdminData } from "../context/AdminDataContext";
 import { API_BASE_URL } from "../../utils/api";
+import { fetchAdminJson } from "../utils/adminApi";
 import StatusBadge from "../components/StatusBadge";
 import EmptyState from "../components/EmptyState";
 
@@ -27,12 +28,10 @@ export default function AdminSearchDetails() {
   React.useEffect(() => {
     let mounted = true;
     setLoading(true);
-    fetch(`${API_BASE_URL}/admin/searches/${id}`)
-      .then((res) => (res.ok ? res.json() : null))
+    fetchAdminJson(`/admin/searches/${id}`)
       .then((item) => {
         if (mounted && item) setLiveSearch(item);
       })
-      .catch((err) => console.error("Error fetching search details:", err))
       .finally(() => {
         if (mounted) setLoading(false);
       });

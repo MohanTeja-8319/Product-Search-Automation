@@ -22,6 +22,8 @@ import StatusBadge from "../components/StatusBadge";
 import EmptyState from "../components/EmptyState";
 import { API_BASE_URL } from "../../utils/api";
 
+import { fetchAdminJson } from "../utils/adminApi";
+
 export default function AdminUserDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -33,8 +35,7 @@ export default function AdminUserDetails() {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-    fetch(`${API_BASE_URL}/admin/users/${id}`)
-      .then((res) => (res.ok ? res.json() : null))
+    fetchAdminJson(`/admin/users/${id}`)
       .then((data) => {
         if (mounted && data) setLiveUser(data);
       })

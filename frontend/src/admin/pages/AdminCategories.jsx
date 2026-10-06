@@ -5,6 +5,7 @@ import StatusBadge from "../components/StatusBadge";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useAdminToast } from "../context/AdminToastContext";
 import { API_BASE_URL } from "../../utils/api";
+import { fetchAdminJson } from "../utils/adminApi";
 
 export default function AdminCategories() {
   const { addToast } = useAdminToast();
@@ -16,8 +17,7 @@ export default function AdminCategories() {
 
   // Fetch categories from backend
   useEffect(() => {
-    fetch(`${API_BASE_URL}/admin/categories`)
-      .then((res) => (res.ok ? res.json() : null))
+    fetchAdminJson("/admin/categories")
       .then((data) => {
         if (data && Array.isArray(data) && data.length > 0) {
           setCategories(data);

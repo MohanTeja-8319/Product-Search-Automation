@@ -6,6 +6,7 @@ import StatusBadge from "../components/StatusBadge";
 import { useAdminData } from "../context/AdminDataContext";
 
 import { API_BASE_URL } from "../../utils/api";
+import { fetchAdminJson } from "../utils/adminApi";
 
 export default function AdminSearches() {
   const { searches: contextSearches = [] } = useAdminData();
@@ -16,14 +17,12 @@ export default function AdminSearches() {
   React.useEffect(() => {
     let mounted = true;
     setLoading(true);
-    fetch(`${API_BASE_URL}/admin/searches`)
-      .then((res) => (res.ok ? res.json() : null))
+    fetchAdminJson("/admin/searches")
       .then((data) => {
         if (mounted && Array.isArray(data)) {
           setLiveSearches(data);
         }
       })
-      .catch((err) => console.error("Error fetching live searches:", err))
       .finally(() => {
         if (mounted) setLoading(false);
       });

@@ -16,6 +16,7 @@ import StatusBadge from "../components/StatusBadge";
 import { useAdminData } from "../context/AdminDataContext";
 
 import { API_BASE_URL } from "../../utils/api";
+import { fetchAdminJson } from "../utils/adminApi";
 
 function ProductThumbnail({ src, alt, size = 44 }) {
   const [error, setError] = useState(!src);
@@ -69,14 +70,12 @@ export default function AdminProducts() {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-    fetch(`${API_BASE_URL}/admin/products`)
-      .then((res) => (res.ok ? res.json() : null))
+    fetchAdminJson("/admin/products")
       .then((data) => {
         if (mounted && Array.isArray(data)) {
           setLiveProducts(data);
         }
       })
-      .catch((err) => console.error("Error fetching live products:", err))
       .finally(() => {
         if (mounted) setLoading(false);
       });

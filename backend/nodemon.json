@@ -10,5 +10,6 @@
     "services",
     "utils"
   ],
-  "ext": "js,json,env"
+  "ext": "js,json,env",
+  "delay": 1000
 }

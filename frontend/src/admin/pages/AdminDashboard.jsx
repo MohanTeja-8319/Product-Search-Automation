@@ -20,6 +20,7 @@ import PlatformPerformanceChart from "../components/PlatformPerformanceChart";
 import StatusBadge from "../components/StatusBadge";
 import { useAdminData } from "../context/AdminDataContext";
 import { API_BASE_URL } from "../../utils/api";
+import { fetchAdminJson } from "../utils/adminApi";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -31,9 +32,8 @@ export default function AdminDashboard() {
   const fetchStats = async () => {
     try {
       setRefreshing(true);
-      const res = await fetch(`${API_BASE_URL}/admin/stats`);
-      if (res.ok) {
-        const data = await res.json();
+      const data = await fetchAdminJson("/admin/stats", null);
+      if (data) {
         setLiveStats(data);
       }
     } catch (err) {

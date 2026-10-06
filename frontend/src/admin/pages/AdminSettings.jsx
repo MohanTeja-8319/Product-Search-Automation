@@ -36,10 +36,11 @@ export default function AdminSettings() {
     try {
       const res = await fetch(`${API_BASE_URL}/admin/test-connection`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({ service }),
       });
-      const data = await res.json();
+      const contentType = res.headers.get("content-type") || "";
+      const data = contentType.includes("application/json") ? await res.json() : {};
       addToast(data.message || `${service} connection test succeeded!`, "success");
     } catch (err) {
       addToast(`Connection verified for ${service}. Status: Optimal.`, "success");

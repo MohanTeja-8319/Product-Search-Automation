@@ -17,6 +17,7 @@ import DataTable from "../components/DataTable";
 import StatusBadge from "../components/StatusBadge";
 import { useAdminToast } from "../context/AdminToastContext";
 import { API_BASE_URL } from "../../utils/api";
+import { fetchAdminJson } from "../utils/adminApi";
 
 export default function AdminAutomation() {
   const { addToast } = useAdminToast();
@@ -27,8 +28,7 @@ export default function AdminAutomation() {
   const [newJobType, setNewJobType] = useState("Price & Variant Update");
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/admin/jobs`)
-      .then((res) => (res.ok ? res.json() : null))
+    fetchAdminJson("/admin/jobs")
       .then((data) => {
         if (data && Array.isArray(data) && data.length > 0) {
           const mapped = data.map((d) => ({

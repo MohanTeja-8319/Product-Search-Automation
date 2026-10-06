@@ -15,6 +15,7 @@ import {
 import StatusBadge from "../components/StatusBadge";
 import { useAdminToast } from "../context/AdminToastContext";
 import { API_BASE_URL } from "../../utils/api";
+import { fetchAdminJson } from "../utils/adminApi";
 
 const INITIAL_SOURCES = [
   {
@@ -130,8 +131,7 @@ export default function AdminSources() {
   const [selectedSource, setSelectedSource] = useState(null);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/admin/sources`)
-      .then((res) => (res.ok ? res.json() : null))
+    fetchAdminJson("/admin/sources")
       .then((data) => {
         if (data && Array.isArray(data) && data.length > 0) {
           setSources(data);

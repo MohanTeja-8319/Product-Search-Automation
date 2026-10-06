@@ -14,6 +14,7 @@ import StatusBadge from "../components/StatusBadge";
 import { useAdminToast } from "../context/AdminToastContext";
 
 import { API_BASE_URL } from "../../utils/api";
+import { fetchAdminJson } from "../utils/adminApi";
 
 export default function AdminReviews() {
   const { addToast } = useAdminToast();
@@ -23,14 +24,12 @@ export default function AdminReviews() {
   React.useEffect(() => {
     let mounted = true;
     setLoading(true);
-    fetch(`${API_BASE_URL}/admin/reviews`)
-      .then((res) => (res.ok ? res.json() : null))
+    fetchAdminJson("/admin/reviews")
       .then((data) => {
         if (mounted && Array.isArray(data)) {
           setReviews(data);
         }
       })
-      .catch((err) => console.error("Error fetching live reviews:", err))
       .finally(() => {
         if (mounted) setLoading(false);
       });

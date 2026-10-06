@@ -17,6 +17,7 @@ import {
   Store,
 } from "lucide-react";
 import { API_BASE_URL } from "../../utils/api";
+import { fetchAdminJson } from "../utils/adminApi";
 
 const DEFAULT_PRICE_METRICS = [
   { title: "Average Price Disparity", value: "18.4%", note: "Across 4 active retailers" },
@@ -57,14 +58,12 @@ export default function AdminAnalytics() {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-    fetch(`${API_BASE_URL}/admin/analytics`)
-      .then((res) => (res.ok ? res.json() : null))
+    fetchAdminJson("/admin/analytics")
       .then((data) => {
         if (mounted && data) {
           setAnalyticsData(data);
         }
       })
-      .catch((err) => console.error("Error fetching live analytics:", err))
       .finally(() => {
         if (mounted) setLoading(false);
       });

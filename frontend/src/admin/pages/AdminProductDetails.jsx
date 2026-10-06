@@ -16,6 +16,7 @@ import {
 import StatusBadge from "../components/StatusBadge";
 import { useAdminData } from "../context/AdminDataContext";
 import { API_BASE_URL } from "../../utils/api";
+import { fetchAdminJson } from "../utils/adminApi";
 
 export default function AdminProductDetails() {
   const { id } = useParams();
@@ -29,14 +30,12 @@ export default function AdminProductDetails() {
     let mounted = true;
     setLoading(true);
     setImgError(false);
-    fetch(`${API_BASE_URL}/admin/products/${id}`)
-      .then((res) => (res.ok ? res.json() : null))
+    fetchAdminJson(`/admin/products/${id}`)
       .then((item) => {
         if (mounted && item) {
           setLiveProduct(item);
         }
       })
-      .catch((err) => console.error("Error fetching product details:", err))
       .finally(() => {
         if (mounted) setLoading(false);
       });
