@@ -23,7 +23,6 @@ export default function AdminSettings() {
 
   // Masked state
   const [keys, setKeys] = useState({
-    serpapi: "••••••••••••••••••••••••••••••••",
     quickcommerce: "••••••••••••••••••••••••••••••••",
     jwtSecret: "••••••••••••••••••••••••••••••••",
     smtpPass: "••••••••••••••••",
@@ -129,70 +128,6 @@ export default function AdminSettings() {
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              {/* SerpAPI Key */}
-              <div
-                style={{
-                  padding: "16px 18px",
-                  borderRadius: 12,
-                  backgroundColor: "rgba(255, 255, 255, 0.03)",
-                  border: "1px solid var(--adm-border, #222222)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  flexWrap: "wrap",
-                  gap: 12,
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: "var(--adm-text, #f4efe8)" }}>
-                    SerpAPI Integration Key
-                  </div>
-                  <div style={{ fontSize: 12, color: "var(--adm-muted, #888888)", marginTop: 2 }}>
-                    Used for organic multi-store product search results and fallback extraction.
-                  </div>
-                  <div style={{ marginTop: 8 }}>
-                    {editingKey === "serpapi" ? (
-                      <div style={{ display: "flex", gap: 8 }}>
-                        <input
-                          type="text"
-                          placeholder="Paste new SerpAPI key..."
-                          value={tempKeyValue}
-                          onChange={(e) => setTempKeyValue(e.target.value)}
-                          className="adm-input"
-                          style={{ width: 280 }}
-                        />
-                        <button onClick={() => handleSaveKey("serpapi")} className="adm-btn adm-btn-primary">
-                          Save
-                        </button>
-                        <button onClick={() => setEditingKey(null)} className="adm-btn adm-btn-outline">
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <code style={{ fontSize: 14, color: "var(--adm-muted, #888888)", letterSpacing: "0.15em", fontWeight: 700 }}>
-                        {keys.serpapi}
-                      </code>
-                    )}
-                  </div>
-                </div>
-
-                {editingKey !== "serpapi" && (
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <button onClick={() => handleOpenEdit("serpapi")} className="adm-btn adm-btn-outline">
-                      Configure
-                    </button>
-                    <button
-                      onClick={() => handleTestConnection("serpapi")}
-                      disabled={testingService === "serpapi"}
-                      className="adm-btn adm-btn-primary"
-                    >
-                      <RefreshCw size={13} className={testingService === "serpapi" ? "spin-animation" : ""} />
-                      {testingService === "serpapi" ? "Testing..." : "Test Connection"}
-                    </button>
-                  </div>
-                )}
-              </div>
-
               {/* QuickCommerce API Key */}
               <div
                 style={{
@@ -209,17 +144,17 @@ export default function AdminSettings() {
               >
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "var(--adm-text, #f4efe8)" }}>
-                    QuickCommerce Commerce Gateway
+                    QuickCommerce API Key
                   </div>
                   <div style={{ fontSize: 12, color: "var(--adm-muted, #888888)", marginTop: 2 }}>
-                    Powers group search queries for Amazon, Flipkart, and Myntra.
+                    Primary real-time search gateway across Amazon, Flipkart, BlinkIt, Zepto, Swiggy, BigBasket, Myntra, and Nykaa.
                   </div>
                   <div style={{ marginTop: 8 }}>
                     {editingKey === "quickcommerce" ? (
                       <div style={{ display: "flex", gap: 8 }}>
                         <input
                           type="text"
-                          placeholder="Paste QuickCommerce API key..."
+                          placeholder="Paste new QuickCommerce API key..."
                           value={tempKeyValue}
                           onChange={(e) => setTempKeyValue(e.target.value)}
                           className="adm-input"
@@ -359,7 +294,7 @@ export default function AdminSettings() {
               { source: "Amazon Crawler", maxRpm: "120 requests / min", cacheTtl: "30 minutes", proxy: "Active" },
               { source: "Flipkart Connector", maxRpm: "80 requests / min", cacheTtl: "20 minutes", proxy: "Active" },
               { source: "Myntra Fashion API", maxRpm: "60 requests / min", cacheTtl: "60 minutes", proxy: "Direct" },
-              { source: "SerpAPI Query Engine", maxRpm: "50 requests / min", cacheTtl: "4 hours", proxy: "Managed" },
+              { source: "QuickCommerce API Gateway", maxRpm: "100 requests / min", cacheTtl: "1 hour", proxy: "Direct" },
             ].map((s) => (
               <div
                 key={s.source}

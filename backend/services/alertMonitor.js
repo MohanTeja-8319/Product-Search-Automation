@@ -2,7 +2,7 @@ const Alert = require("../models/Alert");
 const User = require("../models/User");
 const sendEmail = require("../utils/sendEmail");
 const { sendPushToUser } = require("../utils/sendPush");
-const { searchSpecificLiveProduct } = require("./serpApiService");
+const { searchSpecificLiveProduct } = require("./quickCommerceService");
 
 const DEFAULT_LOCATION = {
   lat: Number(process.env.SEARCH_LAT) || 12.9021,

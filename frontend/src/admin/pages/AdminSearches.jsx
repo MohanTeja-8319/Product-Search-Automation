@@ -85,7 +85,7 @@ export default function AdminSearches() {
             {row.platforms || 4} platforms
           </span>
           <div style={{ fontSize: 11, color: "var(--adm-muted, #888888)" }}>
-            {row.platformList || "Amazon, Flipkart, Myntra, Croma"}
+            {row.platformList || "Amazon, Flipkart, BlinkIt, Zepto, Swiggy, BigBasket, Myntra, Nykaa"}
           </div>
         </div>
       ),

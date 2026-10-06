@@ -95,23 +95,71 @@ export default function AdminProducts() {
 
   const filteredData = useMemo(() => {
     return allProducts.filter((p) => {
-      if (selectedCategory !== "all" && p.category?.toLowerCase() !== selectedCategory.toLowerCase()) {
-        return false;
+      // Category Filter
+      if (selectedCategory !== "all") {
+        const pCat = String(p.category || "").toLowerCase();
+        const selCat = selectedCategory.toLowerCase();
+        let matches = pCat.includes(selCat);
+        if (selCat === "mobiles" || selCat === "smartphones") {
+          matches = pCat.includes("mobile") || pCat.includes("phone") || pCat.includes("smart");
+        } else if (selCat === "headphones" || selCat === "audio") {
+          matches = pCat.includes("headphone") || pCat.includes("audio") || pCat.includes("earphone") || pCat.includes("airpod");
+        } else if (selCat === "shoes" || selCat === "fashion") {
+          matches = pCat.includes("fashion") || pCat.includes("shoe") || pCat.includes("cloth");
+        } else if (selCat === "groceries" || selCat === "grocery") {
+          matches = pCat.includes("grocer") || pCat.includes("food") || pCat.includes("snack");
+        } else if (selCat === "beauty") {
+          matches = pCat.includes("beauty") || pCat.includes("cosmetic") || pCat.includes("serum") || pCat.includes("skin");
+        }
+        if (!matches) return false;
       }
-      if (selectedPlatform !== "all" && !p.platform?.toLowerCase().includes(selectedPlatform.toLowerCase())) {
-        return false;
+
+      // Platform / Store Filter
+      if (selectedPlatform !== "all") {
+        const selPlat = selectedPlatform.toLowerCase();
+        if (selPlat === "multi-store") {
+          const storeCount = p.storeCount || (Array.isArray(p.comparison) ? p.comparison.length : 1);
+          if (storeCount <= 1) return false;
+        } else {
+          const mainStore = String(p.store || p.platform || "").toLowerCase();
+          const compStores = Array.isArray(p.comparison) ? p.comparison.map(c => String(c.store || c.name || "").toLowerCase()) : [];
+          const allStores = [mainStore, ...(Array.isArray(p.stores) ? p.stores.map(s => String(s).toLowerCase()) : []), ...compStores];
+          if (!allStores.some(s => s.includes(selPlat))) {
+            return false;
+          }
+        }
       }
-      if (selectedAvailability !== "all" && p.availability?.toLowerCase() !== selectedAvailability.toLowerCase()) {
-        return false;
+
+      // Availability Filter
+      if (selectedAvailability !== "all") {
+        const pAvail = String(p.availability || "in stock").toLowerCase();
+        const selAvail = selectedAvailability.toLowerCase();
+        if (!pAvail.includes(selAvail)) {
+          return false;
+        }
       }
+
       return true;
+    }).sort((a, b) => {
+      if (priceSort === "low-to-high") {
+        const priceA = typeof a.price === "number" ? a.price : parseFloat(String(a.price || 0).replace(/[^0-9.]/g, "")) || 0;
+        const priceB = typeof b.price === "number" ? b.price : parseFloat(String(b.price || 0).replace(/[^0-9.]/g, "")) || 0;
+        return priceA - priceB;
+      }
+      if (priceSort === "high-to-low") {
+        const priceA = typeof a.price === "number" ? a.price : parseFloat(String(a.price || 0).replace(/[^0-9.]/g, "")) || 0;
+        const priceB = typeof b.price === "number" ? b.price : parseFloat(String(b.price || 0).replace(/[^0-9.]/g, "")) || 0;
+        return priceB - priceA;
+      }
+      return 0;
     });
-  }, [allProducts, selectedCategory, selectedPlatform, selectedAvailability]);
+  }, [allProducts, selectedCategory, selectedPlatform, selectedAvailability, priceSort]);
 
   const handleResetFilters = () => {
     setSelectedCategory("all");
     setSelectedPlatform("all");
     setSelectedAvailability("all");
+    setPriceSort("default");
   };
 
   const columns = [
@@ -292,11 +340,12 @@ export default function AdminProducts() {
           style={{ width: "auto", minWidth: 140, padding: "6px 12px", borderRadius: 9999, fontSize: 13 }}
         >
           <option value="all">All Categories</option>
-          <option value="mobiles">Mobiles</option>
+          <option value="mobiles">Mobiles & Phones</option>
           <option value="laptops">Laptops</option>
-          <option value="headphones">Headphones</option>
-          <option value="shoes">Shoes</option>
-          <option value="home appliances">Home Appliances</option>
+          <option value="headphones">Headphones & Audio</option>
+          <option value="groceries">Groceries & Food</option>
+          <option value="fashion">Fashion & Shoes</option>
+          <option value="beauty">Beauty & Personal Care</option>
         </select>
 
         {/* Platform Filter */}
@@ -308,9 +357,14 @@ export default function AdminProducts() {
         >
           <option value="all">All Platforms</option>
           <option value="multi-store">Multi-Store Matched</option>
-          <option value="amazon">Amazon Only</option>
-          <option value="flipkart">Flipkart Only</option>
-          <option value="myntra">Myntra Only</option>
+          <option value="amazon">Amazon</option>
+          <option value="flipkart">Flipkart</option>
+          <option value="blinkit">BlinkIt</option>
+          <option value="zepto">Zepto</option>
+          <option value="swiggy">Swiggy</option>
+          <option value="bigbasket">BigBasket</option>
+          <option value="myntra">Myntra</option>
+          <option value="nykaa">Nykaa</option>
         </select>
 
         {/* Availability Filter */}
@@ -326,7 +380,19 @@ export default function AdminProducts() {
           <option value="out of stock">Out of Stock</option>
         </select>
 
-        {(selectedCategory !== "all" || selectedPlatform !== "all" || selectedAvailability !== "all") && (
+        {/* Price Sort */}
+        <select
+          value={priceSort}
+          onChange={(e) => setPriceSort(e.target.value)}
+          className="adm-input"
+          style={{ width: "auto", minWidth: 140, padding: "6px 12px", borderRadius: 9999, fontSize: 13 }}
+        >
+          <option value="default">Default Order</option>
+          <option value="low-to-high">Price: Low to High</option>
+          <option value="high-to-low">Price: High to Low</option>
+        </select>
+
+        {(selectedCategory !== "all" || selectedPlatform !== "all" || selectedAvailability !== "all" || priceSort !== "default") && (
           <button
             onClick={handleResetFilters}
             style={{

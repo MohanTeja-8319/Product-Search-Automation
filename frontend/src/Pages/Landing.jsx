@@ -72,7 +72,7 @@ const FEATURES = [
   {
     icon: FiSearch,
     title: "One Search, Everywhere",
-    desc: "Search once and instantly see prices from Amazon, Flipkart, Myntra, Croma, and Reliance Digital side-by-side."
+    desc: "Search once and instantly see prices from Amazon, Flipkart, BlinkIt, Zepto, Swiggy, BigBasket, and Myntra side-by-side."
   },
   {
     icon: FiBell,

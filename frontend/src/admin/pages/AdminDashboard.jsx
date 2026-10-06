@@ -53,7 +53,7 @@ export default function AdminDashboard() {
 
   const topSearchedProducts =
     products.length > 0
-      ? products.slice(0, 5).map((p, idx) => {
+      ? products.slice(0, 25).map((p, idx) => {
           const lowest =
             Array.isArray(p.platforms) && p.platforms.length > 0
               ? Math.min(...p.platforms.map((pl) => pl.price || p.price))
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
 
   const recentSearches =
     searches.length > 0
-      ? searches.slice(0, 5).map((s, idx) => ({
+      ? searches.slice(0, 25).map((s, idx) => ({
           id: s.id || `srch-${idx}`,
           query: s.query,
           user: s.user || "Storefront Guest",
@@ -245,7 +245,7 @@ export default function AdminDashboard() {
               { name: "Amazon India", status: "Enabled", ping: "84ms", success: "98.2%" },
               { name: "Flipkart", status: "Enabled", ping: "92ms", success: "96.8%" },
               { name: "Myntra Fashion", status: "Enabled", ping: "110ms", success: "94.5%" },
-              { name: "Croma Retail", status: "Enabled", ping: "145ms", success: "92.1%" },
+              { name: "BlinkIt Quick Commerce", status: "Enabled", ping: "78ms", success: "97.4%" },
             ].map((store) => (
               <div
                 key={store.name}

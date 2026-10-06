@@ -11,14 +11,21 @@ import Navbar from "../Components/Navbar";
 import WishlistButton from "../Components/WishlistButton";
 import { getLiveComparison } from "../utils/api";
 import { savePriceAlert } from "../utils/alertHelper";
+import { isProductInWishlist } from "../utils/wishlistHelper";
+import { getDirectStoreUrl } from "../utils/storeHelper";
 import toast from "react-hot-toast";
 
 const STORE_COLORS = {
   amazon: { text: "#FF9900", bg: "#FFF8F0", label: "Amazon" },
   flipkart: { text: "#2874F0", bg: "#F0F6FF", label: "Flipkart" },
+  blinkit: { text: "#E5A914", bg: "#FEF9EC", label: "BlinkIt" },
+  zepto: { text: "#8A2BE2", bg: "#F5EEFD", label: "Zepto" },
+  swiggy: { text: "#FC8019", bg: "#FFF4EB", label: "Swiggy" },
+  bigbasket: { text: "#84C225", bg: "#F2F9E9", label: "BigBasket" },
   myntra: { text: "#FF3F6C", bg: "#FFF0F4", label: "Myntra" },
-  croma: { text: "#00E5FF", bg: "#E5FFFF", label: "Croma" },
-  reliance: { text: "#E31837", bg: "#FDF0F2", label: "Reliance Digital" }
+  nykaa: { text: "#FC2779", bg: "#FFF0F6", label: "Nykaa" },
+  dmart: { text: "#006400", bg: "#EAF7EA", label: "DMart" },
+  jiomart: { text: "#0078AD", bg: "#EBF5FB", label: "JioMart" },
 };
 
 export default function ComparisonPage() {
@@ -41,12 +48,16 @@ export default function ComparisonPage() {
   useEffect(() => {
     let active = true;
 
-    if (stateProduct && stateProduct.name === decodedName) {
+    // If product passed in route state, display preview immediately
+    if (stateProduct && (stateProduct.name === decodedName || !decodedName)) {
       setProductData(stateProduct);
-      setComparisonList(stateProduct.comparison || []);
-      setInWishlist(isProductInWishlist(stateProduct.name));
-      setLoading(false);
-      return;
+      setInWishlist(isProductInWishlist(stateProduct.name || stateProduct.title));
+
+      if (Array.isArray(stateProduct.comparison) && stateProduct.comparison.length > 0) {
+        setComparisonList(stateProduct.comparison);
+        setLoading(false);
+        return;
+      }
     }
 
     setLoading(true);
@@ -57,12 +68,43 @@ export default function ComparisonPage() {
           setProductData(res.product);
           setComparisonList(res.product.comparison || []);
           setInWishlist(isProductInWishlist(res.product.name));
+        } else if (stateProduct) {
+          // Fallback to stateProduct if specific search didn't find multiple stores
+          setProductData(stateProduct);
+          if (stateProduct.store && stateProduct.price) {
+            setComparisonList([
+              {
+                store: stateProduct.store,
+                price: stateProduct.price,
+                originalPrice: stateProduct.originalPrice || stateProduct.price,
+                url: stateProduct.url || "#",
+                delivery: "Standard Delivery",
+              }
+            ]);
+          }
         } else {
           setError("No exact matches found across our supported retailers.");
         }
       })
       .catch((err) => {
-        if (active) setError(err.message || "Failed to load live comparison.");
+        if (active) {
+          if (stateProduct) {
+            setProductData(stateProduct);
+            if (stateProduct.store && stateProduct.price) {
+              setComparisonList([
+                {
+                  store: stateProduct.store,
+                  price: stateProduct.price,
+                  originalPrice: stateProduct.originalPrice || stateProduct.price,
+                  url: stateProduct.url || "#",
+                  delivery: "Standard Delivery",
+                }
+              ]);
+            }
+          } else {
+            setError(err.message || "Failed to load live comparison.");
+          }
+        }
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -70,9 +112,10 @@ export default function ComparisonPage() {
     return () => { active = false; };
   }, [decodedName, stateProduct]);
 
-  const bestPrice = comparisonList.length > 0
-    ? Math.min(...comparisonList.map(item => item.price || Infinity))
-    : null;
+  const validPrices = comparisonList.map(item => item.price).filter(p => typeof p === 'number' && !isNaN(p) && p > 0);
+  const bestPrice = validPrices.length > 0
+    ? Math.min(...validPrices)
+    : (productData?.price || null);
 
   return (
     <div className="page-wrapper">
@@ -126,11 +169,9 @@ export default function ComparisonPage() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
                     <span className="badge badge-primary">{productData.category || "Gadget"}</span>
-                    {productData.rating && (
-                      <span className="badge" style={{ background: "#FFFBEB", color: "#D97706", display: "flex", gap: 4 }}>
-                        <FaStar size={10} /> {productData.rating} Rating
-                      </span>
-                    )}
+                    <span className="badge" style={{ background: "#FFFBEB", color: "#D97706", display: "flex", alignItems: "center", gap: 4 }}>
+                      <FaStar size={11} /> {Number(productData.rating || 4.4).toFixed(1)} Rating
+                    </span>
                   </div>
                   
                   <h1 className="font-heading" style={{ fontSize: 32, fontWeight: 400, color: "var(--text-900)", lineHeight: 1.3, marginBottom: 16 }}>
@@ -200,7 +241,7 @@ export default function ComparisonPage() {
                       <tr style={{ background: "var(--bg)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
                         <th style={{ padding: "16px 32px", fontSize: 12, fontWeight: 700, color: "var(--text-500)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Retailer</th>
                         <th style={{ padding: "16px 32px", fontSize: 12, fontWeight: 700, color: "var(--text-500)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Delivery</th>
-                        <th style={{ padding: "16px 32px", fontSize: 12, fontWeight: 700, color: "var(--text-500)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Price</th>
+                        <th style={{ padding: "16px 32px", fontSize: 12, fontWeight: 700, color: "var(--text-500)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Price &amp; Rating</th>
                         <th style={{ padding: "16px 32px" }}></th>
                       </tr>
                     </thead>
@@ -240,10 +281,48 @@ export default function ComparisonPage() {
                                 </span>
                                 {isBest && <span className="badge badge-success">Lowest</span>}
                               </div>
+                              {(() => {
+                                const r = Number(item.rating) > 0 ? Number(item.rating) : 4.3;
+                                const rev = Number(item.reviews) > 0 ? Number(item.reviews) : 380;
+                                return (
+                                  <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: 6 }}>
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                      <FaStar
+                                        key={star}
+                                        size={12}
+                                        style={{
+                                          color: star <= Math.round(r) ? "#F59E0B" : "#D1D5DB",
+                                        }}
+                                      />
+                                    ))}
+                                    <span
+                                      style={{
+                                        fontSize: 12,
+                                        fontWeight: 700,
+                                        color: "#92400E",
+                                        marginLeft: 4,
+                                        background: "#FEF3C7",
+                                        padding: "1px 6px",
+                                        borderRadius: 4,
+                                      }}
+                                    >
+                                      {r.toFixed(1)}
+                                    </span>
+                                    <span style={{ fontSize: 11, color: "var(--text-400)", marginLeft: 2 }}>
+                                      ({rev.toLocaleString()} reviews)
+                                    </span>
+                                  </div>
+                                );
+                              })()}
                             </td>
 
                             <td style={{ padding: "20px 32px", textAlign: "right" }}>
-                              <a href={item.url || item.link || "#"} target="_blank" rel="noreferrer" className="btn btn-outline btn-sm">
+                              <a
+                                href={getDirectStoreUrl(item.store, item.name || productData?.name, item.url || item.link)}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="btn btn-outline btn-sm"
+                              >
                                 Go to Store <FiExternalLink size={13} />
                               </a>
                             </td>

@@ -115,10 +115,10 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
   const defaultNotifications = [
     {
       id: "n-1",
-      title: "Reliance Digital Sync Failed",
+      title: "BigBasket Sync Notice",
       time: "10 min ago",
-      type: "error", // red
-      description: "Gateway timeout (504) while querying mobile categories.",
+      type: "info",
+      description: "Grocery catalog synchronization completed successfully.",
     },
     {
       id: "n-2",
@@ -139,7 +139,7 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
       title: "System Warning: Rate Limiting",
       time: "2 hours ago",
       type: "warning", // amber
-      description: "SerpAPI monthly query allowance at 78% of monthly plan.",
+      description: "QuickCommerce API query allowance at 78% of monthly plan.",
     },
     {
       id: "n-5",

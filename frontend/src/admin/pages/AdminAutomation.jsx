@@ -504,8 +504,9 @@ export default function AdminAutomation() {
                   <option value="Amazon India">Amazon India</option>
                   <option value="Flipkart">Flipkart</option>
                   <option value="Myntra Fashion">Myntra Fashion</option>
-                  <option value="Croma Electronics">Croma Electronics</option>
-                  <option value="SerpAPI Crawler">SerpAPI Multi-Store Engine</option>
+                  <option value="BlinkIt Quick Commerce">BlinkIt Quick Commerce</option>
+                  <option value="Zepto Quick Commerce">Zepto Quick Commerce</option>
+                  <option value="QuickCommerce Engine">QuickCommerce Unified Engine</option>
                 </select>
               </div>
 

@@ -35,18 +35,18 @@ const DEFAULT_SEARCH_TRENDS = [
 
 const DEFAULT_TOP_DEALS = [
   { product: "Apple iPhone 16 (128GB)", storeA: "Amazon (₹79,900)", storeB: "Flipkart (₹76,999)", difference: "₹2,901", savingsPct: "3.6%" },
-  { product: "Samsung Galaxy S24 Ultra", storeA: "Reliance (₹1,24,999)", storeB: "Amazon (₹1,19,999)", difference: "₹5,000", savingsPct: "4.0%" },
-  { product: "Sony WH-1000XM5", storeA: "Croma (₹29,990)", storeB: "Amazon (₹26,490)", difference: "₹3,500", savingsPct: "11.7%" },
+  { product: "Samsung Galaxy S24 Ultra", storeA: "Amazon (₹1,24,999)", storeB: "Flipkart (₹1,19,999)", difference: "₹5,000", savingsPct: "4.0%" },
+  { product: "Sony WH-1000XM5", storeA: "BlinkIt (₹29,990)", storeB: "Amazon (₹26,490)", difference: "₹3,500", savingsPct: "11.7%" },
   { product: "Nike Air Max 270 Shoes", storeA: "Amazon (₹12,495)", storeB: "Myntra (₹11,495)", difference: "₹1,000", savingsPct: "8.0%" },
-  { product: "Apple MacBook Air M3", storeA: "Flipkart (₹1,14,900)", storeB: "Croma (₹1,09,990)", difference: "₹4,910", savingsPct: "4.3%" },
+  { product: "Apple MacBook Air M3", storeA: "Flipkart (₹1,14,900)", storeB: "Amazon (₹1,09,990)", difference: "₹4,910", savingsPct: "4.3%" },
 ];
 
 const STORE_COMPETITIVENESS = [
   { store: "Amazon India", bestPriceShare: "41.2%", avgDiscount: "14.8%", itemsIndexed: 2840, trustScore: 98 },
   { store: "Flipkart", bestPriceShare: "34.5%", avgDiscount: "16.2%", itemsIndexed: 2610, trustScore: 96 },
-  { store: "Croma Electronics", bestPriceShare: "12.8%", avgDiscount: "11.4%", itemsIndexed: 1420, trustScore: 95 },
+  { store: "BlinkIt", bestPriceShare: "12.8%", avgDiscount: "11.4%", itemsIndexed: 1420, trustScore: 95 },
   { store: "Myntra", bestPriceShare: "8.1%", avgDiscount: "22.5%", itemsIndexed: 980, trustScore: 94 },
-  { store: "Reliance Digital", bestPriceShare: "3.4%", avgDiscount: "9.8%", itemsIndexed: 860, trustScore: 92 },
+  { store: "Zepto", bestPriceShare: "3.4%", avgDiscount: "9.8%", itemsIndexed: 860, trustScore: 92 },
 ];
 
 export default function AdminAnalytics() {
@@ -325,7 +325,7 @@ export default function AdminAnalytics() {
             <div style={{ padding: 18, borderRadius: 12, backgroundColor: "var(--surface-hover, #1a1a1a)", border: "1px solid var(--border, #222222)" }}>
               <div style={{ fontSize: 12, color: "var(--text-500, #888888)", fontWeight: 600 }}>Multi-Store Match Rate</div>
               <div style={{ fontSize: 24, fontWeight: 800, color: "var(--text-900, #f4efe8)", margin: "6px 0" }}>96.8%</div>
-              <div style={{ fontSize: 12, color: "#10b981", fontWeight: 600 }}>Across Amazon, Flipkart, Croma</div>
+              <div style={{ fontSize: 12, color: "#10b981", fontWeight: 600 }}>Across Amazon, Flipkart, BlinkIt</div>
             </div>
             <div style={{ padding: 18, borderRadius: 12, backgroundColor: "var(--surface-hover, #1a1a1a)", border: "1px solid var(--border, #222222)" }}>
               <div style={{ fontSize: 12, color: "var(--text-500, #888888)", fontWeight: 600 }}>Zero-Result Queries</div>

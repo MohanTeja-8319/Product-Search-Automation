@@ -1,10 +1,12 @@
 const storeLogos = {
   Amazon: "/images/stores/amazon.png",
   Flipkart: "/images/stores/flipkart.png",
-  Croma: "/images/stores/croma.png",
+  BlinkIt: "/images/stores/blinkit.png",
+  Zepto: "/images/stores/zepto.png",
+  Swiggy: "/images/stores/swiggy.png",
+  BigBasket: "/images/stores/bigbasket.png",
   Myntra: "/images/stores/myntra.jpeg",
-  Ajio: "/images/stores/ajio.jpeg",
-  "Reliance Digital": "/images/stores/reliance.png",
+  Nykaa: "/images/stores/nykaa.png",
 };
 
 export default storeLogos;

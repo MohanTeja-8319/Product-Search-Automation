@@ -1,47 +1,83 @@
 const dns = require("dns");
-try {
-  dns.setServers(["8.8.8.8", "1.1.1.1"]);
-} catch (e) {
-  // Ignore DNS configuration errors
-}
-
 const mongoose = require("mongoose");
 
+let isConnecting = false;
+let retryTimer = null;
+
+// Handle connection events
+mongoose.connection.on("connected", () => {
+  console.log(`MongoDB connected: ${mongoose.connection.host}`);
+});
+
+mongoose.connection.on("disconnected", () => {
+  console.warn("MongoDB connection lost. Retrying in 5 seconds...");
+  scheduleReconnect();
+});
+
+mongoose.connection.on("error", (err) => {
+  console.error("MongoDB connection error:", err.message);
+});
+
+function scheduleReconnect() {
+  if (retryTimer || mongoose.connection.readyState === 1 || mongoose.connection.readyState === 2) return;
+  retryTimer = setTimeout(async () => {
+    retryTimer = null;
+    await connectDB();
+  }, 5000);
+}
+
 async function connectDB() {
+  if (mongoose.connection.readyState === 1) return true;
+  if (isConnecting) return false;
+
+  isConnecting = true;
   const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/product_search_automation";
   const dbName = process.env.DB_NAME || "product_search_automation";
+  const connectOptions = {
+    dbName,
+    serverSelectionTimeoutMS: 5000,
+    family: 4,
+  };
 
-  // Try the configured primary URI
-  try {
-    console.log("Connecting to MongoDB...");
-    await mongoose.connect(uri, {
-      dbName,
-      serverSelectionTimeoutMS: 5000,
-    });
-    console.log(`MongoDB connected: ${mongoose.connection.host}`);
-    return true;
-  } catch (err) {
-    console.warn(`Primary MongoDB connection failed: ${err.message}`);
-  }
-
-  // If primary fails and was not local, try local MongoDB fallback
-  const localUri = "mongodb://127.0.0.1:27017/product_search_automation";
-  if (uri !== localUri) {
+  async function tryConnect(targetUri, label) {
     try {
-      console.log("Attempting fallback connection to local MongoDB (127.0.0.1:27017)...");
-      await mongoose.connect(localUri, {
-        dbName,
-        serverSelectionTimeoutMS: 3000,
-      });
-      console.log(`MongoDB connected via local fallback: ${mongoose.connection.host}`);
+      if (mongoose.connection.readyState !== 0) {
+        await mongoose.disconnect().catch(() => {});
+      }
+      console.log(label);
+      await mongoose.connect(targetUri, connectOptions);
       return true;
-    } catch (localErr) {
-      console.error(`Local MongoDB fallback connection failed: ${localErr.message}`);
+    } catch (err) {
+      console.warn(`${label} failed: ${err.message}`);
+      return false;
     }
   }
 
-  console.error("Warning: Could not connect to any MongoDB instance. Ensure MongoDB is running or Atlas IP is whitelisted.");
-  return false;
+  try {
+    if (await tryConnect(uri, "Connecting to MongoDB...")) {
+      return true;
+    }
+
+    if (uri.startsWith("mongodb+srv://")) {
+      dns.setServers(["8.8.8.8", "1.1.1.1"]);
+      if (await tryConnect(uri, "Retrying MongoDB connection with public DNS servers (8.8.8.8)...")) {
+        return true;
+      }
+    }
+
+    const localUri = "mongodb://127.0.0.1:27017/product_search_automation";
+    if (uri !== localUri) {
+      if (await tryConnect(localUri, "Attempting fallback connection to local MongoDB (127.0.0.1:27017)...")) {
+        return true;
+      }
+    }
+
+    console.error("Warning: Could not connect to any MongoDB instance. Retrying in 5 seconds...");
+    scheduleReconnect();
+    return false;
+  } finally {
+    isConnecting = false;
+  }
 }
 
 module.exports = connectDB;

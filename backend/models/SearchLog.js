@@ -27,7 +27,7 @@ const searchLogSchema = new mongoose.Schema(
     },
     platformList: {
       type: String,
-      default: "Amazon, Flipkart, Myntra, Croma",
+      default: "Amazon, Flipkart, BlinkIt, Zepto, Swiggy, BigBasket, Myntra, Nykaa",
     },
     productsFound: {
       type: Number,

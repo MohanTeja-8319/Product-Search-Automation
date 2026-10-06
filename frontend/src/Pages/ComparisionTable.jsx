@@ -2,15 +2,19 @@ import React from "react";
 import { FiExternalLink } from "react-icons/fi";
 import { FaStar, FaTrophy } from "react-icons/fa";
 import storeLogos from "../data/logos";
+import { getDirectStoreUrl } from "../utils/storeHelper";
 
 const STORE_STYLES = {
  Amazon: "bg-[#131921] text-amber-400 font-bold",
  Flipkart: "bg-[#2874f0] text-yellow-300 font-extrabold",
- Croma: "bg-[#00838f] text-white font-bold",
+ BlinkIt: "bg-[#f8cb46] text-slate-900 font-bold",
+ Zepto: "bg-[#8a2be2] text-white font-bold",
+ Swiggy: "bg-[#fc8019] text-white font-bold",
+ BigBasket: "bg-[#84c225] text-white font-bold",
  Myntra: "bg-gradient-to-r from-[#ff3f6c] to-[#ff527b] text-white font-bold",
- Ajio: "bg-[#2c4152] text-white font-bold",
- "Apple Store": "bg-black text-white font-semibold",
- "Reliance Digital": "bg-[#e42529] text-white font-bold",
+ Nykaa: "bg-[#fc2779] text-white font-bold",
+ DMart: "bg-[#006400] text-white font-bold",
+ JioMart: "bg-[#0078ad] text-white font-bold",
 };
 
 const ComparisonTable = ({ comparison = [], lowestPrice }) => {
@@ -31,13 +35,13 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
 
  {}
  <div className="md:hidden divide-y divide-slate-100">
- {comparison.map((store) => {
+ {comparison.map((store, idx) => {
  const isBest = store.price === lowestPrice;
  const badgeStyle = STORE_STYLES[store.store] || "bg-indigo-600 text-white font-bold";
 
  return (
  <div
- key={store.id || store.store}
+ key={`${store.id || store.store}-${idx}`}
  className={`p-4 transition ${isBest ? "bg-emerald-50/50 " : "hover:bg-slate-50/60 :bg-slate-950/60 "}`}
  >
  <div className="flex items-center justify-between gap-3 mb-3">
@@ -81,7 +85,7 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
  <span className="text-slate-400 text-[10px] uppercase font-bold block">Seller Rating</span>
  <div className="inline-flex items-center gap-1 text-slate-800 font-bold mt-0.5">
  <FaStar className="text-amber-400 text-xs" />
- <span>{store.rating}</span>
+ <span>{store.rating ? Number(store.rating).toFixed(1) : "4.3"}</span>
  </div>
  </div>
 
@@ -102,7 +106,7 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
  </div>
 
  <a
- href={store.url || "#"}
+ href={getDirectStoreUrl(store.store, store.name, store.url)}
  target="_blank"
  rel="noreferrer"
  className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-[10px] text-xs font-bold transition shadow-xs ${
@@ -133,13 +137,13 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
  </tr>
  </thead>
  <tbody className="divide-y divide-slate-100 text-xs font-semibold">
- {comparison.map((store) => {
+ {comparison.map((store, idx) => {
  const isBest = store.price === lowestPrice;
  const badgeStyle = STORE_STYLES[store.store] || "bg-indigo-600 text-white font-bold";
 
  return (
  <tr
- key={store.id || store.store}
+ key={`${store.id || store.store}-${idx}`}
  className={`hover:bg-slate-50/70 :bg-slate-950/70 transition duration-150 ${
  isBest ? "bg-emerald-50/40 " : ""
  }`}
@@ -181,7 +185,7 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
  <td className="px-4 py-4 text-center">
  <div className="inline-flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-[10px] border border-amber-100 text-slate-800 font-bold">
  <FaStar className="text-amber-400 text-xs" />
- <span>{store.rating}</span>
+ <span>{store.rating ? Number(store.rating).toFixed(1) : "4.3"}</span>
  </div>
  </td>
 
@@ -200,7 +204,7 @@ const ComparisonTable = ({ comparison = [], lowestPrice }) => {
 
  <td className="px-6 py-4 text-right">
  <a
- href={store.url || "#"}
+ href={getDirectStoreUrl(store.store, store.name, store.url)}
  target="_blank"
  rel="noreferrer"
  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-xs font-bold transition shadow-xs cursor-pointer ${

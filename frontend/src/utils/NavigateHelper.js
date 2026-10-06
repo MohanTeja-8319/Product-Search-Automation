@@ -1,17 +1,8 @@
-import comparisonProducts from "../data/comparisionProducts";
-
+/**
+ * Returns the route for a product.
+ * Always uses the /comparison/:name route which uses live API data.
+ */
 export const getProductRoute = (product) => {
-
-    const hasComparison =
-        comparisonProducts[product.name] &&
-        comparisonProducts[product.name].length > 0;
-
-    if (hasComparison) {
-
-        return `/comparison/${encodeURIComponent(product.name)}`;
-
-    }
-
-    return `/product/${product.id}`;
-
+  const name = product.name || product.title || "";
+  return `/comparison/${encodeURIComponent(name)}`;
 };

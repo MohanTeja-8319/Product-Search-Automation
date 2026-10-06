@@ -3,7 +3,7 @@ import { searchLiveProducts } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import {
   FiSearch, FiSmartphone, FiMonitor, FiHeadphones, FiWatch,
-  FiCamera, FiTv, FiGrid, FiArrowRight
+  FiCamera, FiTv, FiGrid, FiArrowRight, FiShoppingBag, FiPackage, FiSmile
 } from "react-icons/fi";
 import { FaGamepad } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
@@ -14,25 +14,43 @@ const CATEGORIES = [
     name: "Smartphones",
     searchKey: "Smartphones",
     icon: <FiSmartphone />,
-    desc: "Compare flagships, 5G smartphones & budget champions."
+    desc: "Compare flagships, 5G smartphones & budget champions across Amazon, Flipkart & quick stores."
   },
   {
     name: "Laptops",
     searchKey: "Laptops",
     icon: <FiMonitor />,
-    desc: "MacBooks, ultrabooks, gaming laptops & everyday machines."
+    desc: "MacBooks, ultrabooks, gaming laptops & everyday work machines."
   },
   {
     name: "Headphones",
     searchKey: "Headphones",
     icon: <FiHeadphones />,
-    desc: "True wireless earbuds, over-ear ANC, and audiophile gear."
+    desc: "True wireless earbuds, over-ear ANC, and audiophile gear with live store deals."
+  },
+  {
+    name: "Groceries",
+    searchKey: "Groceries",
+    icon: <FiPackage />,
+    desc: "Daily essentials, cooking oils, snacks, milk & tea from BlinkIt, Zepto & BigBasket."
+  },
+  {
+    name: "Fashion & Shoes",
+    searchKey: "Fashion",
+    icon: <FiShoppingBag />,
+    desc: "Trending sneakers, sportswear, casual clothing & apparel from Myntra & Flipkart."
+  },
+  {
+    name: "Beauty & Personal Care",
+    searchKey: "Beauty",
+    icon: <FiSmile />,
+    desc: "Skincare serums, cosmetics, sunscreens & haircare from Nykaa, BlinkIt & Amazon."
   },
   {
     name: "Smartwatches",
     searchKey: "Smartwatches",
     icon: <FiWatch />,
-    desc: "Fitness trackers, Apple Watches & Wear OS devices."
+    desc: "Fitness trackers, Apple Watches & Wear OS devices at lowest prices."
   },
   {
     name: "Televisions",
@@ -44,7 +62,7 @@ const CATEGORIES = [
     name: "Gaming",
     searchKey: "Gaming Consoles",
     icon: <FaGamepad />,
-    desc: "PlayStation, Xbox, Nintendo Switch and accessories."
+    desc: "PlayStation, Xbox, Nintendo Switch and gaming accessories."
   }
 ];
 

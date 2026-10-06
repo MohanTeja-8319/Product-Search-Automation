@@ -1,22 +1,12 @@
 import React from "react";
-import dummyProducts from "../data/products";
 
 const Specifications = ({ product }) => {
  if (!product) return null;
 
- 
- const matched = dummyProducts.find(
- (p) =>
- p.name.toLowerCase() === (product.name || "").toLowerCase() ||
- (product.name || "").toLowerCase().includes(p.name.toLowerCase())
- );
-
- const brand = product.brand || (matched ? matched.brand : "Apple");
- const category = product.category || (matched ? matched.category : "Smartphones");
- const originalPrice =
- product.originalPrice || (matched ? matched.originalPrice : Math.round(product.price * 1.12));
- const reviews =
- product.reviews || (matched ? matched.reviews : 4230);
+ const brand = product.brand || "Brand";
+ const category = product.category || "General";
+ const originalPrice = product.originalPrice || Math.round(product.price * 1.12);
+ const reviews = product.reviews || 420;
 
  const isPhone = category.toLowerCase().includes("phone") || (product.name || "").toLowerCase().includes("iphone") || (product.name || "").toLowerCase().includes("galaxy");
  const isLaptop = category.toLowerCase().includes("laptop") || (product.name || "").toLowerCase().includes("macbook") || (product.name || "").toLowerCase().includes("dell");

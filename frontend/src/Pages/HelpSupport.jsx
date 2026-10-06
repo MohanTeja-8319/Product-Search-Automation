@@ -44,8 +44,8 @@ const KNOWLEDGE_BASE = [
     category: "Deals & Stores",
     question: "Which stores are currently supported for live price comparison?",
     answer:
-      "Comparely currently supports live product data from Amazon, Flipkart, Myntra, and partner merchant networks. We are actively expanding to integrate additional platforms including Reliance Digital, Croma, and quick-commerce providers.",
-    tags: ["stores", "amazon", "flipkart", "myntra", "retailers", "platforms"],
+      "Comparely currently supports live product data from Amazon, Flipkart, BlinkIt, Zepto, Swiggy, BigBasket, Myntra, and Nykaa via unified QuickCommerce APIs.",
+    tags: ["stores", "amazon", "flipkart", "blinkit", "zepto", "swiggy", "bigbasket", "myntra", "retailers", "platforms"],
   },
   {
     id: 5,

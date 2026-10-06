@@ -13,6 +13,7 @@ import {
   TrendingDown,
 } from "lucide-react";
 import { useAdminData } from "../context/AdminDataContext";
+import { API_BASE_URL } from "../../utils/api";
 import StatusBadge from "../components/StatusBadge";
 import EmptyState from "../components/EmptyState";
 
@@ -26,7 +27,7 @@ export default function AdminSearchDetails() {
   React.useEffect(() => {
     let mounted = true;
     setLoading(true);
-    fetch(`http://localhost:5000/api/admin/searches/${id}`)
+    fetch(`${API_BASE_URL}/admin/searches/${id}`)
       .then((res) => (res.ok ? res.json() : null))
       .then((item) => {
         if (mounted && item) setLiveSearch(item);

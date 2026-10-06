@@ -30,22 +30,6 @@ app.use(compression());
 
 app.use(express.json());
 
-// Guard database routes if DB connection is unavailable
-app.use((req, res, next) => {
-  const requiresDb =
-    req.path.startsWith("/api/auth") ||
-    req.path.startsWith("/api/profile") ||
-    req.path.startsWith("/api/alerts");
-
-  if (requiresDb && mongoose.connection.readyState !== 1) {
-    return res.status(503).json({
-      message:
-        "Database is currently unavailable. Please ensure MongoDB is running or Atlas IP is whitelisted.",
-    });
-  }
-  next();
-});
-
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/profile", profileRoutes);
@@ -56,7 +40,10 @@ app.use("/api/admin", require("./routes/adminRoutes"));
 
 
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok" });
+  res.json({
+    status: "ok",
+    db: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+  });
 });
 
 
@@ -101,33 +88,83 @@ async function runAlertMonitor(label) {
 
 
 
-const server = app.listen(PORT, async () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+let alertMonitorStarted = false;
 
-  const connected = await connectDB();
-  if (connected) {
-    try {
-      await sendEmail.verifyEmailTransporter();
-    } catch (e) {
+function setupAlertMonitoring() {
+  if (alertMonitorStarted) return;
+  alertMonitorStarted = true;
+
+  try {
+    sendEmail.verifyEmailTransporter().catch((e) => {
       console.warn("Email transporter verification:", e.message);
-    }
-
-    console.log(
-      `Price alert monitor interval: ${
-        ALERT_CHECK_INTERVAL_MS / 60000
-      } minutes`
-    );
-
-    setTimeout(() => {
-      runAlertMonitor("Initial price-alert check...");
-    }, 5000);
-
-    setInterval(() => {
-      runAlertMonitor("Checking price alerts...");
-    }, ALERT_CHECK_INTERVAL_MS);
+    });
+  } catch (e) {
+    console.warn("Email transporter verification:", e.message);
   }
+
+  console.log(
+    `Price alert monitor interval: ${
+      ALERT_CHECK_INTERVAL_MS / 60000
+    } minutes`
+  );
+
+  setTimeout(() => {
+    runAlertMonitor("Initial price-alert check...");
+  }, 5000);
+
+  setInterval(() => {
+    runAlertMonitor("Checking price alerts...");
+  }, ALERT_CHECK_INTERVAL_MS);
+}
+
+mongoose.connection.on("connected", () => {
+  setupAlertMonitoring();
 });
 
-server.on("error", (error) => {
-  console.error("Server listener error:", error.message);
-});
+function listenOnPort(port) {
+  return new Promise((resolve, reject) => {
+    const server = app.listen(port, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${port}`);
+      resolve(server);
+    });
+
+    server.on("error", (error) => {
+      reject(error);
+    });
+  });
+}
+
+async function startServer() {
+  const startPort = Number(PORT) || 5000;
+  let server = null;
+  let boundPort = startPort;
+
+  for (let offset = 0; offset < 10; offset += 1) {
+    boundPort = startPort + offset;
+    try {
+      server = await listenOnPort(boundPort);
+      break;
+    } catch (error) {
+      if (error.code === "EADDRINUSE") {
+        console.warn(`Port ${boundPort} is in use, trying ${boundPort + 1}...`);
+        continue;
+      }
+      console.error("Server listener error:", error.message);
+      return;
+    }
+  }
+
+  if (!server) {
+    console.error("Could not bind any port in range", startPort, "-", startPort + 9);
+    return;
+  }
+
+  // Connect to DB in background so HTTP server is immediately responsive
+  connectDB().then((connected) => {
+    if (connected && mongoose.connection.readyState === 1) {
+      setupAlertMonitoring();
+    }
+  }).catch(() => {});
+}
+
+startServer();

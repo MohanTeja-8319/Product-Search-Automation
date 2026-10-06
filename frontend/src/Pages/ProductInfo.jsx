@@ -3,13 +3,16 @@ import { FiTrendingDown, FiShield, FiTruck, FiAward, FiCheckCircle } from "react
 import { FaStar, FaStore, FaTrophy } from "react-icons/fa";
 
 const STORE_STYLES = {
- Amazon: "bg-[#131921] text-amber-400 font-bold",
- Flipkart: "bg-[#2874f0] text-yellow-300 font-extrabold",
- Croma: "bg-[#00838f] text-white font-bold",
- Myntra: "bg-gradient-to-r from-[#ff3f6c] to-[#ff527b] text-white font-bold",
- Ajio: "bg-[#2c4152] text-white font-bold",
- "Apple Store": "bg-black text-white font-semibold",
- "Reliance Digital": "bg-[#e42529] text-white font-bold",
+  Amazon: "bg-[#131921] text-amber-400 font-bold",
+  Flipkart: "bg-[#2874f0] text-yellow-300 font-extrabold",
+  BlinkIt: "bg-[#f8cb46] text-black font-extrabold",
+  Zepto: "bg-[#7c3aed] text-white font-bold",
+  Swiggy: "bg-[#fc8019] text-white font-bold",
+  BigBasket: "bg-[#84c225] text-white font-bold",
+  Myntra: "bg-gradient-to-r from-[#ff3f6c] to-[#ff527b] text-white font-bold",
+  Nykaa: "bg-[#fc2779] text-white font-bold",
+  DMart: "bg-[#008060] text-white font-bold",
+  JioMart: "bg-[#0078ad] text-white font-bold",
 };
 
 const ProductInfo = ({

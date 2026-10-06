@@ -36,7 +36,7 @@ export default function Comparison() {
             </h1>
             
             <p style={{ fontSize: 16, color: "var(--text-500)", lineHeight: 1.6, marginBottom: 40 }}>
-              Search for any product to instantly see its price across Amazon, Flipkart, Myntra, Croma, and Reliance Digital.
+              Search for any product to instantly see its price across Amazon, Flipkart, BlinkIt, Zepto, Swiggy, BigBasket, and Myntra.
             </p>
 
             <form onSubmit={handleSearch} style={{ display: "flex", background: "white", borderRadius: "var(--radius-full)", padding: "8px 8px 8px 24px", boxShadow: "var(--shadow-md)", border: "1px solid var(--border)" }}>

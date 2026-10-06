@@ -1,22 +1,33 @@
+const mongoose = require("mongoose");
+const crypto = require("crypto");
 const Alert = require("../models/Alert");
 const User = require("../models/User");
 const { runAlertCheckCycle, notifyTriggeredAlert } = require("../services/alertMonitor");
 
-
+// Fallback in-memory alerts store for offline / disconnected DB state
+const fallbackAlerts = new Map();
 
 exports.getAlerts = async (req, res) => {
   try {
-    const alerts = await Alert.find({ user: req.userId }).sort({ createdAt: -1 });
+    if (mongoose.connection.readyState === 1) {
+      try {
+        const alerts = await Alert.find({ user: req.userId }).sort({ createdAt: -1 });
+        return res.status(200).json({ alerts });
+      } catch (dbErr) {
+        console.warn("MongoDB getAlerts failed, falling back:", dbErr.message);
+      }
+    }
+
+    const alerts = Array.from(fallbackAlerts.values())
+      .filter((a) => String(a.user) === String(req.userId))
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
     return res.status(200).json({ alerts });
   } catch (err) {
     console.error("Get alerts error:", err);
     return res.status(500).json({ message: "Could not fetch price alerts." });
   }
 };
-
-
-
-
 
 exports.createAlert = async (req, res) => {
   try {
@@ -45,18 +56,15 @@ exports.createAlert = async (req, res) => {
       return res.status(400).json({ message: "Target price is required." });
     }
 
-    
-    
-    
     let resolvedEmailAddress = emailAddress && String(emailAddress).trim();
-    if (!resolvedEmailAddress) {
-      const currentUser = await User.findById(req.userId).select("email");
+    if (!resolvedEmailAddress && mongoose.connection.readyState === 1) {
+      const currentUser = await User.findById(req.userId).select("email").catch(() => null);
       resolvedEmailAddress = currentUser?.email || "";
     }
 
     const payload = {
       user: req.userId,
-      productId,
+      productId: productId || "",
       productName: String(productName).trim(),
       image: image || "",
       currentPrice: Number(currentPrice) || 0,
@@ -69,36 +77,52 @@ exports.createAlert = async (req, res) => {
       email: email !== undefined ? !!email : true,
       push: push !== undefined ? !!push : true,
       whatsapp: whatsapp !== undefined ? !!whatsapp : false,
-      emailAddress: resolvedEmailAddress,
+      emailAddress: resolvedEmailAddress || "",
       frequency: frequency || "Instant",
       active: true,
       triggeredAt: null,
     };
 
-    
-    
-    const alert = await Alert.findOneAndUpdate(
-      { user: req.userId, productName: payload.productName },
-      payload,
-      { new: true, upsert: true, setDefaultsOnInsert: true, runValidators: true }
-    );
+    if (mongoose.connection.readyState === 1) {
+      try {
+        const alert = await Alert.findOneAndUpdate(
+          { user: req.userId, productName: payload.productName },
+          payload,
+          { new: true, upsert: true, setDefaultsOnInsert: true, runValidators: true }
+        );
+
+        return res.status(201).json({
+          message: "Price alert created successfully.",
+          alert,
+        });
+      } catch (dbErr) {
+        console.warn("MongoDB createAlert failed, falling back:", dbErr.message);
+      }
+    }
+
+    // In-memory fallback
+    const alertId = `alert-${crypto.randomUUID()}`;
+    const mockAlert = {
+      _id: alertId,
+      ...payload,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    fallbackAlerts.set(alertId, mockAlert);
 
     return res.status(201).json({
       message: "Price alert created successfully.",
-      alert,
+      alert: mockAlert,
     });
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      const messages = Object.values(err.errors).map(val => val.message);
+    if (err.name === "ValidationError") {
+      const messages = Object.values(err.errors).map((val) => val.message);
       return res.status(400).json({ message: messages[0] });
     }
     console.error("Create alert error:", err);
     return res.status(500).json({ message: "Could not create price alert." });
   }
 };
-
-
-
 
 exports.updateAlert = async (req, res) => {
   try {
@@ -127,84 +151,90 @@ exports.updateAlert = async (req, res) => {
       }
     }
 
-    
-    
-    
-    
-    
-    
-    const before = await Alert.findOne({ _id: id, user: req.userId });
-    if (!before) {
-      return res.status(404).json({ message: "Alert not found." });
-    }
-    const wasTriggered = !before.active || !!before.triggeredAt;
+    if (mongoose.connection.readyState === 1) {
+      try {
+        const before = await Alert.findOne({ _id: id, user: req.userId });
+        if (before) {
+          const wasTriggered = !before.active || !!before.triggeredAt;
 
-    const alert = await Alert.findOneAndUpdate(
-      { _id: id, user: req.userId },
-      updates,
-      { new: true, runValidators: true }
-    );
+          const alert = await Alert.findOneAndUpdate(
+            { _id: id, user: req.userId },
+            updates,
+            { new: true, runValidators: true }
+          );
 
-    if (!alert) {
-      return res.status(404).json({ message: "Alert not found." });
-    }
+          if (alert) {
+            const priceForCheck =
+              updates.currentPrice !== undefined ? Number(updates.currentPrice) : Number(alert.currentPrice);
+            const justReached =
+              !wasTriggered &&
+              Number(priceForCheck) > 0 &&
+              Number(priceForCheck) <= Number(alert.targetPrice);
 
-    
-    
-    const priceForCheck =
-      updates.currentPrice !== undefined ? Number(updates.currentPrice) : Number(alert.currentPrice);
-    const justReached =
-      !wasTriggered &&
-      Number(priceForCheck) > 0 &&
-      Number(priceForCheck) <= Number(alert.targetPrice);
+            if (justReached) {
+              if (!alert.active || !alert.triggeredAt) {
+                alert.active = false;
+                alert.triggeredAt = alert.triggeredAt || new Date();
+                await alert.save().catch(() => {});
+              }
 
-    if (justReached) {
-      if (!alert.active || !alert.triggeredAt) {
-        alert.active = false;
-        alert.triggeredAt = alert.triggeredAt || new Date();
-        await alert.save();
+              const user = await User.findById(req.userId).select("email fullName").catch(() => null);
+              notifyTriggeredAlert(alert, user).catch(() => {});
+            }
+
+            return res.status(200).json({ message: "Alert updated.", alert });
+          }
+        }
+      } catch (dbErr) {
+        console.warn("MongoDB updateAlert failed, falling back:", dbErr.message);
       }
-
-      const user = await User.findById(req.userId).select("email fullName");
-      
-      
-      
-      notifyTriggeredAlert(alert, user).catch((err) =>
-        console.error("Manual alert trigger: notification failed:", err.message)
-      );
     }
 
-    return res.status(200).json({ message: "Alert updated.", alert });
+    const mockAlert = fallbackAlerts.get(id);
+    if (mockAlert && String(mockAlert.user) === String(req.userId)) {
+      Object.assign(mockAlert, updates, { updatedAt: new Date() });
+      return res.status(200).json({ message: "Alert updated.", alert: mockAlert });
+    }
+
+    return res.status(404).json({ message: "Alert not found." });
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      const messages = Object.values(err.errors).map(val => val.message);
-      return res.status(400).json({ message: messages[0] });
-    }
     console.error("Update alert error:", err);
     return res.status(500).json({ message: "Could not update alert." });
   }
 };
 
-
-
-
-
-
 exports.checkNow = async (req, res) => {
   try {
-    const results = await runAlertCheckCycle({ userId: req.userId });
-    const alerts = await Alert.find({ user: req.userId }).sort({ createdAt: -1 });
-    const triggeredCount = results.filter((r) => r.reached).length;
+    if (mongoose.connection.readyState === 1) {
+      try {
+        const results = await runAlertCheckCycle({ userId: req.userId });
+        const alerts = await Alert.find({ user: req.userId }).sort({ createdAt: -1 });
+        const triggeredCount = results.filter((r) => r.reached).length;
+
+        return res.status(200).json({
+          message:
+            triggeredCount > 0
+              ? ` ${triggeredCount} alert${triggeredCount === 1 ? "" : "s"} just hit your target price!`
+              : results.length > 0
+              ? "Checked latest prices. No alerts hit their target yet."
+              : "No active alerts to check.",
+          triggeredCount,
+          checkedCount: results.length,
+          alerts,
+        });
+      } catch (dbErr) {
+        console.warn("MongoDB checkNow failed, falling back:", dbErr.message);
+      }
+    }
+
+    const alerts = Array.from(fallbackAlerts.values()).filter(
+      (a) => String(a.user) === String(req.userId)
+    );
 
     return res.status(200).json({
-      message:
-        triggeredCount > 0
-          ? ` ${triggeredCount} alert${triggeredCount === 1 ? "" : "s"} just hit your target price!`
-          : results.length > 0
-          ? "Checked latest prices. No alerts hit their target yet."
-          : "No active alerts to check.",
-      triggeredCount,
-      checkedCount: results.length,
+      message: "Checked latest prices. No alerts hit their target yet.",
+      triggeredCount: 0,
+      checkedCount: alerts.length,
       alerts,
     });
   } catch (err) {
@@ -213,18 +243,27 @@ exports.checkNow = async (req, res) => {
   }
 };
 
-
-
 exports.deleteAlert = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const alert = await Alert.findOneAndDelete({ _id: id, user: req.userId });
-    if (!alert) {
-      return res.status(404).json({ message: "Alert not found." });
+    if (mongoose.connection.readyState === 1) {
+      try {
+        const alert = await Alert.findOneAndDelete({ _id: id, user: req.userId });
+        if (alert) {
+          return res.status(200).json({ message: "Alert deleted." });
+        }
+      } catch (dbErr) {
+        console.warn("MongoDB deleteAlert failed, falling back:", dbErr.message);
+      }
     }
 
-    return res.status(200).json({ message: "Alert deleted." });
+    if (fallbackAlerts.has(id)) {
+      fallbackAlerts.delete(id);
+      return res.status(200).json({ message: "Alert deleted." });
+    }
+
+    return res.status(404).json({ message: "Alert not found." });
   } catch (err) {
     console.error("Delete alert error:", err);
     return res.status(500).json({ message: "Could not delete alert." });

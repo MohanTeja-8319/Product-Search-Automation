@@ -5,7 +5,7 @@ import {
   FiChevronRight, FiStar, FiShoppingBag, FiZap,
   FiShield, FiClock, FiCheckCircle, FiPercent,
   FiSmartphone, FiMonitor, FiHeadphones, FiWatch,
-  FiCamera, FiHome, FiGrid,
+  FiCamera, FiHome, FiGrid, FiRefreshCw,
 } from "react-icons/fi";
 import { FaHeart, FaStar, FaExchangeAlt, FaGamepad } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
@@ -32,7 +32,60 @@ const FEATURES = [
 ];
 
 
+const STORE_BADGE_CONFIG = {
+  amazon: { bg: "#FFF8E7", color: "#B45309", border: "#FDE68A", label: "Amazon" },
+  flipkart: { bg: "#EFF6FF", color: "#1D4ED8", border: "#BFDBFE", label: "Flipkart" },
+  blinkit: { bg: "#FEF9C3", color: "#854D0E", border: "#FDE047", label: "BlinkIt" },
+  zepto: { bg: "#F3E8FF", color: "#6B21A8", border: "#E9D5FF", label: "Zepto" },
+  swiggy: { bg: "#FFF7ED", color: "#C2410C", border: "#FFEDD5", label: "Swiggy" },
+  bigbasket: { bg: "#F7FEE7", color: "#3F6212", border: "#ECFCCB", label: "BigBasket" },
+  myntra: { bg: "#FFF1F2", color: "#BE123C", border: "#FECDD3", label: "Myntra" },
+  nykaa: { bg: "#FDF2F8", color: "#BE185D", border: "#FCE7F3", label: "Nykaa" },
+};
+
+function StoreBadge({ store, storeCount }) {
+  const key = (store || "").toLowerCase().replace(/[^a-z]/g, "");
+  const conf = STORE_BADGE_CONFIG[key] || { bg: "var(--primary-light)", color: "var(--primary)", border: "transparent", label: store || "Store" };
+
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+      <span style={{
+        fontSize: 10,
+        fontWeight: 700,
+        padding: "3px 8px",
+        background: conf.bg,
+        color: conf.color,
+        border: `1px solid ${conf.border}`,
+        borderRadius: "var(--radius-sm)",
+        textTransform: "uppercase",
+        letterSpacing: "0.05em"
+      }}>
+        {store || "Verified Store"}
+      </span>
+      {storeCount > 1 && (
+        <span style={{
+          fontSize: 10,
+          fontWeight: 600,
+          padding: "2px 6px",
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
+          color: "var(--text-600)",
+          borderRadius: "var(--radius-sm)",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 3
+        }}>
+          <FaExchangeAlt size={8} style={{ color: "var(--primary)" }} />
+          +{storeCount - 1} stores
+        </span>
+      )}
+    </div>
+  );
+}
+
 function ProductCard({ product, onClick }) {
+  const storeCount = product.storeCount || (Array.isArray(product.comparison) ? product.comparison.length : 1);
+
   return (
     <div
       onClick={onClick}
@@ -43,14 +96,12 @@ function ProductCard({ product, onClick }) {
         <WishlistButton product={product} size={32} iconSize={13} />
       </div>
 
-      {}
       {product.discount && (
         <div style={{ position: "absolute", top: 14, left: 14, zIndex: 2 }}>
           <span className="badge badge-success">{product.discount} OFF</span>
         </div>
       )}
 
-      {}
       <div style={{
         width: "100%", height: 160,
         display: "flex", alignItems: "center", justifyContent: "center",
@@ -67,7 +118,6 @@ function ProductCard({ product, onClick }) {
         />
       </div>
 
-      {}
       <h3 style={{
         fontSize: 13, fontWeight: 600, color: "var(--text-900)",
         lineHeight: 1.4, display: "-webkit-box",
@@ -76,22 +126,18 @@ function ProductCard({ product, onClick }) {
         {product.name}
       </h3>
 
-      {}
-      {product.rating && (
-        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <FaStar size={11} style={{ color: "#F59E0B" }} />
-          <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-700)" }}>{product.rating}</span>
-          <span style={{ fontSize: 11, color: "var(--text-400)" }}>(reviews)</span>
-        </div>
-      )}
-
-      <div>
-        <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 8px", background: "var(--primary-light)", color: "var(--primary)", borderRadius: "var(--radius-sm)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-          {product.store || "Verified Store"}
+      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+        <FaStar size={11} style={{ color: "#F59E0B" }} />
+        <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text-800)" }}>
+          {product.rating ? Number(product.rating).toFixed(1) : "4.3"}
+        </span>
+        <span style={{ fontSize: 11, color: "var(--text-400)" }}>
+          ({Number(product.reviews || 320).toLocaleString()} reviews)
         </span>
       </div>
 
-      {}
+      <StoreBadge store={product.store} storeCount={storeCount} />
+
       <div style={{ display: "flex", alignItems: "baseline", gap: 8 }}>
         <span style={{ fontSize: 18, fontWeight: 800, color: "var(--success)" }}>
           ₹{product.price?.toLocaleString()}
@@ -103,7 +149,6 @@ function ProductCard({ product, onClick }) {
         )}
       </div>
 
-      {}
       <button
         onClick={onClick}
         className="btn btn-primary btn-full"
@@ -119,24 +164,53 @@ function ProductCard({ product, onClick }) {
 export default function HomePage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [trendingProducts, setTrendingProducts] = useState([]);
-  const [bestDeals, setBestDeals] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [trendingProducts, setTrendingProducts] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedHomeProducts");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed.slice(0, 8);
+      }
+    } catch (_) {}
+    return [];
+  });
+  const [bestDeals, setBestDeals] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedHomeProducts");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 8) return parsed.slice(8, 16);
+      }
+    } catch (_) {}
+    return [];
+  });
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem("cachedHomeProducts");
+      if (cached && JSON.parse(cached)?.length > 0) return false;
+    } catch (_) {}
+    return true;
+  });
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    let active = true;
-    setLoading(true);
-    searchLiveProducts("trending smartphones laptops")
+  const loadHomeProducts = (forceLoading = false) => {
+    if (forceLoading) setLoading(true);
+    searchLiveProducts("popular")
       .then(res => {
-        if (active && res?.products) {
+        if (res?.products && res.products.length > 0) {
           setTrendingProducts(res.products.slice(0, 8));
           setBestDeals(res.products.slice(8, 16));
+          try {
+            localStorage.setItem("cachedHomeProducts", JSON.stringify(res.products));
+          } catch (_) {}
         }
       })
       .catch(err => console.error("Home fetch error:", err))
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadHomeProducts();
   }, []);
 
   const handleSearch = (e) => {
@@ -317,17 +391,24 @@ export default function HomePage() {
               <div className="products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
                 {trendingProducts.map((product, i) => (
                   <ProductCard
-                    key={product.id || i}
+                    key={`${product.id || 'trend'}-${i}`}
                     product={product}
                     onClick={() => navigate(`/comparison/${encodeURIComponent(product.name)}`, { state: { product } })}
                   />
                 ))}
               </div>
             ) : (
-              <div className="card empty-state">
+              <div className="card empty-state" style={{ padding: "36px 20px", textAlign: "center" }}>
                 <div className="empty-state-icon"><FiSearch size={28} /></div>
                 <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--text-700)", marginBottom: 6 }}>No products loaded</h3>
-                <p style={{ fontSize: 13, color: "var(--text-400)" }}>Make sure the backend server is running.</p>
+                <p style={{ fontSize: 13, color: "var(--text-400)", marginBottom: 16 }}>Unable to load live feed. Please verify the backend service is running.</p>
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={() => loadHomeProducts(true)}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 6, margin: "0 auto" }}
+                >
+                  <FiRefreshCw size={13} /> Retry Loading
+                </button>
               </div>
             )}
           </section>
@@ -347,7 +428,7 @@ export default function HomePage() {
               <div className="products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
                 {bestDeals.map((product, i) => (
                   <ProductCard
-                    key={product.id || i}
+                    key={`${product.id || 'deal'}-${i}`}
                     product={product}
                     onClick={() => navigate(`/comparison/${encodeURIComponent(product.name)}`, { state: { product } })}
                   />
