@@ -175,3 +175,4 @@ export function syncAlertsToNotifications() {
     console.warn("syncAlertsToNotifications error:", e);
   }
 }
+
