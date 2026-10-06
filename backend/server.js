@@ -25,7 +25,15 @@ app.use(
   })
 );
 
-app.use(helmet());
+const fs = require("fs");
+const path = require("path");
+
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+    crossOriginResourcePolicy: false,
+  })
+);
 app.use(compression());
 
 app.use(express.json());
@@ -37,8 +45,6 @@ app.use("/api/alerts", alertRoutes);
 app.use("/api/push", pushRoutes);
 app.use("/api/admin", require("./routes/adminRoutes"));
 
-
-
 app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
@@ -46,7 +52,15 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-
+// In production, serve the built frontend SPA from frontend/dist if present
+const frontendDist = path.join(__dirname, "../frontend/dist");
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api/")) return next();
+    res.sendFile(path.join(frontendDist, "index.html"));
+  });
+}
 
 app.use((req, res) => {
   res.status(404).json({

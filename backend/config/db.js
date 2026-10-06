@@ -10,7 +10,8 @@ mongoose.connection.on("connected", () => {
 });
 
 mongoose.connection.on("disconnected", () => {
-  console.warn("MongoDB disconnected.");
+  console.warn("MongoDB disconnected. Scheduling reconnect...");
+  scheduleReconnect();
 });
 
 mongoose.connection.on("error", (err) => {

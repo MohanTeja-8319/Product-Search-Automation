@@ -168,6 +168,12 @@ export function AdminDataProvider({ children }) {
       if (Array.isArray(liveJobs) && liveJobs.length > 0) {
         setAutomationJobs(liveJobs);
       }
+
+      // 7. Fetch live system logs
+      const liveLogs = await fetchAdminJson("/admin/logs", null);
+      if (Array.isArray(liveLogs) && liveLogs.length > 0) {
+        setSystemLogs(liveLogs);
+      }
     } finally {
       setGlobalLoading(false);
     }

@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { searchLiveProducts } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import {
   FiSearch, FiSmartphone, FiMonitor, FiHeadphones, FiWatch,
-  FiCamera, FiTv, FiGrid, FiArrowRight, FiShoppingBag, FiPackage, FiSmile
+  FiTv, FiGrid, FiShoppingBag, FiPackage, FiSmile
 } from "react-icons/fi";
 import { FaGamepad } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";

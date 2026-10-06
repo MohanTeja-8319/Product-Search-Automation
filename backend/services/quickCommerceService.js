@@ -57,15 +57,6 @@ function similarity(a, b) {
   return inter / (aa.size + bb.size - inter);
 }
 
-function createProductSlug(name) {
-  return (
-    String(name || "product")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "") || "item"
-  );
-}
-
 const VERIFIED_ASIN_MAP = {
   "apple iphone 16": "B0DGH8BGCF",
   "iphone 16": "B0DGH8BGCF",
@@ -2324,7 +2315,7 @@ async function searchLiveProducts({ query, category, lat, lon, pincode }) {
 /**
  * Searches for a specific product to compare side-by-side across stores.
  */
-async function searchSpecificLiveProduct({ query, lat, lon, pincode }) {
+async function searchSpecificLiveProduct({ query }) {
   const cleanQ = (query || "").trim();
   const catalog = buildMultiStoreCatalog();
   const qNorm = normalizeText(cleanQ);

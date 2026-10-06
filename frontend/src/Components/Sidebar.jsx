@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import React from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   FiHome, FiSearch, FiGrid, FiBell, FiHeart,
   FiClock, FiSettings, FiHelpCircle, FiChevronRight,

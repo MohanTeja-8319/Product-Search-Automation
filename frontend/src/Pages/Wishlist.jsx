@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
-  FiHeart, FiTrash2, FiExternalLink, FiArrowRight,
-  FiShoppingCart, FiSearch, FiInfo, FiTag
+  FiHeart, FiTrash2, FiArrowRight, FiInfo
 } from "react-icons/fi";
 import { FaExchangeAlt, FaStar } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";

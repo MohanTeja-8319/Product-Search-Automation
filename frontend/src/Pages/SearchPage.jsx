@@ -3,15 +3,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   FiSearch, FiFilter, FiGrid, FiList, FiHeart, FiStar,
   FiChevronRight, FiChevronLeft, FiChevronDown, FiX, FiSliders, FiArrowUp, FiArrowDown,
-  FiLoader, FiAlertCircle, FiShoppingBag, FiBell, FiRotateCcw, FiTag, FiExternalLink,
+  FiAlertCircle, FiShoppingBag, FiBell, FiRotateCcw, FiTag, FiExternalLink,
   FiSmartphone, FiMonitor, FiHeadphones, FiTv, FiWatch, FiPackage, FiSmile
 } from "react-icons/fi";
-import { FaHeart, FaStar, FaExchangeAlt, FaGamepad } from "react-icons/fa";
+import { FaStar, FaExchangeAlt, FaGamepad } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import WishlistButton from "../Components/WishlistButton";
 import { searchLiveProducts, syncUserData } from "../utils/api";
-import { isProductInWishlist } from "../utils/wishlistHelper";
 import { savePriceAlert } from "../utils/alertHelper";
 import { getDirectStoreUrl } from "../utils/storeHelper";
 import toast from "react-hot-toast";

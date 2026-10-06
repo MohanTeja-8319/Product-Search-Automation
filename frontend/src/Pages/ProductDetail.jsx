@@ -13,7 +13,7 @@ import StickyBuyBar from "./StickyBuyBar";
 import RelatedProducts from "./RelatedProducts";
 import WishlistButton from "../Components/WishlistButton";
 
-import { toggleWishlistItem, isProductInWishlist } from "../utils/wishlistHelper";
+import { isProductInWishlist } from "../utils/wishlistHelper";
 import { syncUserData } from "../utils/api";
 import { getDirectStoreUrl } from "../utils/storeHelper";
 
@@ -21,7 +21,6 @@ const ProductDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
-  const [inWishlist, setInWishlist] = useState(false);
 
   // Try to get product from navigation state (passed via navigate)
   const product = location.state?.product || null;
@@ -36,7 +35,6 @@ const ProductDetails = () => {
       localStorage.setItem("recentProducts", JSON.stringify(updated));
       if (localStorage.getItem("token"))
         syncUserData({ recentProducts: updated }).catch(() => {});
-      setInWishlist(isProductInWishlist(product.name));
     }
   }, [product]);
 

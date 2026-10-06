@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiSearch, FiLayers, FiCheckCircle, FiTrendingDown, FiShield, FiBarChart2 } from "react-icons/fi";
+import { FiSearch, FiLayers, FiTrendingDown, FiShield, FiBarChart2 } from "react-icons/fi";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 

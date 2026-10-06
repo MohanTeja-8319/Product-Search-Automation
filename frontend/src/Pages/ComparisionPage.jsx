@@ -2,16 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   FiArrowLeft, FiCheck, FiX, FiExternalLink, FiBell,
-  FiTrendingDown, FiShield, FiAlertCircle, FiHeart
+  FiTrendingDown, FiShield, FiAlertCircle
 } from "react-icons/fi";
-import { FaStar, FaStore, FaHeart } from "react-icons/fa";
+import { FaStar, FaStore } from "react-icons/fa";
 
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import WishlistButton from "../Components/WishlistButton";
 import { getLiveComparison } from "../utils/api";
 import { savePriceAlert } from "../utils/alertHelper";
-import { isProductInWishlist } from "../utils/wishlistHelper";
 import { getDirectStoreUrl } from "../utils/storeHelper";
 import toast from "react-hot-toast";
 
@@ -40,7 +39,6 @@ export default function ComparisonPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [alertProduct, setAlertProduct] = useState(null);
   const [targetPriceInput, setTargetPriceInput] = useState("");
-  const [inWishlist, setInWishlist] = useState(false);
 
   const location = useLocation();
   const stateProduct = location.state?.product;
@@ -51,7 +49,6 @@ export default function ComparisonPage() {
     // If product passed in route state, display preview immediately
     if (stateProduct && (stateProduct.name === decodedName || !decodedName)) {
       setProductData(stateProduct);
-      setInWishlist(isProductInWishlist(stateProduct.name || stateProduct.title));
 
       if (Array.isArray(stateProduct.comparison) && stateProduct.comparison.length > 0) {
         setComparisonList(stateProduct.comparison);
@@ -67,7 +64,6 @@ export default function ComparisonPage() {
         if (res?.product) {
           setProductData(res.product);
           setComparisonList(res.product.comparison || []);
-          setInWishlist(isProductInWishlist(res.product.name));
         } else if (stateProduct) {
           // Fallback to stateProduct if specific search didn't find multiple stores
           setProductData(stateProduct);

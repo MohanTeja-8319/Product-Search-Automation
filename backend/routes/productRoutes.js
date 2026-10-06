@@ -3,7 +3,6 @@ const {
   searchLiveProducts,
   searchSpecificLiveProduct,
   resolveExactProductUrl,
-  isDirectProductUrl,
   generateDirectStoreUrl,
 } = require("../services/quickCommerceService");
 const SearchLog = require("../models/SearchLog");
@@ -45,10 +44,10 @@ function extractProductFromUrl(urlStr) {
     let slug = "";
 
     if (host.includes("amazon.")) {
-      const match = pathname.match(/^\/([^\/]+)\/dp\//);
+      const match = pathname.match(/^\/([^/]+)\/dp\//);
       if (match) slug = match[1];
     } else if (host.includes("flipkart.com")) {
-      const match = pathname.match(/^\/([^\/]+)\/p\//);
+      const match = pathname.match(/^\/([^/]+)\/p\//);
       if (match) slug = match[1];
     }
     

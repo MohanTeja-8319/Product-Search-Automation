@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const User = require("../models/User");
-const Alert = require("../models/Alert");
 const Product = require("../models/Product");
 const SearchLog = require("../models/SearchLog");
 

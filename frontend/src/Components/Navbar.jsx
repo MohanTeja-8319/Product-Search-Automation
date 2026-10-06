@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
-  FiSearch, FiBell, FiUser, FiChevronDown, FiLogOut,
-  FiSettings, FiMenu, FiX, FiSun, FiMoon
+  FiSearch, FiBell, FiChevronDown, FiLogOut,
+  FiSettings, FiMenu, FiSun, FiMoon
 } from "react-icons/fi";
 
 export default function Navbar({ onMenuToggle }) {
