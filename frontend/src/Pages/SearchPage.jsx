@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   FiSearch, FiFilter, FiGrid, FiList, FiHeart, FiStar,
   FiChevronRight, FiChevronLeft, FiChevronDown, FiX, FiSliders, FiArrowUp, FiArrowDown,
-  FiLoader, FiAlertCircle, FiShoppingBag, FiBell, FiRotateCcw, FiTag
+  FiLoader, FiAlertCircle, FiShoppingBag, FiBell, FiRotateCcw, FiTag, FiExternalLink
 } from "react-icons/fi";
 import { FaHeart, FaStar, FaExchangeAlt } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
@@ -12,6 +12,7 @@ import WishlistButton from "../Components/WishlistButton";
 import { searchLiveProducts, syncUserData } from "../utils/api";
 import { isProductInWishlist } from "../utils/wishlistHelper";
 import { savePriceAlert } from "../utils/alertHelper";
+import { getDirectStoreUrl } from "../utils/storeHelper";
 import toast from "react-hot-toast";
 
 const SORT_OPTIONS = [
@@ -208,6 +209,17 @@ function ProductCard({ product, view, onCompare, onTrack }) {
           <button onClick={onCompare} className="btn btn-primary btn-sm">
             <FaExchangeAlt size={11} /> Compare
           </button>
+          <a
+            href={getDirectStoreUrl(product.store, product.name, product.url)}
+            target="_blank"
+            rel="noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="btn btn-outline btn-sm"
+            style={{ padding: "7px 10px", display: "inline-flex", alignItems: "center", gap: 5, textDecoration: "none", borderColor: "var(--border)", color: "var(--text-900)" }}
+            title={`Go to ${product.store || "Store"}`}
+          >
+            Go to {product.store || "Store"} <FiExternalLink size={12} />
+          </a>
           <button onClick={(e) => { e.stopPropagation(); onTrack(); }} className="btn btn-outline btn-sm" style={{ padding: "7px 10px", borderColor: "var(--border)", color: "var(--text-900)" }}>
             <FiBell size={13} />
           </button>
@@ -267,9 +279,30 @@ function ProductCard({ product, view, onCompare, onTrack }) {
         )}
       </div>
 
-      <button onClick={onCompare} className="btn btn-primary btn-full btn-sm" style={{ marginTop: 4 }}>
-        <FaExchangeAlt size={11} /> Compare Prices
-      </button>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 6, marginTop: 4 }}>
+        <button onClick={onCompare} className="btn btn-primary btn-sm" style={{ width: "100%", justifyContent: "center" }}>
+          <FaExchangeAlt size={11} /> Compare Prices
+        </button>
+        <a
+          href={getDirectStoreUrl(product.store, product.name, product.url)}
+          target="_blank"
+          rel="noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="btn btn-outline btn-sm"
+          style={{
+            padding: "7px 10px",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderColor: "var(--border)",
+            color: "var(--text-900)",
+            textDecoration: "none"
+          }}
+          title={`Go to ${product.store || "Store"}`}
+        >
+          <FiExternalLink size={13} />
+        </a>
+      </div>
     </div>
   );
 }

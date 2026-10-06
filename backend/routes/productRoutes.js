@@ -3,6 +3,8 @@ const {
   searchLiveProducts,
   searchSpecificLiveProduct,
   resolveExactProductUrl,
+  isDirectProductUrl,
+  generateDirectStoreUrl,
 } = require("../services/quickCommerceService");
 const SearchLog = require("../models/SearchLog");
 const Product = require("../models/Product");
@@ -338,25 +340,16 @@ router.get("/redirect", async (req, res) => {
 
   try {
     const directUrl = await resolveExactProductUrl(store, name, rawUrl);
-    if (directUrl) {
+    if (directUrl && isDirectProductUrl(directUrl)) {
       return res.redirect(302, directUrl);
     }
   } catch (err) {
     console.error("Store redirect error:", err.message);
   }
 
-  const q = encodeURIComponent(name);
-  const s = store.toLowerCase();
-  if (s.includes("amazon")) return res.redirect(302, `https://www.amazon.in/s?k=${q}`);
-  if (s.includes("flipkart")) return res.redirect(302, `https://www.flipkart.com/search?q=${q}`);
-  if (s.includes("myntra")) return res.redirect(302, `https://www.myntra.com/${q}`);
-  if (s.includes("nykaa")) return res.redirect(302, `https://www.nykaa.com/search/result/?q=${q}`);
-  if (s.includes("blinkit")) return res.redirect(302, `https://blinkit.com/s/?q=${q}`);
-  if (s.includes("zepto")) return res.redirect(302, `https://www.zeptonow.com/search?query=${q}`);
-  if (s.includes("swiggy")) return res.redirect(302, `https://www.swiggy.com/search?query=${q}`);
-  if (s.includes("bigbasket")) return res.redirect(302, `https://www.bigbasket.com/ps/?q=${q}`);
-  if (s.includes("jiomart")) return res.redirect(302, `https://www.jiomart.com/search/${q}`);
-  return res.redirect(302, "https://www.amazon.in");
+  // Fallback: always redirect to specific platform direct product page (never search page)
+  const directFallback = generateDirectStoreUrl(store, name);
+  return res.redirect(302, directFallback);
 });
 
 module.exports = router;
