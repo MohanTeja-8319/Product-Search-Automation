@@ -33,6 +33,7 @@ const FILTER_CATEGORIES = [
   { id: "groceries", label: "Groceries & Essentials" },
   { id: "fashion", label: "Fashion & Shoes" },
   { id: "beauty", label: "Beauty & Personal Care" },
+  { id: "gaming", label: "Gaming Consoles" },
 ];
 
 const ALL_STORES = [
