@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
-  FiHeart, FiTrash2, FiArrowRight, FiInfo
+  FiHeart, FiTrash2, FiArrowRight, FiInfo, FiSearch
 } from "react-icons/fi";
 import { FaExchangeAlt, FaStar } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
@@ -199,169 +199,185 @@ export default function Wishlist() {
                 gap: 20,
               }}
             >
-              {items.map((item, idx) => (
-                <div
-                  key={item.id || idx}
-                  className="card card-hover"
-                  style={{
-                    padding: 20,
-                    display: "flex",
-                    flexDirection: "column",
-                    position: "relative",
-                  }}
-                >
-                  {/* Remove button */}
-                  <button
-                    onClick={() => handleRemove(item.name || item.title)}
-                    title="Remove from wishlist"
-                    style={{
-                      position: "absolute",
-                      top: 12,
-                      right: 12,
-                      width: 32,
-                      height: 32,
-                      borderRadius: "50%",
-                      background: "var(--surface)",
-                      color: "var(--danger)",
-                      border: "1px solid var(--border)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      cursor: "pointer",
-                      zIndex: 3,
-                      transition: "var(--transition)",
-                      boxShadow: "var(--shadow-xs)",
-                    }}
-                  >
-                    <FiTrash2 size={13} />
-                  </button>
+              {items.map((item, idx) => {
+                const title = item.name || item.title || "Product";
+                const priceNum = typeof item.price === "number" ? item.price : Number(String(item.price || 0).replace(/[^0-9.]/g, "")) || 0;
+                const origNum = typeof item.originalPrice === "number" ? item.originalPrice : Number(String(item.originalPrice || 0).replace(/[^0-9.]/g, "")) || priceNum;
 
-                  {/* Discount tag if any */}
-                  {item.discount && (
-                    <div style={{ position: "absolute", top: 12, left: 12, zIndex: 2 }}>
-                      <span className="badge badge-success">{item.discount} OFF</span>
-                    </div>
-                  )}
-
-                  {/* Product Image */}
+                return (
                   <div
-                    style={{
-                      height: 160,
-                      background: "var(--bg)",
-                      borderRadius: "var(--radius-md)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: 16,
-                      marginTop: item.discount ? 16 : 0,
-                    }}
-                  >
-                    <img
-                      src={item.image}
-                      alt={item.name || item.title}
-                      style={{
-                        maxWidth: "80%",
-                        maxHeight: "80%",
-                        objectFit: "contain",
-                      }}
-                      onError={(e) => {
-                        e.target.src = "https://via.placeholder.com/160?text=Product";
-                      }}
-                    />
-                  </div>
-
-                  {/* Title */}
-                  <h3
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 600,
-                      color: "var(--text-900)",
-                      lineHeight: 1.4,
-                      marginBottom: 8,
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
-                    }}
-                  >
-                    {item.name || item.title}
-                  </h3>
-
-                  {/* Rating & Store */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: 10,
-                    }}
-                  >
-                    {item.rating ? (
-                      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                        <FaStar size={11} style={{ color: "#F59E0B" }} />
-                        <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-700)" }}>
-                          {item.rating}
-                        </span>
-                      </div>
-                    ) : (
-                      <span style={{ fontSize: 11, color: "var(--text-400)" }}>Verified</span>
-                    )}
-
-                    <span
-                      style={{
-                        fontSize: 10,
-                        fontWeight: 700,
-                        padding: "2px 8px",
-                        background: "var(--primary-light)",
-                        color: "var(--primary)",
-                        borderRadius: "var(--radius-sm)",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.05em",
-                      }}
-                    >
-                      {item.store || "Amazon"}
-                    </span>
-                  </div>
-
-                  {/* Price */}
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "baseline",
-                      gap: 8,
-                      marginBottom: 16,
-                      marginTop: "auto",
-                    }}
-                  >
-                    <span style={{ fontSize: 18, fontWeight: 800, color: "var(--success)" }}>
-                      ₹{item.price ? Number(item.price).toLocaleString() : "---"}
-                    </span>
-                    {item.originalPrice > item.price && (
-                      <span
-                        style={{
-                          fontSize: 12,
-                          color: "var(--text-400)",
-                          textDecoration: "line-through",
-                        }}
-                      >
-                        ₹{Number(item.originalPrice).toLocaleString()}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Compare action */}
-                  <button
+                    key={item.id || idx}
+                    className="card card-hover"
                     onClick={() =>
-                      navigate(`/comparison/${encodeURIComponent(item.name || item.title)}`, {
+                      navigate(`/comparison/${encodeURIComponent(title)}`, {
                         state: { product: item },
                       })
                     }
-                    className="btn btn-primary btn-full btn-sm"
+                    style={{
+                      padding: 20,
+                      display: "flex",
+                      flexDirection: "column",
+                      position: "relative",
+                      cursor: "pointer",
+                    }}
                   >
-                    <FaExchangeAlt size={12} /> Compare Prices
-                  </button>
-                </div>
-              ))}
+                    {/* Remove button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemove(title);
+                      }}
+                      title="Remove from wishlist"
+                      style={{
+                        position: "absolute",
+                        top: 12,
+                        right: 12,
+                        width: 32,
+                        height: 32,
+                        borderRadius: "50%",
+                        background: "var(--surface)",
+                        color: "var(--danger)",
+                        border: "1px solid var(--border)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "pointer",
+                        zIndex: 3,
+                        transition: "var(--transition)",
+                        boxShadow: "var(--shadow-xs)",
+                      }}
+                    >
+                      <FiTrash2 size={13} />
+                    </button>
+
+                    {/* Discount tag if any */}
+                    {item.discount && (
+                      <div style={{ position: "absolute", top: 12, left: 12, zIndex: 2 }}>
+                        <span className="badge badge-success">{item.discount} OFF</span>
+                      </div>
+                    )}
+
+                    {/* Product Image */}
+                    <div
+                      style={{
+                        height: 160,
+                        background: "var(--bg)",
+                        borderRadius: "var(--radius-md)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        marginBottom: 16,
+                        marginTop: item.discount ? 16 : 0,
+                      }}
+                    >
+                      <img
+                        src={item.image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&auto=format&fit=crop&q=80"}
+                        alt={title}
+                        style={{
+                          maxWidth: "80%",
+                          maxHeight: "80%",
+                          objectFit: "contain",
+                        }}
+                        onError={(e) => {
+                          e.target.src = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&auto=format&fit=crop&q=80";
+                        }}
+                      />
+                    </div>
+
+                    {/* Title */}
+                    <h3
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 600,
+                        color: "var(--text-900)",
+                        lineHeight: 1.4,
+                        marginBottom: 8,
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {title}
+                    </h3>
+
+                    {/* Rating & Store */}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginBottom: 10,
+                      }}
+                    >
+                      {item.rating ? (
+                        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                          <FaStar size={11} style={{ color: "#F59E0B" }} />
+                          <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-700)" }}>
+                            {item.rating}
+                          </span>
+                        </div>
+                      ) : (
+                        <span style={{ fontSize: 11, color: "var(--text-400)" }}>Verified</span>
+                      )}
+
+                      <span
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 700,
+                          padding: "2px 8px",
+                          background: "var(--primary-light)",
+                          color: "var(--primary)",
+                          borderRadius: "var(--radius-sm)",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.05em",
+                        }}
+                      >
+                        {item.store || "Amazon"}
+                      </span>
+                    </div>
+
+                    {/* Price */}
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "baseline",
+                        gap: 8,
+                        marginBottom: 16,
+                        marginTop: "auto",
+                      }}
+                    >
+                      <span style={{ fontSize: 18, fontWeight: 800, color: "var(--success)" }}>
+                        ₹{priceNum ? priceNum.toLocaleString() : "---"}
+                      </span>
+                      {origNum > priceNum && (
+                        <span
+                          style={{
+                            fontSize: 12,
+                            color: "var(--text-400)",
+                            textDecoration: "line-through",
+                          }}
+                        >
+                          ₹{origNum.toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Compare action */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/comparison/${encodeURIComponent(title)}`, {
+                          state: { product: item },
+                        });
+                      }}
+                      className="btn btn-primary btn-full btn-sm"
+                    >
+                      <FaExchangeAlt size={12} /> Compare Prices
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

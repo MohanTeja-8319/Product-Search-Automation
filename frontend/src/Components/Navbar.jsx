@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  FiSearch, FiBell, FiChevronDown, FiLogOut,
+  FiSearch, FiBell, FiHeart, FiChevronDown, FiLogOut,
   FiSettings, FiMenu, FiSun, FiMoon
 } from "react-icons/fi";
 
@@ -33,6 +33,28 @@ export default function Navbar({ onMenuToggle }) {
       window.removeEventListener("user-profile-updated", load);
       window.removeEventListener("profile-photo-updated", load);
     };
+  }, []);
+
+  const [wishlistCount, setWishlistCount] = useState(() => {
+    try {
+      const stored = localStorage.getItem("wishlistItems");
+      return stored ? JSON.parse(stored).length : 0;
+    } catch {
+      return 0;
+    }
+  });
+
+  useEffect(() => {
+    const handleWishlistUpdate = () => {
+      try {
+        const stored = localStorage.getItem("wishlistItems");
+        setWishlistCount(stored ? JSON.parse(stored).length : 0);
+      } catch {
+        setWishlistCount(0);
+      }
+    };
+    window.addEventListener("wishlistUpdated", handleWishlistUpdate);
+    return () => window.removeEventListener("wishlistUpdated", handleWishlistUpdate);
   }, []);
 
   
@@ -156,6 +178,26 @@ export default function Navbar({ onMenuToggle }) {
             border: "2px solid white"
           }} />
         </button>
+        {/* Wishlist */}
+        <button
+          onClick={() => navigate("/wishlist")}
+          className="btn btn-ghost"
+          style={{ padding: "10px", borderRadius: "var(--radius-full)", position: "relative" }}
+          title="My Wishlist"
+        >
+          <FiHeart size={18} />
+          {wishlistCount > 0 && (
+            <span style={{
+              position: "absolute", top: 4, right: 4,
+              minWidth: 16, height: 16, padding: "0 4px",
+              background: "#EF4444", color: "#fff",
+              borderRadius: "50%", fontSize: 10, fontWeight: 700,
+              display: "flex", alignItems: "center", justifyContent: "center"
+            }}>
+              {wishlistCount > 9 ? "9+" : wishlistCount}
+            </span>
+          )}
+        </button>
 
         {}
         <div style={{ position: "relative" }} ref={userMenuRef}>
@@ -220,6 +262,7 @@ export default function Navbar({ onMenuToggle }) {
                 </div>
               </div>
               {[
+                { label: "My Wishlist", icon: FiHeart, path: "/wishlist" },
                 { label: "Settings", icon: FiSettings, path: "/settings" },
               ].map(item => (
                 <button key={item.label}
