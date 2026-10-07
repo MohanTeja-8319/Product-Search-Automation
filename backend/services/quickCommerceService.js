@@ -80,6 +80,26 @@ const VERIFIED_ASIN_MAP = {
   "lenovo ideapad slim 3": "B0B56CRWDF",
   "asus rog strix g16": "B0BWX2B4F2",
   "dell xps 13": "B0CRVJ8Y2M",
+  "sony bravia": "B0C5MC45FR",
+  "samsung 43": "B0D3GKPRG8",
+  "lg 55": "B0C46FR1R1",
+  "apple watch": "B0DGJGZ83J",
+  "galaxy watch": "B0CC9H5W3M",
+  "playstation 5": "B0CY5J8424",
+  "xbox series x": "B08H734791",
+  "puma smash": "B072LX7J37",
+  "smash v2": "B072LX7J37",
+  "levi's": "B07J5D42LX",
+  "levis": "B07J5D42LX",
+  "adidas ultraboost": "B0BNW1R9KM",
+  "ultraboost": "B0BNW1R9KM",
+  "red tape": "B09D84LKVZ",
+  "lakme": "B07C2FHRV7",
+  "maybelline": "B0046VE6T2",
+  "derma co": "B09B7HQ2G1",
+  "minimalist": "B08F9XGLG2",
+  "boat airdopes": "B0CHWRXH8B",
+  "vivo v30": "B0CX21CBPJ",
 };
 
 function cleanProductNameForStore(name) {
@@ -103,16 +123,6 @@ function isSyntheticBrokenUrl(url = "") {
 
   // Explicit known synthetic broken values
   if (u.includes("b05qn8by2r") || u.includes("629327")) return true;
-
-  // Check if Amazon URL has a synthetic / unverified ASIN
-  if (u.includes("amazon.") && /\/(?:[a-z0-9-]+\/)?dp\/([a-z0-9]{10})/i.test(u)) {
-    const m = u.match(/\/dp\/([a-z0-9]{10})/i);
-    const asin = m ? m[1].toUpperCase() : "";
-    const knownGoodAsins = Object.values(VERIFIED_ASIN_MAP).map((a) => a.toUpperCase());
-    if (asin && !knownGoodAsins.includes(asin)) {
-      return true;
-    }
-  }
 
   // Synthetic Flipkart itm patterns (e.g. itm001, itm600, itm700, etc.)
   if (u.includes("flipkart.com") && /\/p\/itm\d+([/?#]|$)/i.test(u)) {
@@ -308,6 +318,18 @@ function generateDirectStoreUrl(platform, productName) {
 
   if (p.includes("jiomart")) {
     return `https://www.jiomart.com/search/${q}`;
+  }
+
+  if (p.includes("croma")) {
+    return `https://www.croma.com/searchB?q=${q}`;
+  }
+
+  if (p.includes("reliancedigital") || p.includes("reliance")) {
+    return `https://www.reliancedigital.in/search?q=${q}`;
+  }
+
+  if (p.includes("tatacliq") || p.includes("cliq")) {
+    return `https://www.tatacliq.com/search/?searchCategory=all&text=${q}`;
   }
 
   return `https://www.amazon.in/s?k=${q}`;

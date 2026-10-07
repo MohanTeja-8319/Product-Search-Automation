@@ -11,7 +11,12 @@ export const SUPPORTED_STORES = [
   "Swiggy",
   "BigBasket",
   "Myntra",
-  "Nykaa"
+  "Nykaa",
+  "DMart",
+  "JioMart",
+  "Croma",
+  "Reliance Digital",
+  "Tata CLiQ"
 ];
 
 /**
@@ -48,6 +53,19 @@ export const VERIFIED_ASIN_MAP = {
   "galaxy watch": "B0CC9H5W3M",
   "playstation 5": "B0CY5J8424",
   "xbox series x": "B08H734791",
+  "puma smash": "B072LX7J37",
+  "smash v2": "B072LX7J37",
+  "levi's": "B07J5D42LX",
+  "levis": "B07J5D42LX",
+  "adidas ultraboost": "B0BNW1R9KM",
+  "ultraboost": "B0BNW1R9KM",
+  "red tape": "B09D84LKVZ",
+  "lakme": "B07C2FHRV7",
+  "maybelline": "B0046VE6T2",
+  "derma co": "B09B7HQ2G1",
+  "minimalist": "B08F9XGLG2",
+  "boat airdopes": "B0CHWRXH8B",
+  "vivo v30": "B0CX21CBPJ",
 };
 
 /**
@@ -83,24 +101,14 @@ export function createProductSlug(name) {
 /**
  * Detects whether a URL is a known synthetic broken link.
  * Synthetic URLs have fake IDs (like B05QN8BY2R or 629327) that cause
- * external retailers to show 404 or wrong items like coconut soap.
+ * external retailers to show 404 or wrong items.
  */
 export function isSyntheticBrokenUrl(url = "") {
   if (!url || typeof url !== "string") return true;
   const u = url.toLowerCase();
 
-  // Explicit known synthetic IDs from testing
+  // Explicit known synthetic test IDs
   if (u.includes("b05qn8by2r") || u.includes("629327")) return true;
-
-  // Check if Amazon URL has a synthetic / unverified ASIN
-  if (u.includes("amazon.") && /\/(?:[a-z0-9-]+\/)?dp\/([a-z0-9]{10})/i.test(u)) {
-    const m = u.match(/\/dp\/([a-z0-9]{10})/i);
-    const asin = m ? m[1].toUpperCase() : "";
-    const knownGoodAsins = Object.values(VERIFIED_ASIN_MAP).map((a) => a.toUpperCase());
-    if (asin && !knownGoodAsins.includes(asin)) {
-      return true;
-    }
-  }
 
   // Synthetic Flipkart itm patterns (e.g. itm001, itm600, itm700, etc.)
   if (u.includes("flipkart.com") && /\/p\/itm\d+([/?#]|$)/i.test(u)) {
@@ -206,6 +214,21 @@ export function generateDirectStoreUrl(storeName = "", productName = "") {
     return `https://www.jiomart.com/search/${q}`;
   }
 
+  // 11. Croma
+  if (store.includes("croma")) {
+    return `https://www.croma.com/searchB?q=${q}`;
+  }
+
+  // 12. Reliance Digital
+  if (store.includes("reliancedigital") || store.includes("reliance")) {
+    return `https://www.reliancedigital.in/search?q=${q}`;
+  }
+
+  // 13. Tata CLiQ
+  if (store.includes("tatacliq") || store.includes("cliq")) {
+    return `https://www.tatacliq.com/search/?searchCategory=all&text=${q}`;
+  }
+
   return `https://www.amazon.in/s?k=${q}`;
 }
 
@@ -225,7 +248,10 @@ export function isDirectProductUrl(url = "") {
     "https://www.swiggy.com",
     "https://www.bigbasket.com",
     "https://www.myntra.com",
-    "https://www.nykaa.com"
+    "https://www.nykaa.com",
+    "https://www.croma.com",
+    "https://www.reliancedigital.in",
+    "https://www.tatacliq.com"
   ];
   if (genericHomes.includes(u) || u.endsWith(".in/") || u.endsWith(".com/")) {
     return false;
@@ -249,15 +275,15 @@ export function getDirectStoreUrl(storeName = "", productName = "", rawUrl = "")
         const parsed = new URL(trimmed);
         const host = parsed.hostname.toLowerCase();
 
-        // If Amazon, ensure ASIN is verified
+        // If Amazon, ensure ASIN is valid or query param is present
         if (host.includes("amazon.") || store.includes("amazon")) {
           const m = parsed.pathname.match(/\/(?:dp|gp\/product|gp\/aw\/d)\/([A-Z0-9]{10})/i);
           const asin = m?.[1] || parsed.searchParams.get("asin");
-          if (asin) {
-            const knownGoodAsins = Object.values(VERIFIED_ASIN_MAP).map((a) => a.toUpperCase());
-            if (knownGoodAsins.includes(asin.toUpperCase())) {
-              return `https://www.amazon.in/dp/${asin.toUpperCase()}`;
-            }
+          if (asin && /^[A-Z0-9]{10}$/i.test(asin)) {
+            return `https://www.amazon.in/dp/${asin.toUpperCase()}`;
+          }
+          if (parsed.searchParams.has("k")) {
+            return trimmed;
           }
         } else if (
           host.includes("flipkart.com") ||
@@ -266,7 +292,12 @@ export function getDirectStoreUrl(storeName = "", productName = "", rawUrl = "")
           host.includes("swiggy.com") ||
           host.includes("bigbasket.com") ||
           host.includes("myntra.com") ||
-          host.includes("nykaa.com")
+          host.includes("nykaa.com") ||
+          host.includes("dmart.in") ||
+          host.includes("jiomart.com") ||
+          host.includes("croma.com") ||
+          host.includes("reliancedigital.in") ||
+          host.includes("tatacliq.com")
         ) {
           return trimmed;
         }

@@ -252,9 +252,9 @@ function ProductCard({ product, view, onCompare, onTrack }) {
             onClick={(e) => e.stopPropagation()}
             className="btn btn-outline btn-sm"
             style={{ padding: "7px 10px", display: "inline-flex", alignItems: "center", gap: 5, textDecoration: "none", borderColor: "var(--border)", color: "var(--text-900)" }}
-            title={`Go to ${product.store || "Store"}`}
+            title={`Buy on ${product.store || "Store"}`}
           >
-            Go to {product.store || "Store"} <FiExternalLink size={12} />
+            Buy Now <FiExternalLink size={12} />
           </a>
           <button onClick={(e) => { e.stopPropagation(); onTrack(); }} className="btn btn-outline btn-sm" style={{ padding: "7px 10px", borderColor: "var(--border)", color: "var(--text-900)" }}>
             <FiBell size={13} />
@@ -334,7 +334,7 @@ function ProductCard({ product, view, onCompare, onTrack }) {
             color: "var(--text-900)",
             textDecoration: "none"
           }}
-          title={`Go to ${product.store || "Store"}`}
+          title={`Buy on ${product.store || "Store"}`}
         >
           <FiExternalLink size={13} />
         </a>

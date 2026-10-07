@@ -317,9 +317,11 @@ export default function ComparisonPage() {
                                 href={getDirectStoreUrl(item.store, item.name || productData?.name, item.url || item.link)}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="btn btn-outline btn-sm"
+                                className="btn btn-primary btn-sm"
+                                style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+                                title={`Buy on ${item.store || "Store"}`}
                               >
-                                Go to Store <FiExternalLink size={13} />
+                                Buy Now <FiExternalLink size={13} />
                               </a>
                             </td>
                           </tr>
