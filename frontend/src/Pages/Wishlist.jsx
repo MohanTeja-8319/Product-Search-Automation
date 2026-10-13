@@ -209,7 +209,7 @@ export default function Wishlist() {
                     key={item.id || idx}
                     className="card card-hover"
                     onClick={() =>
-                      navigate(`/comparison/${encodeURIComponent(title)}`, {
+                      navigate(`/comparison/${encodeURIComponent(title)}?store=${encodeURIComponent(item.store || "")}`, {
                         state: { product: item },
                       })
                     }
@@ -367,7 +367,7 @@ export default function Wishlist() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/comparison/${encodeURIComponent(title)}`, {
+                        navigate(`/comparison/${encodeURIComponent(title)}?store=${encodeURIComponent(item.store || "")}`, {
                           state: { product: item },
                         });
                       }}

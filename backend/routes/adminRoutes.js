@@ -6,6 +6,8 @@ const Alert = require("../models/Alert");
 const Product = require("../models/Product");
 const SearchLog = require("../models/SearchLog");
 const jwt = require("jsonwebtoken");
+const { getJwtSecret } = require("../config/jwt");
+const { isValidObjectId } = require("../utils/mongoHelpers");
 
 // Flexible middleware: allows access with valid admin token or admin session header
 const checkAdminAccess = async (req, res, next) => {
@@ -14,11 +16,13 @@ const checkAdminAccess = async (req, res, next) => {
     if (authHeader && authHeader.startsWith("Bearer ")) {
       const token = authHeader.split(" ")[1];
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret");
-        const user = await User.findById(decoded.id);
-        if (user) {
-          req.user = user;
-          return next();
+        const decoded = jwt.verify(token, getJwtSecret());
+        if (isValidObjectId(decoded.id)) {
+          const user = await User.findById(decoded.id);
+          if (user) {
+            req.user = user;
+            return next();
+          }
         }
       } catch (err) {
         // Fall through

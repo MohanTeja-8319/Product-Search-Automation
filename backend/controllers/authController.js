@@ -5,6 +5,8 @@ const Alert = require("../models/Alert");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../utils/sendEmail");
+const { getJwtSecret } = require("../config/jwt");
+const { isValidObjectId } = require("../utils/mongoHelpers");
 
 // Resilient in-memory store when MongoDB is offline / disconnected
 const fallbackUsers = new Map();
@@ -47,7 +49,7 @@ function findFallbackUserById(id) {
 }
 
 function generateToken(userId) {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET || "default_jwt_secret_key", {
+  return jwt.sign({ id: userId }, getJwtSecret(), {
     expiresIn: process.env.JWT_EXPIRES_IN || "7d",
   });
 }
@@ -232,7 +234,7 @@ exports.login = async (req, res) => {
 
 exports.getMe = async (req, res) => {
   try {
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 && isValidObjectId(req.userId)) {
       try {
         const user = await User.findById(req.userId);
         if (user) {
@@ -344,7 +346,7 @@ exports.verifyResetOtp = async (req, res) => {
 
     const resetToken = jwt.sign(
       { id: user._id, purpose: "password_reset" },
-      process.env.JWT_SECRET || "default_jwt_secret_key",
+      getJwtSecret(),
       { expiresIn: process.env.RESET_TOKEN_EXPIRES_IN || "10m" }
     );
 
@@ -370,13 +372,13 @@ exports.resetPassword = async (req, res) => {
 
     let decoded;
     try {
-      decoded = jwt.verify(resetToken, process.env.JWT_SECRET || "default_jwt_secret_key");
+      decoded = jwt.verify(resetToken, getJwtSecret());
     } catch {
       return res.status(400).json({ message: "Reset session expired. Please start again." });
     }
 
     let user = null;
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 && isValidObjectId(decoded.id)) {
       user = await User.findById(decoded.id).catch(() => null);
       if (user) {
         user.password = newPassword;
@@ -421,7 +423,7 @@ exports.changePassword = async (req, res) => {
         .json({ message: "New password must be at least 6 characters long." });
     }
 
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 && isValidObjectId(req.userId)) {
       try {
         const user = await User.findById(req.userId).select("+password");
         if (user) {
@@ -470,7 +472,7 @@ exports.updateProfile = async (req, res) => {
     if (wishlist !== undefined) updateData.wishlist = wishlist;
     if (recentProducts !== undefined) updateData.recentProducts = recentProducts;
 
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 && isValidObjectId(req.userId)) {
       try {
         const updated = await User.findByIdAndUpdate(req.userId, { $set: updateData }, { new: true });
         if (updated) {
@@ -512,7 +514,7 @@ exports.deleteAccount = async (req, res) => {
         .json({ message: "Please confirm your password to delete your account." });
     }
 
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 && isValidObjectId(req.userId)) {
       try {
         const user = await User.findById(req.userId).select("+password");
         if (user) {

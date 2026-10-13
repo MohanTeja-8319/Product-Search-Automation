@@ -127,15 +127,23 @@ function ProductCard({ product, onClick }) {
         {product.name}
       </h3>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-        <FaStar size={11} style={{ color: "#F59E0B" }} />
-        <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text-800)" }}>
-          {product.rating ? Number(product.rating).toFixed(1) : "4.3"}
-        </span>
-        <span style={{ fontSize: 11, color: "var(--text-400)" }}>
-          ({Number(product.reviews || 320).toLocaleString()} reviews)
-        </span>
-      </div>
+      {product.rating ? (
+        <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+          <FaStar size={11} style={{ color: "#F59E0B" }} />
+          <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text-800)" }}>
+            {Number(product.rating).toFixed(1)}
+          </span>
+          {product.reviews && (
+            <span style={{ fontSize: 11, color: "var(--text-400)" }}>
+              ({Number(product.reviews).toLocaleString()} reviews)
+            </span>
+          )}
+        </div>
+      ) : (
+        <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 11, color: "var(--text-500)", fontWeight: 500 }}>
+          <FiShield size={11} color="var(--primary)" /> Verified Listing
+        </div>
+      )}
 
       <StoreBadge store={product.store} storeCount={storeCount} />
 
@@ -394,7 +402,7 @@ export default function HomePage() {
                   <ProductCard
                     key={`${product.id || 'trend'}-${i}`}
                     product={product}
-                    onClick={() => navigate(`/comparison/${encodeURIComponent(product.name)}`, { state: { product } })}
+                    onClick={() => navigate(`/comparison/${encodeURIComponent(product.name)}?store=${encodeURIComponent(product.store || "")}`, { state: { product } })}
                   />
                 ))}
               </div>
@@ -431,7 +439,7 @@ export default function HomePage() {
                   <ProductCard
                     key={`${product.id || 'deal'}-${i}`}
                     product={product}
-                    onClick={() => navigate(`/comparison/${encodeURIComponent(product.name)}`, { state: { product } })}
+                    onClick={() => navigate(`/comparison/${encodeURIComponent(product.name)}?store=${encodeURIComponent(product.store || "")}`, { state: { product } })}
                   />
                 ))}
               </div>

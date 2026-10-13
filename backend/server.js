@@ -18,9 +18,22 @@ const sendEmail = require("./utils/sendEmail");
 
 const app = express();
 
+const allowedOrigins = new Set([
+  process.env.CLIENT_ORIGIN,
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:5000",
+  "http://127.0.0.1:5000",
+].filter(Boolean));
+
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || "*",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.has(origin) || process.env.NODE_ENV !== "production") {
+        return callback(null, true);
+      }
+      return callback(null, false);
+    },
     credentials: true,
   })
 );
@@ -162,7 +175,7 @@ process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 
 function listenOnPort(port) {
   return new Promise((resolve, reject) => {
-    const s = app.listen(port, "0.0.0.0", () => {
+    const s = app.listen(port, () => {
       console.log(`Server running on http://localhost:${port}`);
       resolve(s);
     });

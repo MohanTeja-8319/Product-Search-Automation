@@ -162,7 +162,7 @@ const ProductDetails = () => {
                     <button
                       onClick={() =>
                         window.open(
-                          getDirectStoreUrl(product.store, product.name, product.url),
+                          getDirectStoreUrl(product.store, product.name, product.deeplink || product.url || product.product_link || product.link),
                           "_blank"
                         )
                       }

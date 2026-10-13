@@ -13,8 +13,9 @@ const RecentlyViewed = () => {
 
   const openProduct = (product) => {
     // Always navigate to comparison page — it uses live API to fetch product data
+    const storeParam = product.store ? `?store=${encodeURIComponent(product.store)}` : "";
     navigate(
-      `/comparison/${encodeURIComponent(product.name || product.title)}`,
+      `/comparison/${encodeURIComponent(product.name || product.title)}${storeParam}`,
       { state: { product } }
     );
   };

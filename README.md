@@ -13,7 +13,7 @@ SE_Project/
 │   ├── middleware/           # Auth and validation middleware
 │   ├── models/               # MongoDB Mongoose schemas (User, Alert, PushSubscription)
 │   ├── routes/               # Express API routes
-│   ├── services/             # SerpAPI & external commerce scraping/search services
+│   ├── services/             # QuickCommerce API & multi-store search services
 │   ├── utils/                # Helper utilities (email notifications, web-push)
 │   ├── .env.example          # Environment variables template
 │   ├── package.json          # Backend dependencies
@@ -46,7 +46,7 @@ SE_Project/
 ### 1. Prerequisites
 - **Node.js**: v18.x or later
 - **MongoDB**: Local MongoDB instance or MongoDB Atlas cluster URI
-- **SerpAPI / E-Commerce API Key** (optional for live search scraping)
+- **QuickCommerce API Key** (for live multi-store quick commerce search)
 
 ---
 
@@ -63,7 +63,7 @@ Configure your credentials in `backend/.env`:
 - `MONGODB_URI=your_mongodb_connection_string`
 - `JWT_SECRET=your_jwt_secret_key`
 - `CLIENT_ORIGIN=http://localhost:5173`
-- `SERPAPI_KEY=your_serpapi_key` *(optional for live search)*
+- `QUICKCOMMERCE_API_KEY=your_quickcommerce_api_key` *(for live search)*
 
 #### Frontend Setup
 Navigate to `frontend` and create your `.env` file:
@@ -106,7 +106,7 @@ npm run install:all
 
 - **Frontend**: React 19, Vite, Tailwind CSS, React Router v7, React Icons, React Hot Toast
 - **Backend**: Node.js, Express 4, MongoDB & Mongoose, JSON Web Tokens (JWT), Bcrypt.js, Web-Push, Nodemailer
-- **Search & Comparison**: SerpAPI integration with multi-source fallback and normalizer
+- **Search & Comparison**: QuickCommerce API integration with multi-store comparison and normalizer
 
 ---
 

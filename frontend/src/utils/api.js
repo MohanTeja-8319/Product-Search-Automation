@@ -411,10 +411,10 @@ export async function searchLiveProducts(
 
 export async function searchSpecificLiveProduct(
   productName,
-  { lat, lon, pincode } = {}
+  { lat, lon, pincode, store } = {}
 ) {
-  const cleanName =
-    String(productName || "").trim();
+  const cleanName = String(productName || "").trim();
+  const cleanStore = String(store || "").trim();
 
   if (!cleanName) {
     return {
@@ -424,11 +424,8 @@ export async function searchSpecificLiveProduct(
     };
   }
 
-
-  const cached =
-    readLiveSearchCache(
-      cleanName
-    );
+  const cacheKey = cleanStore ? `${cleanName}_${cleanStore.toLowerCase()}` : cleanName;
+  const cached = readLiveSearchCache(cacheKey);
 
   if (cached?.data) {
     return {
@@ -437,14 +434,11 @@ export async function searchSpecificLiveProduct(
     };
   }
 
-
-  const params =
-    new URLSearchParams();
-
-  params.set(
-    "name",
-    cleanName
-  );
+  const params = new URLSearchParams();
+  params.set("name", cleanName);
+  if (cleanStore) {
+    params.set("store", cleanStore);
+  }
 
   if (lat != null) {
     params.set("lat", lat);
@@ -455,42 +449,24 @@ export async function searchSpecificLiveProduct(
   }
 
   if (pincode) {
-    params.set(
-      "pincode",
-      pincode
-    );
+    params.set("pincode", pincode);
   }
 
+  const data = await request(`/products/specific?${params.toString()}`);
 
-  const data = await request(
-    `/products/specific?${params.toString()}`
-  );
-
-
-  writeLiveSearchCache(
-    cleanName,
-    data
-  );
-
+  writeLiveSearchCache(cacheKey, data);
 
   return data;
 }
 
-
-
-
 export async function getLiveComparison(
   productName,
-  { lat, lon, pincode } = {}
+  { lat, lon, pincode, store } = {}
 ) {
-  
-
-  return searchSpecificLiveProduct(
-    productName,
-    {
-      lat,
-      lon,
-      pincode,
-    }
-  );
+  return searchSpecificLiveProduct(productName, {
+    lat,
+    lon,
+    pincode,
+    store,
+  });
 }

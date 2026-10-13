@@ -61,7 +61,8 @@ export const toggleWishlistItem = (product) => {
       image: product.image || "",
       rating: product.rating || null,
       store: product.store || "Amazon",
-      url: product.url || "",
+      url: product.deeplink || product.url || product.product_link || product.link || "",
+      deeplink: product.deeplink || product.url || product.product_link || product.link || "",
       logoText: (product.store || "Amazon")[0].toLowerCase(),
       logoBg: (product.store || "Amazon") === "Amazon" ? "bg-black text-white font-serif" : "bg-blue-600 text-yellow-400 font-extrabold",
       lastUpdated: "Just now"

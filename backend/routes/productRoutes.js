@@ -10,6 +10,8 @@ const Product = require("../models/Product");
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const { getJwtSecret } = require("../config/jwt");
+const { isValidObjectId } = require("../utils/mongoHelpers");
 
 const router = express.Router();
 
@@ -69,40 +71,50 @@ function extractProductFromUrl(urlStr) {
 
 function mapDbProduct(p) {
   const comparison = (Array.isArray(p.platforms) && p.platforms.length > 0)
-    ? p.platforms.map((pl) => ({
-        id: `qc-${pl.name}-${p._id}`,
-        name: p.title,
-        brand: p.brand || "",
-        price: pl.price || p.currentPrice || 0,
-        originalPrice: pl.originalPrice || p.originalPrice,
-        discount: p.discount,
-        rating: pl.rating || p.rating || 4.5,
-        reviews: p.reviewsCount || 120,
-        availability: pl.inStock === false ? "Out of Stock" : "In Stock",
-        image: p.image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80",
-        url: pl.url || `/api/products/redirect?store=${encodeURIComponent(pl.name)}&name=${encodeURIComponent(p.title)}`,
-        store: pl.name,
-        source: "QuickCommerce API",
-      }))
+    ? p.platforms.map((pl) => {
+        const pUrl = pl.deeplink || pl.url || pl.product_link || pl.link || `/api/products/redirect?store=${encodeURIComponent(pl.name)}&name=${encodeURIComponent(p.title)}`;
+        return {
+          id: `qc-${pl.name}-${p._id}`,
+          name: p.title,
+          brand: p.brand || "",
+          price: pl.price || p.currentPrice || 0,
+          originalPrice: pl.originalPrice || p.originalPrice || pl.price,
+          discount: p.discount,
+          rating: (Number.isFinite(pl.rating) && pl.rating > 0) ? pl.rating : ((Number.isFinite(p.rating) && p.rating > 0) ? p.rating : null),
+          reviews: (Number.isFinite(p.reviewsCount) && p.reviewsCount > 0) ? p.reviewsCount : null,
+          availability: pl.inStock === false ? "Out of Stock" : "In Stock",
+          image: p.image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80",
+          url: pUrl,
+          deeplink: pUrl,
+          link: pUrl,
+          product_link: pUrl,
+          store: pl.name,
+          source: p.source || "Quick Commerce",
+        };
+      })
     : [{
-        id: `qc-Amazon-${p._id}`,
+        id: `qc-BlinkIt-${p._id}`,
         name: p.title,
         brand: p.brand || "",
         price: p.currentPrice || 0,
-        originalPrice: p.originalPrice,
+        originalPrice: p.originalPrice || p.currentPrice,
         discount: p.discount,
-        rating: p.rating || 4.5,
-        reviews: p.reviewsCount || 120,
+        rating: (Number.isFinite(p.rating) && p.rating > 0) ? p.rating : null,
+        reviews: (Number.isFinite(p.reviewsCount) && p.reviewsCount > 0) ? p.reviewsCount : null,
         availability: p.availability || "In Stock",
         image: p.image || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=80",
-        url: `/api/products/redirect?store=Amazon&name=${encodeURIComponent(p.title)}`,
-        store: "Amazon",
-        source: "QuickCommerce API",
+        url: `/api/products/redirect?store=BlinkIt&name=${encodeURIComponent(p.title)}`,
+        deeplink: `/api/products/redirect?store=BlinkIt&name=${encodeURIComponent(p.title)}`,
+        link: `/api/products/redirect?store=BlinkIt&name=${encodeURIComponent(p.title)}`,
+        product_link: `/api/products/redirect?store=BlinkIt&name=${encodeURIComponent(p.title)}`,
+        store: "BlinkIt",
+        source: p.source || "Quick Commerce",
       }];
 
   const sortedComp = [...comparison].sort((a, b) => a.price - b.price);
   const primaryStore = p.platforms?.[0]?.name || comparison[0]?.store || "Amazon";
   const primaryItem = comparison.find((c) => c.store === primaryStore) || comparison[0];
+  const primaryUrl = primaryItem.deeplink || primaryItem.url || primaryItem.link || primaryItem.product_link;
 
   return {
     id: `db-${p._id}`,
@@ -116,7 +128,10 @@ function mapDbProduct(p) {
     reviews: p.reviewsCount || primaryItem.reviews || 120,
     availability: p.availability || "In Stock",
     image: p.image || primaryItem.image,
-    url: primaryItem.url,
+    url: primaryUrl,
+    deeplink: primaryUrl,
+    link: primaryUrl,
+    product_link: primaryUrl,
     store: primaryStore,
     storeCount: comparison.length,
     comparison: sortedComp,
@@ -155,8 +170,8 @@ router.get("/search", async (req, res) => {
       const authHeader = req.headers.authorization;
       if (authHeader && authHeader.startsWith("Bearer ")) {
         const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "default_secret");
-        if (mongoose.connection.readyState === 1) {
+        const decoded = jwt.verify(token, getJwtSecret());
+        if (mongoose.connection.readyState === 1 && isValidObjectId(decoded.id)) {
           const u = await User.findById(decoded.id);
           if (u) {
             userName = u.fullName;
@@ -198,19 +213,35 @@ router.get("/search", async (req, res) => {
               currentPrice: p.price || 0,
               originalPrice: p.originalPrice || 0,
               discount: p.discount || "",
-              rating: p.rating || 4.5,
-              reviewsCount: p.reviewsCount || 120,
+              rating: (Number.isFinite(p.rating) && p.rating > 0) ? p.rating : null,
+              reviewsCount: (Number.isFinite(p.reviews) && p.reviews > 0) ? p.reviews : null,
               availability: p.inStock === false ? "Out of Stock" : "In Stock",
               platforms: Array.isArray(p.comparison) && p.comparison.length > 0
-                ? p.comparison.map(c => ({
-                    name: c.store || "Amazon",
-                    price: c.price || p.price || 0,
-                    originalPrice: c.originalPrice || 0,
-                    inStock: c.availability !== "Out of Stock",
-                    url: c.url || "",
-                    rating: c.rating || 4.5,
-                  }))
-                : [{ name: p.store || "Amazon", price: p.price || 0, originalPrice: p.originalPrice || 0, inStock: true }],
+                ? p.comparison.map(c => {
+                    const cUrl = c.deeplink || c.url || c.link || c.product_link || "";
+                    return {
+                      name: c.store || "BlinkIt",
+                      price: c.price || p.price || 0,
+                      originalPrice: c.originalPrice || 0,
+                      inStock: c.availability !== "Out of Stock",
+                      url: cUrl,
+                      deeplink: cUrl,
+                      link: cUrl,
+                      product_link: cUrl,
+                      rating: (Number.isFinite(c.rating) && c.rating > 0) ? c.rating : null,
+                    };
+                  })
+                : [{
+                    name: p.store || "BlinkIt",
+                    price: p.price || 0,
+                    originalPrice: p.originalPrice || 0,
+                    inStock: true,
+                    url: p.deeplink || p.url || p.link || p.product_link || "",
+                    deeplink: p.deeplink || p.url || p.link || p.product_link || "",
+                    link: p.deeplink || p.url || p.link || p.product_link || "",
+                    product_link: p.deeplink || p.url || p.link || p.product_link || "",
+                  }],
+              source: "Quick Commerce API",
               searchQuery: query,
             },
           },
@@ -245,7 +276,7 @@ router.get("/search", async (req, res) => {
       status: "success",
       query: query,
       products: returnedProducts,
-      platforms: result.platforms || ["Amazon", "Flipkart", "BlinkIt", "Zepto", "Swiggy", "BigBasket", "Myntra", "Nykaa"],
+      platforms: result.platforms || ["BlinkIt", "Zepto", "Swiggy", "BigBasket", "DMart", "Minutes"],
       creditsRemaining: result.creditsRemaining,
       fromCache: result.fromCache || false,
     });
@@ -258,7 +289,7 @@ router.get("/search", async (req, res) => {
         status: "success",
         query: query,
         products: fallbackResult.products || [],
-        platforms: fallbackResult.platforms || ["Amazon", "Flipkart", "BlinkIt", "Zepto", "Swiggy", "BigBasket", "Myntra", "Nykaa"],
+        platforms: fallbackResult.platforms || ["BlinkIt", "Zepto", "Swiggy", "BigBasket", "DMart", "Minutes"],
         fromCache: true,
       });
     } catch (_) {}
@@ -267,7 +298,7 @@ router.get("/search", async (req, res) => {
       status: "success",
       query: query,
       products: [],
-      platforms: ["Amazon", "Flipkart", "BlinkIt", "Zepto", "Swiggy", "BigBasket", "Myntra", "Nykaa"],
+      platforms: ["BlinkIt", "Zepto", "Swiggy", "BigBasket", "DMart", "Minutes"],
       fromCache: true,
     });
   }
@@ -279,6 +310,7 @@ router.get("/specific", async (req, res) => {
   let query = String(
     req.query.name || req.query.q || ""
   ).trim();
+  const store = String(req.query.store || "").trim();
   query = extractProductFromUrl(query);
 
   if (!query) {
@@ -293,6 +325,7 @@ router.get("/specific", async (req, res) => {
 
     const result = await searchSpecificLiveProduct({
       query,
+      store,
       ...location,
     });
 
@@ -334,7 +367,7 @@ router.get("/specific", async (req, res) => {
 router.get("/redirect", async (req, res) => {
   const store = String(req.query.store || "").trim();
   const name = String(req.query.name || req.query.q || "").trim();
-  const rawUrl = String(req.query.url || "").trim();
+  const rawUrl = String(req.query.url || req.query.deeplink || req.query.link || req.query.product_link || "").trim();
 
   try {
     const directUrl = await resolveExactProductUrl(store, name, rawUrl);

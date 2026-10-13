@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams, useLocation, useSearchParams } from "react-router-dom";
 import {
   FiArrowLeft, FiCheck, FiX, FiExternalLink, FiBell,
   FiTrendingDown, FiShield, FiAlertCircle
@@ -24,6 +24,7 @@ const STORE_COLORS = {
   myntra: { text: "#FF3F6C", bg: "#FFF0F4", label: "Myntra" },
   nykaa: { text: "#FC2779", bg: "#FFF0F6", label: "Nykaa" },
   dmart: { text: "#006400", bg: "#EAF7EA", label: "DMart" },
+  minutes: { text: "#2874F0", bg: "#F0F6FF", label: "Minutes" },
   jiomart: { text: "#0078AD", bg: "#EBF5FB", label: "JioMart" },
 };
 
@@ -31,6 +32,14 @@ export default function ComparisonPage() {
   const navigate = useNavigate();
   const { productName } = useParams();
   const decodedName = productName || "";
+
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const stateProduct = location.state?.product;
+
+  const urlStore = searchParams.get("store") || "";
+  const initialStore = urlStore || stateProduct?.store || "";
+  const [selectedStore, setSelectedStore] = useState(initialStore);
 
   const [loading, setLoading] = useState(true);
   const [productData, setProductData] = useState(null);
@@ -40,40 +49,123 @@ export default function ComparisonPage() {
   const [alertProduct, setAlertProduct] = useState(null);
   const [targetPriceInput, setTargetPriceInput] = useState("");
 
-  const location = useLocation();
-  const stateProduct = location.state?.product;
-
   useEffect(() => {
     let active = true;
+    const requestedStore = urlStore || stateProduct?.store || selectedStore || "";
 
-    // If product passed in route state, display preview immediately
+    // If product passed in route state, display preview immediately with preserved store
     if (stateProduct && (stateProduct.name === decodedName || !decodedName)) {
-      setProductData(stateProduct);
+      const pStore = requestedStore || stateProduct.store || "";
+      setProductData({
+        ...stateProduct,
+        store: pStore,
+      });
+      if (pStore) setSelectedStore(pStore);
 
       if (Array.isArray(stateProduct.comparison) && stateProduct.comparison.length > 0) {
-        setComparisonList(stateProduct.comparison);
+        const cleaned = stateProduct.comparison
+          .filter((c) => {
+            const isTech = /phone|laptop|galaxy|iphone|macbook|ultra|pro|tv|watch/i.test(decodedName || stateProduct.name || "");
+            if (isTech && /zepto/i.test(c.store)) return false;
+            return true;
+          })
+          .map((c) => {
+            const raw = c.deeplink || c.url || c.product_link || c.link;
+            const resolved = getDirectStoreUrl(c.store, decodedName || stateProduct.name, raw);
+            return {
+              ...c,
+              url: resolved,
+              deeplink: resolved,
+              link: resolved,
+              product_link: resolved,
+            };
+          });
+        setComparisonList(cleaned);
         setLoading(false);
-        return;
       }
     }
 
     setLoading(true);
-    getLiveComparison(decodedName)
+    getLiveComparison(decodedName, { store: requestedStore })
       .then((res) => {
         if (!active) return;
         if (res?.product) {
-          setProductData(res.product);
-          setComparisonList(res.product.comparison || []);
+          // ALWAYS preserve the store from the product card / query!
+          const storeToKeep = requestedStore || stateProduct?.store || res.product.store;
+          if (storeToKeep) setSelectedStore(storeToKeep);
+
+          const storeMatch = Array.isArray(res.product.comparison)
+            ? res.product.comparison.find((c) => c.store.toLowerCase() === storeToKeep.toLowerCase())
+            : null;
+
+          const rawMatchUrl = storeMatch?.deeplink || storeMatch?.url || storeMatch?.product_link || storeMatch?.link;
+          const rawFallbackUrl = storeToKeep === stateProduct?.store
+            ? (stateProduct?.deeplink || stateProduct?.url || stateProduct?.product_link || stateProduct?.link)
+            : (res.product.deeplink || res.product.url || res.product.product_link || res.product.link);
+          const chosenUrl = getDirectStoreUrl(storeToKeep, decodedName || res.product.name, rawMatchUrl ?? rawFallbackUrl);
+
+          setProductData({
+            ...res.product,
+            store: storeToKeep,
+            price: storeMatch?.price ?? (storeToKeep === stateProduct?.store ? stateProduct?.price : res.product.price),
+            originalPrice: storeMatch?.originalPrice ?? (storeToKeep === stateProduct?.store ? stateProduct?.originalPrice : res.product.originalPrice),
+            url: chosenUrl,
+            deeplink: chosenUrl,
+            link: chosenUrl,
+            product_link: chosenUrl,
+            rating: storeMatch?.rating ?? (storeToKeep === stateProduct?.store ? stateProduct?.rating : res.product.rating),
+          });
+
+          // Ensure the comparisonList contains the selected store with accurate data
+          let comps = Array.isArray(res.product.comparison)
+            ? res.product.comparison.map((c) => {
+                const cUrl = c.deeplink || c.url || c.product_link || c.link;
+                const resolved = getDirectStoreUrl(c.store, decodedName || res.product.name, cUrl);
+                return {
+                  ...c,
+                  url: resolved,
+                  deeplink: resolved,
+                  link: resolved,
+                  product_link: resolved,
+                };
+              })
+            : [];
+          if (storeToKeep && !comps.some(c => c.store.toLowerCase() === storeToKeep.toLowerCase()) && stateProduct) {
+            const sUrl = stateProduct.deeplink || stateProduct.url || stateProduct.product_link || stateProduct.link || "#";
+            comps.unshift({
+              store: storeToKeep,
+              price: stateProduct.price,
+              originalPrice: stateProduct.originalPrice || stateProduct.price,
+              url: sUrl,
+              deeplink: sUrl,
+              link: sUrl,
+              product_link: sUrl,
+              delivery: "Standard Delivery",
+            });
+          }
+          setComparisonList(comps);
         } else if (stateProduct) {
           // Fallback to stateProduct if specific search didn't find multiple stores
-          setProductData(stateProduct);
+          const storeToKeep = requestedStore || stateProduct.store || "Quick Commerce";
+          const sUrl = stateProduct.deeplink || stateProduct.url || stateProduct.product_link || stateProduct.link || "#";
+          setProductData({
+            ...stateProduct,
+            store: storeToKeep,
+            url: sUrl,
+            deeplink: sUrl,
+            link: sUrl,
+            product_link: sUrl,
+          });
           if (stateProduct.store && stateProduct.price) {
             setComparisonList([
               {
                 store: stateProduct.store,
                 price: stateProduct.price,
                 originalPrice: stateProduct.originalPrice || stateProduct.price,
-                url: stateProduct.url || "#",
+                url: sUrl,
+                deeplink: sUrl,
+                link: sUrl,
+                product_link: sUrl,
                 delivery: "Standard Delivery",
               }
             ]);
@@ -85,14 +177,26 @@ export default function ComparisonPage() {
       .catch((err) => {
         if (active) {
           if (stateProduct) {
-            setProductData(stateProduct);
+            const storeToKeep = requestedStore || stateProduct.store || "Quick Commerce";
+            const sUrl = stateProduct.deeplink || stateProduct.url || stateProduct.product_link || stateProduct.link || "#";
+            setProductData({
+              ...stateProduct,
+              store: storeToKeep,
+              url: sUrl,
+              deeplink: sUrl,
+              link: sUrl,
+              product_link: sUrl,
+            });
             if (stateProduct.store && stateProduct.price) {
               setComparisonList([
                 {
                   store: stateProduct.store,
                   price: stateProduct.price,
                   originalPrice: stateProduct.originalPrice || stateProduct.price,
-                  url: stateProduct.url || "#",
+                  url: sUrl,
+                  deeplink: sUrl,
+                  link: sUrl,
+                  product_link: sUrl,
                   delivery: "Standard Delivery",
                 }
               ]);
@@ -106,12 +210,29 @@ export default function ComparisonPage() {
         if (active) setLoading(false);
       });
     return () => { active = false; };
-  }, [decodedName, stateProduct]);
+  }, [decodedName, stateProduct, urlStore]);
 
-  const validPrices = comparisonList.map(item => item.price).filter(p => typeof p === 'number' && !isNaN(p) && p > 0);
+  const sortedComparisons = [...comparisonList].sort((a, b) => a.price - b.price);
+  const validPrices = sortedComparisons.map(item => item.price).filter(p => typeof p === 'number' && !isNaN(p) && p > 0);
   const bestPrice = validPrices.length > 0
     ? Math.min(...validPrices)
     : (productData?.price || null);
+
+  const activeStore = productData?.store || selectedStore || "";
+  const selectedOffer = sortedComparisons.find(
+    (item) => item.store.toLowerCase() === activeStore.toLowerCase()
+  ) || (productData ? {
+    store: activeStore,
+    price: productData.price,
+    url: productData.url,
+    deeplink: productData.deeplink || productData.url,
+    link: productData.link || productData.url,
+    product_link: productData.product_link || productData.url,
+  } : null);
+
+  const lowestOffer = sortedComparisons.find((item) => item.price === bestPrice) || sortedComparisons[0] || null;
+  const isSelectedLowest = selectedOffer && bestPrice && selectedOffer.price === bestPrice;
+  const bestDeal = isSelectedLowest ? selectedOffer : lowestOffer;
 
   return (
     <div className="page-wrapper">
@@ -163,11 +284,36 @@ export default function ComparisonPage() {
                 </div>
                 
                 <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+                  <div style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
                     <span className="badge badge-primary">{productData.category || "Gadget"}</span>
-                    <span className="badge" style={{ background: "#FFFBEB", color: "#D97706", display: "flex", alignItems: "center", gap: 4 }}>
-                      <FaStar size={11} /> {Number(productData.rating || 4.4).toFixed(1)} Rating
-                    </span>
+                    {productData.store && (
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 6,
+                          padding: "4px 10px",
+                          background: (STORE_COLORS[productData.store.toLowerCase()]?.bg || "#F3F4F6"),
+                          color: (STORE_COLORS[productData.store.toLowerCase()]?.text || "var(--text-900)"),
+                          borderRadius: "var(--radius-sm)",
+                          fontSize: 12,
+                          fontWeight: 700,
+                          border: `1px solid ${STORE_COLORS[productData.store.toLowerCase()]?.text || "var(--border)"}35`
+                        }}
+                      >
+                        <FaStore size={12} />
+                        {productData.store}
+                      </span>
+                    )}
+                    {productData.rating ? (
+                      <span className="badge" style={{ background: "#FFFBEB", color: "#D97706", display: "flex", alignItems: "center", gap: 4 }}>
+                        <FaStar size={11} /> {Number(productData.rating).toFixed(1)} Rating
+                      </span>
+                    ) : (
+                      <span className="badge" style={{ background: "#EEF2FF", color: "#4F46E5", display: "flex", alignItems: "center", gap: 4 }}>
+                        <FiShield size={11} /> Quick Commerce Verified
+                      </span>
+                    )}
                   </div>
                   
                   <h1 className="font-heading" style={{ fontSize: 32, fontWeight: 400, color: "var(--text-900)", lineHeight: 1.3, marginBottom: 16 }}>
@@ -185,17 +331,72 @@ export default function ComparisonPage() {
                       <FiTrendingDown size={20} />
                     </div>
                     <div>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: "var(--success-hover)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Current Best Price</div>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: "var(--success-hover)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                        {isSelectedLowest
+                          ? `Lowest Price on ${selectedOffer?.store || productData.store}`
+                          : (lowestOffer ? `Best Market Price • Lowest on ${lowestOffer.store}` : `Price on ${productData.store}`)}
+                      </div>
                       <div className="font-heading" style={{ fontSize: 28, fontWeight: 400, color: "var(--success)" }}>
-                        ₹{bestPrice ? bestPrice.toLocaleString() : "N/A"}
+                        ₹{(bestPrice || selectedOffer?.price || productData.price)?.toLocaleString()}
                       </div>
                     </div>
                     
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: "auto" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: "auto", flexWrap: "wrap" }}>
+                      {/* Primary Buy Button for the selected store */}
+                      {selectedOffer && (
+                        <a
+                          href={getDirectStoreUrl(selectedOffer.store, selectedOffer.name || productData.name, selectedOffer.deeplink || selectedOffer.url || selectedOffer.product_link || selectedOffer.link)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-primary"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 6,
+                            padding: "9px 18px",
+                            fontWeight: 700,
+                            borderRadius: "var(--radius-md)",
+                            background: isSelectedLowest ? "var(--success)" : "var(--primary)",
+                            borderColor: isSelectedLowest ? "var(--success)" : "var(--primary)",
+                            color: "#fff",
+                            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+                            textDecoration: "none"
+                          }}
+                          title={`Buy on ${selectedOffer.store}`}
+                        >
+                          Buy on {selectedOffer.store} {selectedOffer.price ? `(₹${selectedOffer.price.toLocaleString()})` : ""} <FiExternalLink size={14} />
+                        </a>
+                      )}
+
+                      {/* Alternative Lowest Price button if another store is cheaper */}
+                      {!isSelectedLowest && lowestOffer && lowestOffer.store.toLowerCase() !== (selectedOffer?.store || "").toLowerCase() && (
+                        <a
+                          href={getDirectStoreUrl(lowestOffer.store, lowestOffer.name || productData.name, lowestOffer.deeplink || lowestOffer.url || lowestOffer.product_link || lowestOffer.link)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn btn-outline"
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: 6,
+                            padding: "9px 16px",
+                            fontWeight: 700,
+                            borderRadius: "var(--radius-md)",
+                            borderColor: "var(--success)",
+                            color: "var(--success)",
+                            background: "#fff",
+                            textDecoration: "none"
+                          }}
+                          title={`Buy on ${lowestOffer.store} for lower price`}
+                        >
+                          Lowest on {lowestOffer.store} (₹{lowestOffer.price?.toLocaleString()}) <FiExternalLink size={14} />
+                        </a>
+                      )}
+
                       <WishlistButton
                         product={{
                           name: productData.name,
-                          price: bestPrice,
+                          price: bestPrice || selectedOffer?.price || productData.price,
                           image: productData.image,
                         }}
                         size={38}
@@ -206,9 +407,10 @@ export default function ComparisonPage() {
                       <button
                         onClick={() => {
                           setAlertProduct(productData);
-                          setTargetPriceInput(Math.round((bestPrice || 0) * 0.9));
+                          setTargetPriceInput(Math.round(((bestPrice || selectedOffer?.price || 0)) * 0.9));
                         }}
-                        className="btn btn-primary"
+                        className="btn btn-outline"
+                        style={{ background: "#fff" }}
                       >
                         <FiBell size={14} /> Set Alert
                       </button>
@@ -242,10 +444,12 @@ export default function ComparisonPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {comparisonList.sort((a, b) => a.price - b.price).map((item, idx) => {
+                      {sortedComparisons.map((item, idx) => {
                         const storeId = item.store.toLowerCase();
                         const storeStyle = STORE_COLORS[storeId] || { text: "var(--text-700)", bg: "var(--bg)", label: item.store };
                         const isBest = item.price === bestPrice;
+                        const isSelectedStore = (productData?.store || selectedStore || "").toLowerCase() === item.store.toLowerCase();
+                        const buyUrl = getDirectStoreUrl(item.store, item.name || productData?.name, item.deeplink || item.url || item.product_link || item.link);
 
                         return (
                           <tr key={idx} style={{ borderBottom: "1px solid var(--border)", transition: "var(--transition)", background: isBest ? "rgba(5,150,105,0.02)" : "transparent" }}
@@ -256,6 +460,11 @@ export default function ComparisonPage() {
                               <div style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "8px 14px", background: storeStyle.bg, color: storeStyle.text, borderRadius: "var(--radius-md)", fontWeight: 700, fontSize: 13 }}>
                                 <FaStore size={14} /> {storeStyle.label}
                               </div>
+                              {isSelectedStore && (
+                                <span className="badge badge-primary" style={{ marginLeft: 8, fontSize: 10, verticalAlign: "middle" }}>
+                                  Selected Store
+                                </span>
+                              )}
                             </td>
                             
                             <td style={{ padding: "20px 32px" }}>
@@ -277,51 +486,61 @@ export default function ComparisonPage() {
                                 </span>
                                 {isBest && <span className="badge badge-success">Lowest</span>}
                               </div>
-                              {(() => {
-                                const r = Number(item.rating) > 0 ? Number(item.rating) : 4.3;
-                                const rev = Number(item.reviews) > 0 ? Number(item.reviews) : 380;
-                                return (
-                                  <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: 6 }}>
-                                    {[1, 2, 3, 4, 5].map((star) => (
-                                      <FaStar
-                                        key={star}
-                                        size={12}
-                                        style={{
-                                          color: star <= Math.round(r) ? "#F59E0B" : "#D1D5DB",
-                                        }}
-                                      />
-                                    ))}
-                                    <span
+                              {item.rating ? (
+                                <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: 6 }}>
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <FaStar
+                                      key={star}
+                                      size={12}
                                       style={{
-                                        fontSize: 12,
-                                        fontWeight: 700,
-                                        color: "#92400E",
-                                        marginLeft: 4,
-                                        background: "#FEF3C7",
-                                        padding: "1px 6px",
-                                        borderRadius: 4,
+                                        color: star <= Math.round(Number(item.rating)) ? "#F59E0B" : "#D1D5DB",
                                       }}
-                                    >
-                                      {r.toFixed(1)}
-                                    </span>
+                                    />
+                                  ))}
+                                  <span
+                                    style={{
+                                      fontSize: 12,
+                                      fontWeight: 700,
+                                      color: "#92400E",
+                                      marginLeft: 4,
+                                      background: "#FEF3C7",
+                                      padding: "1px 6px",
+                                      borderRadius: 4,
+                                    }}
+                                  >
+                                    {Number(item.rating).toFixed(1)}
+                                  </span>
+                                  {item.reviews && (
                                     <span style={{ fontSize: 11, color: "var(--text-400)", marginLeft: 2 }}>
-                                      ({rev.toLocaleString()} reviews)
+                                      ({Number(item.reviews).toLocaleString()} reviews)
                                     </span>
-                                  </div>
-                                );
-                              })()}
+                                  )}
+                                </div>
+                              ) : (
+                                <div style={{ display: "flex", alignItems: "center", gap: 4, marginTop: 6, fontSize: 11, color: "var(--text-500)", fontWeight: 500 }}>
+                                  <FiShield size={12} color="var(--primary)" /> Verified Store Listing
+                                </div>
+                              )}
                             </td>
 
                             <td style={{ padding: "20px 32px", textAlign: "right" }}>
                               <a
-                                href={getDirectStoreUrl(item.store, item.name || productData?.name, item.url || item.link)}
+                                href={buyUrl}
                                 target="_blank"
-                                rel="noreferrer"
+                                rel="noopener noreferrer"
                                 className="btn btn-primary btn-sm"
-                                style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
+                                style={{
+                                  display: "inline-flex",
+                                  alignItems: "center",
+                                  gap: 6,
+                                  background: isBest ? "var(--success)" : undefined,
+                                  borderColor: isBest ? "var(--success)" : undefined,
+                                  boxShadow: isBest ? "0 2px 8px rgba(16, 185, 129, 0.25)" : undefined,
+                                  textDecoration: "none"
+                                }}
                                 title={`Buy on ${item.store || "Store"}`}
                               >
-                                Buy Now <FiExternalLink size={13} />
+                                Buy on {item.store || "Store"} <FiExternalLink size={13} />
                               </a>
                             </td>
                           </tr>

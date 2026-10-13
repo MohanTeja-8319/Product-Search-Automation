@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   FiSearch, FiFilter, FiGrid, FiList, FiHeart, FiStar,
   FiChevronRight, FiChevronLeft, FiChevronDown, FiX, FiSliders, FiArrowUp, FiArrowDown,
-  FiAlertCircle, FiShoppingBag, FiBell, FiRotateCcw, FiTag, FiExternalLink,
+  FiAlertCircle, FiShoppingBag, FiBell, FiRotateCcw, FiTag, FiExternalLink, FiShield,
   FiSmartphone, FiMonitor, FiHeadphones, FiTv, FiWatch, FiPackage, FiSmile
 } from "react-icons/fi";
 import { FaStar, FaExchangeAlt, FaGamepad } from "react-icons/fa";
@@ -37,25 +37,29 @@ const FILTER_CATEGORIES = [
 ];
 
 const ALL_STORES = [
-  { id: "amazon", name: "Amazon", color: "#F59E0B" },
+  { id: "amazon", name: "Amazon", color: "#FF9900" },
   { id: "flipkart", name: "Flipkart", color: "#2563EB" },
   { id: "blinkit", name: "BlinkIt", color: "#EAB308" },
   { id: "zepto", name: "Zepto", color: "#9333EA" },
   { id: "swiggy", name: "Swiggy", color: "#EA580C" },
   { id: "bigbasket", name: "BigBasket", color: "#65A30D" },
-  { id: "myntra", name: "Myntra", color: "#E11D48" },
-  { id: "nykaa", name: "Nykaa", color: "#DB2777" },
+  { id: "dmart", name: "DMart", color: "#059669" },
+  { id: "minutes", name: "Minutes", color: "#2563EB" },
+  { id: "jiomart", name: "JioMart", color: "#0078AD" },
 ];
 
 const STORE_BADGE_CONFIG = {
-  amazon: { bg: "#FFF8E7", color: "#B45309", border: "#FDE68A", label: "Amazon" },
+  amazon: { bg: "#FFF8F0", color: "#EA580C", border: "#FDBA74", label: "Amazon" },
   flipkart: { bg: "#EFF6FF", color: "#1D4ED8", border: "#BFDBFE", label: "Flipkart" },
   blinkit: { bg: "#FEF9C3", color: "#854D0E", border: "#FDE047", label: "BlinkIt" },
   zepto: { bg: "#F3E8FF", color: "#6B21A8", border: "#E9D5FF", label: "Zepto" },
   swiggy: { bg: "#FFF7ED", color: "#C2410C", border: "#FFEDD5", label: "Swiggy" },
   bigbasket: { bg: "#F7FEE7", color: "#3F6212", border: "#ECFCCB", label: "BigBasket" },
-  myntra: { bg: "#FFF1F2", color: "#BE123C", border: "#FECDD3", label: "Myntra" },
-  nykaa: { bg: "#FDF2F8", color: "#BE185D", border: "#FCE7F3", label: "Nykaa" },
+  dmart: { bg: "#ECFDF5", color: "#047857", border: "#A7F3D0", label: "DMart" },
+  minutes: { bg: "#EFF6FF", color: "#1D4ED8", border: "#BFDBFE", label: "Minutes" },
+  jiomart: { bg: "#EFF6FF", color: "#0078AD", border: "#BFDBFE", label: "JioMart" },
+  croma: { bg: "#ECFEFF", color: "#0891B2", border: "#A5F3FC", label: "Croma" },
+  reliancedigital: { bg: "#FEF2F2", color: "#DC2626", border: "#FECACA", label: "Reliance Digital" },
 };
 
 function getNumericPrice(val) {
@@ -149,13 +153,17 @@ function getDisplayProduct(p, selectedStores) {
       return selectedStores.some(s => cStore.includes(s.toLowerCase()));
     });
     if (compMatch) {
+      const matchedUrl = compMatch.deeplink || compMatch.url || compMatch.product_link || compMatch.link || p.deeplink || p.url || p.link || "";
       return {
         ...p,
         store: compMatch.store || compMatch.name || p.store,
         price: compMatch.price || p.price,
         originalPrice: compMatch.originalPrice || p.originalPrice,
         discount: compMatch.discount || p.discount,
-        link: compMatch.link || p.link,
+        url: matchedUrl,
+        deeplink: matchedUrl,
+        link: matchedUrl,
+        product_link: matchedUrl,
         rating: compMatch.rating || p.rating,
         delivery: compMatch.delivery || p.delivery
       };
@@ -222,15 +230,23 @@ function ProductCard({ product, view, onCompare, onTrack }) {
           <h3 style={{ fontSize: 14, fontWeight: 600, color: "var(--text-900)", lineHeight: 1.4, marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
             {product.name}
           </h3>
-          <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 4 }}>
-            <FaStar size={11} style={{ color: "#F59E0B" }} />
-            <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text-800)" }}>
-              {product.rating ? Number(product.rating).toFixed(1) : "4.3"}
-            </span>
-            <span style={{ fontSize: 11, color: "var(--text-400)" }}>
-              ({Number(product.reviews || 280).toLocaleString()} reviews)
-            </span>
-          </div>
+          {product.rating ? (
+            <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 4 }}>
+              <FaStar size={11} style={{ color: "#F59E0B" }} />
+              <span style={{ fontSize: 12, fontWeight: 700, color: "var(--text-800)" }}>
+                {Number(product.rating).toFixed(1)}
+              </span>
+              {product.reviews && (
+                <span style={{ fontSize: 11, color: "var(--text-400)" }}>
+                  ({Number(product.reviews).toLocaleString()} reviews)
+                </span>
+              )}
+            </div>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4, fontSize: 11, color: "var(--text-500)", fontWeight: 500 }}>
+              <FiShield size={11} color="var(--primary)" /> Verified Listing
+            </div>
+          )}
           <StoreBadge store={product.store} storeCount={storeCount} />
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4 }}>
             <span style={{ fontSize: 16, fontWeight: 800, color: "var(--success)" }}>₹{numPrice.toLocaleString("en-IN")}</span>
@@ -246,7 +262,7 @@ function ProductCard({ product, view, onCompare, onTrack }) {
             <FaExchangeAlt size={11} /> Compare
           </button>
           <a
-            href={getDirectStoreUrl(product.store, product.name, product.url)}
+            href={getDirectStoreUrl(product.store, product.name, product.deeplink || product.url || product.product_link || product.link)}
             target="_blank"
             rel="noreferrer"
             onClick={(e) => e.stopPropagation()}
@@ -296,15 +312,23 @@ function ProductCard({ product, view, onCompare, onTrack }) {
         {product.name}
       </h3>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-        <FaStar size={11} style={{ color: "#F59E0B" }} />
-        <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-800)" }}>
-          {product.rating ? Number(product.rating).toFixed(1) : "4.3"}
-        </span>
-        <span style={{ fontSize: 10, color: "var(--text-400)" }}>
-          ({Number(product.reviews || 280).toLocaleString()})
-        </span>
-      </div>
+      {product.rating ? (
+        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+          <FaStar size={11} style={{ color: "#F59E0B" }} />
+          <span style={{ fontSize: 11, fontWeight: 700, color: "var(--text-800)" }}>
+            {Number(product.rating).toFixed(1)}
+          </span>
+          {product.reviews && (
+            <span style={{ fontSize: 10, color: "var(--text-400)" }}>
+              ({Number(product.reviews).toLocaleString()})
+            </span>
+          )}
+        </div>
+      ) : (
+        <div style={{ display: "flex", alignItems: "center", gap: 3, fontSize: 10, color: "var(--text-500)", fontWeight: 500 }}>
+          <FiShield size={10} color="var(--primary)" /> Verified Listing
+        </div>
+      )}
 
       <StoreBadge store={product.store} storeCount={storeCount} />
 
@@ -320,7 +344,7 @@ function ProductCard({ product, view, onCompare, onTrack }) {
           <FaExchangeAlt size={11} /> Compare Prices
         </button>
         <a
-          href={getDirectStoreUrl(product.store, product.name, product.url)}
+          href={getDirectStoreUrl(product.store, product.name, product.deeplink || product.url || product.product_link || product.link)}
           target="_blank"
           rel="noreferrer"
           onClick={(e) => e.stopPropagation()}
@@ -1009,7 +1033,7 @@ export default function SearchPage() {
                   )}
                   {!query && !loading && (
                     <div style={{ fontSize: 14, color: "var(--text-600)" }}>
-                      <span style={{ fontWeight: 800, color: "var(--text-900)" }}>{filtered.length}</span> products across 8 live stores
+                      <span style={{ fontWeight: 800, color: "var(--text-900)" }}>{filtered.length}</span> products across {ALL_STORES.length} live stores
                       {totalPages > 1 && (
                         <span style={{ fontSize: 12, color: "var(--text-500)", marginLeft: 6 }}>
                           (Page {safeCurrentPage} of {totalPages})
@@ -1090,8 +1114,8 @@ export default function SearchPage() {
                   )}
 
                   {selectedStores.map(st => (
-                    <span key={st} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 8px", fontSize: 12, color: "var(--text-800)", textTransform: "capitalize" }}>
-                      Store: <strong>{st}</strong>
+                    <span key={st} style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "var(--radius-sm)", display: "inline-flex", alignItems: "center", gap: 6, padding: "3px 8px", fontSize: 12, color: "var(--text-800)" }}>
+                      Store: <strong>{ALL_STORES.find(s => s.id === st)?.name || st}</strong>
                       <FiX style={{ cursor: "pointer", color: "var(--text-400)" }} onClick={() => toggleStore(st)} />
                     </span>
                   ))}
@@ -1193,7 +1217,7 @@ export default function SearchPage() {
                         key={`${product.id || 'prod'}-${startIndex + i}`}
                         product={product}
                         view={view}
-                        onCompare={() => navigate(`/comparison/${encodeURIComponent(product.name)}`, { state: { product } })}
+                        onCompare={() => navigate(`/comparison/${encodeURIComponent(product.name)}?store=${encodeURIComponent(product.store || "")}`, { state: { product } })}
                         onTrack={() => {
                           setAlertProduct(product);
                           setTargetPriceInput(Math.round(getNumericPrice(product.price) * 0.9));

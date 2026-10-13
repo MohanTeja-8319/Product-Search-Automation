@@ -80,7 +80,8 @@ export default function AdminProductDetails() {
     delivery: p.delivery || "Standard 2-3 Business Days",
     rating: p.rating || 4.5,
     deal: p.deal || (idx === 0 ? "Best Price" : "Standard Price"),
-    url: p.url || "#",
+    url: p.deeplink || p.url || p.product_link || p.link || "#",
+    deeplink: p.deeplink || p.url || p.product_link || p.link || "#",
   }));
 
   // Safe specifications matrix

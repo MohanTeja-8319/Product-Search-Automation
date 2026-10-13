@@ -3,13 +3,14 @@ const crypto = require("crypto");
 const Alert = require("../models/Alert");
 const User = require("../models/User");
 const { runAlertCheckCycle, notifyTriggeredAlert } = require("../services/alertMonitor");
+const { isValidObjectId } = require("../utils/mongoHelpers");
 
 // Fallback in-memory alerts store for offline / disconnected DB state
 const fallbackAlerts = new Map();
 
 exports.getAlerts = async (req, res) => {
   try {
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 && isValidObjectId(req.userId)) {
       try {
         const alerts = await Alert.find({ user: req.userId }).sort({ createdAt: -1 });
         return res.status(200).json({ alerts });
@@ -83,7 +84,7 @@ exports.createAlert = async (req, res) => {
       triggeredAt: null,
     };
 
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 && isValidObjectId(req.userId)) {
       try {
         const alert = await Alert.findOneAndUpdate(
           { user: req.userId, productName: payload.productName },
@@ -151,7 +152,7 @@ exports.updateAlert = async (req, res) => {
       }
     }
 
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 && isValidObjectId(req.userId)) {
       try {
         const before = await Alert.findOne({ _id: id, user: req.userId });
         if (before) {
@@ -205,7 +206,7 @@ exports.updateAlert = async (req, res) => {
 
 exports.checkNow = async (req, res) => {
   try {
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 && isValidObjectId(req.userId)) {
       try {
         const results = await runAlertCheckCycle({ userId: req.userId });
         const alerts = await Alert.find({ user: req.userId }).sort({ createdAt: -1 });
@@ -247,7 +248,7 @@ exports.deleteAlert = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (mongoose.connection.readyState === 1) {
+    if (mongoose.connection.readyState === 1 && isValidObjectId(req.userId)) {
       try {
         const alert = await Alert.findOneAndDelete({ _id: id, user: req.userId });
         if (alert) {

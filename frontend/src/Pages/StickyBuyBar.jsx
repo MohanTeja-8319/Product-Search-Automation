@@ -39,7 +39,7 @@ const StickyBuyBar = ({ productName, bestDeal }) => {
         {/* Right: Actions */}
         <div className="flex gap-2 sm:gap-4 items-center shrink-0">
           <a
-            href={getDirectStoreUrl(bestDeal.store, productName, bestDeal.url)}
+            href={getDirectStoreUrl(bestDeal.store, productName, bestDeal.deeplink || bestDeal.url || bestDeal.product_link || bestDeal.link)}
             target="_blank"
             rel="noreferrer"
             className="bg-purple-600 text-white px-4 py-2 sm:px-8 sm:py-3 rounded-[10px] hover:bg-purple-700 transition font-semibold text-sm sm:text-base whitespace-nowrap"
