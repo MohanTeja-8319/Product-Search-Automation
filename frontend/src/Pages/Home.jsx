@@ -5,13 +5,15 @@ import {
   FiChevronRight, FiStar, FiShoppingBag, FiZap,
   FiShield, FiClock, FiCheckCircle, FiPercent,
   FiSmartphone, FiMonitor, FiHeadphones, FiWatch,
-  FiCamera, FiHome, FiGrid, FiRefreshCw, FiTv, FiPackage, FiSmile
+  FiCamera, FiHome, FiGrid, FiRefreshCw, FiTv, FiPackage, FiSmile,
+  FiExternalLink
 } from "react-icons/fi";
 import { FaHeart, FaStar, FaExchangeAlt, FaGamepad } from "react-icons/fa";
 import Sidebar from "../Components/Sidebar";
 import Navbar from "../Components/Navbar";
 import WishlistButton from "../Components/WishlistButton";
 import { searchLiveProducts } from "../utils/api";
+import { getDirectStoreUrl } from "../utils/storeHelper";
 
 const CATEGORIES = [
   { name: "Mobiles",     icon: FiSmartphone,  searchKey: "Smartphones",      categoryKey: "smartphones",  color: "#4F46E5", bg: "#EEF2FF" },
@@ -84,7 +86,94 @@ function StoreBadge({ store, storeCount }) {
   );
 }
 
+function EmptyCard() {
+  return (
+    <div
+      className="card animate-fade-in-up"
+      style={{
+        padding: 20,
+        display: "flex",
+        flexDirection: "column",
+        gap: 12,
+        position: "relative",
+        border: "1px dashed var(--border)",
+        background: "var(--surface)",
+        minHeight: 330,
+        borderRadius: "var(--radius-lg)",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          height: 160,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "var(--bg)",
+          borderRadius: "var(--radius-md)",
+          color: "var(--text-400)",
+          gap: 8,
+          border: "1px dashed var(--border)",
+        }}
+      >
+        <FiPackage size={30} style={{ opacity: 0.5 }} />
+        <span style={{ fontSize: 11, fontWeight: 600, color: "var(--text-400)", letterSpacing: "0.04em", textTransform: "uppercase" }}>
+          Empty Card
+        </span>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 4 }}>
+        <div style={{ height: 14, background: "var(--border)", borderRadius: 4, width: "70%", opacity: 0.4 }} />
+        <div style={{ height: 11, background: "var(--border)", borderRadius: 4, width: "45%", opacity: 0.3 }} />
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <span style={{
+          fontSize: 10,
+          fontWeight: 700,
+          padding: "3px 8px",
+          background: "var(--bg)",
+          color: "var(--text-400)",
+          border: "1px dashed var(--border)",
+          borderRadius: "var(--radius-sm)",
+          textTransform: "uppercase",
+          letterSpacing: "0.05em",
+        }}>
+          No Store
+        </span>
+      </div>
+
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: "auto" }}>
+        <span style={{ fontSize: 18, fontWeight: 800, color: "var(--text-400)" }}>
+          ₹ —
+        </span>
+      </div>
+
+      <button
+        disabled
+        className="btn btn-secondary btn-full"
+        style={{
+          marginTop: 6,
+          opacity: 0.5,
+          cursor: "default",
+          background: "var(--bg)",
+          borderColor: "var(--border)",
+          color: "var(--text-400)",
+          fontSize: 12,
+          fontWeight: 600,
+        }}
+      >
+        Empty
+      </button>
+    </div>
+  );
+}
+
 function ProductCard({ product, onClick }) {
+  if (!product || !product.name) {
+    return <EmptyCard />;
+  }
   const storeCount = product.storeCount || (Array.isArray(product.comparison) ? product.comparison.length : 1);
 
   return (
@@ -158,14 +247,35 @@ function ProductCard({ product, onClick }) {
         )}
       </div>
 
-      <button
-        onClick={onClick}
-        className="btn btn-primary btn-full"
-        style={{ marginTop: "auto" }}
-      >
-        <FaExchangeAlt size={12} />
-        Compare Prices
-      </button>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr auto", gap: 6, marginTop: "auto" }}>
+        <button
+          onClick={onClick}
+          className="btn btn-primary btn-sm"
+          style={{ width: "100%", justifyContent: "center" }}
+        >
+          <FaExchangeAlt size={12} />
+          Compare Prices
+        </button>
+        <a
+          href={getDirectStoreUrl(product.store, product.name, product.deeplink || product.url || product.product_link || product.link)}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="btn btn-outline btn-sm"
+          style={{
+            padding: "7px 10px",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderColor: "var(--border)",
+            color: "var(--text-900)",
+            textDecoration: "none"
+          }}
+          title={`Buy on ${product.store || "Store"}`}
+        >
+          <FiExternalLink size={13} />
+        </a>
+      </div>
     </div>
   );
 }
@@ -173,52 +283,48 @@ function ProductCard({ product, onClick }) {
 export default function HomePage() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [trendingProducts, setTrendingProducts] = useState(() => {
-    try {
-      const cached = localStorage.getItem("cachedHomeProducts");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed.slice(0, 8);
-      }
-    } catch (_) {}
-    return [];
-  });
-  const [bestDeals, setBestDeals] = useState(() => {
-    try {
-      const cached = localStorage.getItem("cachedHomeProducts");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 8) return parsed.slice(8, 16);
-      }
-    } catch (_) {}
-    return [];
-  });
-  const [loading, setLoading] = useState(() => {
-    try {
-      const cached = localStorage.getItem("cachedHomeProducts");
-      if (cached && JSON.parse(cached)?.length > 0) return false;
-    } catch (_) {}
-    return true;
-  });
+  const [trendingProducts, setTrendingProducts] = useState([]);
+  const [bestDeals, setBestDeals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [creditsCompleted, setCreditsCompleted] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const loadHomeProducts = (forceLoading = false) => {
-    if (forceLoading) setLoading(true);
+  const loadHomeProducts = () => {
+    setLoading(true);
+    setCreditsCompleted(false);
     searchLiveProducts("popular")
       .then(res => {
+        if (res?.creditsCompleted || res?.message === "products are not available") {
+          setCreditsCompleted(true);
+          setTrendingProducts([]);
+          setBestDeals([]);
+          return;
+        }
         if (res?.products && res.products.length > 0) {
           setTrendingProducts(res.products.slice(0, 8));
           setBestDeals(res.products.slice(8, 16));
-          try {
-            localStorage.setItem("cachedHomeProducts", JSON.stringify(res.products));
-          } catch (_) {}
+        } else {
+          setTrendingProducts([]);
+          setBestDeals([]);
         }
       })
-      .catch(err => console.error("Home fetch error:", err))
+      .catch(err => {
+        console.error("Home fetch error:", err);
+        const isCompleted = err?.response?.data?.creditsCompleted || err?.response?.data?.message === "products are not available";
+        if (isCompleted) {
+          setCreditsCompleted(true);
+        }
+        setTrendingProducts([]);
+        setBestDeals([]);
+      })
       .finally(() => setLoading(false));
   };
 
   useEffect(() => {
+    try {
+      localStorage.removeItem("cachedHomeProducts");
+      localStorage.removeItem("cachedSearchProducts");
+    } catch (_) {}
     loadHomeProducts();
   }, []);
 
@@ -396,6 +502,10 @@ export default function HomePage() {
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
                 {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
               </div>
+            ) : creditsCompleted ? (
+              <div className="card empty-state" style={{ padding: 40, textAlign: "center", border: "1px dashed var(--border)" }}>
+                <p style={{ fontSize: 16, fontWeight: 700, color: "var(--text-700)" }}>products are not available</p>
+              </div>
             ) : trendingProducts.length > 0 ? (
               <div className="products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
                 {trendingProducts.map((product, i) => (
@@ -407,33 +517,34 @@ export default function HomePage() {
                 ))}
               </div>
             ) : (
-              <div className="card empty-state" style={{ padding: "36px 20px", textAlign: "center" }}>
-                <div className="empty-state-icon"><FiSearch size={28} /></div>
-                <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--text-700)", marginBottom: 6 }}>No products loaded</h3>
-                <p style={{ fontSize: 13, color: "var(--text-400)", marginBottom: 16 }}>Unable to load live feed. Please verify the backend service is running.</p>
-                <button
-                  className="btn btn-primary btn-sm"
-                  onClick={() => loadHomeProducts(true)}
-                  style={{ display: "inline-flex", alignItems: "center", gap: 6, margin: "0 auto" }}
-                >
-                  <FiRefreshCw size={13} /> Retry Loading
-                </button>
+              <div className="products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+                {[...Array(8)].map((_, i) => (
+                  <EmptyCard key={`empty-trend-${i}`} />
+                ))}
               </div>
             )}
           </section>
 
-          {}
-          {bestDeals.length > 0 && (
-            <section style={{ marginBottom: 48 }}>
-              <div className="section-header">
-                <div>
-                  <div className="section-label"><FiPercent size={11} /> Maximum Savings</div>
-                  <h2 className="section-title">Best Deals</h2>
-                </div>
-                <button className="section-link" onClick={() => navigate("/search")}>
-                  View All <FiChevronRight size={14} />
-                </button>
+          {/* Best Deals */}
+          <section style={{ marginBottom: 48 }}>
+            <div className="section-header">
+              <div>
+                <div className="section-label"><FiPercent size={11} /> Maximum Savings</div>
+                <h2 className="section-title">Best Deals</h2>
               </div>
+              <button className="section-link" onClick={() => navigate("/search")}>
+                View All <FiChevronRight size={14} />
+              </button>
+            </div>
+            {loading ? (
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+                {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
+              </div>
+            ) : creditsCompleted ? (
+              <div className="card empty-state" style={{ padding: 40, textAlign: "center", border: "1px dashed var(--border)" }}>
+                <p style={{ fontSize: 16, fontWeight: 700, color: "var(--text-700)" }}>products are not available</p>
+              </div>
+            ) : bestDeals.length > 0 ? (
               <div className="products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
                 {bestDeals.map((product, i) => (
                   <ProductCard
@@ -443,8 +554,14 @@ export default function HomePage() {
                   />
                 ))}
               </div>
-            </section>
-          )}
+            ) : (
+              <div className="products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+                {[...Array(8)].map((_, i) => (
+                  <EmptyCard key={`empty-deal-${i}`} />
+                ))}
+              </div>
+            )}
+          </section>
 
           {}
           <section style={{ marginBottom: 48 }}>

@@ -1,8 +1,10 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import WishlistButton from "../Components/WishlistButton";
 import { getDirectStoreUrl } from "../utils/storeHelper";
 
 const StickyBuyBar = ({ productName, bestDeal }) => {
+  const navigate = useNavigate();
   if (!bestDeal) return null;
 
   const product = {
@@ -23,7 +25,7 @@ const StickyBuyBar = ({ productName, bestDeal }) => {
             className="w-10 h-10 sm:w-16 sm:h-16 object-contain shrink-0"
           />
           <div className="min-w-0">
-            <h2 className="font-bold text-sm sm:text-lg truncate">{productName}</h2>
+            <h2 className="font-bold text-sm sm:lg truncate">{productName}</h2>
             <p className="hidden sm:block text-gray-500">Best Price on {bestDeal.store}</p>
           </div>
         </div>
@@ -41,10 +43,10 @@ const StickyBuyBar = ({ productName, bestDeal }) => {
           <a
             href={getDirectStoreUrl(bestDeal.store, productName, bestDeal.deeplink || bestDeal.url || bestDeal.product_link || bestDeal.link)}
             target="_blank"
-            rel="noreferrer"
-            className="bg-purple-600 text-white px-4 py-2 sm:px-8 sm:py-3 rounded-[10px] hover:bg-purple-700 transition font-semibold text-sm sm:text-base whitespace-nowrap"
+            rel="noopener noreferrer"
+            className="bg-purple-600 text-white px-4 py-2 sm:px-8 sm:py-3 rounded-[10px] hover:bg-purple-700 transition font-semibold text-sm sm:text-base whitespace-nowrap text-center inline-block"
           >
-            Buy Now
+            Buy on {bestDeal.store || "Store"}
           </a>
 
           <WishlistButton

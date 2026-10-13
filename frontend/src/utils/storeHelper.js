@@ -157,58 +157,14 @@ export const VERIFIED_PRODUCT_STORE_URLS = {
     "flipkart": "https://www.flipkart.com/apple-iphone-15-black-128-gb/p/itm3234701b0863a?pid=MOBHQV9YR4CBTD9D",
     "blinkit": "https://blinkit.com/prn/apple-iphone-15-128-gb-black/prid/512948"
   },
-  "vivo v30 pro 5g (andaman blue, 256gb)": {
-    "flipkart": "https://www.flipkart.com/vivo-v30-pro-5g-andaman-blue-256-gb/p/itmd7b7a1700c431?pid=MOBGYGCBEM4PVYYM",
-    "amazon": "https://www.amazon.in/dp/B0CX21C26W"
-  },
-  "realme 12 pro+ 5g (submarine blue, 256gb)": {
-    "flipkart": "https://www.flipkart.com/realme-12-pro-plus-5g-submarine-blue-256-gb/p/itme?pid=MOBGWH8SERYVVPV8",
-    "amazon": "https://www.amazon.in/dp/B0CS5X6DDP"
-  },
-  "google pixel 8a 5g (obsidian, 128gb)": {
-    "flipkart": "https://www.flipkart.com/google-pixel-8a-obsidian-128-gb/p/itm0a2bbdcfe6f30?pid=MOBGYVGGK67Z4WZG",
-    "amazon": "https://www.amazon.in/dp/B0D1YFCRK9"
-  },
-  "xiaomi 14 5g (jade green, 512gb)": {
-    "amazon": "https://www.amazon.in/dp/B0CWTLX1CG",
-    "flipkart": "https://www.flipkart.com/xiaomi-14-jade-green-512-gb/p/itm87fe48d94ca13?pid=MOBGYZ2YHZ8VYZ2A"
-  },
   "apple macbook air m3 (13.6-inch, 16gb ram, 512gb ssd)": {
     "amazon": "https://www.amazon.in/dp/B0CX21CBPJ",
-    "flipkart": "https://www.flipkart.com/apple-macbook-air-m3-16-gb-512-gb-ssd-macos-sonoma-mxd13hn-a/p/itm5b94f09dcbca5?pid=COMGZ3ZZVHRHFYYZ"
-  },
-  "dell xps 13 intel core ultra 7 (16gb ram, 512gb ssd)": {
-    "flipkart": "https://www.flipkart.com/dell-xps-13-intel-core-ultra-7-16-gb-512-gb-ssd-windows-11-home-9340/p/itm178652d87e38f?pid=COMGYYGHY8VGH7ZZ",
-    "amazon": "https://www.amazon.in/dp/B0CRVJ8Y2M"
-  },
-  "hp pavilion 15 (amd ryzen 7, 16gb ram, 512gb ssd)": {
-    "amazon": "https://www.amazon.in/dp/B0BH4WFL2X",
-    "flipkart": "https://www.flipkart.com/hp-pavilion-amd-ryzen-7-octa-core-5700u-16-gb-512-gb-ssd-windows-11-home-15-eh1108au-thin-light-laptop/p/itmd411a0ea4c16d?pid=COMG7W6TZFYPZY7E"
-  },
-  "lenovo ideapad slim 3 (intel core i5 13th gen, 16gb ram)": {
-    "flipkart": "https://www.flipkart.com/lenovo-ideapad-slim-3-intel-core-i5-13th-gen-13420h-16-gb-512-gb-ssd-windows-11-home-15iah8-thin-light-laptop/p/itmdb2ebdc7c2e0b?pid=COMGVGTYGH9GYZ8Z",
-    "amazon": "https://www.amazon.in/dp/B0B56CRWDF"
-  },
-  "asus rog strix g16 gaming laptop (rtx 4060, 16gb ram, 1tb ssd)": {
-    "amazon": "https://www.amazon.in/dp/B0BWX2B4F2",
-    "flipkart": "https://www.flipkart.com/asus-rog-strix-g16-2024-intel-core-i7-14th-gen-14650hx-16-gb-1-tb-ssd-windows-11-home-8-gb-graphics-nvidia-geforce-rtx-4060-g614jvr-n4079w-gaming-laptop/p/itm9adbbbe9eb559?pid=COMGYTYZ68ZVFH6Y"
-  },
-  "apple macbook pro 14 (m3 pro chip, 18gb memory, 512gb ssd)": {
-    "amazon": "https://www.amazon.in/dp/B0CHX2NZH6",
-    "flipkart": "https://www.flipkart.com/apple-macbook-pro-m3-pro-18-gb-512-gb-ssd-macos-sonoma-mrx33hn-a/p/itm4b94f09dcbca5?pid=COMGWY6HF8HYZZ6Y"
-  },
-  "acer predator helios neo 16 gaming laptop (intel i7, rtx 4050)": {
-    "flipkart": "https://www.flipkart.com/acer-predator-helios-neo-16-intel-core-i7-13th-gen-13700hx-16-gb-512-gb-ssd-windows-11-home-6-gb-graphics-nvidia-geforce-rtx-4050-phn16-71-gaming-laptop/p/itm6d863f69aa6ff?pid=COMGZT7GVFGYZX7A",
-    "amazon": "https://www.amazon.in/dp/B0C3HNW2C5"
-  },
-  "asus zenbook 14 oled (intel core ultra 7, 16gb ram, 1tb ssd)": {
-    "amazon": "https://www.amazon.in/dp/B0CWLP5CYT",
-    "flipkart": "https://www.flipkart.com/asus-zenbook-14-oled-intel-core-ultra-7-155h-16-gb-1-tb-ssd-windows-11-home-ux3405ma-pz752ws-thin-light-laptop/p/itm87fe48d94ca15?pid=COMGWZGHY8VGYY2A"
+    "flipkart": "https://www.flipkart.com/search?q=Apple+MacBook+Air+M3"
   },
   "sony wh-1000xm5 wireless noise cancelling headphones": {
     "blinkit": "https://blinkit.com/prn/sony-wh-1000xm5-wireless-noise-cancelling-headphones/prid/512949",
     "amazon": "https://www.amazon.in/dp/B09XS7JWHH",
-    "flipkart": "https://www.flipkart.com/sony-wh-1000xm5-bluetooth-headset/p/itm68b20da5ef154?pid=ACCGH2E64NMG72TG"
+    "flipkart": "https://www.flipkart.com/search?q=Sony+WH-1000XM5"
   },
   "boat airdopes 141 bluetooth truly wireless earbuds": {
     "zepto": "https://www.zeptonow.com/pn/boat-airdopes-141-anc-true-wireless-earbuds/pvid/7178c743-12cb-45ec-91b3-469bfd290ca8",
@@ -216,9 +172,9 @@ export const VERIFIED_PRODUCT_STORE_URLS = {
     "amazon": "https://www.amazon.in/dp/B09N3ZNHTY"
   },
   "apple airpods pro (2nd gen with usb-c magsafe)": {
-    "flipkart": "https://www.flipkart.com/apple-airpods-pro-2nd-generation-magsafe-case-usb-c-bluetooth-headset/p/itm9b4d8d9bceba3?pid=ACCGTR7ZEYGH9ZZY",
     "amazon": "https://www.amazon.in/dp/B0CHWRXH8B",
-    "blinkit": "https://blinkit.com/prn/apple-airpods-pro-2nd-generation-with-usb-c/prid/512950"
+    "blinkit": "https://blinkit.com/prn/apple-airpods-pro-2nd-generation-with-usb-c/prid/512950",
+    "flipkart": "https://www.flipkart.com/search?q=Apple+AirPods+Pro+2nd+Gen"
   },
   "jbl flip 6 portable bluetooth speaker": {
     "blinkit": "https://blinkit.com/prn/jbl-flip-6-portable-waterproof-speaker/prid/418290",
@@ -228,141 +184,7 @@ export const VERIFIED_PRODUCT_STORE_URLS = {
     "zepto": "https://www.zeptonow.com/pn/oneplus-bullets-wireless-z2-bluetooth-neckband-earphones/pvid/bca7bb9d-e4fb-4b9e-990a-a53ce5201cb4",
     "amazon": "https://www.amazon.in/dp/B09TVVGXWS"
   },
-  "bose quietcomfort 45 bluetooth wireless noise cancelling headphones": {
-    "amazon": "https://www.amazon.in/dp/B098FKXT8L",
-    "flipkart": "https://www.flipkart.com/bose-quietcomfort-45-bluetooth-headset/p/itm5b0eb81112663?pid=ACCG9Y8ZEYHYZZ7Y"
-  },
-  "sennheiser momentum 4 wireless anc headphones (60hr battery)": {
-    "flipkart": "https://www.flipkart.com/sennheiser-momentum-4-wireless-bluetooth-headset/p/itm3d25d0aa9cfa3?pid=ACCGH7Y8ZEYHYZZ8",
-    "amazon": "https://www.amazon.in/dp/B0B6GHW1X5"
-  },
-  "marshall emberton ii portable bluetooth speaker (black & steel)": {
-    "amazon": "https://www.amazon.in/dp/B09Z4VGH7L",
-    "flipkart": "https://www.flipkart.com/marshall-emberton-ii-20-w-bluetooth-speaker/p/itm7e63ef2587bb4?pid=ACCGGY8ZEYHYZZ9Y"
-  },
-  "sony bravia 55 inches 4k ultra hd smart led google tv kd-55x74l": {
-    "amazon": "https://www.amazon.in/dp/B0C5MC45FR",
-    "flipkart": "https://www.flipkart.com/sony-bravia-138-8-cm-55-inch-ultra-hd-4k-led-smart-google-tv-kd-55x74l/p/itm25da5f8f53a70?pid=TVSGQJZZF9HYZZ7Y"
-  },
-  "samsung 43 inches crystal 4k vivid pro ultra hd smart led tv": {
-    "flipkart": "https://www.flipkart.com/samsung-crystal-4k-vivid-pro-108-cm-43-inch-ultra-hd-4k-led-smart-tizen-tv/p/itm78198f48cefb8?pid=TVSGZ9GH8VGYY2AZ",
-    "amazon": "https://www.amazon.in/dp/B0D3GKPRG8"
-  },
-  "lg 55 inches 4k ultra hd smart oled evo tv 55c3psa": {
-    "amazon": "https://www.amazon.in/dp/B0C46FR1R1",
-    "flipkart": "https://www.flipkart.com/lg-oled-evo-c3-139-cm-55-inch-ultra-hd-4k-oled-smart-webos-tv-55c3psa/p/itmcf44f0b09459f?pid=TVSGZHY8ZEYHYZZ1"
-  },
-  "oneplus 50 inches y series 4k ultra hd smart android tv 50y1s pro": {
-    "flipkart": "https://www.flipkart.com/oneplus-y1s-pro-126-cm-50-inch-ultra-hd-4k-led-smart-android-tv/p/itme7e4e16d47b54?pid=TVSGDF7Z8ZEYHYZZ",
-    "amazon": "https://www.amazon.in/dp/B09VCC4HY7"
-  },
-  "xiaomi 43 inches x pro 4k dolby vision iq smart google tv": {
-    "amazon": "https://www.amazon.in/dp/B0C4J8FY9H",
-    "flipkart": "https://www.flipkart.com/mi-x-pro-108-cm-43-inch-ultra-hd-4k-led-smart-google-tv-iq-series/p/itm345162ecdbda4?pid=TVSGZGY8ZEYHYZZ2"
-  },
-  "tcl 55 inches 4k ultra hd smart qled google tv (55c645)": {
-    "amazon": "https://www.amazon.in/dp/B0C39Y9VG7",
-    "flipkart": "https://www.flipkart.com/tcl-c645-138-8-cm-55-inch-qled-ultra-hd-4k-smart-google-tv-55c645/p/itm29d663eb4c7e7?pid=TVSGZHY9ZEYHYZZ3"
-  },
-  "acer 50 inches advanced i series 4k ultra hd smart led google tv": {
-    "flipkart": "https://www.flipkart.com/acer-advanced-series-127-cm-50-inch-ultra-hd-4k-led-smart-google-tv/p/itm600daea89dc13?pid=TVSGZJY8ZEYHYZZ4",
-    "amazon": "https://www.amazon.in/dp/B0C7Z4QZ7G"
-  },
-  "hisense 65 inches 4k ultra hd smart mini-led google tv (65u6k)": {
-    "amazon": "https://www.amazon.in/dp/B0CHMY7B8Z",
-    "flipkart": "https://www.flipkart.com/hisense-u6k-164-cm-65-inch-qled-mini-led-ultra-hd-4k-smart-google-tv-65u6k/p/itm2b498f48cefb8?pid=TVSGZKY8ZEYHYZZ5"
-  },
-  "apple watch series 10 gps 46mm smartwatch": {
-    "amazon": "https://www.amazon.in/dp/B0DGJGZ83J",
-    "flipkart": "https://www.flipkart.com/apple-watch-series-10-gps-46mm-jet-black-aluminium-case-sport-band/p/itm4b94f09dcbcb1?pid=SMWGYZZYHZ8VYZ2A",
-    "blinkit": "https://blinkit.com/prn/apple-watch-series-10-gps-46mm/prid/589120"
-  },
-  "samsung galaxy watch 6 lte 44mm smartwatch": {
-    "flipkart": "https://www.flipkart.com/samsung-galaxy-watch6-lte-44mm/p/itm3234701b0863b?pid=SMWGZGY8ZEYHYZZ6",
-    "amazon": "https://www.amazon.in/dp/B0CC9H5W3M"
-  },
-  "boat wave call 2 smartwatch with bluetooth calling": {
-    "zepto": "https://www.zeptonow.com/pn/boat-wave-call-2-smartwatch-with-1-83-hd-display/pvid/e6ef3e35-a48b-4b1f-bc87-73d8ceb09efc",
-    "blinkit": "https://blinkit.com/prn/boat-wave-call-2-smartwatch-active-black/prid/450291",
-    "amazon": "https://www.amazon.in/dp/B0C89VJ6F2"
-  },
-  "noise colorfit pulse 2 max 1.85 display smartwatch": {
-    "amazon": "https://www.amazon.in/dp/B0B784CV45",
-    "flipkart": "https://www.flipkart.com/noise-colorfit-pulse-2-max-1-85-display-bluetooth-calling-smartwatch/p/itm7e63ef2587bb5?pid=SMWGZLY8ZEYHYZZ7"
-  },
-  "fire-boltt gladiator 1.96-inch hd display bluetooth smartwatch": {
-    "amazon": "https://www.amazon.in/dp/B0BNW1R9KM",
-    "flipkart": "https://www.flipkart.com/fire-boltt-gladiator-1-96-bluetooth-calling-smartwatch/p/itm6d863f69aa6f1?pid=SMWGZMY8ZEYHYZZ8",
-    "blinkit": "https://blinkit.com/prn/fire-boltt-gladiator-smartwatch-black/prid/489123"
-  },
-  "amazfit gtr 4 smart watch with dual-band gps & amoled display": {
-    "amazon": "https://www.amazon.in/dp/B0B7X7YGH8",
-    "flipkart": "https://www.flipkart.com/amazfit-gtr-4-smartwatch/p/itm3d25d0aa9cfa4?pid=SMWGZNY8ZEYHYZZ9"
-  },
-  "garmin forerunner 55 gps running smartwatch (black)": {
-    "amazon": "https://www.amazon.in/dp/B09575VG8M",
-    "flipkart": "https://www.flipkart.com/garmin-forerunner-55-gps-running-smartwatch/p/itm5b0eb81112664?pid=SMWGZPY8ZEYHYZ10"
-  },
-  "oneplus watch 2 with wear os by google (radiant silver)": {
-    "amazon": "https://www.amazon.in/dp/B0CVLGH8Z2",
-    "flipkart": "https://www.flipkart.com/oneplus-watch-2-wear-os-by-google/p/itmcf44f0b094590?pid=SMWGZQY8ZEYHYZ11"
-  },
-  "sony playstation 5 slim console (disc edition)": {
-    "amazon": "https://www.amazon.in/dp/B0CY5J8424",
-    "flipkart": "https://www.flipkart.com/sony-playstation-5-slim-1-tb-disc-edition/p/itmd7b7a1700c432?pid=GMCGYGCBEM4PVYYN"
-  },
-  "microsoft xbox series x 1tb gaming console": {
-    "flipkart": "https://www.flipkart.com/microsoft-xbox-series-x-1024-gb/p/itme?pid=GMCGWH8SERYVVPV9",
-    "amazon": "https://www.amazon.in/dp/B08H734791"
-  },
-  "nintendo switch oled model (neon red & neon blue joy-con)": {
-    "amazon": "https://www.amazon.in/dp/B098RKWHHZ",
-    "flipkart": "https://www.flipkart.com/nintendo-switch-oled-model-neon-blue-red-joy-con-64-gb/p/itm0a2bbdcfe6f31?pid=GMCGYVGGK67Z4WZH"
-  },
-  "sony playstation vr2 virtual reality headset for ps5": {
-    "amazon": "https://www.amazon.in/dp/B0BSMGG8Z1",
-    "flipkart": "https://www.flipkart.com/sony-playstation-vr2-horizon-call-mountain-bundle/p/itm87fe48d94ca14?pid=GMCGYZ2YHZ8VYZ2B"
-  },
-  "sony dualsense wireless controller for playstation 5 (white)": {
-    "amazon": "https://www.amazon.in/dp/B08FC6C75B",
-    "flipkart": "https://www.flipkart.com/sony-dualsense-wireless-controller-playstation-5/p/itm5b94f09dcbca6?pid=ACCGZ3ZZVHRHFYY0",
-    "blinkit": "https://blinkit.com/prn/sony-ps5-dualsense-wireless-controller-white/prid/512952"
-  },
-  "microsoft xbox wireless controller (carbon black)": {
-    "flipkart": "https://www.flipkart.com/microsoft-xbox-wireless-controller-carbon-black/p/itm178652d87e380?pid=ACCGYYGHY8VGH7Z1",
-    "amazon": "https://www.amazon.in/dp/B08DF26MXW"
-  },
-  "asus rog ally 7-inch fhd 120hz gaming handheld console (z1 extreme)": {
-    "amazon": "https://www.amazon.in/dp/B0C7J8GH6M",
-    "flipkart": "https://www.flipkart.com/asus-rog-ally-handheld-gaming-console-z1-extreme-512-gb/p/itmd411a0ea4c16e?pid=GMCG7W6TZFYPZY7F"
-  },
-  "nintendo switch lite handheld gaming console (turquoise)": {
-    "amazon": "https://www.amazon.in/dp/B07V48X327",
-    "flipkart": "https://www.flipkart.com/nintendo-switch-lite-turquoise-32-gb/p/itmdb2ebdc7c2e0c?pid=GMCGVGTYGH9GYZ80"
-  },
-  "amul taaza homogenised toned milk 1l": {
-    "blinkit": "https://blinkit.com/prn/amul-taaza-homogenised-toned-milk/prid/19598",
-    "zepto": "https://www.zeptonow.com/pn/amul-taaza-toned-fresh-milk-tetra/pvid/d108d4be-c20e-4366-a249-1616cbf20cb1",
-    "swiggy": "https://www.swiggy.com/instamart/item/amul-taaza-homogenised-toned-milk-1l",
-    "bigbasket": "https://www.bigbasket.com/pd/242672/amul-taaza-homogenised-toned-milk-1-l-tetra-pack/"
-  },
-  "country delight pure cow milk 1l": {
-    "zepto": "https://www.zeptonow.com/pn/country-delight-pure-cow-milk/pvid/b4d0e123-57bf-463d-a5ee-4613c72bce9a",
-    "bigbasket": "https://www.bigbasket.com/pd/40248231/country-delight-pure-cow-milk-1-l/"
-  },
-  "tata tea gold premium black tea 500g": {
-    "bigbasket": "https://www.bigbasket.com/pd/266580/tata-tea-gold-500-g/",
-    "swiggy": "https://www.swiggy.com/instamart/item/tata-tea-gold-500g"
-  },
-  "fortune sunlite refined sunflower oil 1l pouch": {
-    "bigbasket": "https://www.bigbasket.com/pd/274145/fortune-sunlite-refined-sunflower-oil-1-l-pouch/",
-    "zepto": "https://www.zeptonow.com/pn/fortune-sunlite-refined-sunflower-oil/pvid/e61bfd19-bfae-4f0f-8f83-e18e33f38aa4"
-  },
-  "cadbury dairy milk silk chocolate bar 150g": {
-    "zepto": "https://www.zeptonow.com/pn/cadbury-dairy-milk-silk-plain-chocolate/pvid/26c8b09f-c6ad-4545-9833-2ca73602fcb3",
-    "blinkit": "https://blinkit.com/prn/cadbury-dairy-milk-silk-chocolate-bar/prid/5837"
-  },
-  "aashirvaad superior mp whole wheat atta 5kg": {
+  "aashirvaad shudh chakki whole wheat atta 5kg": {
     "bigbasket": "https://www.bigbasket.com/pd/126903/aashirvaad-atta-whole-wheat-5-kg/",
     "blinkit": "https://blinkit.com/prn/aashirvaad-shudh-chakki-whole-wheat-atta/prid/1284"
   },
@@ -389,277 +211,6 @@ export const VERIFIED_PRODUCT_STORE_URLS = {
     "blinkit": "https://blinkit.com/prn/epigamia-natural-greek-yogurt/prid/24912",
     "swiggy": "https://www.swiggy.com/instamart/item/epigamia-natural-greek-yogurt-400g",
     "bigbasket": "https://www.bigbasket.com/pd/40090875/epigamia-greek-yogurt-natural-400-g-tub/"
-  },
-  "nike air max 270 running shoes": {
-    "myntra": "https://www.myntra.com/sports-shoes/nike/nike-air-max-270-running-shoes/1299401/buy",
-    "flipkart": "https://www.flipkart.com/nike-air-max-270-running-shoes-men/p/itm9adbbbe9eb550?pid=SHOGYTYZ68ZVFH6Z",
-    "amazon": "https://www.amazon.in/dp/B078HFHQM8"
-  },
-  "puma smash v2 casual unisex sneakers": {
-    "myntra": "https://www.myntra.com/casual-shoes/puma/puma-unisex-smash-v2-sneakers/1049281/buy",
-    "flipkart": "https://www.flipkart.com/puma-smash-v2-sneakers-men/p/itm4b94f09dcbca7?pid=SHOGWY6HF8HYZZ6Z",
-    "amazon": "https://www.amazon.in/dp/B072LX7J37"
-  },
-  "levi's men 511 slim fit stretchable jeans": {
-    "myntra": "https://www.myntra.com/jeans/levis/levis-men-blue-511-slim-fit-stretchable-jeans/142910/buy",
-    "amazon": "https://www.amazon.in/dp/B07J5D42LX",
-    "flipkart": "https://www.flipkart.com/levi-s-slim-men-blue-jeans/p/itm6d863f69aa6f2?pid=JEACOMGZT7GVFGYZX"
-  },
-  "adidas ultraboost light running shoes": {
-    "flipkart": "https://www.flipkart.com/adidas-ultraboost-light-running-shoes-men/p/itm87fe48d94ca16?pid=SHOGWZGHY8VGYY2B",
-    "myntra": "https://www.myntra.com/sports-shoes/adidas/adidas-men-ultraboost-light-running-shoes/1940182/buy",
-    "amazon": "https://www.amazon.in/dp/B0BNW1R9KM"
-  },
-  "red tape classic men's casual sneaker shoes": {
-    "flipkart": "https://www.flipkart.com/red-tape-casual-sneaker-shoes-men/p/itm68b20da5ef155?pid=SHOACCGH2E64NMG72",
-    "myntra": "https://www.myntra.com/casual-shoes/red-tape/red-tape-men-white-sneakers/2104928/buy",
-    "amazon": "https://www.amazon.in/dp/B09D84LKVZ"
-  },
-  "skechers men d'lites memory foam casual sneakers": {
-    "myntra": "https://www.myntra.com/casual-shoes/skechers/skechers-men-dlites-sneakers/1892041/buy",
-    "flipkart": "https://www.flipkart.com/skechers-d-lites-casual-sneakers-men/p/itm7e63ef2587bb6?pid=SHOGZLY8ZEYHYZZ9",
-    "amazon": "https://www.amazon.in/dp/B08P1QGH7B"
-  },
-  "allen solly men regular fit solid casual cotton shirt": {
-    "myntra": "https://www.myntra.com/shirts/allen-solly/allen-solly-men-cotton-casual-shirt/2491028/buy",
-    "amazon": "https://www.amazon.in/dp/B08XGH7Z4L",
-    "flipkart": "https://www.flipkart.com/allen-solly-men-solid-casual-shirt/p/itm6d863f69aa6f3?pid=SHTGZMY8ZEYHYZZ0"
-  },
-  "bata men formal derby leather shoes (black lace-up)": {
-    "flipkart": "https://www.flipkart.com/bata-derby-formal-shoes-men/p/itm3d25d0aa9cfa5?pid=SHOGZNY8ZEYHYZ11",
-    "amazon": "https://www.amazon.in/dp/B07P9GH7L2",
-    "myntra": "https://www.myntra.com/formal-shoes/bata/bata-men-black-derby-formal-shoes/1982031/buy"
-  },
-  "lakme absolute matte melt liquid lip color (6ml)": {
-    "nykaa": "https://www.nykaa.com/lakme-absolute-matte-melt-liquid-lip-color/p/231940",
-    "blinkit": "https://blinkit.com/prn/lakme-absolute-matte-melt-liquid-lip-color/prid/349120",
-    "myntra": "https://www.myntra.com/lipstick/lakme/lakme-absolute-matte-melt/231940/buy",
-    "amazon": "https://www.amazon.in/dp/B07C2FHRV7"
-  },
-  "maybelline new york colossal waterproof mascara (9ml)": {
-    "nykaa": "https://www.nykaa.com/maybelline-new-york-the-colossal-mascara-waterproof/p/9842",
-    "blinkit": "https://blinkit.com/prn/maybelline-new-york-colossal-waterproof-mascara/prid/214902",
-    "amazon": "https://www.amazon.in/dp/B0046VE6T2"
-  },
-  "the derma co 1% hyaluronic sunscreen aqua gel 50g": {
-    "nykaa": "https://www.nykaa.com/the-derma-co-1percent-hyaluronic-sunscreen-aqua-gel/p/2749102",
-    "blinkit": "https://blinkit.com/prn/the-derma-co-1-hyaluronic-sunscreen-aqua-gel/prid/421901",
-    "amazon": "https://www.amazon.in/dp/B09B7HQ2G1"
-  },
-  "minimalist 10% niacinamide face serum 30ml": {
-    "blinkit": "https://blinkit.com/prn/minimalist-10-niacinamide-face-serum/prid/391028",
-    "nykaa": "https://www.nykaa.com/minimalist-10-niacinamide-face-serum/p/1054391",
-    "amazon": "https://www.amazon.in/dp/B08F9XGLG2"
-  },
-  "cetaphil gentle skin cleanser for all skin types (250ml)": {
-    "nykaa": "https://www.nykaa.com/cetaphil-gentle-skin-cleanser/p/20993",
-    "blinkit": "https://blinkit.com/prn/cetaphil-gentle-skin-cleanser-250-ml/prid/291038",
-    "amazon": "https://www.amazon.in/dp/B01CCGW7P6"
-  },
-  "nivea soft light moisturizer cream with vitamin e (200ml)": {
-    "blinkit": "https://blinkit.com/prn/nivea-soft-light-moisturiser-cream/prid/12904",
-    "zepto": "https://www.zeptonow.com/pn/nivea-soft-light-moisturizer-cream/pvid/f43e5c9b-1d70-4966-9aa9-eefb1263c919",
-    "nykaa": "https://www.nykaa.com/nivea-soft-light-moisturising-cream/p/10492",
-    "amazon": "https://www.amazon.in/dp/B006LX9L3I"
-  },
-  "plum green tea alcohol-free face toner (200ml)": {
-    "nykaa": "https://www.nykaa.com/plum-green-tea-alcohol-free-toner/p/24102",
-    "blinkit": "https://blinkit.com/prn/plum-green-tea-alcohol-free-toner/prid/382019",
-    "amazon": "https://www.amazon.in/dp/B00OCJ5M02"
-  },
-  "l'oreal paris extraordinary oil hair serum (100ml)": {
-    "nykaa": "https://www.nykaa.com/loreal-paris-extraordinary-oil-hair-serum/p/18204",
-    "blinkit": "https://blinkit.com/prn/loreal-paris-extraordinary-oil-serum/prid/271049",
-    "amazon": "https://www.amazon.in/dp/B00UM8OAK2"
-  },
-  "apple iphone 16": {
-    "amazon": "https://www.amazon.in/dp/B0DGJ7TGDR",
-    "flipkart": "https://www.flipkart.com/apple-iphone-16-teal-128-gb/p/itma6dcc38e89c7d?pid=MOBHCUW8YWYCZXY7",
-    "blinkit": "https://blinkit.com/prn/apple-iphone-16-128-gb-teal/prid/578192"
-  },
-  "iphone 16": {
-    "amazon": "https://www.amazon.in/dp/B0DGJ7TGDR",
-    "flipkart": "https://www.flipkart.com/apple-iphone-16-teal-128-gb/p/itma6dcc38e89c7d?pid=MOBHCUW8YWYCZXY7",
-    "blinkit": "https://blinkit.com/prn/apple-iphone-16-128-gb-teal/prid/578192"
-  },
-  "apple iphone 15": {
-    "amazon": "https://www.amazon.in/dp/B0CHX1W1XY",
-    "flipkart": "https://www.flipkart.com/apple-iphone-15-black-128-gb/p/itm3234701b0863a?pid=MOBHQV9YR4CBTD9D",
-    "blinkit": "https://blinkit.com/prn/apple-iphone-15-128-gb-black/prid/512948"
-  },
-  "iphone 15": {
-    "amazon": "https://www.amazon.in/dp/B0CHX1W1XY",
-    "flipkart": "https://www.flipkart.com/apple-iphone-15-black-128-gb/p/itm3234701b0863a?pid=MOBHQV9YR4CBTD9D",
-    "blinkit": "https://blinkit.com/prn/apple-iphone-15-128-gb-black/prid/512948"
-  },
-  "samsung galaxy s24 ultra": {
-    "amazon": "https://www.amazon.in/dp/B0CT5FSPJG",
-    "flipkart": "https://www.flipkart.com/samsung-galaxy-s24-ultra-5g-titanium-gray-256-gb/p/itmd4f51262e3e6b?pid=MOBGX2F38JBJGZSE",
-    "zepto": "https://www.zeptonow.com/pn/samsung-galaxy-s24-ultra-5g-titanium-gray-256-gb/pvid/4c919a32-9cb0-466e-a2b1-591b61c47910"
-  },
-  "s24 ultra": {
-    "amazon": "https://www.amazon.in/dp/B0CT5FSPJG",
-    "flipkart": "https://www.flipkart.com/samsung-galaxy-s24-ultra-5g-titanium-gray-256-gb/p/itmd4f51262e3e6b?pid=MOBGX2F38JBJGZSE",
-    "zepto": "https://www.zeptonow.com/pn/samsung-galaxy-s24-ultra-5g-titanium-gray-256-gb/pvid/4c919a32-9cb0-466e-a2b1-591b61c47910"
-  },
-  "galaxy s24 ultra": {
-    "amazon": "https://www.amazon.in/dp/B0CT5FSPJG",
-    "flipkart": "https://www.flipkart.com/samsung-galaxy-s24-ultra-5g-titanium-gray-256-gb/p/itmd4f51262e3e6b?pid=MOBGX2F38JBJGZSE",
-    "zepto": "https://www.zeptonow.com/pn/samsung-galaxy-s24-ultra-5g-titanium-gray-256-gb/pvid/4c919a32-9cb0-466e-a2b1-591b61c47910"
-  },
-  "oneplus 12": {
-    "flipkart": "https://www.flipkart.com/oneplus-12-flowy-emerald-256-gb/p/itm4464454f95a2e?pid=MOBGXGT7SDCAJ3GF",
-    "amazon": "https://www.amazon.in/dp/B0CQPP6JTH"
-  },
-  "apple macbook air m3": {
-    "amazon": "https://www.amazon.in/dp/B0CX21CBPJ",
-    "flipkart": "https://www.flipkart.com/apple-macbook-air-m3-16-gb-512-gb-ssd-macos-sonoma-mxd13hn-a/p/itm5b94f09dcbca5?pid=COMGZ3ZZVHRHFYYZ"
-  },
-  "macbook air m3": {
-    "amazon": "https://www.amazon.in/dp/B0CX21CBPJ",
-    "flipkart": "https://www.flipkart.com/apple-macbook-air-m3-16-gb-512-gb-ssd-macos-sonoma-mxd13hn-a/p/itm5b94f09dcbca5?pid=COMGZ3ZZVHRHFYYZ"
-  },
-  "macbook air": {
-    "amazon": "https://www.amazon.in/dp/B0CX21CBPJ",
-    "flipkart": "https://www.flipkart.com/apple-macbook-air-m3-16-gb-512-gb-ssd-macos-sonoma-mxd13hn-a/p/itm5b94f09dcbca5?pid=COMGZ3ZZVHRHFYYZ"
-  },
-  "apple macbook pro 14": {
-    "amazon": "https://www.amazon.in/dp/B0CHX2NZH6",
-    "flipkart": "https://www.flipkart.com/apple-macbook-pro-m3-pro-18-gb-512-gb-ssd-macos-sonoma-mrx33hn-a/p/itm4b94f09dcbca5?pid=COMGWY6HF8HYZZ6Y"
-  },
-  "macbook pro 14": {
-    "amazon": "https://www.amazon.in/dp/B0CHX2NZH6",
-    "flipkart": "https://www.flipkart.com/apple-macbook-pro-m3-pro-18-gb-512-gb-ssd-macos-sonoma-mrx33hn-a/p/itm4b94f09dcbca5?pid=COMGWY6HF8HYZZ6Y"
-  },
-  "macbook pro": {
-    "amazon": "https://www.amazon.in/dp/B0CHX2NZH6",
-    "flipkart": "https://www.flipkart.com/apple-macbook-pro-m3-pro-18-gb-512-gb-ssd-macos-sonoma-mrx33hn-a/p/itm4b94f09dcbca5?pid=COMGWY6HF8HYZZ6Y"
-  },
-  "dell xps 13": {
-    "flipkart": "https://www.flipkart.com/dell-xps-13-intel-core-ultra-7-16-gb-512-gb-ssd-windows-11-home-9340/p/itm178652d87e38f?pid=COMGYYGHY8VGH7ZZ",
-    "amazon": "https://www.amazon.in/dp/B0CRVJ8Y2M"
-  },
-  "hp pavilion 15": {
-    "amazon": "https://www.amazon.in/dp/B0BH4WFL2X",
-    "flipkart": "https://www.flipkart.com/hp-pavilion-amd-ryzen-7-octa-core-5700u-16-gb-512-gb-ssd-windows-11-home-15-eh1108au-thin-light-laptop/p/itmd411a0ea4c16d?pid=COMG7W6TZFYPZY7E"
-  },
-  "lenovo ideapad slim 3": {
-    "flipkart": "https://www.flipkart.com/lenovo-ideapad-slim-3-intel-core-i5-13th-gen-13420h-16-gb-512-gb-ssd-windows-11-home-15iah8-thin-light-laptop/p/itmdb2ebdc7c2e0b?pid=COMGVGTYGH9GYZ8Z",
-    "amazon": "https://www.amazon.in/dp/B0B56CRWDF"
-  },
-  "asus rog strix g16": {
-    "amazon": "https://www.amazon.in/dp/B0BWX2B4F2",
-    "flipkart": "https://www.flipkart.com/asus-rog-strix-g16-2024-intel-core-i7-14th-gen-14650hx-16-gb-1-tb-ssd-windows-11-home-8-gb-graphics-nvidia-geforce-rtx-4060-g614jvr-n4079w-gaming-laptop/p/itm9adbbbe9eb559?pid=COMGYTYZ68ZVFH6Y"
-  },
-  "sony wh-1000xm5": {
-    "blinkit": "https://blinkit.com/prn/sony-wh-1000xm5-wireless-noise-cancelling-headphones/prid/512949",
-    "amazon": "https://www.amazon.in/dp/B09XS7JWHH",
-    "flipkart": "https://www.flipkart.com/sony-wh-1000xm5-bluetooth-headset/p/itm68b20da5ef154?pid=ACCGH2E64NMG72TG"
-  },
-  "wh-1000xm5": {
-    "blinkit": "https://blinkit.com/prn/sony-wh-1000xm5-wireless-noise-cancelling-headphones/prid/512949",
-    "amazon": "https://www.amazon.in/dp/B09XS7JWHH",
-    "flipkart": "https://www.flipkart.com/sony-wh-1000xm5-bluetooth-headset/p/itm68b20da5ef154?pid=ACCGH2E64NMG72TG"
-  },
-  "sony xm5": {
-    "blinkit": "https://blinkit.com/prn/sony-wh-1000xm5-wireless-noise-cancelling-headphones/prid/512949",
-    "amazon": "https://www.amazon.in/dp/B09XS7JWHH",
-    "flipkart": "https://www.flipkart.com/sony-wh-1000xm5-bluetooth-headset/p/itm68b20da5ef154?pid=ACCGH2E64NMG72TG"
-  },
-  "boat airdopes 141": {
-    "zepto": "https://www.zeptonow.com/pn/boat-airdopes-141-anc-true-wireless-earbuds/pvid/7178c743-12cb-45ec-91b3-469bfd290ca8",
-    "blinkit": "https://blinkit.com/prn/boat-airdopes-141-bluetooth-truly-wireless-earbuds/prid/394829",
-    "amazon": "https://www.amazon.in/dp/B09N3ZNHTY"
-  },
-  "apple airpods pro": {
-    "flipkart": "https://www.flipkart.com/apple-airpods-pro-2nd-generation-magsafe-case-usb-c-bluetooth-headset/p/itm9b4d8d9bceba3?pid=ACCGTR7ZEYGH9ZZY",
-    "amazon": "https://www.amazon.in/dp/B0CHWRXH8B",
-    "blinkit": "https://blinkit.com/prn/apple-airpods-pro-2nd-generation-with-usb-c/prid/512950"
-  },
-  "airpods pro": {
-    "flipkart": "https://www.flipkart.com/apple-airpods-pro-2nd-generation-magsafe-case-usb-c-bluetooth-headset/p/itm9b4d8d9bceba3?pid=ACCGTR7ZEYGH9ZZY",
-    "amazon": "https://www.amazon.in/dp/B0CHWRXH8B",
-    "blinkit": "https://blinkit.com/prn/apple-airpods-pro-2nd-generation-with-usb-c/prid/512950"
-  },
-  "jbl flip 6": {
-    "blinkit": "https://blinkit.com/prn/jbl-flip-6-portable-waterproof-speaker/prid/418290",
-    "amazon": "https://www.amazon.in/dp/B09RM53Y5B"
-  },
-  "oneplus bullets wireless z2": {
-    "zepto": "https://www.zeptonow.com/pn/oneplus-bullets-wireless-z2-bluetooth-neckband-earphones/pvid/bca7bb9d-e4fb-4b9e-990a-a53ce5201cb4",
-    "amazon": "https://www.amazon.in/dp/B09TVVGXWS"
-  },
-  "sony bravia": {
-    "amazon": "https://www.amazon.in/dp/B0C5MC45FR",
-    "flipkart": "https://www.flipkart.com/sony-bravia-138-8-cm-55-inch-ultra-hd-4k-led-smart-google-tv-kd-55x74l/p/itm25da5f8f53a70?pid=TVSGQJZZF9HYZZ7Y"
-  },
-  "samsung 43": {
-    "flipkart": "https://www.flipkart.com/samsung-crystal-4k-vivid-pro-108-cm-43-inch-ultra-hd-4k-led-smart-tizen-tv/p/itm78198f48cefb8?pid=TVSGZ9GH8VGYY2AZ",
-    "amazon": "https://www.amazon.in/dp/B0D3GKPRG8"
-  },
-  "lg 55": {
-    "amazon": "https://www.amazon.in/dp/B0C46FR1R1",
-    "flipkart": "https://www.flipkart.com/lg-oled-evo-c3-139-cm-55-inch-ultra-hd-4k-oled-smart-webos-tv-55c3psa/p/itmcf44f0b09459f?pid=TVSGZHY8ZEYHYZZ1"
-  },
-  "apple watch": {
-    "amazon": "https://www.amazon.in/dp/B0DGJGZ83J",
-    "flipkart": "https://www.flipkart.com/apple-watch-series-10-gps-46mm-jet-black-aluminium-case-sport-band/p/itm4b94f09dcbcb1?pid=SMWGYZZYHZ8VYZ2A",
-    "blinkit": "https://blinkit.com/prn/apple-watch-series-10-gps-46mm/prid/589120"
-  },
-  "apple watch series 10": {
-    "amazon": "https://www.amazon.in/dp/B0DGJGZ83J",
-    "flipkart": "https://www.flipkart.com/apple-watch-series-10-gps-46mm-jet-black-aluminium-case-sport-band/p/itm4b94f09dcbcb1?pid=SMWGYZZYHZ8VYZ2A",
-    "blinkit": "https://blinkit.com/prn/apple-watch-series-10-gps-46mm/prid/589120"
-  },
-  "galaxy watch": {
-    "flipkart": "https://www.flipkart.com/samsung-galaxy-watch6-lte-44mm/p/itm3234701b0863b?pid=SMWGZGY8ZEYHYZZ6",
-    "amazon": "https://www.amazon.in/dp/B0CC9H5W3M"
-  },
-  "playstation 5": {
-    "amazon": "https://www.amazon.in/dp/B0CY5J8424",
-    "flipkart": "https://www.flipkart.com/sony-playstation-5-slim-1-tb-disc-edition/p/itmd7b7a1700c432?pid=GMCGYGCBEM4PVYYN"
-  },
-  "ps5": {
-    "amazon": "https://www.amazon.in/dp/B0CY5J8424",
-    "flipkart": "https://www.flipkart.com/sony-playstation-5-slim-1-tb-disc-edition/p/itmd7b7a1700c432?pid=GMCGYGCBEM4PVYYN"
-  },
-  "xbox series x": {
-    "flipkart": "https://www.flipkart.com/microsoft-xbox-series-x-1024-gb/p/itme?pid=GMCGWH8SERYVVPV9",
-    "amazon": "https://www.amazon.in/dp/B08H734791"
-  },
-  "nintendo switch": {
-    "amazon": "https://www.amazon.in/dp/B098RKWHHZ",
-    "flipkart": "https://www.flipkart.com/nintendo-switch-oled-model-neon-blue-red-joy-con-64-gb/p/itm0a2bbdcfe6f31?pid=GMCGYVGGK67Z4WZH"
-  },
-  "puma smash v2": {
-    "myntra": "https://www.myntra.com/casual-shoes/puma/puma-unisex-smash-v2-sneakers/1049281/buy",
-    "flipkart": "https://www.flipkart.com/puma-smash-v2-sneakers-men/p/itm4b94f09dcbca7?pid=SHOGWY6HF8HYZZ6Z",
-    "amazon": "https://www.amazon.in/dp/B072LX7J37"
-  },
-  "puma smash": {
-    "myntra": "https://www.myntra.com/casual-shoes/puma/puma-unisex-smash-v2-sneakers/1049281/buy",
-    "flipkart": "https://www.flipkart.com/puma-smash-v2-sneakers-men/p/itm4b94f09dcbca7?pid=SHOGWY6HF8HYZZ6Z",
-    "amazon": "https://www.amazon.in/dp/B072LX7J37"
-  },
-  "levi's": {
-    "myntra": "https://www.myntra.com/jeans/levis/levis-men-blue-511-slim-fit-stretchable-jeans/142910/buy",
-    "amazon": "https://www.amazon.in/dp/B07J5D42LX",
-    "flipkart": "https://www.flipkart.com/levi-s-slim-men-blue-jeans/p/itm6d863f69aa6f2?pid=JEACOMGZT7GVFGYZX"
-  },
-  "levis": {
-    "myntra": "https://www.myntra.com/jeans/levis/levis-men-blue-511-slim-fit-stretchable-jeans/142910/buy",
-    "amazon": "https://www.amazon.in/dp/B07J5D42LX",
-    "flipkart": "https://www.flipkart.com/levi-s-slim-men-blue-jeans/p/itm6d863f69aa6f2?pid=JEACOMGZT7GVFGYZX"
-  },
-  "adidas ultraboost": {
-    "flipkart": "https://www.flipkart.com/adidas-ultraboost-light-running-shoes-men/p/itm87fe48d94ca16?pid=SHOGWZGHY8VGYY2B",
-    "myntra": "https://www.myntra.com/sports-shoes/adidas/adidas-men-ultraboost-light-running-shoes/1940182/buy",
-    "amazon": "https://www.amazon.in/dp/B0BNW1R9KM"
-  },
-  "minimalist": {
-    "blinkit": "https://blinkit.com/prn/minimalist-10-niacinamide-face-serum/prid/391028",
-    "nykaa": "https://www.nykaa.com/minimalist-10-niacinamide-face-serum/p/1054391",
-    "amazon": "https://www.amazon.in/dp/B08F9XGLG2"
   },
   "amul taaza": {
     "blinkit": "https://blinkit.com/prn/amul-taaza-homogenised-toned-milk/prid/19597",
@@ -780,6 +331,26 @@ export function isSyntheticBrokenUrl(url = "") {
     u.includes("itm9b4d8d9bceba2") ||
     u.includes("itm345162ecdbda3") ||
     u.includes("itm6d863f69aa6ee") ||
+    u.includes("itm6d863f69") ||
+    u.includes("itme?") ||
+    u.includes("1299401") ||
+    u.includes("231940") ||
+    u.includes("1049281") ||
+    u.includes("142910") ||
+    u.includes("1940182") ||
+    u.includes("2104928") ||
+    u.includes("1892041") ||
+    u.includes("2491028") ||
+    u.includes("1982031") ||
+    u.includes("2749102") ||
+    u.includes("1054391") ||
+    u.includes("20993") ||
+    u.includes("10492") ||
+    u.includes("24102") ||
+    u.includes("18204") ||
+    u.includes("9842") ||
+    u.includes("qc-") ||
+    u.includes("db-") ||
     u.includes("629327")
   ) {
     return true;
@@ -1094,30 +665,29 @@ export function getDirectStoreUrl(storeArg = "", productArg = "", rawUrlArg = ""
     }
   }
 
-  // If source object has platform productId/id, build direct product details page
+  // If source object has platform productId/id (and it is NOT an internal qc-/db- ID), build direct product details page
   if (sourceObj) {
-    const cleanId = String(sourceObj.id || sourceObj.productId || "").trim();
+    const rawId = String(sourceObj.productId || sourceObj.id || "").trim();
+    const isInternalId = !rawId || rawId.startsWith("qc-") || rawId.startsWith("db-") || rawId.startsWith("trend-") || rawId.startsWith("deal-");
+    const cleanId = isInternalId ? "" : rawId;
     const slug = createProductSlug(cleanName);
     if (cleanId) {
-      if (store.includes("blinkit")) {
+      if (store.includes("blinkit") && (/^\d+$/.test(cleanId) || /^[a-f0-9-]{36}$/i.test(cleanId))) {
         return `https://blinkit.com/prn/${slug}/prid/${cleanId}`;
       }
-      if (store.includes("zepto")) {
+      if (store.includes("zepto") && /^[a-f0-9-]{36}$/i.test(cleanId)) {
         return `https://www.zeptonow.com/pn/${slug}/pvid/${cleanId}`;
       }
-      if (store.includes("swiggy")) {
+      if (store.includes("swiggy") && (/^\d+$/.test(cleanId) || cleanId.includes("-"))) {
         return `https://www.swiggy.com/instamart/item/${cleanId}`;
       }
-      if (store.includes("bigbasket")) {
-        return `https://www.bigbasket.com/ps/?q=${encodeURIComponent(cleanName)}`;
-      }
-      if (store.includes("dmart")) {
+      if (store.includes("dmart") && /^[a-z0-9_-]+$/i.test(cleanId)) {
         return `https://www.dmart.in/product/${slug}-${cleanId}`;
       }
       if (store.includes("amazon") && /^[B0-9][A-Z0-9]{9}$/i.test(cleanId)) {
         return `https://www.amazon.in/dp/${cleanId}`;
       }
-      if (store.includes("flipkart") && (cleanId.startsWith("itm") || cleanId.length >= 10)) {
+      if (store.includes("flipkart") && /^[A-Z0-9]{16}$/i.test(cleanId)) {
         return `https://www.flipkart.com/product/p/itm?pid=${cleanId}`;
       }
     }

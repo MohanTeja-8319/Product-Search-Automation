@@ -28,6 +28,56 @@ const STORE_COLORS = {
   jiomart: { text: "#0078AD", bg: "#EBF5FB", label: "JioMart" },
 };
 
+function mergeStoreComparisons(listA = [], listB = [], baseName = "", fallbackItem = null) {
+  const storeMap = new Map();
+
+  const addItems = (items) => {
+    if (!Array.isArray(items)) return;
+    for (const item of items) {
+      if (item && item.store && typeof item.price === "number" && !isNaN(item.price)) {
+        const key = item.store.toLowerCase().trim();
+        const rawUrl = item.deeplink || item.url || item.product_link || item.link;
+        const resolvedUrl = getDirectStoreUrl(item.store, item.name || baseName, rawUrl);
+        const existing = storeMap.get(key);
+        if (!existing || item.price < existing.price) {
+          storeMap.set(key, {
+            ...item,
+            url: resolvedUrl,
+            deeplink: resolvedUrl,
+            link: resolvedUrl,
+            product_link: resolvedUrl,
+          });
+        }
+      }
+    }
+  };
+
+  addItems(listA);
+  addItems(listB);
+
+  if (fallbackItem && fallbackItem.store && typeof fallbackItem.price === "number" && !isNaN(fallbackItem.price)) {
+    const key = fallbackItem.store.toLowerCase().trim();
+    if (!storeMap.has(key)) {
+      const rawUrl = fallbackItem.deeplink || fallbackItem.url || fallbackItem.product_link || fallbackItem.link;
+      const resolvedUrl = getDirectStoreUrl(fallbackItem.store, fallbackItem.name || baseName, rawUrl);
+      storeMap.set(key, {
+        store: fallbackItem.store,
+        price: fallbackItem.price,
+        originalPrice: fallbackItem.originalPrice || fallbackItem.price,
+        delivery: fallbackItem.delivery || "Standard Delivery",
+        rating: fallbackItem.rating,
+        reviews: fallbackItem.reviews,
+        url: resolvedUrl,
+        deeplink: resolvedUrl,
+        link: resolvedUrl,
+        product_link: resolvedUrl,
+      });
+    }
+  }
+
+  return Array.from(storeMap.values()).sort((a, b) => a.price - b.price);
+}
+
 export default function ComparisonPage() {
   const navigate = useNavigate();
   const { productName } = useParams();
@@ -56,31 +106,23 @@ export default function ComparisonPage() {
     // If product passed in route state, display preview immediately with preserved store
     if (stateProduct && (stateProduct.name === decodedName || !decodedName)) {
       const pStore = requestedStore || stateProduct.store || "";
-      setProductData({
-        ...stateProduct,
-        store: pStore,
-      });
       if (pStore) setSelectedStore(pStore);
 
-      if (Array.isArray(stateProduct.comparison) && stateProduct.comparison.length > 0) {
-        const cleaned = stateProduct.comparison
-          .filter((c) => {
-            const isTech = /phone|laptop|galaxy|iphone|macbook|ultra|pro|tv|watch/i.test(decodedName || stateProduct.name || "");
-            if (isTech && /zepto/i.test(c.store)) return false;
-            return true;
-          })
-          .map((c) => {
-            const raw = c.deeplink || c.url || c.product_link || c.link;
-            const resolved = getDirectStoreUrl(c.store, decodedName || stateProduct.name, raw);
-            return {
-              ...c,
-              url: resolved,
-              deeplink: resolved,
-              link: resolved,
-              product_link: resolved,
-            };
-          });
-        setComparisonList(cleaned);
+      const initialComps = mergeStoreComparisons(stateProduct.comparison, [], decodedName || stateProduct.name, stateProduct);
+      const storeMatch = initialComps.find(c => c.store.toLowerCase() === pStore.toLowerCase()) || initialComps[0];
+
+      setProductData({
+        ...stateProduct,
+        store: storeMatch?.store || pStore,
+        price: storeMatch?.price ?? stateProduct.price,
+        originalPrice: storeMatch?.originalPrice ?? stateProduct.originalPrice,
+        url: storeMatch?.url || stateProduct.url,
+        storeCount: initialComps.length,
+        comparison: initialComps,
+      });
+
+      if (initialComps.length > 0) {
+        setComparisonList(initialComps);
         setLoading(false);
       }
     }
@@ -89,118 +131,85 @@ export default function ComparisonPage() {
     getLiveComparison(decodedName, { store: requestedStore })
       .then((res) => {
         if (!active) return;
+        if (res?.creditsCompleted || res?.message === "products are not available") {
+          setProductData(null);
+          setComparisonList([]);
+          setError("products are not available");
+          return;
+        }
+
         if (res?.product) {
-          // ALWAYS preserve the store from the product card / query!
           const storeToKeep = requestedStore || stateProduct?.store || res.product.store;
           if (storeToKeep) setSelectedStore(storeToKeep);
 
-          const storeMatch = Array.isArray(res.product.comparison)
-            ? res.product.comparison.find((c) => c.store.toLowerCase() === storeToKeep.toLowerCase())
-            : null;
-
-          const rawMatchUrl = storeMatch?.deeplink || storeMatch?.url || storeMatch?.product_link || storeMatch?.link;
-          const rawFallbackUrl = storeToKeep === stateProduct?.store
-            ? (stateProduct?.deeplink || stateProduct?.url || stateProduct?.product_link || stateProduct?.link)
-            : (res.product.deeplink || res.product.url || res.product.product_link || res.product.link);
-          const chosenUrl = getDirectStoreUrl(storeToKeep, decodedName || res.product.name, rawMatchUrl ?? rawFallbackUrl);
+          const comps = mergeStoreComparisons(res.product.comparison, stateProduct?.comparison, decodedName || res.product.name, stateProduct);
+          const storeMatch = comps.find((c) => c.store.toLowerCase() === storeToKeep.toLowerCase()) || comps[0];
 
           setProductData({
             ...res.product,
-            store: storeToKeep,
-            price: storeMatch?.price ?? (storeToKeep === stateProduct?.store ? stateProduct?.price : res.product.price),
-            originalPrice: storeMatch?.originalPrice ?? (storeToKeep === stateProduct?.store ? stateProduct?.originalPrice : res.product.originalPrice),
-            url: chosenUrl,
-            deeplink: chosenUrl,
-            link: chosenUrl,
-            product_link: chosenUrl,
-            rating: storeMatch?.rating ?? (storeToKeep === stateProduct?.store ? stateProduct?.rating : res.product.rating),
+            store: storeMatch?.store || storeToKeep,
+            price: storeMatch?.price ?? res.product.price,
+            originalPrice: storeMatch?.originalPrice ?? res.product.originalPrice,
+            url: storeMatch?.url || res.product.url,
+            deeplink: storeMatch?.url || res.product.url,
+            link: storeMatch?.url || res.product.url,
+            product_link: storeMatch?.url || res.product.url,
+            rating: storeMatch?.rating ?? res.product.rating,
+            storeCount: comps.length,
+            comparison: comps,
           });
 
-          // Ensure the comparisonList contains the selected store with accurate data
-          let comps = Array.isArray(res.product.comparison)
-            ? res.product.comparison.map((c) => {
-                const cUrl = c.deeplink || c.url || c.product_link || c.link;
-                const resolved = getDirectStoreUrl(c.store, decodedName || res.product.name, cUrl);
-                return {
-                  ...c,
-                  url: resolved,
-                  deeplink: resolved,
-                  link: resolved,
-                  product_link: resolved,
-                };
-              })
-            : [];
-          if (storeToKeep && !comps.some(c => c.store.toLowerCase() === storeToKeep.toLowerCase()) && stateProduct) {
-            const sUrl = stateProduct.deeplink || stateProduct.url || stateProduct.product_link || stateProduct.link || "#";
-            comps.unshift({
-              store: storeToKeep,
-              price: stateProduct.price,
-              originalPrice: stateProduct.originalPrice || stateProduct.price,
-              url: sUrl,
-              deeplink: sUrl,
-              link: sUrl,
-              product_link: sUrl,
-              delivery: "Standard Delivery",
-            });
-          }
           setComparisonList(comps);
         } else if (stateProduct) {
-          // Fallback to stateProduct if specific search didn't find multiple stores
           const storeToKeep = requestedStore || stateProduct.store || "Quick Commerce";
-          const sUrl = stateProduct.deeplink || stateProduct.url || stateProduct.product_link || stateProduct.link || "#";
+          const comps = mergeStoreComparisons(stateProduct.comparison, [], decodedName || stateProduct.name, stateProduct);
+          const storeMatch = comps.find((c) => c.store.toLowerCase() === storeToKeep.toLowerCase()) || comps[0];
+
           setProductData({
             ...stateProduct,
-            store: storeToKeep,
-            url: sUrl,
-            deeplink: sUrl,
-            link: sUrl,
-            product_link: sUrl,
+            store: storeMatch?.store || storeToKeep,
+            price: storeMatch?.price ?? stateProduct.price,
+            originalPrice: storeMatch?.originalPrice ?? stateProduct.originalPrice,
+            url: storeMatch?.url || stateProduct.url,
+            deeplink: storeMatch?.url || stateProduct.url,
+            link: storeMatch?.url || stateProduct.url,
+            product_link: storeMatch?.url || stateProduct.url,
+            storeCount: comps.length,
+            comparison: comps,
           });
-          if (stateProduct.store && stateProduct.price) {
-            setComparisonList([
-              {
-                store: stateProduct.store,
-                price: stateProduct.price,
-                originalPrice: stateProduct.originalPrice || stateProduct.price,
-                url: sUrl,
-                deeplink: sUrl,
-                link: sUrl,
-                product_link: sUrl,
-                delivery: "Standard Delivery",
-              }
-            ]);
-          }
+          setComparisonList(comps);
         } else {
           setError("No exact matches found across our supported retailers.");
         }
       })
       .catch((err) => {
         if (active) {
+          const isCompleted = err?.response?.data?.creditsCompleted || err?.response?.data?.message === "products are not available";
+          if (isCompleted) {
+            setProductData(null);
+            setComparisonList([]);
+            setError("products are not available");
+            return;
+          }
+
           if (stateProduct) {
             const storeToKeep = requestedStore || stateProduct.store || "Quick Commerce";
-            const sUrl = stateProduct.deeplink || stateProduct.url || stateProduct.product_link || stateProduct.link || "#";
+            const comps = mergeStoreComparisons(stateProduct.comparison, [], decodedName || stateProduct.name, stateProduct);
+            const storeMatch = comps.find((c) => c.store.toLowerCase() === storeToKeep.toLowerCase()) || comps[0];
+
             setProductData({
               ...stateProduct,
-              store: storeToKeep,
-              url: sUrl,
-              deeplink: sUrl,
-              link: sUrl,
-              product_link: sUrl,
+              store: storeMatch?.store || storeToKeep,
+              price: storeMatch?.price ?? stateProduct.price,
+              originalPrice: storeMatch?.originalPrice ?? stateProduct.originalPrice,
+              url: storeMatch?.url || stateProduct.url,
+              deeplink: storeMatch?.url || stateProduct.url,
+              link: storeMatch?.url || stateProduct.url,
+              product_link: storeMatch?.url || stateProduct.url,
+              storeCount: comps.length,
+              comparison: comps,
             });
-            if (stateProduct.store && stateProduct.price) {
-              setComparisonList([
-                {
-                  store: stateProduct.store,
-                  price: stateProduct.price,
-                  originalPrice: stateProduct.originalPrice || stateProduct.price,
-                  url: sUrl,
-                  deeplink: sUrl,
-                  link: sUrl,
-                  product_link: sUrl,
-                  delivery: "Standard Delivery",
-                }
-              ]);
-            }
+            setComparisonList(comps);
           } else {
             setError(err.message || "Failed to load live comparison.");
           }
@@ -213,15 +222,13 @@ export default function ComparisonPage() {
   }, [decodedName, stateProduct, urlStore]);
 
   const sortedComparisons = [...comparisonList].sort((a, b) => a.price - b.price);
-  const validPrices = sortedComparisons.map(item => item.price).filter(p => typeof p === 'number' && !isNaN(p) && p > 0);
-  const bestPrice = validPrices.length > 0
-    ? Math.min(...validPrices)
-    : (productData?.price || null);
+  const lowestOffer = sortedComparisons.length > 0 ? sortedComparisons[0] : null;
+  const bestPrice = lowestOffer?.price || productData?.price || null;
 
-  const activeStore = productData?.store || selectedStore || "";
+  const activeStore = selectedStore || productData?.store || lowestOffer?.store || "";
   const selectedOffer = sortedComparisons.find(
     (item) => item.store.toLowerCase() === activeStore.toLowerCase()
-  ) || (productData ? {
+  ) || lowestOffer || (productData ? {
     store: activeStore,
     price: productData.price,
     url: productData.url,
@@ -230,9 +237,18 @@ export default function ComparisonPage() {
     product_link: productData.product_link || productData.url,
   } : null);
 
-  const lowestOffer = sortedComparisons.find((item) => item.price === bestPrice) || sortedComparisons[0] || null;
-  const isSelectedLowest = selectedOffer && bestPrice && selectedOffer.price === bestPrice;
-  const bestDeal = isSelectedLowest ? selectedOffer : lowestOffer;
+  const isSelectedLowest = Boolean(
+    selectedOffer && lowestOffer && selectedOffer.store.toLowerCase() === lowestOffer.store.toLowerCase()
+  );
+
+  const priceDiff = (!isSelectedLowest && selectedOffer && lowestOffer && selectedOffer.price > lowestOffer.price)
+    ? (selectedOffer.price - lowestOffer.price)
+    : 0;
+
+  const savingsPct = (!isSelectedLowest && selectedOffer?.price && priceDiff > 0)
+    ? Math.round((priceDiff / selectedOffer.price) * 100)
+    : 0;
+
 
   return (
     <div className="page-wrapper">
@@ -262,11 +278,15 @@ export default function ComparisonPage() {
           )}
 
           {!loading && error && (
-            <div className="card empty-state" style={{ marginTop: 40 }}>
+            <div className="card empty-state" style={{ marginTop: 40, padding: 48, textAlign: "center" }}>
               <div className="empty-state-icon"><FiAlertCircle size={28} /></div>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-900)", marginBottom: 8 }}>Product Not Found</h3>
-              <p style={{ fontSize: 14, color: "var(--text-500)", marginBottom: 24 }}>{error}</p>
-              <button className="btn btn-primary" onClick={() => navigate("/search")}>Search Again</button>
+              <h3 style={{ fontSize: 20, fontWeight: 700, color: "var(--text-900)", marginBottom: 8 }}>
+                {error === "products are not available" ? "products are not available" : "Product Not Found"}
+              </h3>
+              <p style={{ fontSize: 14, color: "var(--text-500)", marginBottom: 24 }}>
+                {error === "products are not available" ? "products are not available" : error}
+              </p>
+              <button className="btn btn-primary" onClick={() => navigate("/search")}>Return to Search</button>
             </div>
           )}
 
@@ -274,6 +294,7 @@ export default function ComparisonPage() {
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               
               {}
+              {/* Compare Hero Card */}
               <div className="card compare-hero" style={{ padding: 32, display: "flex", gap: 40, alignItems: "center" }}>
                 <div style={{
                   width: 280, height: 280, flexShrink: 0, background: "var(--bg)",
@@ -283,148 +304,312 @@ export default function ComparisonPage() {
                     onError={e => { e.target.src = "https://via.placeholder.com/280?text=Product"; }} />
                 </div>
                 
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
-                    <span className="badge badge-primary">{productData.category || "Gadget"}</span>
-                    {productData.store && (
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  {/* Badges Bar with Store Count */}
+                  <div style={{ display: "flex", gap: 10, marginBottom: 14, flexWrap: "wrap", alignItems: "center" }}>
+                    <span className="badge badge-primary">{productData.category || "General"}</span>
+
+                    {/* Store Availability Badge */}
+                    <span
+                      className="badge"
+                      style={{
+                        background: "#EEF2FF",
+                        color: "#4338CA",
+                        fontWeight: 700,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
+                        padding: "5px 12px",
+                        fontSize: 12,
+                        border: "1px solid #C7D2FE"
+                      }}
+                    >
+                      <FaStore size={12} />
+                      Available in {comparisonList.length || 1} {comparisonList.length === 1 ? "Store" : "Stores"}
+                    </span>
+
+                    {/* Active Selected Store Badge */}
+                    {selectedOffer?.store && (
                       <span
                         style={{
                           display: "inline-flex",
                           alignItems: "center",
                           gap: 6,
-                          padding: "4px 10px",
-                          background: (STORE_COLORS[productData.store.toLowerCase()]?.bg || "#F3F4F6"),
-                          color: (STORE_COLORS[productData.store.toLowerCase()]?.text || "var(--text-900)"),
+                          padding: "5px 12px",
+                          background: (STORE_COLORS[selectedOffer.store.toLowerCase()]?.bg || "#F3F4F6"),
+                          color: (STORE_COLORS[selectedOffer.store.toLowerCase()]?.text || "var(--text-900)"),
                           borderRadius: "var(--radius-sm)",
                           fontSize: 12,
                           fontWeight: 700,
-                          border: `1px solid ${STORE_COLORS[productData.store.toLowerCase()]?.text || "var(--border)"}35`
+                          border: `1px solid ${STORE_COLORS[selectedOffer.store.toLowerCase()]?.text || "var(--border)"}35`
                         }}
                       >
                         <FaStore size={12} />
-                        {productData.store}
+                        Viewing: {selectedOffer.store}
                       </span>
                     )}
+
                     {productData.rating ? (
                       <span className="badge" style={{ background: "#FFFBEB", color: "#D97706", display: "flex", alignItems: "center", gap: 4 }}>
                         <FaStar size={11} /> {Number(productData.rating).toFixed(1)} Rating
                       </span>
                     ) : (
-                      <span className="badge" style={{ background: "#EEF2FF", color: "#4F46E5", display: "flex", alignItems: "center", gap: 4 }}>
+                      <span className="badge" style={{ background: "#F0FDF4", color: "#166534", display: "flex", alignItems: "center", gap: 4 }}>
                         <FiShield size={11} /> Quick Commerce Verified
                       </span>
                     )}
                   </div>
                   
-                  <h1 className="font-heading" style={{ fontSize: 32, fontWeight: 400, color: "var(--text-900)", lineHeight: 1.3, marginBottom: 16 }}>
+                  <h1 className="font-heading" style={{ fontSize: 30, fontWeight: 500, color: "var(--text-900)", lineHeight: 1.3, marginBottom: 12 }}>
                     {productData.name}
                   </h1>
                   
                   {productData.description && (
-                    <p style={{ fontSize: 14, color: "var(--text-500)", lineHeight: 1.6, marginBottom: 24 }}>
+                    <p style={{ fontSize: 14, color: "var(--text-500)", lineHeight: 1.6, marginBottom: 16 }}>
                       {productData.description}
                     </p>
                   )}
 
-                  <div className="best-price-box" style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 20px", background: "var(--success-light)", borderRadius: "var(--radius-md)", border: "1px solid #A7F3D0" }}>
-                    <div style={{ width: 40, height: 40, borderRadius: 10, background: "var(--success)", color: "white", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <FiTrendingDown size={20} />
-                    </div>
-                    <div>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: "var(--success-hover)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                        {isSelectedLowest
-                          ? `Lowest Price on ${selectedOffer?.store || productData.store}`
-                          : (lowestOffer ? `Best Market Price • Lowest on ${lowestOffer.store}` : `Price on ${productData.store}`)}
+                  {/* Multi-Store Availability Selector Chips */}
+                  {sortedComparisons.length > 0 && (
+                    <div style={{ marginBottom: 18 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-600)", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                        <FaStore size={12} /> Available across {sortedComparisons.length} {sortedComparisons.length === 1 ? "store" : "stores"} (Click to compare):
                       </div>
-                      <div className="font-heading" style={{ fontSize: 28, fontWeight: 400, color: "var(--success)" }}>
-                        ₹{(bestPrice || selectedOffer?.price || productData.price)?.toLocaleString()}
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                        {sortedComparisons.map((c) => {
+                          const isCurrent = (selectedOffer?.store || "").toLowerCase() === c.store.toLowerCase();
+                          const isLowest = lowestOffer && c.store.toLowerCase() === lowestOffer.store.toLowerCase();
+                          const sColor = STORE_COLORS[c.store.toLowerCase()] || { bg: "#F3F4F6", text: "var(--text-900)" };
+                          return (
+                            <button
+                              key={c.store}
+                              type="button"
+                              onClick={() => {
+                                setSelectedStore(c.store);
+                                setProductData(prev => ({
+                                  ...prev,
+                                  store: c.store,
+                                  price: c.price,
+                                  url: c.url || c.deeplink || prev?.url
+                                }));
+                              }}
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: 6,
+                                padding: "6px 14px",
+                                borderRadius: "var(--radius-full)",
+                                fontSize: 12,
+                                fontWeight: 700,
+                                cursor: "pointer",
+                                background: isCurrent ? sColor.bg : "var(--surface)",
+                                color: isCurrent ? sColor.text : "var(--text-700)",
+                                border: isCurrent ? `2px solid ${sColor.text}` : "1px solid var(--border)",
+                                boxShadow: isCurrent ? "var(--shadow-xs)" : "none",
+                                transition: "all 0.15s ease"
+                              }}
+                              title={`Switch to ${c.store} (₹${c.price?.toLocaleString()})`}
+                            >
+                              <FaStore size={11} />
+                              <span>{c.store}</span>
+                              <span style={{ fontWeight: 800, color: isLowest ? "var(--success)" : "inherit" }}>
+                                ₹{c.price?.toLocaleString()}
+                              </span>
+                              {isLowest && (
+                                <span style={{ fontSize: 9, background: "var(--success)", color: "#fff", padding: "1px 6px", borderRadius: 10, fontWeight: 800, textTransform: "uppercase" }}>
+                                  Lowest
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
-                    
-                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: "auto", flexWrap: "wrap" }}>
-                      {/* Primary Buy Button for the selected store */}
-                      {selectedOffer && (
-                        <a
-                          href={getDirectStoreUrl(selectedOffer.store, selectedOffer.name || productData.name, selectedOffer.deeplink || selectedOffer.url || selectedOffer.product_link || selectedOffer.link)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn btn-primary"
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 6,
-                            padding: "9px 18px",
-                            fontWeight: 700,
-                            borderRadius: "var(--radius-md)",
-                            background: isSelectedLowest ? "var(--success)" : "var(--primary)",
-                            borderColor: isSelectedLowest ? "var(--success)" : "var(--primary)",
-                            color: "#fff",
-                            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
-                            textDecoration: "none"
-                          }}
-                          title={`Buy on ${selectedOffer.store}`}
-                        >
-                          Buy on {selectedOffer.store} {selectedOffer.price ? `(₹${selectedOffer.price.toLocaleString()})` : ""} <FiExternalLink size={14} />
-                        </a>
-                      )}
+                  )}
 
-                      {/* Alternative Lowest Price button if another store is cheaper */}
-                      {!isSelectedLowest && lowestOffer && lowestOffer.store.toLowerCase() !== (selectedOffer?.store || "").toLowerCase() && (
-                        <a
-                          href={getDirectStoreUrl(lowestOffer.store, lowestOffer.name || productData.name, lowestOffer.deeplink || lowestOffer.url || lowestOffer.product_link || lowestOffer.link)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="btn btn-outline"
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: 6,
-                            padding: "9px 16px",
-                            fontWeight: 700,
-                            borderRadius: "var(--radius-md)",
-                            borderColor: "var(--success)",
-                            color: "var(--success)",
-                            background: "#fff",
-                            textDecoration: "none"
-                          }}
-                          title={`Buy on ${lowestOffer.store} for lower price`}
-                        >
-                          Lowest on {lowestOffer.store} (₹{lowestOffer.price?.toLocaleString()}) <FiExternalLink size={14} />
-                        </a>
-                      )}
+                  {/* Dual Price Comparison Display */}
+                  {priceDiff > 0 && lowestOffer && selectedOffer ? (
+                    <div className="price-comparison-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
+                      {/* Lowest Available Price Box */}
+                      <div style={{ padding: "16px 20px", background: "var(--success-light)", borderRadius: "var(--radius-md)", border: "2px solid #34D399", display: "flex", flexDirection: "column", gap: 8 }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: "var(--success-hover)", textTransform: "uppercase", letterSpacing: "0.05em", display: "flex", alignItems: "center", gap: 6 }}>
+                            <FiTrendingDown size={16} /> Lowest Price on {lowestOffer.store}
+                          </div>
+                          <span className="badge badge-success" style={{ fontSize: 11, fontWeight: 800 }}>
+                            Best Market Price
+                          </span>
+                        </div>
+                        <div className="font-heading" style={{ fontSize: 32, fontWeight: 700, color: "var(--success)" }}>
+                          ₹{lowestOffer.price?.toLocaleString()}
+                        </div>
+                        <div style={{ fontSize: 12, color: "var(--success-hover)", fontWeight: 700 }}>
+                          Save ₹{priceDiff.toLocaleString()} ({savingsPct}% cheaper than {selectedOffer.store})
+                        </div>
+                        <div style={{ marginTop: "auto", paddingTop: 8 }}>
+                          <a
+                            href={getDirectStoreUrl(lowestOffer.store, lowestOffer.name || productData.name, lowestOffer.deeplink || lowestOffer.url || lowestOffer.link)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-primary btn-sm btn-full"
+                            style={{ background: "var(--success)", borderColor: "var(--success)", color: "#fff", fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "9px 16px" }}
+                          >
+                            Buy Lowest on {lowestOffer.store} (₹{lowestOffer.price?.toLocaleString()}) <FiExternalLink size={13} />
+                          </a>
+                        </div>
+                      </div>
 
-                      <WishlistButton
-                        product={{
-                          name: productData.name,
-                          price: bestPrice || selectedOffer?.price || productData.price,
-                          image: productData.image,
-                        }}
-                        size={38}
-                        iconSize={15}
-                        showText={true}
-                      />
-
-                      <button
-                        onClick={() => {
-                          setAlertProduct(productData);
-                          setTargetPriceInput(Math.round(((bestPrice || selectedOffer?.price || 0)) * 0.9));
-                        }}
-                        className="btn btn-outline"
-                        style={{ background: "#fff" }}
-                      >
-                        <FiBell size={14} /> Set Alert
-                      </button>
+                      {/* Current Selected Store Price Box */}
+                      <div style={{ padding: "16px 20px", background: "var(--surface)", borderRadius: "var(--radius-md)", border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: 8 }}>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: "var(--text-600)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                            Price on {selectedOffer.store} (Selected)
+                          </div>
+                          <span className="badge" style={{ background: "#F3F4F6", color: "var(--text-700)", fontSize: 11 }}>
+                            Selected Store
+                          </span>
+                        </div>
+                        <div className="font-heading" style={{ fontSize: 32, fontWeight: 700, color: "var(--text-900)" }}>
+                          ₹{selectedOffer.price?.toLocaleString()}
+                        </div>
+                        <div style={{ fontSize: 12, color: "#DC2626", fontWeight: 600 }}>
+                          +₹{priceDiff.toLocaleString()} higher than {lowestOffer.store}
+                        </div>
+                        <div style={{ marginTop: "auto", paddingTop: 8 }}>
+                          <a
+                            href={getDirectStoreUrl(selectedOffer.store, selectedOffer.name || productData.name, selectedOffer.deeplink || selectedOffer.url || selectedOffer.link)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn btn-outline btn-sm btn-full"
+                            style={{ fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "9px 16px" }}
+                          >
+                            Buy on {selectedOffer.store} (₹{selectedOffer.price?.toLocaleString()}) <FiExternalLink size={13} />
+                          </a>
+                        </div>
+                      </div>
                     </div>
+                  ) : (
+                    /* Single Best Price Box when selected store IS lowest or only 1 store exists */
+                    <div className="best-price-box" style={{ display: "flex", alignItems: "center", gap: 16, padding: "16px 20px", background: "var(--success-light)", borderRadius: "var(--radius-md)", border: "2px solid #34D399", marginBottom: 16, flexWrap: "wrap" }}>
+                      <div style={{ width: 44, height: 44, borderRadius: 10, background: "var(--success)", color: "white", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <FiTrendingDown size={22} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: "var(--success-hover)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                          ✓ Lowest Price on {selectedOffer?.store || productData.store} (Best Price Guaranteed)
+                        </div>
+                        <div className="font-heading" style={{ fontSize: 30, fontWeight: 700, color: "var(--success)" }}>
+                          ₹{(bestPrice || selectedOffer?.price || productData.price)?.toLocaleString()}
+                        </div>
+                        <div style={{ fontSize: 12, color: "var(--success-hover)", fontWeight: 600 }}>
+                          Lowest price verified across all {comparisonList.length || 1} supported {comparisonList.length === 1 ? "store" : "stores"}
+                        </div>
+                      </div>
+
+                      <div style={{ marginLeft: "auto", display: "flex", gap: 10, flexWrap: "wrap" }}>
+                        {(selectedOffer || lowestOffer || comparisonList[0]) && (() => {
+                          const target = selectedOffer || lowestOffer || comparisonList[0];
+                          return (
+                            <a
+                              href={getDirectStoreUrl(target.store, target.name || productData.name, target.deeplink || target.url || target.link)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn btn-primary"
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: 6,
+                                padding: "9px 18px",
+                                fontWeight: 700,
+                                borderRadius: "var(--radius-md)",
+                                background: "var(--success)",
+                                borderColor: "var(--success)",
+                                color: "#fff",
+                                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+                                textDecoration: "none"
+                              }}
+                              title={`Buy on ${target.store}`}
+                            >
+                              Buy on {target.store} (₹{(target.price || productData.price)?.toLocaleString()}) <FiExternalLink size={14} />
+                            </a>
+                          );
+                        })()}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Secondary Actions (Wishlist & Price Alert) */}
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+                    <WishlistButton
+                      product={{
+                        name: productData.name,
+                        price: bestPrice || selectedOffer?.price || productData.price,
+                        image: productData.image,
+                      }}
+                      size={38}
+                      iconSize={15}
+                      showText={true}
+                    />
+
+                    <button
+                      onClick={() => {
+                        setAlertProduct(productData);
+                        setTargetPriceInput(Math.round(((bestPrice || selectedOffer?.price || 0)) * 0.9));
+                      }}
+                      className="btn btn-outline"
+                      style={{ background: "#fff", display: "inline-flex", alignItems: "center", gap: 6, padding: "8px 16px" }}
+                    >
+                      <FiBell size={14} /> Set Price Drop Alert
+                    </button>
                   </div>
                 </div>
               </div>
 
-              {}
+              {/* Price Difference Explanatory Banner */}
+              {priceDiff > 0 && lowestOffer && selectedOffer && (
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 16,
+                  padding: "14px 20px",
+                  borderRadius: "var(--radius-md)",
+                  background: "#FFFBEB",
+                  border: "1px solid #FCD34D",
+                  color: "#92400E",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  flexWrap: "wrap"
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <FiTrendingDown size={20} color="#D97706" style={{ flexShrink: 0 }} />
+                    <span>
+                      <strong>Price Alert:</strong> {productData.name} is available for <strong>₹{lowestOffer.price?.toLocaleString()} on {lowestOffer.store}</strong>, which is <strong>₹{priceDiff.toLocaleString()} less</strong> than {selectedOffer?.store}'s price of ₹{selectedOffer?.price?.toLocaleString()}.
+                    </span>
+                  </div>
+                  <a
+                    href={getDirectStoreUrl(lowestOffer.store, lowestOffer.name || productData.name, lowestOffer.deeplink || lowestOffer.url || lowestOffer.link)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-sm"
+                    style={{ background: "#D97706", color: "#fff", border: "none", fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 5, padding: "8px 14px", borderRadius: "var(--radius-sm)" }}
+                  >
+                    Buy Lowest on {lowestOffer.store} <FiExternalLink size={12} />
+                  </a>
+                </div>
+              )}
+
+              {/* Live Price Comparison Table */}
               <div className="card" style={{ padding: "32px 0 0" }}>
                 <div className="section-header" style={{ padding: "0 32px", marginBottom: 24 }}>
                   <div>
-                    <h2 className="section-title">Live Price Comparison</h2>
-                    <p style={{ fontSize: 14, color: "var(--text-500)", marginTop: 4 }}>Compare exact matches across verified retailers.</p>
+                    <h2 className="section-title">
+                      Live Price Comparison ({comparisonList.length} {comparisonList.length === 1 ? "Store" : "Stores"} Available)
+                    </h2>
+                    <p style={{ fontSize: 14, color: "var(--text-500)", marginTop: 4 }}>
+                      Compare real-time prices, delivery speeds, and verified ratings across all {comparisonList.length} stores.
+                    </p>
                   </div>
                 </div>
 
@@ -434,27 +619,28 @@ export default function ComparisonPage() {
                   </div>
                 ) : (
                   <div style={{ overflowX: "auto" }}>
-                    <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: 600 }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: 640 }}>
                     <thead>
                       <tr style={{ background: "var(--bg)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
                         <th style={{ padding: "16px 32px", fontSize: 12, fontWeight: 700, color: "var(--text-500)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Retailer</th>
                         <th style={{ padding: "16px 32px", fontSize: 12, fontWeight: 700, color: "var(--text-500)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Delivery</th>
-                        <th style={{ padding: "16px 32px", fontSize: 12, fontWeight: 700, color: "var(--text-500)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Price &amp; Rating</th>
-                        <th style={{ padding: "16px 32px" }}></th>
+                        <th style={{ padding: "16px 32px", fontSize: 12, fontWeight: 700, color: "var(--text-500)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Price &amp; Comparison</th>
+                        <th style={{ padding: "16px 32px", textAlign: "right" }}>Action</th>
                       </tr>
                     </thead>
                     <tbody>
                       {sortedComparisons.map((item, idx) => {
                         const storeId = item.store.toLowerCase();
                         const storeStyle = STORE_COLORS[storeId] || { text: "var(--text-700)", bg: "var(--bg)", label: item.store };
-                        const isBest = item.price === bestPrice;
-                        const isSelectedStore = (productData?.store || selectedStore || "").toLowerCase() === item.store.toLowerCase();
+                        const isBest = lowestOffer && item.store.toLowerCase() === lowestOffer.store.toLowerCase();
+                        const isSelectedStore = (selectedOffer?.store || "").toLowerCase() === item.store.toLowerCase();
                         const buyUrl = getDirectStoreUrl(item.store, item.name || productData?.name, item.deeplink || item.url || item.product_link || item.link);
+                        const storeDiff = bestPrice != null && item.price > bestPrice ? (item.price - bestPrice) : 0;
 
                         return (
-                          <tr key={idx} style={{ borderBottom: "1px solid var(--border)", transition: "var(--transition)", background: isBest ? "rgba(5,150,105,0.02)" : "transparent" }}
+                          <tr key={idx} style={{ borderBottom: "1px solid var(--border)", transition: "var(--transition)", background: isBest ? "rgba(5,150,105,0.03)" : "transparent" }}
                             onMouseEnter={e => e.currentTarget.style.background = "var(--bg)"}
-                            onMouseLeave={e => e.currentTarget.style.background = isBest ? "rgba(5,150,105,0.02)" : "transparent"}
+                            onMouseLeave={e => e.currentTarget.style.background = isBest ? "rgba(5,150,105,0.03)" : "transparent"}
                           >
                             <td style={{ padding: "20px 32px" }}>
                               <div style={{ display: "inline-flex", alignItems: "center", gap: 10, padding: "8px 14px", background: storeStyle.bg, color: storeStyle.text, borderRadius: "var(--radius-md)", fontWeight: 700, fontSize: 13 }}>
@@ -480,11 +666,20 @@ export default function ComparisonPage() {
                             </td>
 
                             <td style={{ padding: "20px 32px" }}>
-                              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <span style={{ fontSize: 18, fontWeight: 800, color: isBest ? "var(--success)" : "var(--text-900)" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                                <span style={{ fontSize: 19, fontWeight: 800, color: isBest ? "var(--success)" : "var(--text-900)" }}>
                                   ₹{item.price ? Number(item.price).toLocaleString() : "N/A"}
                                 </span>
-                                {isBest && <span className="badge badge-success">Lowest</span>}
+                                {isBest && (
+                                  <span className="badge badge-success" style={{ fontWeight: 800 }}>
+                                    Lowest Price
+                                  </span>
+                                )}
+                                {!isBest && storeDiff > 0 && (
+                                  <span style={{ fontSize: 11, fontWeight: 700, color: "#DC2626", background: "#FEE2E2", padding: "2px 8px", borderRadius: "var(--radius-sm)" }}>
+                                    +₹{storeDiff.toLocaleString()} higher
+                                  </span>
+                                )}
                               </div>
                               {item.rating ? (
                                 <div style={{ display: "flex", alignItems: "center", gap: 3, marginTop: 6 }}>
@@ -536,7 +731,8 @@ export default function ComparisonPage() {
                                   background: isBest ? "var(--success)" : undefined,
                                   borderColor: isBest ? "var(--success)" : undefined,
                                   boxShadow: isBest ? "0 2px 8px rgba(16, 185, 129, 0.25)" : undefined,
-                                  textDecoration: "none"
+                                  textDecoration: "none",
+                                  fontWeight: 700
                                 }}
                                 title={`Buy on ${item.store || "Store"}`}
                               >
@@ -554,7 +750,7 @@ export default function ComparisonPage() {
               
               <div style={{ textAlign: "center", padding: "40px 0", opacity: 0.6 }}>
                 <FiShield size={24} style={{ marginBottom: 12, color: "var(--text-400)" }} />
-                <div style={{ fontSize: 12, fontWeight: 600 }}>We automatically update these prices in real-time.</div>
+                <div style={{ fontSize: 12, fontWeight: 600 }}>We automatically update these prices across all verified retailers in real-time.</div>
               </div>
               
             </div>
@@ -566,6 +762,7 @@ export default function ComparisonPage() {
         @media (max-width: 768px) {
           .compare-hero { flex-direction: column !important; padding: 20px !important; gap: 20px !important; }
           .compare-hero > div:first-child { width: 100% !important; height: auto !important; aspect-ratio: 1; }
+          .price-comparison-grid { grid-template-columns: 1fr !important; }
           .best-price-box { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
           .best-price-box .btn { margin-left: 0 !important; width: 100% !important; justify-content: center !important; }
         }

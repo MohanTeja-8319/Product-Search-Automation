@@ -159,17 +159,14 @@ const ProductDetails = () => {
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8 items-center">
-                    <button
-                      onClick={() =>
-                        window.open(
-                          getDirectStoreUrl(product.store, product.name, product.deeplink || product.url || product.product_link || product.link),
-                          "_blank"
-                        )
-                      }
-                      className="bg-purple-600 hover:bg-purple-700 text-white px-6 sm:px-8 py-3 rounded-[10px] cursor-pointer text-sm sm:text-base font-semibold transition"
+                    <a
+                      href={getDirectStoreUrl(product.store, product.name || product.title, product.deeplink || product.url || product.product_link || product.link)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-6 sm:px-8 py-3 rounded-[10px] cursor-pointer text-sm sm:text-base font-semibold transition inline-flex items-center gap-2"
                     >
-                      Buy Now
-                    </button>
+                      Buy on {product.store || "Store"}
+                    </a>
                     <WishlistButton
                       product={product}
                       size={44}

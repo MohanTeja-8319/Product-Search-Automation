@@ -212,7 +212,143 @@ function StoreBadge({ store, storeCount }) {
   );
 }
 
+function EmptySearchCard({ view = "grid" }) {
+  if (view === "list") {
+    return (
+      <div
+        className="card animate-fade-in-up"
+        style={{
+          padding: "16px 20px",
+          display: "flex",
+          alignItems: "center",
+          gap: 20,
+          border: "1px dashed var(--border)",
+          background: "var(--surface)",
+        }}
+      >
+        <div
+          style={{
+            width: 80,
+            height: 80,
+            flexShrink: 0,
+            background: "var(--bg)",
+            borderRadius: "var(--radius-md)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "var(--text-400)",
+            border: "1px dashed var(--border)",
+          }}
+        >
+          <FiPackage size={22} style={{ opacity: 0.5 }} />
+          <span style={{ fontSize: 9, fontWeight: 700, marginTop: 3 }}>EMPTY</span>
+        </div>
+        <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 6 }}>
+          <div style={{ height: 14, background: "var(--border)", borderRadius: 4, width: "50%", opacity: 0.4 }} />
+          <div style={{ height: 11, background: "var(--border)", borderRadius: 4, width: "30%", opacity: 0.3 }} />
+          <span style={{
+            fontSize: 10,
+            fontWeight: 700,
+            padding: "2px 6px",
+            background: "var(--bg)",
+            color: "var(--text-400)",
+            border: "1px dashed var(--border)",
+            borderRadius: "var(--radius-sm)",
+            width: "fit-content",
+            textTransform: "uppercase"
+          }}>
+            No Store
+          </span>
+          <span style={{ fontSize: 16, fontWeight: 800, color: "var(--text-400)" }}>₹ —</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          <button disabled className="btn btn-secondary btn-sm" style={{ opacity: 0.5, cursor: "default", background: "var(--bg)", borderColor: "var(--border)", color: "var(--text-400)" }}>
+            Empty
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="card animate-fade-in-up"
+      style={{
+        padding: 18,
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        position: "relative",
+        border: "1px dashed var(--border)",
+        background: "var(--surface)",
+        minHeight: 330,
+        borderRadius: "var(--radius-lg)",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          height: 150,
+          background: "var(--bg)",
+          borderRadius: "var(--radius-md)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "var(--text-400)",
+          border: "1px dashed var(--border)",
+          gap: 6
+        }}
+      >
+        <FiPackage size={28} style={{ opacity: 0.5 }} />
+        <span style={{ fontSize: 10, fontWeight: 700, color: "var(--text-400)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+          Empty Card
+        </span>
+      </div>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 4 }}>
+        <div style={{ height: 14, background: "var(--border)", borderRadius: 4, width: "70%", opacity: 0.4 }} />
+        <div style={{ height: 11, background: "var(--border)", borderRadius: 4, width: "40%", opacity: 0.3 }} />
+      </div>
+
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <span style={{
+          fontSize: 10,
+          fontWeight: 700,
+          padding: "3px 8px",
+          background: "var(--bg)",
+          color: "var(--text-400)",
+          border: "1px dashed var(--border)",
+          borderRadius: "var(--radius-sm)",
+          textTransform: "uppercase",
+          letterSpacing: "0.05em",
+        }}>
+          No Store
+        </span>
+      </div>
+
+      <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginTop: "auto" }}>
+        <span style={{ fontSize: 17, fontWeight: 800, color: "var(--text-400)" }}>₹ —</span>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 6, marginTop: 4 }}>
+        <button
+          disabled
+          className="btn btn-secondary btn-sm"
+          style={{ width: "100%", justifyContent: "center", opacity: 0.5, cursor: "default", background: "var(--bg)", borderColor: "var(--border)", color: "var(--text-400)" }}
+        >
+          Empty
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function ProductCard({ product, view, onCompare, onTrack }) {
+  if (!product || !product.name) {
+    return <EmptySearchCard view={view} />;
+  }
   const storeCount = product.storeCount || (Array.isArray(product.comparison) ? product.comparison.length : 1);
   const numPrice = getNumericPrice(product.price);
   const numOrigPrice = getNumericPrice(product.originalPrice);
@@ -264,13 +400,13 @@ function ProductCard({ product, view, onCompare, onTrack }) {
           <a
             href={getDirectStoreUrl(product.store, product.name, product.deeplink || product.url || product.product_link || product.link)}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
             className="btn btn-outline btn-sm"
             style={{ padding: "7px 10px", display: "inline-flex", alignItems: "center", gap: 5, textDecoration: "none", borderColor: "var(--border)", color: "var(--text-900)" }}
             title={`Buy on ${product.store || "Store"}`}
           >
-            Buy Now <FiExternalLink size={12} />
+            Buy on {product.store || "Store"} <FiExternalLink size={12} />
           </a>
           <button onClick={(e) => { e.stopPropagation(); onTrack(); }} className="btn btn-outline btn-sm" style={{ padding: "7px 10px", borderColor: "var(--border)", color: "var(--text-900)" }}>
             <FiBell size={13} />
@@ -346,7 +482,7 @@ function ProductCard({ product, view, onCompare, onTrack }) {
         <a
           href={getDirectStoreUrl(product.store, product.name, product.deeplink || product.url || product.product_link || product.link)}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
           className="btn btn-outline btn-sm"
           style={{
@@ -373,17 +509,16 @@ export default function SearchPage() {
   const query = searchParams.get("q") || "";
   const paramCategory = searchParams.get("category") || "";
 
-  const [products, setProducts] = useState(() => {
-    try {
-      const cached = localStorage.getItem("cachedSearchProducts") || localStorage.getItem("cachedHomeProducts");
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch (_) {}
-    return [];
-  });
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [creditsCompleted, setCreditsCompleted] = useState(false);
+
+  useEffect(() => {
+    try {
+      localStorage.removeItem("cachedSearchProducts");
+      localStorage.removeItem("cachedHomeProducts");
+    } catch (_) {}
+  }, []);
   const [error, setError] = useState("");
   const [view, setView] = useState("grid");
   const [sort, setSort] = useState("relevance");
@@ -403,7 +538,7 @@ export default function SearchPage() {
 
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [itemsPerPage, setItemsPerPage] = useState(24);
 
   // Price Alert Modal
   const [alertProduct, setAlertProduct] = useState(null);
@@ -508,8 +643,16 @@ export default function SearchPage() {
 
     setLoading(true);
     setError("");
+    setCreditsCompleted(false);
     searchLiveProducts(q || "popular", { category: cat !== "all" ? cat : undefined })
       .then(res => {
+        if (res?.creditsCompleted || res?.message === "products are not available") {
+          setProducts([]);
+          setCreditsCompleted(true);
+          setError("products are not available");
+          return;
+        }
+
         const list = res?.products || [];
         setProducts(list);
         if (list.length > 0) {
@@ -551,18 +694,14 @@ export default function SearchPage() {
         }
       })
       .catch(err => {
-        try {
-          const cached = localStorage.getItem("cachedSearchProducts") || localStorage.getItem("cachedHomeProducts");
-          if (cached) {
-            const parsed = JSON.parse(cached);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              setProducts(parsed);
-              setError("");
-              return;
-            }
-          }
-        } catch (_) {}
-        setError("Unable to retrieve live products. Please try again.");
+        const isCompleted = err?.response?.data?.creditsCompleted || err?.response?.data?.message === "products are not available";
+        if (isCompleted) {
+          setCreditsCompleted(true);
+          setError("products are not available");
+        } else {
+          setError(err?.message || "Search failed");
+        }
+        setProducts([]);
       })
       .finally(() => setLoading(false));
   }, [query, paramCategory]);
@@ -1153,8 +1292,23 @@ export default function SearchPage() {
                 </div>
               )}
 
-              {/* Error State */}
-              {!loading && error && (
+              {/* Credits Completed State */}
+              {!loading && (creditsCompleted || error === "products are not available") && (
+                <div className="card empty-state" style={{ marginTop: 24, padding: "48px 24px", textAlign: "center", border: "1px dashed var(--border)" }}>
+                  <div className="empty-state-icon" style={{ margin: "0 auto 16px", color: "var(--text-400)" }}>
+                    <FiShoppingBag size={36} />
+                  </div>
+                  <h3 style={{ fontSize: 20, fontWeight: 700, color: "var(--text-900)", marginBottom: 8 }}>
+                    products are not available
+                  </h3>
+                  <p style={{ fontSize: 14, color: "var(--text-500)", maxWidth: 440, margin: "0 auto" }}>
+                    products are not available
+                  </p>
+                </div>
+              )}
+
+              {/* Generic Error State */}
+              {!loading && !creditsCompleted && error && error !== "products are not available" && (
                 <div className="card empty-state">
                   <div className="empty-state-icon"><FiAlertCircle size={28} /></div>
                   <h3 style={{ fontSize: 16, fontWeight: 600, color: "var(--text-700)", marginBottom: 6 }}>Search Error</h3>
@@ -1162,49 +1316,52 @@ export default function SearchPage() {
                 </div>
               )}
 
-              {/* Empty State */}
-              {!loading && !error && filtered.length === 0 && (
-                <div className="card empty-state" style={{ padding: "48px 20px", textAlign: "center" }}>
-                  <div style={{ width: 64, height: 64, borderRadius: "50%", background: "var(--surface)", border: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", color: "var(--text-400)" }}>
-                    <FiShoppingBag size={28} />
-                  </div>
-                  {products.length > 0 ? (
-                    <>
-                      <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-900)", marginBottom: 8 }}>
-                        No products match your current filters
-                      </h3>
-                      <p style={{ fontSize: 13, color: "var(--text-500)", marginBottom: 20, maxWidth: 420, margin: "0 auto 20px" }}>
-                        Found {products.length} live products, but none met all the selected filters. Try clearing or expanding your price, rating, or store filters.
-                      </p>
+              {/* Empty State: render empty cards ONLY when credits NOT completed */}
+              {!loading && !error && !creditsCompleted && filtered.length === 0 && (
+                <div>
+                  <div style={{
+                    marginBottom: 16,
+                    padding: "12px 18px",
+                    borderRadius: "var(--radius-md)",
+                    background: "var(--surface)",
+                    border: "1px dashed var(--border)",
+                    color: "var(--text-600)",
+                    fontSize: 13,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    flexWrap: "wrap",
+                    gap: 8
+                  }}>
+                    <span>
+                      {query
+                        ? `No products found matching "${query}". Showing empty card slots.`
+                        : "No products loaded. Showing empty card slots."}
+                    </span>
+                    {activeFilterCount > 0 && (
                       <button
-                        className="btn btn-primary btn-sm"
-                        style={{ margin: "0 auto", display: "inline-flex", alignItems: "center", gap: 6 }}
                         onClick={handleClearAllFilters}
-                      >
-                        <FiRotateCcw size={12} /> Reset All Filters
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <h3 style={{ fontSize: 18, fontWeight: 700, color: "var(--text-900)", marginBottom: 8 }}>
-                        {query ? `No results found for "${query}"` : "No products available"}
-                      </h3>
-                      <p style={{ fontSize: 13, color: "var(--text-500)", marginBottom: 20 }}>
-                        Try searching for smartphones, headphones, laptops, groceries, or shoes.
-                      </p>
-                      <button
-                        className="btn btn-primary btn-sm"
-                        style={{ margin: "0 auto" }}
-                        onClick={() => {
-                          setSearchInput("");
-                          setSearchParams({});
-                          handleClearAllFilters();
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: "var(--primary)",
+                          fontSize: 12,
+                          fontWeight: 700,
+                          cursor: "pointer",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 4
                         }}
                       >
-                        Browse Popular Products
+                        <FiRotateCcw size={11} /> Reset Filters
                       </button>
-                    </>
-                  )}
+                    )}
+                  </div>
+                  <div className={view === "list" ? "" : "products-grid"} style={{ display: "grid", gridTemplateColumns: view === "list" ? "1fr" : "repeat(3, 1fr)", gap: 16 }}>
+                    {[...Array(6)].map((_, i) => (
+                      <EmptySearchCard key={`empty-search-slot-${i}`} view={view} />
+                    ))}
+                  </div>
                 </div>
               )}
 
@@ -1350,10 +1507,11 @@ export default function SearchPage() {
                             cursor: "pointer"
                           }}
                         >
-                          <option value={6}>6 items</option>
-                          <option value={9}>9 items</option>
                           <option value={12}>12 items</option>
-                          <option value={18}>18 items</option>
+                          <option value={24}>24 items</option>
+                          <option value={48}>48 items</option>
+                          <option value={96}>96 items</option>
+                          <option value={500}>All items (up to 500)</option>
                         </select>
                       </div>
                     </div>

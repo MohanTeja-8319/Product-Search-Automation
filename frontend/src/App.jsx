@@ -14,6 +14,7 @@ import Wishlist from "./Pages/Wishlist";
 import Comparison from "./Pages/Comparison";
 import ProductDetails from "./Pages/ProductDetail";
 import ComparisonPage from "./Pages/ComparisionPage";
+import StoreOrderingPage from "./Pages/StoreOrderingPage";
 import HistoryPage from "./Pages/HistoryPage";
 import Settings from "./Pages/Settings";
 import HelpSupport from "./Pages/HelpSupport";
@@ -71,6 +72,9 @@ function App() {
               <Route path="/support" element={<HelpSupport />} />
               <Route path="/product/:id" element={<ProductDetails />} />
               <Route path="/comparison/:productName" element={<ComparisonPage />} />
+              <Route path="/order/:store/:productName" element={<StoreOrderingPage />} />
+              <Route path="/order/:store" element={<StoreOrderingPage />} />
+              <Route path="/order" element={<StoreOrderingPage />} />
               <Route path="/pricealerts" element={<PriceAlerts />} />
               <Route path="/price-alerts" element={<PriceAlerts />} />
               <Route path="/alerts" element={<PriceAlerts />} />
