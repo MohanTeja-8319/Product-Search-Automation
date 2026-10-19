@@ -1,4 +1,39 @@
 /**
+ * Backend-supplied product links (deeplink / url / product_link) and product IDs are
+ * often invented, which gives "page not found" errors on the store.
+ * While false, only links from VERIFIED_PRODUCT_STORE_URLS / VERIFIED_ASIN_MAP open an
+ * exact product page; everything else opens that store's search for the product.
+ * Set to true once your backend returns real per-store product URLs.
+ */
+export const TRUST_BACKEND_LINKS = false;
+
+/**
+ * VERIFIED_PRODUCT_STORE_URLS and VERIFIED_ASIN_MAP were typed in by hand and many of
+ * their IDs do not exist on the stores (e.g. the Blinkit iPhone 16 /prid/578192 page).
+ * Keep false unless you have opened every entry yourself.
+ */
+export const USE_HARDCODED_LINKS = false;
+
+/** Stores whose API links are trusted (after normalisation) even while TRUST_BACKEND_LINKS is false. */
+export const TRUSTED_LINK_STORES = [
+  "swiggy", "instamart", "amazon", "flipkart", "blinkit", "zepto", "bigbasket",
+  "dmart", "jiomart", "minutes", "myntra", "nykaa", "croma", "reliance",
+  "tatacliq", "cliq", "vijay", "shopsy",
+];
+
+/**
+ * The API returns Swiggy links like https://www.swiggy.com/instamart/p/--Q0OH8U9D4U
+ * which redirect to a broken instamart.in page. The real product page is
+ * https://www.swiggy.com/instamart/item/<ID>.
+ */
+export function normalizeSwiggyUrl(url = "") {
+  if (!url || typeof url !== "string") return url;
+  const m = url.match(/swiggy\.com\/(?:stores\/)?instamart\/(?:p|item)\/(?:.*?-)?([A-Z0-9]{10})(?:[/?#]|$)/i) ||
+            url.match(/instamart\.in\/p\/(?:.*?-)?([A-Z0-9]{10})(?:[/?#]|$)/i);
+  return m ? `https://www.swiggy.com/instamart/item/${m[1].toUpperCase()}` : url;
+}
+
+/**
  * Supported QuickCommerce platforms
  */
 export const SUPPORTED_STORES = [
@@ -40,7 +75,6 @@ export const VERIFIED_ASIN_MAP = {
   "oneplus bullets wireless z2": "B09TVVGXWS",
   "hp pavilion 15": "B0BH4WFL2X",
   "lenovo ideapad slim 3": "B0B56CRWDF",
-  "asus rog strix g16": "B0BWX2B4F2",
   "dell xps 13": "B0CRVJ8Y2M",
   "sony bravia": "B0C5MC45FR",
   "samsung 43": "B0D3GKPRG8",
@@ -250,8 +284,10 @@ export const VERIFIED_PRODUCT_STORE_URLS = {
 export const CATEGORY_DIRECT_STORE_MAP = [];
 
 export function lookupDirectStoreProductUrl(storeName = "", productName = "") {
+  if (!USE_HARDCODED_LINKS) return null;
   if (!productName || typeof productName !== "string") return null;
   const store = String(storeName || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (!store) return null;
   const normProduct = String(productName).toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
 
   // 1. Direct key match or all-keywords inclusion
@@ -304,10 +340,10 @@ export function isSyntheticBrokenUrl(url = "") {
     u.includes("b05qn8by2r") ||
     u.includes("b0cq236s7c") ||
     u.includes("b0dgh8bgcf") ||
-    u.includes("dummy") ||
-    u.includes("fake") ||
+    u.includes("/dummy") ||
+    u.includes("/fake") ||
     u.includes("undefined") ||
-    u.includes("null") ||
+    /\/null(\/|$|\?)/.test(u) ||
     u.includes("example.com")
   ) {
     return true;
@@ -333,24 +369,6 @@ export function isSyntheticBrokenUrl(url = "") {
     u.includes("itm6d863f69aa6ee") ||
     u.includes("itm6d863f69") ||
     u.includes("itme?") ||
-    u.includes("1299401") ||
-    u.includes("231940") ||
-    u.includes("1049281") ||
-    u.includes("142910") ||
-    u.includes("1940182") ||
-    u.includes("2104928") ||
-    u.includes("1892041") ||
-    u.includes("2491028") ||
-    u.includes("1982031") ||
-    u.includes("2749102") ||
-    u.includes("1054391") ||
-    u.includes("20993") ||
-    u.includes("10492") ||
-    u.includes("24102") ||
-    u.includes("18204") ||
-    u.includes("9842") ||
-    u.includes("qc-") ||
-    u.includes("db-") ||
     u.includes("629327")
   ) {
     return true;
@@ -367,7 +385,7 @@ export function generateDirectStoreUrl(storeName = "", productName = "") {
 
   // Amazon: direct product page (/dp/ASIN) if verified ASIN known, else official retailer search
   if (store.includes("amazon")) {
-    for (const [key, asin] of Object.entries(VERIFIED_ASIN_MAP)) {
+    if (USE_HARDCODED_LINKS) for (const [key, asin] of Object.entries(VERIFIED_ASIN_MAP)) {
       if (new RegExp(`\\b${key}\\b`, "i").test(norm) || norm.includes(key)) {
         return `https://www.amazon.in/dp/${asin}`;
       }
@@ -576,6 +594,47 @@ export function canonicalizeProductUrl(url = "", platform = "") {
   }
 }
 
+const STORE_HOSTS = {
+  amazon: ["amazon."],
+  flipkart: ["flipkart.com", "shopsy"],
+  minutes: ["flipkart.com"],
+  blinkit: ["blinkit.com", "grofers"],
+  zepto: ["zeptonow.com", "zepto"],
+  swiggy: ["swiggy.com"],
+  instamart: ["swiggy.com"],
+  bigbasket: ["bigbasket.com"],
+  dmart: ["dmart.in"],
+  jiomart: ["jiomart.com"],
+  myntra: ["myntra.com"],
+  nykaa: ["nykaa.com"],
+  croma: ["croma.com"],
+  reliancedigital: ["reliancedigital.in"],
+  reliance: ["reliancedigital.in"],
+  tatacliq: ["tatacliq.com"],
+  cliq: ["tatacliq.com"],
+  vijaysales: ["vijaysales.com"],
+  vijay: ["vijaysales.com"],
+};
+
+/**
+ * True when the URL really belongs to the given store. Prevents one store's
+ * link being reused for another store's "Buy Now" button.
+ * Unknown stores / non-http (mobile deeplink) values are not rejected.
+ */
+export function urlBelongsToStore(url = "", storeName = "") {
+  const store = String(storeName || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (!store) return true;
+  let host = "";
+  try {
+    host = new URL(url).hostname.toLowerCase();
+  } catch {
+    return true;
+  }
+  const key = Object.keys(STORE_HOSTS).find((k) => store.includes(k));
+  if (!key) return true;
+  return STORE_HOSTS[key].some((h) => host.includes(h));
+}
+
 /**
  * Resolves any product into a working retailer destination URL across
  * all supported QuickCommerce platforms without 404 errors or wrong products.
@@ -637,6 +696,22 @@ export function getDirectStoreUrl(storeArg = "", productArg = "", rawUrlArg = ""
 
   const cleanName = cleanProductNameForStore(productName);
   const store = String(storeName || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+
+  const trustedStore = TRUSTED_LINK_STORES.some((k) => store.includes(k));
+  if (trustedStore && typeof rawUrl === "string" && /swiggy\.com|instamart\.in/i.test(rawUrl)) {
+    const fixed = normalizeSwiggyUrl(rawUrl.trim());
+    if (/\/instamart\/item\/[A-Z0-9]{10}$/.test(fixed)) return fixed;
+  }
+
+  if (!TRUST_BACKEND_LINKS && !trustedStore) {
+    rawUrl = "";
+    sourceObj = null;
+  }
+
+  // A link that belongs to a different store must never be used for this store
+  if (typeof rawUrl === "string" && /^https?:\/\//i.test(rawUrl.trim()) && !urlBelongsToStore(rawUrl.trim(), storeName)) {
+    rawUrl = "";
+  }
 
   // Convert mobile scheme deeplinks (blinkit://, zepto://, swiggy://) into direct web PDP URLs
   if (typeof rawUrl === "string") {
