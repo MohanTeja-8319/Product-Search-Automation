@@ -29,6 +29,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "https://product-search-automation.onrender.com*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
