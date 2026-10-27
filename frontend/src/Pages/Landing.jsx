@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import {
-  FiSearch, FiTrendingDown, FiShield, FiBell, FiBarChart2, FiSun, FiMoon
+  FiSearch, FiTrendingDown, FiShield, FiBell, FiBarChart2, FiSun, FiMoon, FiPlay
 } from "react-icons/fi";
+import ComparelyLogoAnimation from "../Components/ComparelyLogoAnimation";
 
 
 function getTheme() {
@@ -14,7 +15,7 @@ function applyTheme(t) {
 }
 
 
-function PublicNavbar({ theme, onToggle }) {
+function PublicNavbar({ theme, onToggle, onPlayIntro }) {
   const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -37,13 +38,17 @@ function PublicNavbar({ theme, onToggle }) {
         <img
           src="/logo.png"
           alt="Comparely"
-          style={{ height: 60, width: "auto", objectFit: "contain" }}
+          style={{ height: 60, width: "auto", objectFit: "contain", cursor: "pointer" }}
+          onClick={onPlayIntro}
+          title="Click to replay logo animation"
         />
       </div>
 
       {}
       <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
         {}
+       
+
         <button
           onClick={onToggle}
           title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
@@ -96,6 +101,16 @@ export default function Landing() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [theme, setTheme] = useState(getTheme);
+  const [showIntro, setShowIntro] = useState(true);
+  const [introFading, setIntroFading] = useState(false);
+
+  const handleIntroComplete = () => {
+    setIntroFading(true);
+    setTimeout(() => {
+      setShowIntro(false);
+      setIntroFading(false);
+    }, 600);
+  };
 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
@@ -112,7 +127,38 @@ export default function Landing() {
 
   return (
     <div style={{ minHeight: "100vh", background: "var(--bg)", fontFamily: "'Inter', sans-serif" }}>
-      <PublicNavbar theme={theme} onToggle={toggleTheme} />
+      {/* 5-7s Premium Logo Animation before site landing */}
+      {showIntro && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            background: "#FFFFFF",
+            opacity: introFading ? 0 : 1,
+            transition: "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+            pointerEvents: introFading ? "none" : "auto",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+        >
+          <ComparelyLogoAnimation
+            onComplete={handleIntroComplete}
+            autoPlay={true}
+            standalone={false}
+          />
+        </div>
+      )}
+
+      <PublicNavbar
+        theme={theme}
+        onToggle={toggleTheme}
+        onPlayIntro={() => {
+          setIntroFading(false);
+          setShowIntro(true);
+        }}
+      />
 
       {}
       <section style={{ padding: "160px 24px 100px", textAlign: "center", position: "relative" }}>

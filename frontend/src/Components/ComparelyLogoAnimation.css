@@ -1,0 +1,219 @@
+/* Comparely Premium Logo Animation Styling */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+.comparely-anim-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #FFFFFF;
+  overflow: hidden;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comparely-anim-stage {
+  position: relative;
+  width: 100%;
+  max-width: 1920px;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+}
+
+/* Subtle soft ambient glow breathing in center during intro */
+.comparely-ambient-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(79, 70, 229, 0.045) 0%, rgba(16, 185, 129, 0.025) 40%, rgba(255, 255, 255, 0) 70%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 46%;
+  animation: comparelyPulseGlow 4s ease-in-out infinite alternate;
+}
+
+@keyframes comparelyPulseGlow {
+  0% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.4;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 0.9;
+  }
+}
+
+/* Particles Canvas */
+.comparely-particles-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Main Lockup Wrapper */
+.comparely-lockup {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+}
+
+/* Logo Mark Box */
+.comparely-mark-box {
+  position: relative;
+  width: 220px;
+  height: 212px; /* Proportional to 482 x 464 */
+  transform-origin: center center;
+}
+
+@media (min-width: 768px) {
+  .comparely-mark-box {
+    width: 260px;
+    height: 250px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .comparely-mark-box {
+    width: 290px;
+    height: 279px;
+  }
+}
+
+/* Individual layers */
+.comparely-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  will-change: transform, opacity, clip-path;
+}
+
+/* Brand Name Typography */
+.comparely-text-title {
+  margin-top: 24px;
+  font-size: clamp(38px, 4.4vw, 56px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  will-change: transform, opacity;
+}
+
+.comparely-text-dark {
+  color: #0F172A; /* Dark Navy / Indigo */
+}
+
+.comparely-text-indigo {
+  color: #4F46E5; /* Brand Indigo */
+}
+
+/* Tagline Typography */
+.comparely-tagline {
+  margin-top: 14px;
+  font-size: clamp(14px, 1.4vw, 19px);
+  font-weight: 500;
+  color: #64748B; /* Muted Slate */
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  will-change: opacity, transform, letter-spacing;
+}
+
+.comparely-tagline-dot {
+  color: #10B981; /* Mint Green */
+  font-size: 1.1em;
+  display: inline-block;
+}
+
+/* Subtle elevation shadow under logo mark */
+.comparely-mark-shadow {
+  position: absolute;
+  bottom: -10px;
+  left: 10%;
+  width: 80%;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(67, 56, 202, 0.16) 0%, rgba(67, 56, 202, 0) 70%);
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+  z-index: 5;
+}
+
+/* Top Action Controls */
+.comparely-anim-actions {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.comparely-btn-skip {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  color: #64748B;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.comparely-btn-skip:hover {
+  background: #FFFFFF;
+  color: #4F46E5;
+  border-color: #4F46E5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+}
+
+.comparely-btn-replay {
+  background: #4F46E5;
+  border: none;
+  color: #FFFFFF;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+}
+
+.comparely-btn-replay:hover {
+  background: #4338CA;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+}

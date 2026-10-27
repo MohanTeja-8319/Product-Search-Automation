@@ -20,6 +20,8 @@ import Settings from "./Pages/Settings";
 import HelpSupport from "./Pages/HelpSupport";
 
 import PriceAlerts from "./Components/PriceAlertsMain";
+import LogoAnimationPage from "./Pages/LogoAnimationPage";
+import PwaStatusBanner from "./Components/PwaStatusBanner";
 
 // Admin Contexts
 import { AdminAuthProvider, AdminProtectedRoute } from "./admin/context/AdminAuthContext";
@@ -48,12 +50,15 @@ function App() {
   return (
     <BrowserRouter>
       <Toaster position="top-center" toastOptions={{ style: { background: '#333', color: '#fff', borderRadius: '8px' } }} />
+      <PwaStatusBanner />
       <AdminAuthProvider>
         <AdminToastProvider>
           <AdminDataProvider>
             <Routes>
               {/* User Storefront Routes */}
               <Route path="/" element={<Landing />} />
+              <Route path="/intro" element={<LogoAnimationPage />} />
+              <Route path="/logo-animation" element={<LogoAnimationPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
