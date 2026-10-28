@@ -158,7 +158,7 @@ export default function Wishlist() {
           )}
 
           {loading ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 260px), 1fr))", gap: 20 }}>
               {[...Array(4)].map((_, i) => (
                 <div key={i} className="card skeleton" style={{ height: 320, borderRadius: "var(--radius-lg)" }} />
               ))}
@@ -193,9 +193,10 @@ export default function Wishlist() {
             </div>
           ) : (
             <div
+              className="wishlist-grid"
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 260px), 1fr))",
                 gap: 20,
               }}
             >
@@ -382,6 +383,11 @@ export default function Wishlist() {
           )}
         </div>
       </div>
+      <style>{`
+        @media (max-width: 480px) {
+          .wishlist-grid { gap: 14px !important; }
+        }
+      `}</style>
     </div>
   );
 }

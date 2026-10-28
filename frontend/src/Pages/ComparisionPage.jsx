@@ -601,8 +601,8 @@ export default function ComparisonPage() {
               )}
 
               {/* Live Price Comparison Table */}
-              <div className="card" style={{ padding: "32px 0 0" }}>
-                <div className="section-header" style={{ padding: "0 32px", marginBottom: 24 }}>
+              <div className="card comparison-table-card" style={{ padding: "32px 0 0" }}>
+                <div className="section-header" style={{ padding: "0 clamp(16px, 4vw, 32px)", marginBottom: 24 }}>
                   <div>
                     <h2 className="section-title">
                       Live Price Comparison ({comparisonList.length} {comparisonList.length === 1 ? "Store" : "Stores"} Available)
@@ -618,7 +618,7 @@ export default function ComparisonPage() {
                     No exact store listings found. Check spelling or try a broader search.
                   </div>
                 ) : (
-                  <div style={{ overflowX: "auto" }}>
+                  <div className="table-responsive-container" style={{ overflowX: "auto", WebkitOverflowScrolling: "touch", width: "100%" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: 640 }}>
                     <thead>
                       <tr style={{ background: "var(--bg)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)" }}>
@@ -760,11 +760,18 @@ export default function ComparisonPage() {
       
       <style>{`
         @media (max-width: 768px) {
-          .compare-hero { flex-direction: column !important; padding: 20px !important; gap: 20px !important; }
-          .compare-hero > div:first-child { width: 100% !important; height: auto !important; aspect-ratio: 1; }
+          .compare-hero { flex-direction: column !important; padding: 18px !important; gap: 18px !important; }
+          .compare-hero > div:first-child { width: 100% !important; max-width: 260px !important; height: auto !important; aspect-ratio: 1; margin: 0 auto; }
           .price-comparison-grid { grid-template-columns: 1fr !important; }
           .best-price-box { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
           .best-price-box .btn { margin-left: 0 !important; width: 100% !important; justify-content: center !important; }
+          .comparison-table-card { padding: 20px 0 0 !important; }
+          .comparison-table-card td, .comparison-table-card th { padding: 12px 16px !important; }
+        }
+        @media (max-width: 480px) {
+          .compare-hero { padding: 14px !important; }
+          .compare-hero h1 { font-size: 22px !important; }
+          .comparison-table-card td, .comparison-table-card th { padding: 10px 12px !important; }
         }
       `}</style>
       

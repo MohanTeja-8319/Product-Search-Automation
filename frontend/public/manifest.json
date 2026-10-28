@@ -1,8 +1,8 @@
 {
   "id": "/",
-  "name": "Product Search Automation",
-  "short_name": "Product Search",
-  "description": "Intelligent multi-store price comparison and product search automation platform.",
+  "name": "Comparely",
+  "short_name": "Comparely",
+  "description": "Search, compare, and discover products across supported shopping platforms.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

@@ -39,16 +39,16 @@ export default function Comparison() {
               Search for any product to instantly see its price across Amazon, Flipkart, BlinkIt, Zepto, Swiggy, BigBasket, and Myntra.
             </p>
 
-            <form onSubmit={handleSearch} style={{ display: "flex", background: "white", borderRadius: "var(--radius-full)", padding: "8px 8px 8px 24px", boxShadow: "var(--shadow-md)", border: "1px solid var(--border)" }}>
+            <form onSubmit={handleSearch} className="comparison-search-form" style={{ display: "flex", background: "var(--surface)", borderRadius: "var(--radius-full)", padding: "6px 6px 6px 20px", boxShadow: "var(--shadow-md)", border: "1px solid var(--border)", alignItems: "center" }}>
               <FiSearch size={20} color="var(--text-400)" style={{ alignSelf: "center", flexShrink: 0 }} />
               <input
                 type="text"
                 placeholder="e.g., iPhone 15 Pro, Sony Headphones"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                style={{ flex: 1, border: "none", outline: "none", padding: "14px 16px", fontSize: 15, background: "transparent", color: "var(--text-900)" }}
+                style={{ flex: 1, border: "none", outline: "none", padding: "12px 14px", fontSize: 15, background: "transparent", color: "var(--text-900)", minWidth: 0 }}
               />
-              <button type="submit" className="btn btn-primary btn-pill" style={{ padding: "12px 28px" }}>
+              <button type="submit" className="btn btn-primary btn-pill comparison-search-btn" style={{ padding: "11px 24px", flexShrink: 0 }}>
                 Compare Now
               </button>
             </form>
@@ -92,6 +92,10 @@ export default function Comparison() {
       <style>{`
         @media (max-width: 768px) {
           .comparison-features-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 480px) {
+          .comparison-search-form { padding: 4px 4px 4px 14px !important; }
+          .comparison-search-btn { padding: 9px 18px !important; font-size: 13px !important; }
         }
       `}</style>
     </div>

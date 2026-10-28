@@ -111,11 +111,14 @@ export default function Navbar({ onMenuToggle }) {
       borderBottom: "1px solid var(--border)",
       display: "flex",
       alignItems: "center",
-      padding: "0 24px",
-      gap: "16px",
+      padding: "0 clamp(10px, 3vw, 24px)",
+      gap: "clamp(8px, 2vw, 16px)",
       position: "sticky",
       top: 0,
       zIndex: 50,
+      width: "100%",
+      maxWidth: "100vw",
+      boxSizing: "border-box"
     }}>
       {}
       <button
@@ -123,13 +126,14 @@ export default function Navbar({ onMenuToggle }) {
         className="btn btn-ghost btn-sm"
         style={{ display: "none", padding: "8px" }}
         id="mobile-menu-btn"
+        aria-label="Toggle navigation menu"
       >
         <FiMenu size={20} />
       </button>
 
       {}
       {!["/home", "/search", "/comparison"].some(p => location.pathname.startsWith(p)) ? (
-        <form onSubmit={handleSearch} style={{ flex: 1, maxWidth: 480 }}>
+        <form onSubmit={handleSearch} className="navbar-search" style={{ flex: 1, maxWidth: 480, minWidth: 0 }}>
         <div className="input-group" style={{ borderRadius: "var(--radius-full)" }}>
           <span style={{ padding: "0 12px 0 16px", color: "var(--text-400)", display: "flex" }}>
             <FiSearch size={16} />
@@ -291,6 +295,9 @@ export default function Navbar({ onMenuToggle }) {
       <style>{`
         @media (max-width: 1024px) {
           #mobile-menu-btn { display: flex !important; }
+        }
+        @media (max-width: 480px) {
+          .navbar-username { display: none !important; }
         }
       `}</style>
     </header>

@@ -204,7 +204,7 @@ export default function PriceAlertsMain() {
           )}
 
           {loading ? (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))", gap: 20 }}>
               {[...Array(3)].map((_, i) => (
                 <div key={i} className="card skeleton" style={{ height: 220, borderRadius: "var(--radius-lg)" }} />
               ))}
@@ -260,9 +260,10 @@ export default function PriceAlertsMain() {
             </div>
           ) : (
             <div
+              className="price-alerts-grid"
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))",
+                gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))",
                 gap: 20,
               }}
             >
@@ -605,6 +606,11 @@ export default function PriceAlertsMain() {
           )}
         </div>
       </div>
+      <style>{`
+        @media (max-width: 480px) {
+          .price-alerts-grid { gap: 14px !important; }
+        }
+      `}</style>
     </div>
   );
 }

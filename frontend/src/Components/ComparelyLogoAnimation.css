@@ -26,6 +26,14 @@
   background: #FFFFFF;
 }
 
+@media (max-width: 640px) and (orientation: portrait) {
+  .comparely-anim-stage {
+    aspect-ratio: auto;
+    min-height: 100dvh;
+    padding: 40px 16px;
+  }
+}
+
 /* Subtle soft ambient glow breathing in center during intro */
 .comparely-ambient-glow {
   position: absolute;

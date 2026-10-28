@@ -97,7 +97,7 @@ self.addEventListener("fetch", (event) => {
           // Final fallback to dedicated offline HTML page
           const offlineFallback = await cache.match("/offline.html");
           if (offlineFallback) return offlineFallback;
-          return new Response("Offline - Product Search Automation", {
+          return new Response("Offline - Comparely", {
             status: 503,
             headers: { "Content-Type": "text/plain" }
           });

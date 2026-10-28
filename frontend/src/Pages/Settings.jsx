@@ -202,7 +202,7 @@ export default function Settings() {
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: "var(--text-900)", marginBottom: 24 }}>Personal Information</h3>
 
                 {}
-                <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 28 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 28, flexWrap: "wrap" }}>
                   <div style={{ position: "relative", flexShrink: 0 }}>
                     {photoPreview ? (
                       <img

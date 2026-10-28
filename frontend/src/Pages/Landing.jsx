@@ -26,7 +26,7 @@ function PublicNavbar({ theme, onToggle, onPlayIntro }) {
   return (
     <nav style={{
       display: "flex", alignItems: "center", justifyContent: "space-between",
-      padding: "0 48px", height: 72,
+      padding: "0 clamp(12px, 4vw, 48px)", height: 72,
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
       background: scrolled ? "var(--surface)" : "transparent",
       borderBottom: scrolled ? "1px solid var(--border)" : "none",
@@ -38,22 +38,19 @@ function PublicNavbar({ theme, onToggle, onPlayIntro }) {
         <img
           src="/logo.png"
           alt="Comparely"
-          style={{ height: 60, width: "auto", objectFit: "contain", cursor: "pointer" }}
+          style={{ height: "clamp(36px, 6vw, 56px)", width: "auto", objectFit: "contain", cursor: "pointer" }}
           onClick={onPlayIntro}
           title="Click to replay logo animation"
         />
       </div>
 
       {}
-      <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-        {}
-       
-
+      <div style={{ display: "flex", gap: "clamp(6px, 2vw, 12px)", alignItems: "center" }}>
         <button
           onClick={onToggle}
           title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
           style={{
-            width: 38, height: 38, borderRadius: "50%",
+            width: 36, height: 36, borderRadius: "50%",
             background: "var(--surface)", border: "1px solid var(--border)",
             display: "flex", alignItems: "center", justifyContent: "center",
             cursor: "pointer", color: "var(--text-500)",
@@ -62,11 +59,11 @@ function PublicNavbar({ theme, onToggle, onPlayIntro }) {
           onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--primary)"; e.currentTarget.style.color = "var(--primary)"; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text-500)"; }}
         >
-          {theme === "dark" ? <FiSun size={16} /> : <FiMoon size={16} />}
+          {theme === "dark" ? <FiSun size={15} /> : <FiMoon size={15} />}
         </button>
 
-        <Link to="/login" style={{ color: "var(--text-700)", fontWeight: 600, fontSize: 14, textDecoration: "none", padding: "8px 4px" }}>Log In</Link>
-        <Link to="/register" className="btn btn-primary btn-sm" style={{ borderRadius: "var(--radius-full)" }}>Sign Up Free</Link>
+        <Link to="/login" style={{ color: "var(--text-700)", fontWeight: 600, fontSize: 13, textDecoration: "none", padding: "6px 4px", whiteSpace: "nowrap" }}>Log In</Link>
+        <Link to="/register" className="btn btn-primary btn-sm" style={{ borderRadius: "var(--radius-full)", padding: "7px 14px", fontSize: 12.5, whiteSpace: "nowrap" }}>Sign Up Free</Link>
       </div>
     </nav>
   );
@@ -194,11 +191,11 @@ export default function Landing() {
           </p>
 
           {/* Search Bar */}
-          <form onSubmit={handleSearch} style={{ maxWidth: 600, margin: "0 auto 40px" }}>
-            <div style={{
+          <form onSubmit={handleSearch} style={{ maxWidth: 600, margin: "0 auto 40px", width: "100%" }}>
+            <div className="landing-search-bar" style={{
               display: "flex", background: "var(--surface)",
               borderRadius: "var(--radius-full)",
-              padding: "6px 6px 6px 24px",
+              padding: "6px 6px 6px 20px",
               border: "1px solid var(--border)",
               alignItems: "center"
             }}>
@@ -209,12 +206,12 @@ export default function Landing() {
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 style={{
-                  flex: 1, border: "none", outline: "none", padding: "14px 16px",
-                  fontSize: 16, background: "transparent", color: "var(--text-900)",
-                  fontFamily: "'Inter', sans-serif"
+                  flex: 1, border: "none", outline: "none", padding: "12px 14px",
+                  fontSize: 15, background: "transparent", color: "var(--text-900)",
+                  fontFamily: "'Inter', sans-serif", minWidth: 0
                 }}
               />
-              <button type="submit" className="btn btn-primary btn-pill" style={{ padding: "12px 28px", fontSize: 15 }}>
+              <button type="submit" className="btn btn-primary btn-pill landing-search-btn" style={{ padding: "11px 24px", fontSize: 14, flexShrink: 0 }}>
                 Compare
               </button>
             </div>
@@ -308,6 +305,13 @@ export default function Landing() {
         </p>
         <p style={{ fontSize: 12, color: "var(--text-300)" }}>Compare. Save. Shop Smarter.</p>
       </footer>
+
+      <style>{`
+        @media (max-width: 480px) {
+          .landing-search-bar { padding: 4px 4px 4px 14px !important; }
+          .landing-search-btn { padding: 8px 16px !important; font-size: 13px !important; }
+        }
+      `}</style>
     </div>
   );
 }

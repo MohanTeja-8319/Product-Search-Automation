@@ -8,7 +8,7 @@ import {
 import "./PwaStatusBanner.css";
 
 export default function PwaStatusBanner() {
-  const [canInstall, setCanInstall] = useState(false);
+  const [canInstall, setCanInstall] = useState(false);  
   const [isDismissed, setIsDismissed] = useState(() => {
     try {
       return sessionStorage.getItem("pwa_install_dismissed") === "true";

@@ -103,12 +103,12 @@ export default function CategoriesPage() {
           </div>
 
           {/* Grid */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24, paddingBottom: 40 }}>
+          <div className="categories-page-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 280px), 1fr))", gap: 20, paddingBottom: 40 }}>
             {CATEGORIES.map((cat, idx) => (
-              <div key={idx} className="card-hover" onClick={() => navigate(`/search?q=${encodeURIComponent(cat.searchKey)}&category=${cat.categoryKey}`)}
+              <div key={idx} className="card-hover category-card" onClick={() => navigate(`/search?q=${encodeURIComponent(cat.searchKey)}&category=${cat.categoryKey}`)}
                 style={{
                   cursor: "pointer", display: "flex", flexDirection: "column",
-                  padding: 32, textAlign: "center",
+                  padding: "clamp(20px, 4vw, 32px)", textAlign: "center",
                   border: "1px solid var(--border)", borderRadius: "var(--radius-lg)",
                   background: "transparent", transition: "var(--transition)"
                 }}
@@ -124,7 +124,7 @@ export default function CategoriesPage() {
                   {cat.icon}
                 </div>
                 
-                <h3 className="font-heading" style={{ fontSize: 24, fontWeight: 400, color: "var(--text-900)", marginBottom: 8 }}>
+                <h3 className="font-heading" style={{ fontSize: "clamp(20px, 3vw, 24px)", fontWeight: 400, color: "var(--text-900)", marginBottom: 8 }}>
                   {cat.name}
                 </h3>
                 <p style={{ fontSize: 14, color: "var(--text-500)", lineHeight: 1.6, flex: 1, marginBottom: 24 }}>
@@ -140,6 +140,11 @@ export default function CategoriesPage() {
 
         </div>
       </div>
+      <style>{`
+        @media (max-width: 480px) {
+          .categories-page-grid { gap: 14px !important; }
+        }
+      `}</style>
     </div>
   );
 }

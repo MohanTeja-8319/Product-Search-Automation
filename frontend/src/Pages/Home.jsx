@@ -390,13 +390,14 @@ export default function HomePage() {
               </p>
 
               <form onSubmit={handleSearch}>
-                <div style={{
+                <div className="home-search-bar" style={{
                   display: "flex", gap: 0,
                   background: "var(--surface)",
                   border: "1px solid var(--text-300)",
                   borderRadius: "var(--radius-full)",
                   padding: "6px 6px 6px 20px",
                   maxWidth: 520, margin: "0 auto",
+                  alignItems: "center"
                 }}>
                   <FiSearch size={18} style={{ color: "var(--text-400)", alignSelf: "center", flexShrink: 0 }} />
                   <input
@@ -407,11 +408,11 @@ export default function HomePage() {
                     style={{
                       flex: 1, border: "none", outline: "none", padding: "10px 14px",
                       fontSize: 14, background: "transparent", color: "var(--text-900)",
-                      fontFamily: "'Inter', sans-serif",
+                      fontFamily: "'Inter', sans-serif", minWidth: 0
                     }}
                     onKeyDown={e => e.key === "Enter" && handleSearch()}
                   />
-                  <button type="submit" className="btn btn-primary btn-pill" style={{ padding: "11px 28px" }}>
+                  <button type="submit" className="btn btn-primary btn-pill home-search-btn" style={{ padding: "11px 28px", flexShrink: 0 }}>
                     Search
                   </button>
                 </div>
@@ -499,7 +500,7 @@ export default function HomePage() {
             </div>
 
             {loading ? (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+              <div className="products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
                 {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
               </div>
             ) : creditsCompleted ? (
@@ -537,7 +538,7 @@ export default function HomePage() {
               </button>
             </div>
             {loading ? (
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+              <div className="products-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
                 {[...Array(8)].map((_, i) => <SkeletonCard key={i} />)}
               </div>
             ) : creditsCompleted ? (
@@ -602,12 +603,19 @@ export default function HomePage() {
           .features-grid   { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (max-width: 640px) {
-          .categories-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 8px !important; }
-          .products-grid   { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
-          .features-grid   { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
-          .cta-banner      { padding: 28px 20px !important; }
-          .cta-buttons     { width: 100%; }
-          .cta-buttons .btn { flex: 1; justify-content: center; }
+          .categories-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+          .products-grid   { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+          .features-grid   { grid-template-columns: repeat(1, 1fr) !important; gap: 12px !important; }
+          .home-search-bar { padding: 4px 4px 4px 14px !important; }
+          .home-search-btn { padding: 9px 18px !important; font-size: 13px !important; }
+        }
+        @media (max-width: 480px) {
+          .categories-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 6px !important; }
+          .products-grid   { grid-template-columns: repeat(1, 1fr) !important; gap: 12px !important; }
+          .home-search-btn { padding: 8px 14px !important; font-size: 12.5px !important; }
+        }
+        @media (max-width: 360px) {
+          .categories-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
         }
       `}</style>
     </div>

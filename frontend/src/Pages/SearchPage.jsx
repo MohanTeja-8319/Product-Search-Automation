@@ -356,7 +356,7 @@ function ProductCard({ product, view, onCompare, onTrack }) {
 
   if (view === "list") {
     return (
-      <div className="card card-hover" onClick={onCompare}
+      <div className="card card-hover search-list-card" onClick={onCompare}
         style={{ padding: "16px 20px", display: "flex", alignItems: "center", gap: 20 }}>
         <div style={{ width: 80, height: 80, flexShrink: 0, background: "var(--bg)", borderRadius: "var(--radius-md)", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <img src={product.image} alt={product.name} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
@@ -392,7 +392,7 @@ function ProductCard({ product, view, onCompare, onTrack }) {
             {discountPct > 0 && <span className="badge badge-success">{discountPct}% OFF</span>}
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+        <div className="search-list-card-actions" style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
           <WishlistButton product={product} size={32} iconSize={13} />
           <button onClick={onCompare} className="btn btn-primary btn-sm">
             <FaExchangeAlt size={11} /> Compare
@@ -849,21 +849,21 @@ export default function SearchPage() {
 
           {/* Search Header Bar */}
           <form onSubmit={handleSearch} style={{ marginBottom: 24 }}>
-            <div className="input-group" style={{ borderRadius: "var(--radius-full)", boxShadow: "var(--shadow-sm)" }}>
+            <div className="input-group search-header-group" style={{ borderRadius: "var(--radius-full)", boxShadow: "var(--shadow-sm)" }}>
               <span style={{ padding: "0 0 0 20px", color: "var(--text-400)", display: "flex" }}>
                 <FiSearch size={18} />
               </span>
               <input className="input" type="text" placeholder="Search across Amazon, Flipkart, BlinkIt, Zepto & more..."
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
-                style={{ border: "none", boxShadow: "none", fontSize: 15, padding: "13px 16px" }} />
+                style={{ border: "none", boxShadow: "none", fontSize: 15, padding: "13px 16px", minWidth: 0 }} />
               {searchInput && (
                 <button type="button" onClick={() => setSearchInput("")}
                   style={{ padding: "0 8px", background: "none", border: "none", color: "var(--text-400)", cursor: "pointer", display: "flex" }}>
                   <FiX size={16} />
                 </button>
               )}
-              <button type="submit" className="btn btn-primary btn-pill" style={{ margin: "5px", padding: "10px 28px" }}>
+              <button type="submit" className="btn btn-primary btn-pill search-header-btn" style={{ margin: "5px", padding: "10px 28px", flexShrink: 0 }}>
                 Search
               </button>
             </div>
@@ -1557,6 +1557,33 @@ export default function SearchPage() {
             overflow-y: visible !important;
           }
           .products-grid { grid-template-columns: repeat(1, 1fr) !important; }
+          .search-list-card {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 12px !important;
+          }
+          .search-list-card-actions {
+            width: 100% !important;
+            justify-content: flex-start !important;
+            flex-wrap: wrap !important;
+            gap: 8px !important;
+          }
+          .pagination-bar {
+            flex-direction: column !important;
+            align-items: center !important;
+            gap: 12px !important;
+            text-align: center !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .search-header-btn {
+            padding: 8px 16px !important;
+            font-size: 13px !important;
+          }
+          .search-header-group .input {
+            font-size: 13.5px !important;
+            padding: 10px 8px !important;
+          }
         }
       `}</style>
 

@@ -19,7 +19,7 @@ export function AuthLayout({ children, title, subtitle, isRegister }) {
       background: "var(--bg)", fontFamily: "'Inter', sans-serif"
     }}>
       {/* Sidebar (Left) */}
-      <div style={{
+      <div className="auth-left-panel" style={{
         width: 480, flexShrink: 0,
         background: "var(--primary-content)", // Stark dark/black
         display: "flex", flexDirection: "column", padding: "48px 48px",
@@ -33,7 +33,8 @@ export function AuthLayout({ children, title, subtitle, isRegister }) {
           <img
             src="/logo.png"
             alt="Comparely"
-            style={{ height: 60, width: "auto", objectFit: "contain" }}
+            style={{ height: 60, width: "auto", objectFit: "contain", cursor: "pointer" }}
+            onClick={() => navigate("/")}
           />
         </div>
 
@@ -66,17 +67,25 @@ export function AuthLayout({ children, title, subtitle, isRegister }) {
 
       {}
       <div style={{
-        flex: 1, display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "40px 24px"
+        flex: 1, minWidth: 0, display: "flex", alignItems: "center", justifyContent: "center",
+        padding: "40px clamp(16px, 5vw, 32px)", width: "100%"
       }}>
         <div style={{ width: "100%", maxWidth: 420 }}>
+          <div className="auth-mobile-logo" style={{ display: "none", alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
+            <img
+              src="/logo.png"
+              alt="Comparely"
+              style={{ height: 48, width: "auto", objectFit: "contain", cursor: "pointer" }}
+              onClick={() => navigate("/")}
+            />
+          </div>
           <h1 className="font-heading" style={{
-            fontSize: 32, fontWeight: 400,
+            fontSize: "clamp(26px, 5vw, 32px)", fontWeight: 400,
             color: "var(--text-900)", marginBottom: 12
           }}>
             {title}
           </h1>
-          <p style={{ fontSize: 13, color: "var(--text-500)", marginBottom: 40, lineHeight: 1.6, letterSpacing: "0.01em" }}>
+          <p style={{ fontSize: 13, color: "var(--text-500)", marginBottom: 32, lineHeight: 1.6, letterSpacing: "0.01em" }}>
             {subtitle}
           </p>
           {children}
@@ -93,6 +102,12 @@ export function AuthLayout({ children, title, subtitle, isRegister }) {
           </div>
         </div>
       </div>
+      <style>{`
+        @media (max-width: 1024px) {
+          .auth-left-panel { display: none !important; }
+          .auth-mobile-logo { display: flex !important; }
+        }
+      `}</style>
     </div>
   );
 }

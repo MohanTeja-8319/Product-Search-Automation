@@ -51,15 +51,19 @@ export default function Sidebar({ isOpen, onClose }) {
 
       <aside style={{
         width: "var(--sidebar-width)",
+        maxWidth: "min(var(--sidebar-width), 85vw)",
         background: "var(--surface)",
         borderRight: "1px solid var(--border)",
         height: "100vh",
+        height: "100dvh",
         position: "fixed",
         top: 0, left: 0,
         display: "flex",
         flexDirection: "column",
         zIndex: 99,
         transition: "transform 0.25s ease",
+        paddingTop: "env(safe-area-inset-top, 0px)",
+        paddingBottom: "env(safe-area-inset-bottom, 0px)",
       }}
       id="main-sidebar"
       >

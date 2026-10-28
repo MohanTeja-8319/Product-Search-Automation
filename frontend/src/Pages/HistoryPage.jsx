@@ -252,7 +252,7 @@ export default function HistoryPage() {
                   className="card-hover"
                   onClick={() => navigate(`/search?q=${encodeURIComponent(item.term)}`)}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 0, flex: 1 }}>
                     <div
                       style={{
                         width: 40,
@@ -268,13 +268,16 @@ export default function HistoryPage() {
                     >
                       <FiSearch size={16} />
                     </div>
-                    <div>
+                    <div style={{ minWidth: 0, flex: 1 }}>
                       <h3
                         style={{
                           fontSize: 15,
                           fontWeight: 600,
                           color: "var(--text-900)",
                           marginBottom: 4,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap"
                         }}
                       >
                         {item.term}
@@ -293,7 +296,7 @@ export default function HistoryPage() {
                     </div>
                   </div>
 
-                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
                     <button
                       className="btn btn-primary btn-sm"
                       onClick={(e) => {
