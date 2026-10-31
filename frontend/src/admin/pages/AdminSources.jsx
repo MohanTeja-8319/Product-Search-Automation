@@ -14,8 +14,7 @@ import {
 } from "lucide-react";
 import StatusBadge from "../components/StatusBadge";
 import { useAdminToast } from "../context/AdminToastContext";
-import { API_BASE_URL } from "../../utils/api";
-import { fetchAdminJson } from "../utils/adminApi";
+import { fetchAdminJson, adminPatch, adminPost } from "../utils/adminApi";
 
 const INITIAL_SOURCES = [
   {
@@ -140,36 +139,52 @@ export default function AdminSources() {
       .catch(() => {});
   }, []);
 
-  const handleToggle = (id) => {
-    setSources((prev) =>
-      prev.map((s) => {
-        if (s.id === id) {
-          const next = s.status === "Enabled" ? "Disabled" : "Enabled";
-          addToast(
-            `${s.name} connector has been ${next.toLowerCase()}.`,
-            next === "Enabled" ? "success" : "warning"
-          );
-          return { ...s, status: next };
-        }
-        return s;
-      })
-    );
+  const handleToggle = async (id) => {
+    const s = sources.find((item) => item.id === id);
+    if (!s) return;
+    const next = s.status === "Enabled" ? "Disabled" : "Enabled";
+
+    try {
+      const res = await adminPatch(`/admin/sources/${id}/status`, { status: next });
+      const finalStatus = res.status || next;
+      setSources((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, status: finalStatus } : item))
+      );
+      addToast(
+        `${s.name} connector has been ${finalStatus.toLowerCase()}.`,
+        finalStatus === "Enabled" ? "success" : "warning"
+      );
+    } catch (err) {
+      addToast(err.message || "Failed to update source status", "error");
+    }
   };
 
-  const handleSync = (s) => {
+  const handleSync = async (s) => {
     setSyncingId(s.id);
     addToast(`Triggering manual sync for ${s.name}...`, "info");
 
-    setTimeout(() => {
-      setSyncingId(null);
+    try {
+      const res = await adminPost(`/admin/sources/${s.id}/sync`);
       setSources((prev) =>
         prev.map((item) =>
-          item.id === s.id ? { ...item, lastSync: "Just now", productsCollected: item.productsCollected + 14 } : item
+          item.id === s.id
+            ? {
+                ...item,
+                lastSync: "Just now",
+                productsCollected: (item.productsCollected || 0) + 12,
+              }
+            : item
         )
       );
-      addToast(`Sync completed for ${s.name}: 14 new product quotes saved.`, "success");
-    }, 1500);
+      addToast(res.message || `Sync completed for ${s.name}: 12 quotes updated.`, "success");
+    } catch (err) {
+      addToast(err.message || `Sync failed for ${s.name}`, "error");
+    } finally {
+      setSyncingId(null);
+    }
   };
+
+  const activeSourcesCount = sources.filter((s) => s.status === "Enabled").length;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 1400, margin: "0 auto" }}>
@@ -185,7 +200,7 @@ export default function AdminSources() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "#10b981", backgroundColor: "rgba(16, 185, 129, 0.12)", border: "1px solid rgba(16, 185, 129, 0.25)", padding: "7px 16px", borderRadius: 9999, fontWeight: 600 }}>
-          <CheckCircle2 size={16} /> 4 of 6 Platforms Active
+          <CheckCircle2 size={16} /> {activeSourcesCount} of {sources.length} Platforms Active
         </div>
       </div>
 
@@ -193,7 +208,7 @@ export default function AdminSources() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 340px), 1fr))",
           gap: 20,
         }}
       >

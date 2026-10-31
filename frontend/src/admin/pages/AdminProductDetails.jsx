@@ -132,6 +132,7 @@ export default function AdminProductDetails() {
         <div style={{ display: "flex", gap: 32, flexWrap: "wrap" }}>
           {/* Product Image with Fallback */}
           <div
+            className="adm-product-img-box"
             style={{
               width: 260,
               height: 260,
@@ -238,7 +239,7 @@ export default function AdminProductDetails() {
       </div>
 
       {/* Two Columns: Platform Comparison Table & Specifications */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(460px, 1fr))", gap: 24 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))", gap: 24 }}>
         {/* Platform Comparison */}
         <div className="adm-card" style={{ padding: 24 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>

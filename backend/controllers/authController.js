@@ -5,7 +5,12 @@ const Alert = require("../models/Alert");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../utils/sendEmail");
-const { getJwtSecret } = require("../config/jwt");
+const {
+  getJwtSecret,
+  getRefreshJwtSecret,
+  getAccessTokenExpiry,
+  getRefreshTokenExpiry,
+} = require("../config/jwt");
 const { isValidObjectId } = require("../utils/mongoHelpers");
 
 // Resilient in-memory store when MongoDB is offline / disconnected
@@ -24,6 +29,7 @@ fallbackUsers.set("user@comparely.io", {
   searchHistory: [],
   wishlist: [],
   recentProducts: [],
+  refreshTokens: [],
   createdAt: new Date(),
 });
 
@@ -38,6 +44,7 @@ fallbackUsers.set("admin@comparely.io", {
   searchHistory: [],
   wishlist: [],
   recentProducts: [],
+  refreshTokens: [],
   createdAt: new Date(),
 });
 
@@ -48,10 +55,81 @@ function findFallbackUserById(id) {
   return null;
 }
 
-function generateToken(userId) {
-  return jwt.sign({ id: userId }, getJwtSecret(), {
-    expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+function hashToken(token) {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
+
+function generateAccessToken(userId) {
+  return jwt.sign({ id: userId, type: "access" }, getJwtSecret(), {
+    expiresIn: getAccessTokenExpiry(),
   });
+}
+
+function generateRefreshToken(userId) {
+  return jwt.sign(
+    { id: userId, jti: crypto.randomUUID(), type: "refresh" },
+    getRefreshJwtSecret(),
+    { expiresIn: getRefreshTokenExpiry() }
+  );
+}
+
+function getRefreshTokenCookieOptions() {
+  const isProd = process.env.NODE_ENV === "production";
+  const sameSite = process.env.COOKIE_SAME_SITE || (isProd ? "strict" : "lax");
+  return {
+    httpOnly: true,
+    secure: isProd || sameSite === "none",
+    sameSite,
+    path: "/",
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+  };
+}
+
+function setRefreshTokenCookie(res, token) {
+  res.cookie("comparely_rf", token, getRefreshTokenCookieOptions());
+}
+
+function clearRefreshTokenCookie(res) {
+  const isProd = process.env.NODE_ENV === "production";
+  const sameSite = process.env.COOKIE_SAME_SITE || (isProd ? "strict" : "lax");
+  res.clearCookie("comparely_rf", {
+    httpOnly: true,
+    secure: isProd || sameSite === "none",
+    sameSite,
+    path: "/",
+  });
+}
+
+async function storeRefreshToken(userId, refreshToken) {
+  const tokenHash = hashToken(refreshToken);
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  const now = new Date();
+
+  if (mongoose.connection.readyState === 1 && isValidObjectId(userId)) {
+    try {
+      const user = await User.findById(userId).select("+refreshTokens");
+      if (user) {
+        if (!Array.isArray(user.refreshTokens)) user.refreshTokens = [];
+        const active = user.refreshTokens.filter((t) => t.expiresAt > now);
+        active.push({ tokenHash, expiresAt, createdAt: now });
+        if (active.length > 10) active.splice(0, active.length - 10);
+        user.refreshTokens = active;
+        await user.save();
+        return;
+      }
+    } catch (err) {
+      console.warn("MongoDB storeRefreshToken warning:", err.message);
+    }
+  }
+
+  const mockUser = findFallbackUserById(userId);
+  if (mockUser) {
+    if (!Array.isArray(mockUser.refreshTokens)) mockUser.refreshTokens = [];
+    const active = mockUser.refreshTokens.filter((t) => t.expiresAt > now);
+    active.push({ tokenHash, expiresAt, createdAt: now });
+    if (active.length > 10) active.splice(0, active.length - 10);
+    mockUser.refreshTokens = active;
+  }
 }
 
 function sanitizeUser(user) {
@@ -61,6 +139,8 @@ function sanitizeUser(user) {
     email: user.email,
     phone: user.phone || "",
     location: user.location || "",
+    isAdmin: Boolean(user.isAdmin),
+    status: user.status || "Active",
     searchHistory: user.searchHistory || [],
     wishlist: user.wishlist || [],
     recentProducts: user.recentProducts || [],
@@ -99,7 +179,10 @@ exports.register = async (req, res) => {
         }
 
         const user = await User.create({ fullName: fullName.trim(), email: lowerEmail, password });
-        const token = generateToken(user._id);
+        const token = generateAccessToken(user._id);
+        const refreshToken = generateRefreshToken(user._id);
+        await storeRefreshToken(user._id, refreshToken);
+        setRefreshTokenCookie(res, refreshToken);
 
         return res.status(201).json({
           message: "Registration successful!",
@@ -135,10 +218,14 @@ exports.register = async (req, res) => {
       searchHistory: [],
       wishlist: [],
       recentProducts: [],
+      refreshTokens: [],
       createdAt: new Date(),
     };
     fallbackUsers.set(lowerEmail, mockUser);
-    const token = generateToken(mockUser._id);
+    const token = generateAccessToken(mockUser._id);
+    const refreshToken = generateRefreshToken(mockUser._id);
+    await storeRefreshToken(mockUser._id, refreshToken);
+    setRefreshTokenCookie(res, refreshToken);
 
     return res.status(201).json({
       message: "Registration successful!",
@@ -170,7 +257,10 @@ exports.login = async (req, res) => {
         if (user) {
           const isMatch = await user.comparePassword(password);
           if (isMatch) {
-            const token = generateToken(user._id);
+            const token = generateAccessToken(user._id);
+            const refreshToken = generateRefreshToken(user._id);
+            await storeRefreshToken(user._id, refreshToken);
+            setRefreshTokenCookie(res, refreshToken);
             return res.status(200).json({
               message: "Login successful!",
               token,
@@ -189,7 +279,10 @@ exports.login = async (req, res) => {
     if (mockUser) {
       const isMatch = await bcrypt.compare(password, mockUser.password);
       if (isMatch) {
-        const token = generateToken(mockUser._id);
+        const token = generateAccessToken(mockUser._id);
+        const refreshToken = generateRefreshToken(mockUser._id);
+        await storeRefreshToken(mockUser._id, refreshToken);
+        setRefreshTokenCookie(res, refreshToken);
         return res.status(200).json({
           message: "Login successful!",
           token,
@@ -214,10 +307,14 @@ exports.login = async (req, res) => {
         searchHistory: [],
         wishlist: [],
         recentProducts: [],
+        refreshTokens: [],
         createdAt: new Date(),
       };
       fallbackUsers.set(lowerEmail, newMockUser);
-      const token = generateToken(newMockUser._id);
+      const token = generateAccessToken(newMockUser._id);
+      const refreshToken = generateRefreshToken(newMockUser._id);
+      await storeRefreshToken(newMockUser._id, refreshToken);
+      setRefreshTokenCookie(res, refreshToken);
       return res.status(200).json({
         message: "Login successful!",
         token,
@@ -255,6 +352,200 @@ exports.getMe = async (req, res) => {
     console.error("GetMe error:", err);
     return res.status(500).json({ message: "Server error." });
   }
+};
+
+exports.refreshSession = async (req, res) => {
+  try {
+    const rawToken = req.cookies?.comparely_rf || req.body?.refreshToken;
+    if (!rawToken) {
+      return res.status(401).json({ message: "No refresh token provided.", code: "NO_REFRESH_TOKEN" });
+    }
+
+    let decoded;
+    try {
+      decoded = jwt.verify(rawToken, getRefreshJwtSecret());
+    } catch (err) {
+      clearRefreshTokenCookie(res);
+      return res.status(401).json({
+        message: "Session expired or invalid. Please sign in again.",
+        code: "SESSION_EXPIRED",
+      });
+    }
+
+    if (!decoded?.id || decoded.type !== "refresh") {
+      clearRefreshTokenCookie(res);
+      return res.status(401).json({ message: "Invalid token type.", code: "INVALID_TOKEN" });
+    }
+
+    const incomingHash = hashToken(rawToken);
+    let user = null;
+
+    if (mongoose.connection.readyState === 1 && isValidObjectId(decoded.id)) {
+      try {
+        user = await User.findById(decoded.id).select("+refreshTokens");
+      } catch (dbErr) {
+        console.warn("MongoDB refreshSession fetch error:", dbErr.message);
+      }
+    }
+
+    if (!user) {
+      user = findFallbackUserById(decoded.id);
+    }
+
+    if (!user) {
+      clearRefreshTokenCookie(res);
+      return res.status(401).json({ message: "User not found.", code: "USER_NOT_FOUND" });
+    }
+
+    if (!Array.isArray(user.refreshTokens)) {
+      user.refreshTokens = [];
+    }
+
+    const now = new Date();
+    const existingIndex = user.refreshTokens.findIndex((t) => t.tokenHash === incomingHash);
+
+    if (existingIndex === -1) {
+      clearRefreshTokenCookie(res);
+      return res.status(401).json({
+        message: "Session has expired or was revoked. Please sign in again.",
+        code: "SESSION_REVOKED",
+      });
+    }
+
+    const matchedToken = user.refreshTokens[existingIndex];
+    if (matchedToken.expiresAt && new Date(matchedToken.expiresAt) < now) {
+      user.refreshTokens.splice(existingIndex, 1);
+      if (user.save) await user.save().catch(() => {});
+      clearRefreshTokenCookie(res);
+      return res.status(401).json({
+        message: "Session expired. Please sign in again.",
+        code: "SESSION_EXPIRED",
+      });
+    }
+
+    // Grace period for multi-tab bursts: if token was rotated in the last 15 seconds, return active access token
+    if (matchedToken.rotatedAt && now.getTime() - new Date(matchedToken.rotatedAt).getTime() < 15000) {
+      const accessToken = generateAccessToken(user._id);
+      return res.status(200).json({
+        message: "Token refreshed successfully",
+        token: accessToken,
+        user: sanitizeUser(user),
+      });
+    }
+
+    // Remove old token from active tokens
+    user.refreshTokens.splice(existingIndex, 1);
+
+    // Prune expired tokens
+    user.refreshTokens = user.refreshTokens.filter((t) => new Date(t.expiresAt) > now);
+
+    // Generate new pair
+    const newAccessToken = generateAccessToken(user._id);
+    const newRefreshToken = generateRefreshToken(user._id);
+    const newHash = hashToken(newRefreshToken);
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+    // Keep the old token in rotated grace state for 15s to prevent concurrent request race conditions
+    user.refreshTokens.push({
+      tokenHash: incomingHash,
+      expiresAt: new Date(Date.now() + 15000),
+      rotatedAt: now,
+      createdAt: matchedToken.createdAt || now,
+    });
+
+    user.refreshTokens.push({
+      tokenHash: newHash,
+      expiresAt,
+      createdAt: now,
+    });
+
+    if (user.refreshTokens.length > 12) {
+      user.refreshTokens.splice(0, user.refreshTokens.length - 12);
+    }
+
+    if (user.save) {
+      await user.save().catch((err) => console.warn("Failed saving rotated token:", err.message));
+    }
+
+    setRefreshTokenCookie(res, newRefreshToken);
+
+    return res.status(200).json({
+      message: "Token refreshed successfully",
+      token: newAccessToken,
+      user: sanitizeUser(user),
+    });
+  } catch (err) {
+    console.error("Refresh session error:", err);
+    return res.status(500).json({ message: "Server error during token refresh." });
+  }
+};
+
+exports.logout = async (req, res) => {
+  try {
+    const rawToken = req.cookies?.comparely_rf || req.body?.refreshToken;
+    clearRefreshTokenCookie(res);
+
+    if (rawToken) {
+      const incomingHash = hashToken(rawToken);
+      let decoded = null;
+      try {
+        decoded = jwt.verify(rawToken, getRefreshJwtSecret());
+      } catch (e) {
+        decoded = jwt.decode(rawToken);
+      }
+
+      if (decoded?.id) {
+        if (mongoose.connection.readyState === 1 && isValidObjectId(decoded.id)) {
+          try {
+            await User.findByIdAndUpdate(decoded.id, {
+              $pull: { refreshTokens: { tokenHash: incomingHash } },
+            }).catch(() => {});
+          } catch (e) {}
+        }
+        const mockUser = findFallbackUserById(decoded.id);
+        if (mockUser && Array.isArray(mockUser.refreshTokens)) {
+          mockUser.refreshTokens = mockUser.refreshTokens.filter((t) => t.tokenHash !== incomingHash);
+        }
+      }
+    }
+
+    return res.status(200).json({ message: "Logged out successfully." });
+  } catch (err) {
+    console.error("Logout error:", err);
+    clearRefreshTokenCookie(res);
+    return res.status(200).json({ message: "Logged out successfully." });
+  }
+};
+
+exports.getSession = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    const token = authHeader.split(" ")[1];
+    try {
+      const decoded = jwt.verify(token, getJwtSecret());
+      if (decoded?.id && (!decoded.type || decoded.type === "access")) {
+        let user = null;
+        if (mongoose.connection.readyState === 1 && isValidObjectId(decoded.id)) {
+          user = await User.findById(decoded.id);
+        }
+        if (!user) {
+          user = findFallbackUserById(decoded.id);
+        }
+        if (user) {
+          return res.status(200).json({
+            authenticated: true,
+            user: sanitizeUser(user),
+            token,
+          });
+        }
+      }
+    } catch (e) {
+      // Access token expired or invalid; proceed to try refresh cookie below
+    }
+  }
+
+  // Attempt session restoration via refresh cookie
+  return exports.refreshSession(req, res);
 };
 
 exports.forgotPassword = async (req, res) => {
@@ -547,3 +838,11 @@ exports.deleteAccount = async (req, res) => {
     return res.status(500).json({ message: "Could not delete account." });
   }
 };
+
+exports.findFallbackUserById = findFallbackUserById;
+exports.fallbackUsers = fallbackUsers;
+exports.sanitizeUser = sanitizeUser;
+exports.generateAccessToken = generateAccessToken;
+exports.generateRefreshToken = generateRefreshToken;
+exports.storeRefreshToken = storeRefreshToken;
+exports.setRefreshTokenCookie = setRefreshTokenCookie;

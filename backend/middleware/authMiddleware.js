@@ -12,9 +12,15 @@ function protect(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, getJwtSecret());
+    if (decoded.type && decoded.type !== "access") {
+      return res.status(401).json({ message: "Not authorized, invalid token type." });
+    }
     req.userId = decoded.id;
     next();
   } catch (err) {
+    if (err.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired.", code: "TOKEN_EXPIRED" });
+    }
     return res.status(401).json({ message: "Not authorized, invalid token." });
   }
 }

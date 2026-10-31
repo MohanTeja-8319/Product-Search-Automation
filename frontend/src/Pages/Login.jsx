@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FiEye, FiEyeOff, FiMail, FiLock, FiUser, FiArrowRight, FiBarChart2, FiCheck } from "react-icons/fi";
-import { loginUser, registerUser, saveAuth } from "../utils/api";
+import { useAuth } from "../context/AuthContext";
 
 const FEATURES = [
   "Compare prices across 7+ stores instantly",
@@ -115,6 +115,8 @@ export function AuthLayout({ children, title, subtitle, isRegister }) {
 // ── LOGIN ──────────────────────────────────────
 export function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPw, setShowPw] = useState(false);
@@ -126,9 +128,10 @@ export function Login() {
     setError("");
     setLoading(true);
     try {
-      const data = await loginUser({ email, password });
-      saveAuth(data);
-      navigate("/home");
+      await login({ email, password });
+      const from = location.state?.from;
+      const target = from?.pathname ? `${from.pathname}${from.search || ""}` : (from || "/home");
+      navigate(target, { replace: true });
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
     } finally {
@@ -169,7 +172,7 @@ export function Login() {
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
-              style={{ border: "none", boxShadow: "none", padding: "8px 0" }}
+              style={{ border: "none", boxShadow: "none", outline: "none", padding: "8px 0" }}
             />
           </div>
         </div>
@@ -193,7 +196,7 @@ export function Login() {
               value={password}
               onChange={e => setPassword(e.target.value)}
               required
-              style={{ border: "none", boxShadow: "none", padding: "8px 0" }}
+              style={{ border: "none", boxShadow: "none", outline: "none", padding: "8px 0" }}
             />
             <button type="button" onClick={() => setShowPw(p => !p)}
               style={{ padding: "0 14px", background: "none", border: "none", color: "var(--text-400)", cursor: "pointer", display: "flex" }}>
@@ -221,6 +224,8 @@ export function Login() {
 // ── REGISTER ──────────────────────────────────
 export function Register() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { register } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -235,9 +240,10 @@ export function Register() {
     if (password !== confirmPassword) { setError("Passwords do not match."); return; }
     setLoading(true);
     try {
-      const data = await registerUser({ fullName, email, password, confirmPassword });
-      saveAuth(data);
-      navigate("/home");
+      await register({ fullName, email, password, confirmPassword });
+      const from = location.state?.from;
+      const target = from?.pathname ? `${from.pathname}${from.search || ""}` : (from || "/home");
+      navigate(target, { replace: true });
     } catch (err) {
       setError(err.message || "Registration failed.");
     } finally {
@@ -267,7 +273,7 @@ export function Register() {
           <div className="input-group" style={{ borderRadius: "0", border: "none", borderBottom: "1px solid var(--border)", paddingBottom: 4 }}>
             <span style={{ padding: "0 0 0 14px", color: "var(--text-400)", display: "flex" }}><FiUser size={15} /></span>
             <input className="input" type="text" placeholder="Your full name" value={fullName}
-              onChange={e => setFullName(e.target.value)} required style={{ border: "none", boxShadow: "none", padding: "8px 0" }} />
+              onChange={e => setFullName(e.target.value)} required style={{ border: "none", boxShadow: "none", outline: "none", padding: "8px 0" }} />
           </div>
         </div>
 
@@ -276,7 +282,7 @@ export function Register() {
           <div className="input-group" style={{ borderRadius: "0", border: "none", borderBottom: "1px solid var(--border)", paddingBottom: 4 }}>
             <span style={{ padding: "0 0 0 14px", color: "var(--text-400)", display: "flex" }}><FiMail size={15} /></span>
             <input className="input" type="email" placeholder="you@example.com" value={email}
-              onChange={e => setEmail(e.target.value)} required style={{ border: "none", boxShadow: "none", padding: "8px 0" }} />
+              onChange={e => setEmail(e.target.value)} required style={{ border: "none", boxShadow: "none", outline: "none", padding: "8px 0" }} />
           </div>
         </div>
 
@@ -285,7 +291,7 @@ export function Register() {
           <div className="input-group" style={{ borderRadius: "0", border: "none", borderBottom: "1px solid var(--border)", paddingBottom: 4 }}>
             <span style={{ padding: "0 0 0 14px", color: "var(--text-400)", display: "flex" }}><FiLock size={15} /></span>
             <input className="input" type={showPw ? "text" : "password"} placeholder="Min. 8 characters" value={password}
-              onChange={e => setPassword(e.target.value)} required style={{ border: "none", boxShadow: "none", padding: "8px 0" }} />
+              onChange={e => setPassword(e.target.value)} required style={{ border: "none", boxShadow: "none", outline: "none", padding: "8px 0" }} />
             <button type="button" onClick={() => setShowPw(p => !p)}
               style={{ padding: "0 14px", background: "none", border: "none", color: "var(--text-400)", cursor: "pointer", display: "flex" }}>
               {showPw ? <FiEyeOff size={15} /> : <FiEye size={15} />}
@@ -298,7 +304,7 @@ export function Register() {
           <div className="input-group" style={{ borderRadius: "0", border: "none", borderBottom: "1px solid var(--border)", paddingBottom: 4 }}>
             <span style={{ padding: "0 0 0 14px", color: "var(--text-400)", display: "flex" }}><FiLock size={15} /></span>
             <input className="input" type="password" placeholder="Repeat password" value={confirmPassword}
-              onChange={e => setConfirmPassword(e.target.value)} required style={{ border: "none", boxShadow: "none", padding: "8px 0" }} />
+              onChange={e => setConfirmPassword(e.target.value)} required style={{ border: "none", boxShadow: "none", outline: "none", padding: "8px 0" }} />
           </div>
         </div>
 
@@ -314,13 +320,19 @@ export function Register() {
 // ── LOGOUT ────────────────────────────────────
 export function Logout() {
   const navigate = useNavigate();
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-  localStorage.removeItem("searchHistory");
-  localStorage.removeItem("recentProducts");
-  localStorage.removeItem("wishlistItems");
-  localStorage.removeItem("price_scout_notifications");
-  localStorage.removeItem("profilePhoto");
-  navigate("/");
+  const { logout } = useAuth();
+
+  useEffect(() => {
+    let active = true;
+    logout().finally(() => {
+      if (active) {
+        navigate("/", { replace: true });
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [logout, navigate]);
+
   return null;
 }

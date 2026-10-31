@@ -4,6 +4,8 @@ import {
   FiSearch, FiTrendingDown, FiShield, FiBell, FiBarChart2, FiSun, FiMoon, FiPlay
 } from "react-icons/fi";
 import ComparelyLogoAnimation from "../Components/ComparelyLogoAnimation";
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 
 function getTheme() {
@@ -96,6 +98,7 @@ const FEATURES = [
 
 export default function Landing() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [theme, setTheme] = useState(getTheme);
   const [showIntro, setShowIntro] = useState(true);
@@ -115,9 +118,26 @@ export default function Landing() {
     applyTheme(next);
   };
 
-  const handleSearch = (e) => {
+    const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    const q = searchQuery.trim();
+
+    if (!isAuthenticated) {
+      toast.error("Please log in to search and compare products across stores.", {
+        id: "search-login-req"
+      });
+      navigate("/login", {
+        state: {
+          from: q ? { pathname: "/search", search: `?q=${encodeURIComponent(q)}` } : { pathname: "/search" },
+          message: "Please sign in to search and compare live products."
+        }
+      });
+      return;
+    }
+
+    if (q) {
+      navigate(`/search?q=${encodeURIComponent(q)}`);
+    }
   };
 
   const isDark = theme === "dark";

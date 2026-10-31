@@ -2,13 +2,17 @@ export const API_BASE_URL =
   import.meta.env.VITE_API_URL ||
   (typeof window !== "undefined" ? "/api" : "http://localhost:5000/api");
 
+let activeRefreshPromise = null;
+
 async function request(path, options = {}) {
   const { headers: customHeaders, ...rest } = options;
 
   const res = await fetch(`${API_BASE_URL}${path}`, {
+    credentials: "include",
     ...rest,
     headers: {
       "Content-Type": "application/json",
+      "X-Comparely-Client": "web",
       ...(customHeaders || {}),
     },
   });
@@ -22,18 +26,63 @@ async function request(path, options = {}) {
   }
 
   if (!res.ok) {
-    throw new Error(
+    const error = new Error(
       data?.message ||
         data?.error ||
         "Something went wrong. Please try again."
     );
+    error.status = res.status;
+    error.code = data?.code;
+    error.data = data;
+    throw error;
   }
 
   return data;
 }
 
+export async function refreshAuthSession() {
+  if (activeRefreshPromise) {
+    return activeRefreshPromise;
+  }
 
-function authRequest(path, options = {}) {
+  activeRefreshPromise = (async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Comparely-Client": "web",
+        },
+        credentials: "include",
+      });
+
+      let data = null;
+      try {
+        data = await res.json();
+      } catch {}
+
+      if (!res.ok || !data?.token) {
+        clearAuth();
+        const err = new Error(data?.message || "Session expired. Please log in again.");
+        err.status = res.status;
+        err.code = data?.code || "SESSION_EXPIRED";
+        throw err;
+      }
+
+      saveAuth(data);
+      return data.token;
+    } catch (err) {
+      clearAuth();
+      throw err;
+    } finally {
+      activeRefreshPromise = null;
+    }
+  })();
+
+  return activeRefreshPromise;
+}
+
+export function authRequest(path, options = {}, isRetry = false) {
   const token = localStorage.getItem("token");
 
   return request(path, {
@@ -42,11 +91,33 @@ function authRequest(path, options = {}) {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     },
+  }).catch(async (error) => {
+    // If 401 unauthorized and not already retrying, attempt automatic refresh
+    const isAuthEndpoint =
+      path.includes("/auth/login") ||
+      path.includes("/auth/register") ||
+      path.includes("/auth/refresh");
+
+    if (error.status === 401 && !isRetry && !isAuthEndpoint) {
+      try {
+        const newToken = await refreshAuthSession();
+        // Retry the original request with the fresh token
+        return request(path, {
+          ...options,
+          headers: {
+            Authorization: `Bearer ${newToken}`,
+            ...(options.headers || {}),
+          },
+        });
+      } catch (refreshErr) {
+        window.dispatchEvent(new CustomEvent("session-expired", { detail: { error: refreshErr } }));
+        throw refreshErr;
+      }
+    }
+
+    throw error;
   });
 }
-
-
-
 
 export function registerUser({
   fullName,
@@ -65,7 +136,6 @@ export function registerUser({
   });
 }
 
-
 export function loginUser({
   email,
   password,
@@ -77,6 +147,87 @@ export function loginUser({
       password,
     }),
   });
+}
+
+export async function restoreSession() {
+  const token = localStorage.getItem("token");
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/session`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Comparely-Client": "web",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      credentials: "include",
+    });
+
+    let data = null;
+    try {
+      data = await res.json();
+    } catch {}
+
+    if (res.ok && data?.user) {
+      const activeToken = data.token || token;
+      if (activeToken) {
+        saveAuth({ token: activeToken, user: data.user });
+      }
+      return {
+        authenticated: true,
+        user: data.user,
+        token: activeToken,
+      };
+    }
+  } catch (err) {
+    console.warn("Session restoration network error:", err.message);
+  }
+
+  // If restoring via /session fails, try refresh endpoint explicitly
+  try {
+    const refreshedToken = await refreshAuthSession();
+    const storedUser = localStorage.getItem("user");
+    let parsedUser = null;
+    try { parsedUser = storedUser ? JSON.parse(storedUser) : null; } catch {}
+    return {
+      authenticated: true,
+      user: parsedUser,
+      token: refreshedToken,
+    };
+  } catch {
+    clearAuth();
+    return {
+      authenticated: false,
+      user: null,
+      token: null,
+    };
+  }
+}
+
+export async function logoutUser() {
+  try {
+    await request("/auth/logout", {
+      method: "POST",
+    });
+  } catch (err) {
+    console.warn("Server logout request warning:", err.message);
+  } finally {
+    clearAuth();
+  }
+}
+
+export function clearAuth() {
+  try {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("searchHistory");
+    localStorage.removeItem("recentProducts");
+    localStorage.removeItem("wishlistItems");
+    localStorage.removeItem("price_scout_notifications");
+    localStorage.removeItem("profilePhoto");
+  } catch {}
+
+  window.dispatchEvent(new Event("user-profile-updated"));
+  window.dispatchEvent(new Event("user-auth-changed"));
 }
 
 
@@ -132,6 +283,9 @@ export function saveAuth({
 
   localStorage.removeItem("price_scout_notifications");
   localStorage.removeItem("profilePhoto");
+
+  window.dispatchEvent(new Event("user-profile-updated"));
+  window.dispatchEvent(new Event("user-auth-changed"));
 }
 
 

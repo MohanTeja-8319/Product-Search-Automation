@@ -4,12 +4,12 @@ import DataTable from "../components/DataTable";
 import StatusBadge from "../components/StatusBadge";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { useAdminToast } from "../context/AdminToastContext";
-import { API_BASE_URL } from "../../utils/api";
-import { fetchAdminJson } from "../utils/adminApi";
+import { fetchAdminJson, adminPost, adminPatch, adminDelete } from "../utils/adminApi";
 
 export default function AdminCategories() {
   const { addToast } = useAdminToast();
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [categoryName, setCategoryName] = useState("");
@@ -17,13 +17,15 @@ export default function AdminCategories() {
 
   // Fetch categories from backend
   useEffect(() => {
+    setLoading(true);
     fetchAdminJson("/admin/categories")
       .then((data) => {
         if (data && Array.isArray(data) && data.length > 0) {
           setCategories(data);
         }
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   const handleOpenAdd = () => {
@@ -38,47 +40,66 @@ export default function AdminCategories() {
     setModalOpen(true);
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    if (!categoryName.trim()) return;
+    const trimmed = categoryName.trim();
+    if (!trimmed) return;
 
     if (editingCategory) {
-      setCategories((prev) =>
-        prev.map((c) => (c.id === editingCategory.id ? { ...c, name: categoryName.trim() } : c))
-      );
-      addToast(`Category "${categoryName}" updated successfully.`, "success");
+      try {
+        await adminPatch(`/admin/categories/${editingCategory.id}`, { name: trimmed });
+        setCategories((prev) =>
+          prev.map((c) => (c.id === editingCategory.id ? { ...c, name: trimmed } : c))
+        );
+        addToast(`Category "${trimmed}" updated successfully.`, "success");
+      } catch (err) {
+        addToast(err.message || "Failed to update category", "error");
+      }
     } else {
-      const newCat = {
-        id: `cat-${Date.now()}`,
-        name: categoryName.trim(),
-        productsCount: 0,
-        activeStatus: true,
-        createdDate: new Date().toISOString().split("T")[0],
-      };
-      setCategories((prev) => [newCat, ...prev]);
-      addToast(`Category "${categoryName}" created.`, "success");
+      try {
+        const created = await adminPost("/admin/categories", { name: trimmed });
+        const newCat = {
+          id: created.id || `cat-${Date.now()}`,
+          name: created.name || trimmed,
+          productsCount: created.productsCount || 0,
+          activeStatus: created.activeStatus !== undefined ? created.activeStatus : true,
+          createdDate: created.createdDate || new Date().toISOString().split("T")[0],
+        };
+        setCategories((prev) => [newCat, ...prev]);
+        addToast(`Category "${trimmed}" created.`, "success");
+      } catch (err) {
+        addToast(err.message || "Failed to create category", "error");
+      }
     }
     setModalOpen(false);
   };
 
-  const handleToggleStatus = (id) => {
-    setCategories((prev) =>
-      prev.map((c) => {
-        if (c.id === id) {
-          const next = !c.activeStatus;
-          addToast(`Category "${c.name}" ${next ? "enabled" : "disabled"}.`, next ? "success" : "warning");
-          return { ...c, activeStatus: next };
-        }
-        return c;
-      })
-    );
+  const handleToggleStatus = async (id) => {
+    const target = categories.find((c) => c.id === id);
+    if (!target) return;
+    try {
+      const res = await adminPatch(`/admin/categories/${id}/status`);
+      const next = res.activeStatus !== undefined ? res.activeStatus : !target.activeStatus;
+      setCategories((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, activeStatus: next } : c))
+      );
+      addToast(`Category "${target.name}" ${next ? "enabled" : "disabled"}.`, next ? "success" : "warning");
+    } catch (err) {
+      addToast(err.message || "Failed to update category status", "error");
+    }
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (!deleteTarget) return;
-    setCategories((prev) => prev.filter((c) => c.id !== deleteTarget.id));
-    addToast(`Category "${deleteTarget.name}" deleted.`, "info");
-    setDeleteTarget(null);
+    try {
+      await adminDelete(`/admin/categories/${deleteTarget.id}`);
+      setCategories((prev) => prev.filter((c) => c.id !== deleteTarget.id));
+      addToast(`Category "${deleteTarget.name}" deleted.`, "info");
+    } catch (err) {
+      addToast(err.message || "Failed to delete category", "error");
+    } finally {
+      setDeleteTarget(null);
+    }
   };
 
   const columns = [
@@ -152,16 +173,15 @@ export default function AdminCategories() {
               fontWeight: 600,
               display: "inline-flex",
               alignItems: "center",
-              gap: 4,
+              gap: 5,
               transition: "all 0.15s ease",
             }}
           >
             <Power size={13} /> {row.activeStatus ? "Disable" : "Enable"}
           </button>
-
           <button
             onClick={() => handleOpenEdit(row)}
-            title="Edit category"
+            title="Edit Category"
             style={{
               padding: "6px 12px",
               borderRadius: 9999,
@@ -173,28 +193,27 @@ export default function AdminCategories() {
               fontWeight: 600,
               display: "inline-flex",
               alignItems: "center",
-              gap: 4,
+              gap: 5,
               transition: "all 0.15s ease",
             }}
           >
             <Edit3 size={13} /> Edit
           </button>
-
           <button
             onClick={() => setDeleteTarget(row)}
-            title="Delete category"
+            title="Delete Category"
             style={{
-              padding: "6px 10px",
+              padding: "6px 12px",
               borderRadius: 9999,
               border: "1px solid rgba(239, 68, 68, 0.3)",
-              backgroundColor: "rgba(239, 68, 68, 0.05)",
-              color: "#f87171",
+              backgroundColor: "rgba(239, 68, 68, 0.08)",
+              color: "#ef4444",
               cursor: "pointer",
               fontSize: 12,
               fontWeight: 600,
               display: "inline-flex",
               alignItems: "center",
-              gap: 4,
+              gap: 5,
               transition: "all 0.15s ease",
             }}
           >

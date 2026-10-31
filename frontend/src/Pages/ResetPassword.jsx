@@ -105,7 +105,7 @@ export default function ResetPassword() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              style={{ border: "none", boxShadow: "none", padding: "8px 0" }}
+              style={{ border: "none", boxShadow: "none", outline: "none", padding: "8px 0" }}
             />
             <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ background: "none", border: "none", padding: "0 14px", color: "var(--text-400)", cursor: "pointer", display: "flex" }}>
               {showPassword ? <FiEyeOff size={15} /> : <FiEye size={15} />}
@@ -128,7 +128,7 @@ export default function ResetPassword() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              style={{ border: "none", boxShadow: "none", padding: "8px 0" }}
+              style={{ border: "none", boxShadow: "none", outline: "none", padding: "8px 0" }}
             />
             <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={{ background: "none", border: "none", padding: "0 14px", color: "var(--text-400)", cursor: "pointer", display: "flex" }}>
               {showConfirmPassword ? <FiEyeOff size={15} /> : <FiEye size={15} />}

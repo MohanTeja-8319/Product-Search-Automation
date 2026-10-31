@@ -170,7 +170,7 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
         }}
       >
         {/* Left Side: Title & Subtitle */}
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <div className="admin-header-left" style={{ display: "flex", alignItems: "center", gap: 16, minWidth: 0 }}>
           <button
             onClick={onToggleMobile}
             style={{
@@ -186,9 +186,9 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
             <Menu size={20} color="var(--text-900, #f4efe8)" />
           </button>
 
-          <div>
+          <div className="admin-header-title-box" style={{ minWidth: 0 }}>
             <h1
-              className="font-heading"
+              className="font-heading admin-header-title"
               style={{
                 fontSize: 22,
                 fontWeight: 700,
@@ -201,6 +201,7 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
               {title}
             </h1>
             <p
+              className="admin-header-subtitle"
               style={{
                 fontSize: 12.5,
                 color: "var(--text-500, #888888)",
@@ -214,10 +215,11 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
         </div>
 
         {/* Right Side: Quick Search, Theme Toggle, Notifications, Admin Profile */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+        <div className="admin-header-right" style={{ display: "flex", alignItems: "center", gap: 14, flexShrink: 0 }}>
           {/* Quick Search Button */}
           <button
             onClick={() => setSearchModalOpen(true)}
+            className="admin-quick-search-btn"
             style={{
               display: "flex",
               alignItems: "center",
@@ -234,7 +236,7 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
             title="Search products, users, or jobs (Cmd+K)"
           >
             <Search size={14} color="var(--text-500, #888888)" />
-            <span style={{ display: "inline-block" }}>Search platform...</span>
+            <span className="admin-quick-search-text" style={{ display: "inline-block" }}>Search platform...</span>
             <kbd
               style={{
                 fontSize: 10.5,
@@ -306,11 +308,12 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
 
             {notifOpen && (
               <div
+                className="admin-notif-dropdown"
                 style={{
                   position: "absolute",
                   top: "calc(100% + 8px)",
                   right: 0,
-                  width: 360,
+                  width: "min(360px, calc(100vw - 28px))",
                   backgroundColor: "var(--surface, #111111)",
                   borderRadius: "var(--radius-lg, 14px)",
                   boxShadow: "0 10px 40px rgba(0, 0, 0, 0.7)",
@@ -459,6 +462,7 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
           <div ref={profileRef} style={{ position: "relative" }}>
             <button
               onClick={() => setProfileOpen(!profileOpen)}
+              className="admin-profile-btn"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -485,7 +489,7 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
                   border: "2px solid var(--primary, #ffffff)",
                 }}
               />
-              <div style={{ textAlign: "left", display: "flex", flexDirection: "column" }}>
+              <div className="admin-profile-meta" style={{ textAlign: "left", display: "flex", flexDirection: "column" }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text-900, #f4efe8)", lineHeight: 1.2 }}>
                   {adminUser?.name || "Mohan Teja"}
                 </span>
@@ -498,11 +502,12 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
 
             {profileOpen && (
               <div
+                className="admin-profile-dropdown"
                 style={{
                   position: "absolute",
                   top: "calc(100% + 8px)",
                   right: 0,
-                  width: 230,
+                  width: "min(230px, calc(100vw - 28px))",
                   backgroundColor: "var(--surface, #111111)",
                   borderRadius: "var(--radius-lg, 14px)",
                   boxShadow: "0 10px 40px rgba(0, 0, 0, 0.7)",

@@ -63,7 +63,7 @@ export default function ForgotPassword() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              style={{ border: "none", boxShadow: "none", padding: "8px 0" }}
+              style={{ border: "none", boxShadow: "none", outline: "none", padding: "8px 0" }}
             />
           </div>
         </div>

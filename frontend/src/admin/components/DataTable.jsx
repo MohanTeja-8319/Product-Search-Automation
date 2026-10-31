@@ -119,6 +119,7 @@ export default function DataTable({
       {/* Top Search & Actions Bar */}
       {(searchPlaceholder || actions) && (
         <div
+          className="adm-datatable-header"
           style={{
             padding: "16px 20px",
             borderBottom: "1px solid var(--border, #222222)",
@@ -131,6 +132,7 @@ export default function DataTable({
         >
           {searchPlaceholder && (
             <div
+              className="adm-datatable-search"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -169,7 +171,7 @@ export default function DataTable({
       )}
 
       {/* Table Content */}
-      <div style={{ overflowX: "auto" }}>
+      <div className="adm-table-container" style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
         <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0 }}>
           <thead>
             <tr>
@@ -254,6 +256,7 @@ export default function DataTable({
       {/* Pagination Footer */}
       {totalPages > 1 && (
         <div
+          className="adm-pagination-footer"
           style={{
             padding: "14px 20px",
             borderTop: "1px solid var(--border, #222222)",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Star,
   MessageSquare,
@@ -12,16 +12,14 @@ import {
 import DataTable from "../components/DataTable";
 import StatusBadge from "../components/StatusBadge";
 import { useAdminToast } from "../context/AdminToastContext";
-
-import { API_BASE_URL } from "../../utils/api";
-import { fetchAdminJson } from "../utils/adminApi";
+import { fetchAdminJson, adminPatch, adminDelete } from "../utils/adminApi";
 
 export default function AdminReviews() {
   const { addToast } = useAdminToast();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let mounted = true;
     setLoading(true);
     fetchAdminJson("/admin/reviews")
@@ -38,23 +36,35 @@ export default function AdminReviews() {
     };
   }, []);
 
-  const handleToggleStatus = (id) => {
-    setReviews((prev) =>
-      prev.map((r) => {
-        if (r.id === id) {
-          const next = r.status === "Approved" ? "Flagged" : "Approved";
-          addToast(`Review marked as ${next}.`, next === "Approved" ? "success" : "warning");
-          return { ...r, status: next };
-        }
-        return r;
-      })
-    );
+  const handleToggleStatus = async (id) => {
+    const target = reviews.find((r) => r.id === id);
+    if (!target) return;
+    try {
+      const res = await adminPatch(`/admin/reviews/${id}/status`);
+      const next = res.status || (target.status === "Approved" ? "Flagged" : "Approved");
+      setReviews((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, status: next } : r))
+      );
+      addToast(`Review marked as ${next}.`, next === "Approved" ? "success" : "warning");
+    } catch (err) {
+      addToast(err.message || "Failed to update review status", "error");
+    }
   };
 
-  const handleDelete = (id) => {
-    setReviews((prev) => prev.filter((r) => r.id !== id));
-    addToast("Review removed from platform index.", "info");
+  const handleDelete = async (id) => {
+    try {
+      await adminDelete(`/admin/reviews/${id}`);
+      setReviews((prev) => prev.filter((r) => r.id !== id));
+      addToast("Review removed from platform index.", "info");
+    } catch (err) {
+      addToast(err.message || "Failed to delete review", "error");
+    }
   };
+
+  const avgRating =
+    reviews.length > 0
+      ? (reviews.reduce((acc, r) => acc + (Number(r.rating) || 5), 0) / reviews.length).toFixed(1)
+      : "5.0";
 
   const columns = [
     {
@@ -185,7 +195,7 @@ export default function AdminReviews() {
         <div style={{ display: "flex", gap: 12 }}>
           <div style={{ backgroundColor: "var(--adm-card, #111111)", border: "1px solid var(--adm-border, #222222)", borderRadius: 9999, padding: "8px 18px", display: "flex", alignItems: "center", gap: 8 }}>
             <Star size={16} fill="#fbbf24" color="#fbbf24" />
-            <span style={{ fontSize: 13, fontWeight: 700, color: "var(--adm-text, #f4efe8)" }}>4.7 / 5.0 Average Platform Rating</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: "var(--adm-text, #f4efe8)" }}>{avgRating} / 5.0 Average Platform Rating</span>
           </div>
         </div>
       </div>

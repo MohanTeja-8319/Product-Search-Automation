@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: "",
     },
-        resetOtp: {
+    resetOtp: {
       type: String,
       select: false,
     },
@@ -47,6 +47,11 @@ const userSchema = new mongoose.Schema(
     isAdmin: {
       type: Boolean,
       default: false,
+    },
+    status: {
+      type: String,
+      enum: ["Active", "Suspended"],
+      default: "Active",
     },
     otpAttempts: {
       type: Number,
@@ -66,11 +71,22 @@ const userSchema = new mongoose.Schema(
     recentProducts: {
       type: Array,
       default: []
+    },
+    refreshTokens: {
+      type: [
+        {
+          tokenHash: { type: String, required: true },
+          createdAt: { type: Date, default: Date.now },
+          expiresAt: { type: Date, required: true },
+          rotatedAt: { type: Date },
+        },
+      ],
+      default: [],
+      select: false,
     }
   },
   { timestamps: true }
 );
-
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
@@ -78,7 +94,6 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
-
 
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);

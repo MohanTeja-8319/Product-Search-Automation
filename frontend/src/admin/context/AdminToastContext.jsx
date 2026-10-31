@@ -25,7 +25,7 @@ export function AdminToastProvider({ children }) {
  <AdminToastContext.Provider value={{ addToast, removeToast }}>
  {children}
  {}
- <div className="fixed bottom-5 right-5 z-50 flex flex-col space-y-3 pointer-events-none max-w-md w-full px-4">
+ <div className="fixed bottom-5 inset-x-0 sm:left-auto sm:right-5 z-50 flex flex-col space-y-3 pointer-events-none max-w-md w-full mx-auto sm:mx-0 px-4">
  {toasts.map((toast) => {
  const typeStyles = {
  success: "bg-slate-900 text-white border-emerald-500/50 shadow-emerald-950/20",

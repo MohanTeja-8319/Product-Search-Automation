@@ -16,8 +16,7 @@ import {
 import DataTable from "../components/DataTable";
 import StatusBadge from "../components/StatusBadge";
 import { useAdminToast } from "../context/AdminToastContext";
-import { API_BASE_URL } from "../../utils/api";
-import { fetchAdminJson } from "../utils/adminApi";
+import { fetchAdminJson, adminPost } from "../utils/adminApi";
 
 export default function AdminAutomation() {
   const { addToast } = useAdminToast();
@@ -27,132 +26,119 @@ export default function AdminAutomation() {
   const [newJobSource, setNewJobSource] = useState("Amazon India");
   const [newJobType, setNewJobType] = useState("Price & Variant Update");
 
-  useEffect(() => {
+  const loadJobs = () => {
     fetchAdminJson("/admin/jobs")
       .then((data) => {
         if (data && Array.isArray(data) && data.length > 0) {
           const mapped = data.map((d) => ({
-            jobId: d.id,
-            sourceWebsite: d.source,
+            jobId: d.jobId || d.id,
+            sourceWebsite: d.sourceWebsite || d.source,
             type: d.type,
-            startTime: d.started,
+            startTime: d.startTime || d.started,
             duration: d.duration,
             status: d.status,
-            resultsCollected: 24,
-            logs: (d.logs || []).map((l) => ({
-              time: l.split(" - ")[0] || "10:00:00",
-              text: l.split(" - ")[1] || l,
-              type: l.toLowerCase().includes("error") || l.toLowerCase().includes("failed") ? "error" : "info",
-            })),
+            resultsCollected: d.resultsCollected || 0,
+            logs: (d.logs || []).map((l) => {
+              if (typeof l === "object" && l.text) return l;
+              const str = String(l);
+              const parts = str.split(" - ");
+              return {
+                time: parts[0] || "10:00:00",
+                text: parts[1] || str,
+                type: str.toLowerCase().includes("error") || str.toLowerCase().includes("failed") ? "error" : "info",
+              };
+            }),
           }));
           setJobs(mapped);
         }
       })
       .catch(() => {});
-  }, []);
-
-  const handleRunJob = (e) => {
-    e.preventDefault();
-    const now = new Date();
-    const timeStr = now.toTimeString().split(" ")[0];
-    const newId = `JOB-${Math.floor(1000 + Math.random() * 9000)}`;
-
-    const newJob = {
-      jobId: newId,
-      sourceWebsite: newJobSource,
-      type: newJobType,
-      startTime: timeStr,
-      duration: "Running",
-      status: "Running",
-      resultsCollected: 0,
-      logs: [
-        { time: timeStr, text: `Job manually triggered by administrator`, type: "info" },
-        { time: timeStr, text: `Connecting to ${newJobSource} endpoints...`, type: "info" },
-      ],
-    };
-
-    setJobs((prev) => [newJob, ...prev]);
-    addToast(`Job ${newId} started on ${newJobSource}.`, "info");
-    setRunModalOpen(false);
-
-    // Auto complete after 3s
-    setTimeout(() => {
-      setJobs((prev) =>
-        prev.map((j) =>
-          j.jobId === newId
-            ? {
-                ...j,
-                status: "Completed",
-                duration: "2.8s",
-                resultsCollected: 32,
-                logs: [
-                  ...j.logs,
-                  { time: new Date().toTimeString().split(" ")[0], text: "Data parsed and normalized successfully.", type: "success" },
-                ],
-              }
-            : j
-        )
-      );
-      addToast(`Job ${newId} completed successfully!`, "success");
-    }, 3000);
   };
 
-  const handleRetryJob = (jobId) => {
-    addToast(`Retrying job ${jobId}...`, "info");
-    setJobs((prev) =>
-      prev.map((j) =>
-        j.jobId === jobId
-          ? {
-              ...j,
-              status: "Running",
-              duration: "Running",
-              logs: [
-                ...j.logs,
-                { time: new Date().toTimeString().split(" ")[0], text: "Retry initiated by admin.", type: "info" },
-              ],
-            }
-          : j
-      )
-    );
+  useEffect(() => {
+    loadJobs();
+  }, []);
 
-    setTimeout(() => {
+  const handleRunJob = async (e) => {
+    e.preventDefault();
+    setRunModalOpen(false);
+
+    try {
+      const created = await adminPost("/admin/jobs/run", {
+        source: newJobSource,
+        type: newJobType,
+      });
+
+      const newJob = {
+        jobId: created.jobId || created.id,
+        sourceWebsite: created.sourceWebsite || created.source || newJobSource,
+        type: created.type || newJobType,
+        startTime: created.startTime || created.started || new Date().toLocaleTimeString(),
+        duration: created.duration || "Running",
+        status: created.status || "Running",
+        resultsCollected: created.resultsCollected || 0,
+        logs: Array.isArray(created.logs) && created.logs.length > 0
+          ? created.logs
+          : [
+              { time: new Date().toLocaleTimeString(), text: "Job initiated by administrator", type: "info" },
+              { time: new Date().toLocaleTimeString(), text: `Connecting to ${newJobSource} endpoints...`, type: "info" },
+            ],
+      };
+
+      setJobs((prev) => [newJob, ...prev]);
+      addToast(`Job ${newJob.jobId} started on ${newJob.sourceWebsite}.`, "info");
+    } catch (err) {
+      addToast(err.message || "Failed to start background job", "error");
+    }
+  };
+
+  const handleRetryJob = async (jobId) => {
+    addToast(`Retrying job ${jobId}...`, "info");
+    try {
+      await adminPost(`/admin/jobs/${jobId}/retry`);
       setJobs((prev) =>
         prev.map((j) =>
           j.jobId === jobId
             ? {
                 ...j,
-                status: "Completed",
-                duration: "3.1s",
-                resultsCollected: 28,
+                status: "Running",
+                duration: "Running",
                 logs: [
-                  ...j.logs,
-                  { time: new Date().toTimeString().split(" ")[0], text: "Connection recovered. Scraping completed.", type: "success" },
+                  ...(j.logs || []),
+                  { time: new Date().toLocaleTimeString(), text: "Retry initiated by administrator.", type: "info" },
                 ],
               }
             : j
         )
       );
-      addToast(`Job ${jobId} finished with status Completed.`, "success");
-    }, 2500);
+      addToast(`Job ${jobId} restart dispatched.`, "success");
+    } catch (err) {
+      addToast(err.message || "Failed to retry job", "error");
+    }
   };
 
-  const handleCancelJob = (jobId) => {
-    setJobs((prev) =>
-      prev.map((j) =>
-        j.jobId === jobId
-          ? {
-              ...j,
-              status: "Failed",
-              duration: "Cancelled",
-              logs: [
-                ...j.logs,
-                { time: new Date().toTimeString().split(" ")[0], text: "Job cancelled by administrator.", type: "error" },
-              ],
-            }
-          : j
-      )
-    );
-    addToast(`Job ${jobId} was cancelled.`, "warning");
+  const handleCancelJob = async (jobId) => {
+    try {
+      await adminPost(`/admin/jobs/${jobId}/cancel`);
+      setJobs((prev) =>
+        prev.map((j) =>
+          j.jobId === jobId
+            ? {
+                ...j,
+                status: "Failed",
+                duration: "Cancelled",
+                logs: [
+                  ...(j.logs || []),
+                  { time: new Date().toLocaleTimeString(), text: "Job cancelled by administrator.", type: "error" },
+                ],
+              }
+            : j
+        )
+      );
+      addToast(`Job ${jobId} was cancelled.`, "warning");
+    } catch (err) {
+      addToast(err.message || "Failed to cancel job", "error");
+    }
   };
 
   const columns = [

@@ -22,6 +22,7 @@ export default function AdminLayout() {
 
         {/* Dynamic Page Outlet */}
         <main
+          className="adm-main-content"
           style={{
             flex: 1,
             padding: "28px 32px 60px",

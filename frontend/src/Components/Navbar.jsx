@@ -1,37 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import {
   FiSearch, FiHeart, FiChevronDown, FiLogOut,
-  FiSettings, FiMenu, FiSun, FiMoon
+  FiSettings, FiMenu, FiSun, FiMoon, FiShield
 } from "react-icons/fi";
 import Notification from "./Notification";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar({ onMenuToggle }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user: authUser, isAuthenticated, logout } = useAuth();
   const [search, setSearch] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState(() => {
     try { return localStorage.getItem("profilePhoto") || null; } catch { return null; }
   });
   const userMenuRef = useRef(null);
 
+  const user = authUser;
+
   useEffect(() => {
     const load = () => {
-      try {
-        const raw = localStorage.getItem("user");
-        if (raw) setUser(JSON.parse(raw));
-      } catch { setUser(null); }
       try {
         setProfilePhoto(localStorage.getItem("profilePhoto") || null);
       } catch {}
     };
     load();
-    window.addEventListener("user-profile-updated", load);
     window.addEventListener("profile-photo-updated", load);
     return () => {
-      window.removeEventListener("user-profile-updated", load);
       window.removeEventListener("profile-photo-updated", load);
     };
   }, []);
@@ -77,18 +74,12 @@ export default function Navbar({ onMenuToggle }) {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("searchHistory");
-    localStorage.removeItem("recentProducts");
-    localStorage.removeItem("wishlistItems");
-    localStorage.removeItem("price_scout_notifications");
-    localStorage.removeItem("profilePhoto");
+  const handleLogout = async () => {
+    setUserMenuOpen(false);
+    await logout();
     navigate("/");
   };
 
-  
   const [theme, setTheme] = useState(() => {
     try { return localStorage.getItem("theme") || "dark"; } catch { return "dark"; }
   });
@@ -100,9 +91,14 @@ export default function Navbar({ onMenuToggle }) {
 
   const toggleTheme = () => setTheme(t => t === "dark" ? "light" : "dark");
 
-  const initials = user?.name
-    ? user.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)
-    : "?";
+  const displayName = user?.name || user?.fullName || "User";
+  const initials = displayName
+    .split(" ")
+    .filter(Boolean)
+    .map(n => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2) || "?";
 
   return (
     <header style={{
@@ -115,7 +111,7 @@ export default function Navbar({ onMenuToggle }) {
       gap: "clamp(8px, 2vw, 16px)",
       position: "sticky",
       top: 0,
-      zIndex: 50,
+      zIndex: 100,
       width: "100%",
       maxWidth: "100vw",
       boxSizing: "border-box"
@@ -191,105 +187,124 @@ export default function Navbar({ onMenuToggle }) {
         </button>
 
         {}
-        <div style={{ position: "relative" }} ref={userMenuRef}>
-          <button
-            onClick={() => setUserMenuOpen(o => !o)}
+        {!isAuthenticated ? (
+          <Link
+            to="/login"
+            className="btn btn-primary btn-sm"
             style={{
-              display: "flex", alignItems: "center", gap: "10px",
-              padding: "6px 12px 6px 6px",
-              background: userMenuOpen ? "var(--bg)" : "transparent",
-              border: "1px solid",
-              borderColor: userMenuOpen ? "var(--border)" : "transparent",
               borderRadius: "var(--radius-full)",
-              cursor: "pointer",
-              transition: "var(--transition)"
+              padding: "7px 16px",
+              fontSize: 13,
+              fontWeight: 600,
+              textDecoration: "none",
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
             }}
           >
-            {profilePhoto ? (
-              <img src={profilePhoto} alt={user?.name || "User"}
-                style={{ width: 32, height: 32, borderRadius: "50%", objectFit: "cover" }} />
-            ) : (
+            Sign In
+          </Link>
+        ) : (
+          <div style={{ position: "relative" }} ref={userMenuRef}>
+            <button
+              onClick={() => setUserMenuOpen(o => !o)}
+              style={{
+                display: "flex", alignItems: "center", gap: "10px",
+                padding: "6px 12px 6px 6px",
+                background: userMenuOpen ? "var(--bg)" : "transparent",
+                border: "1px solid",
+                borderColor: userMenuOpen ? "var(--border)" : "transparent",
+                borderRadius: "var(--radius-full)",
+                cursor: "pointer",
+                transition: "var(--transition)"
+              }}
+            >
+              {profilePhoto ? (
+                <img src={profilePhoto} alt={displayName}
+                  style={{ width: 32, height: 32, borderRadius: "50%", objectFit: "cover" }} />
+              ) : (
+                <div style={{
+                  width: 32, height: 32, borderRadius: "50%",
+                  background: "var(--primary)", color: "white",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 13, fontWeight: 700
+                }}>
+                  {initials}
+                </div>
+              )}
+              <div style={{ textAlign: "left", display: "flex", flexDirection: "column" }} className="navbar-username">
+                <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text-900)", lineHeight: 1.2 }}>
+                  {displayName.split(" ")[0]}
+                </span>
+                <span style={{ fontSize: 11, color: user?.isAdmin ? "var(--primary)" : "var(--text-400)", lineHeight: 1.2, fontWeight: user?.isAdmin ? 600 : 400 }}>{user?.isAdmin ? "Administrator" : "Member"}</span>
+              </div>
+              <FiChevronDown size={14} style={{
+                color: "var(--text-400)",
+                transform: userMenuOpen ? "rotate(180deg)" : "none",
+                transition: "var(--transition)"
+              }} />
+            </button>
+
+            {userMenuOpen && (
               <div style={{
-                width: 32, height: 32, borderRadius: "50%",
-                background: "var(--primary)", color: "white",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 13, fontWeight: 700
+                position: "absolute", top: "calc(100% + 8px)", right: 0,
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
+                borderRadius: "var(--radius-lg)",
+                boxShadow: "var(--shadow-lg)",
+                width: 200,
+                overflow: "hidden",
+                animation: "fadeIn 0.15s ease",
+                zIndex: 100,
               }}>
-                {initials}
+                <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)" }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-900)" }}>
+                    {displayName}
+                  </div>
+                  <div style={{ fontSize: 11, color: "var(--text-400)", marginTop: 2 }}>
+                    {user?.email || ""}
+                  </div>
+                </div>
+                {[
+                  ...(user?.isAdmin ? [{ label: "Admin Dashboard", icon: FiShield, path: "/admin/dashboard" }] : []),
+                  { label: "My Wishlist", icon: FiHeart, path: "/wishlist" },
+                  { label: "Settings", icon: FiSettings, path: "/settings" },
+                ].map(item => (
+                  <button key={item.label}
+                    onClick={() => { navigate(item.path); setUserMenuOpen(false); }}
+                    style={{
+                      width: "100%", display: "flex", alignItems: "center", gap: 10,
+                      padding: "10px 16px", background: "none", border: "none",
+                      cursor: "pointer", fontSize: 13, color: "var(--text-700)",
+                      transition: "var(--transition)", textAlign: "left"
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = "var(--bg)"}
+                    onMouseLeave={e => e.currentTarget.style.background = "none"}
+                  >
+                    <item.icon size={15} style={{ color: "var(--text-400)" }} />
+                    {item.label}
+                  </button>
+                ))}
+                <div style={{ borderTop: "1px solid var(--border)" }}>
+                  <button
+                    onClick={handleLogout}
+                    style={{
+                      width: "100%", display: "flex", alignItems: "center", gap: 10,
+                      padding: "10px 16px", background: "none", border: "none",
+                      cursor: "pointer", fontSize: 13, color: "var(--danger)",
+                      transition: "var(--transition)", textAlign: "left"
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = "var(--danger-light)"}
+                    onMouseLeave={e => e.currentTarget.style.background = "none"}
+                  >
+                    <FiLogOut size={15} />
+                    Sign Out
+                  </button>
+                </div>
               </div>
             )}
-            <div style={{ textAlign: "left", display: "flex", flexDirection: "column" }} className="navbar-username">
-              <span style={{ fontSize: 13, fontWeight: 600, color: "var(--text-900)", lineHeight: 1.2 }}>
-                {user?.name?.split(" ")[0] || "User"}
-              </span>
-              <span style={{ fontSize: 11, color: "var(--text-400)", lineHeight: 1.2 }}>Member</span>
-            </div>
-            <FiChevronDown size={14} style={{
-              color: "var(--text-400)",
-              transform: userMenuOpen ? "rotate(180deg)" : "none",
-              transition: "var(--transition)"
-            }} />
-          </button>
-
-          {}
-          {userMenuOpen && (
-            <div style={{
-              position: "absolute", top: "calc(100% + 8px)", right: 0,
-              background: "var(--surface)",
-              border: "1px solid var(--border)",
-              borderRadius: "var(--radius-lg)",
-              boxShadow: "var(--shadow-lg)",
-              width: 200,
-              overflow: "hidden",
-              animation: "fadeIn 0.15s ease",
-              zIndex: 100,
-            }}>
-              <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--border)" }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "var(--text-900)" }}>
-                  {user?.name || "User"}
-                </div>
-                <div style={{ fontSize: 11, color: "var(--text-400)", marginTop: 2 }}>
-                  {user?.email || ""}
-                </div>
-              </div>
-              {[
-                { label: "My Wishlist", icon: FiHeart, path: "/wishlist" },
-                { label: "Settings", icon: FiSettings, path: "/settings" },
-              ].map(item => (
-                <button key={item.label}
-                  onClick={() => { navigate(item.path); setUserMenuOpen(false); }}
-                  style={{
-                    width: "100%", display: "flex", alignItems: "center", gap: 10,
-                    padding: "10px 16px", background: "none", border: "none",
-                    cursor: "pointer", fontSize: 13, color: "var(--text-700)",
-                    transition: "var(--transition)", textAlign: "left"
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = "var(--bg)"}
-                  onMouseLeave={e => e.currentTarget.style.background = "none"}
-                >
-                  <item.icon size={15} style={{ color: "var(--text-400)" }} />
-                  {item.label}
-                </button>
-              ))}
-              <div style={{ borderTop: "1px solid var(--border)" }}>
-                <button
-                  onClick={handleLogout}
-                  style={{
-                    width: "100%", display: "flex", alignItems: "center", gap: 10,
-                    padding: "10px 16px", background: "none", border: "none",
-                    cursor: "pointer", fontSize: 13, color: "var(--danger)",
-                    transition: "var(--transition)", textAlign: "left"
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.background = "var(--danger-light)"}
-                  onMouseLeave={e => e.currentTarget.style.background = "none"}
-                >
-                  <FiLogOut size={15} />
-                  Sign Out
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <style>{`

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Settings,
   Key,
@@ -14,7 +14,7 @@ import {
   Globe,
 } from "lucide-react";
 import { useAdminToast } from "../context/AdminToastContext";
-import { API_BASE_URL } from "../../utils/api";
+import { fetchAdminJson, adminPost } from "../utils/adminApi";
 
 export default function AdminSettings() {
   const { addToast } = useAdminToast();
@@ -28,22 +28,39 @@ export default function AdminSettings() {
     smtpPass: "••••••••••••••••",
   });
 
+  const [generalSettings, setGeneralSettings] = useState({
+    platformName: "Comparely",
+    brandTagline: "Compare • Choose • Save",
+    currencyCode: "INR (₹)",
+    supportEmail: "geddadaleelasatyavaraprasad@gmail.com",
+  });
+
   const [editingKey, setEditingKey] = useState(null);
   const [tempKeyValue, setTempKeyValue] = useState("");
+
+  useEffect(() => {
+    fetchAdminJson("/admin/settings")
+      .then((data) => {
+        if (data && typeof data === "object") {
+          setGeneralSettings((prev) => ({
+            ...prev,
+            platformName: data.platformName || prev.platformName,
+            brandTagline: data.brandTagline || prev.brandTagline,
+            currencyCode: data.currencyCode || prev.currencyCode,
+            supportEmail: data.supportEmail || prev.supportEmail,
+          }));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleTestConnection = async (service) => {
     setTestingService(service);
     try {
-      const res = await fetch(`${API_BASE_URL}/admin/test-connection`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ service }),
-      });
-      const contentType = res.headers.get("content-type") || "";
-      const data = contentType.includes("application/json") ? await res.json() : {};
+      const data = await adminPost("/admin/test-connection", { service });
       addToast(data.message || `${service} connection test succeeded!`, "success");
     } catch (err) {
-      addToast(`Connection verified for ${service}. Status: Optimal.`, "success");
+      addToast(err.message || `Connection error for ${service}.`, "error");
     } finally {
       setTestingService(null);
     }
@@ -54,13 +71,27 @@ export default function AdminSettings() {
     setTempKeyValue("");
   };
 
-  const handleSaveKey = (keyName) => {
+  const handleSaveKey = async (keyName) => {
     if (tempKeyValue.trim()) {
-      setKeys((prev) => ({ ...prev, [keyName]: "••••••••••••••••••••••••••••••••" }));
-      addToast(`${keyName.toUpperCase()} key updated and encrypted successfully.`, "success");
+      try {
+        await adminPost("/admin/settings", { [keyName]: tempKeyValue.trim() });
+        setKeys((prev) => ({ ...prev, [keyName]: "••••••••••••••••••••••••••••••••" }));
+        addToast(`${keyName.toUpperCase()} key updated and encrypted successfully.`, "success");
+      } catch (err) {
+        addToast(err.message || "Failed to update API key", "error");
+      }
     }
     setEditingKey(null);
     setTempKeyValue("");
+  };
+
+  const handleSaveGeneral = async () => {
+    try {
+      await adminPost("/admin/settings", generalSettings);
+      addToast("Platform preferences updated successfully.", "success");
+    } catch (err) {
+      addToast(err.message || "Failed to save settings", "error");
+    }
   };
 
   const TABS = [
@@ -243,39 +274,59 @@ export default function AdminSettings() {
           <h3 style={{ fontSize: 16, fontWeight: 700, fontFamily: "var(--font-heading, 'Playfair Display', serif)", color: "var(--adm-text, #f4efe8)", marginBottom: 16 }}>
             General Platform Settings
           </h3>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: 20 }}>
             <div>
               <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: "var(--adm-muted, #888888)", display: "block", marginBottom: 6 }}>
                 Platform Display Name
               </label>
-              <input type="text" defaultValue="Comparely" className="adm-input" />
+              <input
+                type="text"
+                value={generalSettings.platformName}
+                onChange={(e) => setGeneralSettings((p) => ({ ...p, platformName: e.target.value }))}
+                className="adm-input"
+              />
             </div>
 
             <div>
               <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: "var(--adm-muted, #888888)", display: "block", marginBottom: 6 }}>
                 Brand Tagline
               </label>
-              <input type="text" defaultValue="Compare • Choose • Save" className="adm-input" />
+              <input
+                type="text"
+                value={generalSettings.brandTagline}
+                onChange={(e) => setGeneralSettings((p) => ({ ...p, brandTagline: e.target.value }))}
+                className="adm-input"
+              />
             </div>
 
             <div>
               <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: "var(--adm-muted, #888888)", display: "block", marginBottom: 6 }}>
                 Default Currency Code
               </label>
-              <input type="text" defaultValue="INR (₹)" className="adm-input" />
+              <input
+                type="text"
+                value={generalSettings.currencyCode}
+                onChange={(e) => setGeneralSettings((p) => ({ ...p, currencyCode: e.target.value }))}
+                className="adm-input"
+              />
             </div>
 
             <div>
               <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", color: "var(--adm-muted, #888888)", display: "block", marginBottom: 6 }}>
                 Support Email
               </label>
-              <input type="email" defaultValue="geddadaleelasatyavaraprasad@gmail.com" className="adm-input" />
+              <input
+                type="email"
+                value={generalSettings.supportEmail}
+                onChange={(e) => setGeneralSettings((p) => ({ ...p, supportEmail: e.target.value }))}
+                className="adm-input"
+              />
             </div>
           </div>
 
           <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end" }}>
             <button
-              onClick={() => addToast("Platform preferences updated.", "success")}
+              onClick={handleSaveGeneral}
               className="adm-btn adm-btn-primary"
             >
               Save General Settings
@@ -339,9 +390,11 @@ export default function AdminSettings() {
             </div>
             <button
               onClick={() => handleTestConnection("database")}
+              disabled={testingService === "database"}
               className="adm-btn adm-btn-primary"
             >
-              Verify DB Health
+              <RefreshCw size={13} className={testingService === "database" ? "spin-animation" : ""} />
+              {testingService === "database" ? "Verifying..." : "Verify DB Health"}
             </button>
           </div>
 
@@ -352,14 +405,14 @@ export default function AdminSettings() {
               backgroundColor: "rgba(255, 255, 255, 0.03)",
               border: "1px solid var(--adm-border, #222222)",
               display: "grid",
-              gridTemplateColumns: "1fr 1fr",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
               gap: 16,
               fontSize: 13,
             }}
           >
             <div>
               <span style={{ color: "var(--adm-muted, #888888)", display: "block" }}>Database Host:</span>
-              <strong style={{ color: "var(--adm-text, #f4efe8)" }}>127.0.0.1 (Local MongoDB Fallback)</strong>
+              <strong style={{ color: "var(--adm-text, #f4efe8)" }}>127.0.0.1 (Local MongoDB / Replica)</strong>
             </div>
             <div>
               <span style={{ color: "var(--adm-muted, #888888)", display: "block" }}>Connection State:</span>

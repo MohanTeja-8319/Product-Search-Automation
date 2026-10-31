@@ -19,6 +19,7 @@ import { getDirectStoreUrl } from "../utils/storeHelper";
 
 const ProductDetails = () => {
   const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { id } = useParams();
   const location = useLocation();
 
@@ -79,10 +80,10 @@ const ProductDetails = () => {
 
   return (
     <div className="bg-[#f8fafc] min-h-screen text-gray-800 transition-colors duration-200">
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="ml-0 lg:ml-72 flex flex-col min-h-screen">
-        <Navbar />
+        <Navbar onMenuToggle={() => setSidebarOpen((o) => !o)} />
 
         <div className="flex-1 pb-28">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">

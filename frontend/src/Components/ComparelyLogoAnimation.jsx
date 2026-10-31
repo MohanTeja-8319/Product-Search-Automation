@@ -675,61 +675,46 @@ export default function ComparelyLogoAnimation({
           </div>
         </div>
 
-        {/* Top Control Actions */}
-        {showControls && (
+        {/* Top Control Actions (Standalone Theatre Mode Only) */}
+        {showControls && standalone && (
           <div className="comparely-anim-actions">
-            {!standalone && (
-              <button
-                type="button"
-                onClick={handleSkip}
-                className="comparely-btn-skip"
-                title="Skip straight to Comparely home"
-              >
-                Skip Intro &rarr;
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={handleReplay}
+              className="comparely-btn-replay"
+              title="Replay 60fps logo animation"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M1 4v6h6" />
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+              </svg>
+              Replay
+            </button>
 
-            {standalone && (
-              <>
-                <button
-                  type="button"
-                  onClick={handleReplay}
-                  className="comparely-btn-replay"
-                  title="Replay 60fps logo animation"
-                >
+            <button
+              type="button"
+              onClick={handleRecordVideo}
+              disabled={isRecording}
+              className="comparely-btn-skip"
+              style={{
+                color: isRecording ? "#4F46E5" : "#0F172A",
+                fontWeight: 700
+              }}
+              title="Export high-resolution 1920x1080 60fps video"
+            >
+              {isRecording ? (
+                `Exporting 1080p: ${recordProgress}%`
+              ) : (
+                <>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M1 4v6h6" />
-                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
                   </svg>
-                  Replay
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleRecordVideo}
-                  disabled={isRecording}
-                  className="comparely-btn-skip"
-                  style={{
-                    color: isRecording ? "#4F46E5" : "#0F172A",
-                    fontWeight: 700
-                  }}
-                  title="Export high-resolution 1920x1080 60fps video"
-                >
-                  {isRecording ? (
-                    `Exporting 1080p: ${recordProgress}%`
-                  ) : (
-                    <>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="7 10 12 15 17 10" />
-                        <line x1="12" y1="15" x2="12" y2="3" />
-                      </svg>
-                      Download 1080p Video
-                    </>
-                  )}
-                </button>
-              </>
-            )}
+                  Download 1080p Video
+                </>
+              )}
+            </button>
           </div>
         )}
 

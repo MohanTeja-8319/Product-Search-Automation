@@ -734,3 +734,284 @@ body {
   font-size: 14px;
 }
 
+
+
+/* ==========================================================================
+   ACCESSIBILITY & FOCUS MANAGEMENT (ANDROID, MOBILE & DESKTOP)
+   ========================================================================== */
+
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--primary) !important;
+  outline-offset: 2px !important;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Form inputs & input groups - completely remove jarring thick black borders / outlines */
+input,
+select,
+textarea,
+.input,
+.input-group input,
+.adm-input {
+  outline: none !important;
+}
+
+input:focus,
+input:focus-visible,
+select:focus,
+select:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+.input:focus,
+.input:focus-visible,
+.input-group input:focus,
+.input-group input:focus-visible,
+.adm-input:focus,
+.adm-input:focus-visible {
+  outline: none !important;
+}
+
+.input-group .input,
+.input-group input,
+.input-group .input:focus,
+.input-group input:focus,
+.input-group .input:focus-visible,
+.input-group input:focus-visible {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+button,
+a,
+input,
+select,
+textarea,
+[role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="password"],
+  input[type="email"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+.alert-banner,
+.alert-box,
+[role="alert"] {
+  max-width: 100% !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+
+/* ==========================================================================
+   Storefront Notifications - Mobile & App (PWA) Responsiveness
+   ========================================================================== */
+.notification-backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .notification-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    z-index: 998;
+    animation: fadeIn 0.15s ease;
+  }
+
+  .notification-dropdown {
+    position: fixed !important;
+    top: calc(var(--navbar-height, 72px) + 8px) !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    max-width: calc(100vw - 20px) !important;
+    max-height: calc(100dvh - var(--navbar-height, 72px) - 20px) !important;
+    margin: 0 auto !important;
+    border-radius: 16px !important;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+    z-index: 1000 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  .notification-list {
+    max-height: calc(100dvh - var(--navbar-height, 72px) - 155px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .notification-header {
+    padding: 12px 14px !important;
+  }
+
+  .notification-filters {
+    padding: 6px 12px !important;
+  }
+
+  .notification-item {
+    padding: 10px 12px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .notification-dropdown {
+    left: 6px !important;
+    right: 6px !important;
+    max-width: calc(100vw - 12px) !important;
+  }
+
+  .notification-header span {
+    font-size: 13px !important;
+  }
+
+  .notification-item {
+    gap: 8px !important;
+    padding: 10px 8px !important;
+  }
+}
+
+
+/* ==========================================================================
+   Help & Support Search Bar - Mobile & Responsive Styling
+   ========================================================================== */
+.support-search-form {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border-radius: var(--radius-full);
+  padding: 5px 6px 5px 18px;
+  border: 1.5px solid var(--border);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+.support-search-form:hover {
+  border-color: var(--text-400);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.support-search-form:focus-within {
+  border-color: var(--primary) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.09), 0 0 0 2px var(--primary-light) !important;
+}
+
+.support-search-icon {
+  flex-shrink: 0;
+  color: var(--text-400);
+  transition: color 0.2s ease;
+}
+
+.support-search-form:focus-within .support-search-icon {
+  color: var(--primary);
+}
+
+.support-search-input {
+  flex: 1;
+  min-width: 0 !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  padding: 10px 12px;
+  font-size: 15px;
+  background: transparent !important;
+  color: var(--text-900);
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.support-search-input::placeholder {
+  color: var(--text-400);
+  opacity: 0.85;
+}
+
+.support-clear-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  color: var(--text-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: var(--transition);
+  margin-right: 4px;
+}
+
+.support-clear-btn:hover {
+  background: var(--bg);
+  color: var(--text-700);
+}
+
+.support-search-btn {
+  padding: 10px 22px !important;
+  border-radius: var(--radius-full) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+}
+
+@media (max-width: 640px) {
+  .support-search-form {
+    padding: 4px 4px 4px 14px !important;
+  }
+
+  .support-search-input {
+    padding: 8px 8px !important;
+    font-size: 14px !important;
+  }
+
+  .support-search-btn {
+    padding: 8px 16px !important;
+    font-size: 13px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .support-search-form {
+    padding: 3px 4px 3px 10px !important;
+  }
+
+  .support-search-input {
+    padding: 7px 6px !important;
+    font-size: 13px !important;
+  }
+
+  .support-search-btn {
+    padding: 7px 12px !important;
+    font-size: 12px !important;
+  }
+}

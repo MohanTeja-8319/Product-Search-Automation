@@ -23,6 +23,9 @@ import PriceAlerts from "./Components/PriceAlertsMain";
 import LogoAnimationPage from "./Pages/LogoAnimationPage";
 import PwaStatusBanner from "./Components/PwaStatusBanner";
 
+// User Auth Context & Protected Routes
+import { AuthProvider, ProtectedRoute, PublicOnlyRoute } from "./context/AuthContext";
+
 // Admin Contexts
 import { AdminAuthProvider, AdminProtectedRoute } from "./admin/context/AdminAuthContext";
 import { AdminToastProvider } from "./admin/context/AdminToastContext";
@@ -49,31 +52,48 @@ import AdminLogs from "./admin/pages/AdminLogs";
 function App() {
   return (
     <BrowserRouter>
-      <Toaster position="top-center" toastOptions={{ style: { background: '#333', color: '#fff', borderRadius: '8px' } }} />
+      <Toaster
+        position="top-center"
+        containerStyle={{ top: 24, left: 12, right: 12 }}
+        toastOptions={{
+          style: {
+            background: 'var(--surface, #1e293b)',
+            color: 'var(--text-900, #f8fafc)',
+            border: '1px solid var(--border, #334155)',
+            borderRadius: '12px',
+            fontSize: '13.5px',
+            maxWidth: 'min(420px, 92vw)',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.4)',
+            padding: '12px 16px',
+            fontFamily: "'Inter', sans-serif"
+          }
+        }}
+      />
       <PwaStatusBanner />
-      <AdminAuthProvider>
-        <AdminToastProvider>
-          <AdminDataProvider>
-            <Routes>
-              {/* User Storefront Routes */}
-              <Route path="/" element={<Landing />} />
-              <Route path="/intro" element={<LogoAnimationPage />} />
-              <Route path="/logo-animation" element={<LogoAnimationPage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/verify-otp" element={<VerifyOtp />} />
-              <Route path="/verify-code" element={<VerifyOtp />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/search" element={<SearchPage />} />
-              <Route path="/wishlist" element={<Wishlist />} />
-              <Route path="/comparison" element={<Comparison />} />
-              <Route path="/compare" element={<Comparison />} />
-              <Route path="/logout" element={<Logout />} />
-              <Route path="/categories" element={<CategoriesPage />} />
-              <Route path="/history" element={<HistoryPage />} />
-              <Route path="/settings" element={<Settings />} />
+      <AuthProvider>
+        <AdminAuthProvider>
+          <AdminToastProvider>
+            <AdminDataProvider>
+              <Routes>
+                {/* User Storefront Routes */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/intro" element={<LogoAnimationPage />} />
+                <Route path="/logo-animation" element={<LogoAnimationPage />} />
+                <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
+                <Route path="/register" element={<PublicOnlyRoute><Register /></PublicOnlyRoute>} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/verify-otp" element={<VerifyOtp />} />
+                <Route path="/verify-code" element={<VerifyOtp />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/search" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
+                <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="/comparison" element={<Comparison />} />
+                <Route path="/compare" element={<Comparison />} />
+                <Route path="/logout" element={<Logout />} />
+                <Route path="/categories" element={<CategoriesPage />} />
+                <Route path="/history" element={<HistoryPage />} />
+                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
               <Route path="/support" element={<HelpSupport />} />
               <Route path="/product/:id" element={<ProductDetails />} />
               <Route path="/comparison/:productName" element={<ComparisonPage />} />
@@ -117,6 +137,7 @@ function App() {
           </AdminDataProvider>
         </AdminToastProvider>
       </AdminAuthProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

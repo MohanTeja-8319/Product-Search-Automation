@@ -72,14 +72,14 @@ export default function GlobalSearchModal({ onClose = () => {} }) {
         alignItems: "flex-start",
         justifyContent: "center",
         zIndex: 100,
-        padding: "80px 20px 20px",
+        padding: "max(16px, env(safe-area-inset-top, 16px)) 16px 20px",
       }}
       onClick={onClose}
     >
       <div
         style={{
           width: "100%",
-          maxWidth: 600,
+          maxWidth: "min(600px, calc(100vw - 24px))", maxHeight: "calc(100dvh - 32px)", display: "flex", flexDirection: "column",
           backgroundColor: "#FFFFFF",
           borderRadius: 16,
           boxShadow: "0 25px 50px -12px rgba(15, 23, 42, 0.25)",

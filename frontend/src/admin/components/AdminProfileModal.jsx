@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   X,
   Shield,
@@ -17,14 +17,29 @@ export default function AdminProfileModal({ onClose = () => {} }) {
   const [name, setName] = useState(adminUser?.name || "Mohan Teja");
   const [email, setEmail] = useState(adminUser?.email || "admin@comparely.io");
   const [savedMessage, setSavedMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    if (updateProfile) {
-      updateProfile({ name, email });
+  useEffect(() => {
+    if (adminUser) {
+      if (adminUser.name) setName(adminUser.name);
+      if (adminUser.email) setEmail(adminUser.email);
     }
-    setSavedMessage("Admin credentials updated successfully!");
-    setTimeout(() => setSavedMessage(""), 3000);
+  }, [adminUser]);
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      if (updateProfile) {
+        await updateProfile({ name: name.trim(), email: email.trim() });
+      }
+      setSavedMessage("Admin credentials updated successfully!");
+      setTimeout(() => setSavedMessage(""), 3000);
+    } catch (err) {
+      console.error("Failed to update profile", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -230,8 +245,8 @@ export default function AdminProfileModal({ onClose = () => {} }) {
             >
               Cancel
             </button>
-            <button type="submit" className="adm-btn adm-btn-primary">
-              Save Changes
+            <button type="submit" disabled={isSubmitting} className="adm-btn adm-btn-primary">
+              {isSubmitting ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>

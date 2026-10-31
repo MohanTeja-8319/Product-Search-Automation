@@ -16,6 +16,7 @@ import {
   deleteAccount as deleteAccountApi,
   updateStoredUser,
 } from "../utils/api";
+import { logoutUser } from "../context/AuthContext";
 import { enableBrowserPush, disableBrowserPush, getExistingPushSubscription } from "../utils/push";
 
 
@@ -176,9 +177,8 @@ export default function Settings() {
     setDeletingAccount(true);
     try {
       await deleteAccountApi({ password: deletePassword });
-      localStorage.clear(); sessionStorage.clear();
-      window.dispatchEvent(new Event("user-profile-updated"));
-      navigate("/login");
+      await logoutUser().catch(() => {});
+      navigate("/login", { replace: true });
     } catch (err) { setDeleteError(err.message); } finally { setDeletingAccount(false); }
   };
 

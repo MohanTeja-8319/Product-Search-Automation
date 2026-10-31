@@ -63,11 +63,13 @@ export default function Notification() {
 
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside, { passive: true });
       document.addEventListener("keydown", handleEscape);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
       document.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen]);
@@ -96,12 +98,12 @@ export default function Notification() {
   };
 
   return (
-    <div style={{ position: "relative" }} ref={dropdownRef}>
+    <div style={{ position: "relative" }} ref={dropdownRef} className="notification-wrapper">
       {/* Bell Button */}
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="btn btn-ghost"
+        className="btn btn-ghost notification-bell-btn"
         style={{
           padding: "10px",
           borderRadius: "var(--radius-full)",
@@ -137,9 +139,20 @@ export default function Notification() {
         )}
       </button>
 
+      {/* Backdrop for mobile / app overlay */}
+      {isOpen && (
+        <div
+          className="notification-backdrop"
+          onClick={() => setIsOpen(false)}
+          onTouchEnd={() => setIsOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Dropdown Panel */}
       {isOpen && (
         <div
+          className="notification-dropdown"
           style={{
             position: "absolute",
             top: "calc(100% + 8px)",
@@ -152,10 +165,13 @@ export default function Notification() {
             zIndex: 1000,
             overflow: "hidden",
             animation: "fadeIn 0.15s ease",
+            display: "flex",
+            flexDirection: "column",
           }}
         >
           {/* Header */}
           <div
+            className="notification-header"
             style={{
               padding: "14px 18px",
               borderBottom: "1px solid var(--border)",
@@ -163,10 +179,11 @@ export default function Notification() {
               alignItems: "center",
               justifyContent: "space-between",
               background: "var(--surface)",
+              flexShrink: 0,
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text-900)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+              <span style={{ fontSize: 14, fontWeight: 700, color: "var(--text-900)", whiteSpace: "nowrap" }}>
                 Notifications
               </span>
               {unreadCount > 0 && (
@@ -178,6 +195,7 @@ export default function Notification() {
                     borderRadius: "var(--radius-full)",
                     background: "var(--primary-light)",
                     color: "var(--primary)",
+                    whiteSpace: "nowrap",
                   }}
                 >
                   {unreadCount} new
@@ -185,7 +203,7 @@ export default function Notification() {
               )}
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
               {unreadCount > 0 && (
                 <button
                   type="button"
@@ -200,6 +218,7 @@ export default function Notification() {
                     display: "flex",
                     alignItems: "center",
                     gap: 4,
+                    padding: "3px 6px",
                   }}
                   title="Mark all as read"
                 >
@@ -216,6 +235,7 @@ export default function Notification() {
                     fontSize: 11,
                     color: "var(--text-400)",
                     cursor: "pointer",
+                    padding: "3px 6px",
                   }}
                   title="Clear all"
                 >
@@ -230,9 +250,13 @@ export default function Notification() {
                   border: "none",
                   color: "var(--text-400)",
                   cursor: "pointer",
-                  padding: 2,
+                  padding: 4,
                   display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "50%",
                 }}
+                aria-label="Close notifications"
               >
                 <FiX size={16} />
               </button>
@@ -241,12 +265,15 @@ export default function Notification() {
 
           {/* Filter Pills */}
           <div
+            className="notification-filters"
             style={{
               padding: "8px 14px",
               borderBottom: "1px solid var(--border)",
               display: "flex",
               gap: 6,
               background: "var(--bg)",
+              overflowX: "auto",
+              flexShrink: 0,
             }}
           >
             {[
@@ -269,6 +296,8 @@ export default function Notification() {
                     background: active ? "var(--primary)" : "transparent",
                     color: active ? "#fff" : "var(--text-600)",
                     transition: "var(--transition)",
+                    whiteSpace: "nowrap",
+                    flexShrink: 0,
                   }}
                 >
                   {f.label}
@@ -279,9 +308,11 @@ export default function Notification() {
 
           {/* Notifications List */}
           <div
+            className="notification-list"
             style={{
-              maxHeight: 320,
+              maxHeight: 340,
               overflowY: "auto",
+              flex: 1,
             }}
           >
             {filteredNotifications.length > 0 ? (
@@ -293,8 +324,9 @@ export default function Notification() {
                   <div
                     key={item.id}
                     onClick={() => handleItemClick(item)}
+                    className="notification-item"
                     style={{
-                      padding: "12px 16px",
+                      padding: "12px 14px",
                       display: "flex",
                       alignItems: "flex-start",
                       gap: 12,
@@ -351,6 +383,7 @@ export default function Notification() {
                           alignItems: "center",
                           justifyContent: "space-between",
                           gap: 6,
+                          marginBottom: 2,
                         }}
                       >
                         <h4
@@ -377,12 +410,14 @@ export default function Notification() {
                           color: "var(--text-600)",
                           margin: "3px 0 6px",
                           lineHeight: 1.4,
+                          wordBreak: "break-word",
+                          overflowWrap: "anywhere",
                         }}
                       >
                         {item.message}
                       </p>
 
-                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                         {item.discount && (
                           <span
                             style={{
@@ -425,9 +460,13 @@ export default function Notification() {
                           border: "none",
                           color: "var(--text-400)",
                           cursor: "pointer",
-                          padding: 2,
+                          padding: 4,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
                         }}
                         title="Dismiss"
+                        aria-label="Dismiss notification"
                       >
                         <FiX size={13} />
                       </button>
@@ -450,11 +489,13 @@ export default function Notification() {
 
           {/* Footer */}
           <div
+            className="notification-footer"
             style={{
               padding: "10px 16px",
               borderTop: "1px solid var(--border)",
               background: "var(--surface)",
               textAlign: "center",
+              flexShrink: 0,
             }}
           >
             <button
@@ -484,6 +525,78 @@ export default function Notification() {
           </div>
         </div>
       )}
+
+      <style>{`
+        .notification-backdrop {
+          display: none;
+        }
+
+        @media (max-width: 768px) {
+          .notification-backdrop {
+            display: block;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            z-index: 998;
+            animation: fadeIn 0.15s ease;
+          }
+
+          .notification-dropdown {
+            position: fixed !important;
+            top: calc(var(--navbar-height, 72px) + 8px) !important;
+            left: 10px !important;
+            right: 10px !important;
+            width: auto !important;
+            max-width: calc(100vw - 20px) !important;
+            max-height: calc(100dvh - var(--navbar-height, 72px) - 20px) !important;
+            margin: 0 auto !important;
+            border-radius: 16px !important;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+            z-index: 1000 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow: hidden !important;
+          }
+
+          .notification-list {
+            max-height: calc(100dvh - var(--navbar-height, 72px) - 155px) !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+          }
+
+          .notification-header {
+            padding: 12px 14px !important;
+          }
+
+          .notification-filters {
+            padding: 6px 12px !important;
+          }
+
+          .notification-item {
+            padding: 10px 12px !important;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .notification-dropdown {
+            left: 6px !important;
+            right: 6px !important;
+            max-width: calc(100vw - 12px) !important;
+          }
+
+          .notification-header span {
+            font-size: 13px !important;
+          }
+
+          .notification-item {
+            gap: 8px !important;
+            padding: 10px 8px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

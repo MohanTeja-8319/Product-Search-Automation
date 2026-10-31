@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   FiSearch,
   FiHelpCircle,
@@ -105,6 +105,20 @@ export default function HelpSupport() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [openFaq, setOpenFaq] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.innerWidth <= 640;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 640);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -226,22 +240,11 @@ export default function HelpSupport() {
             {/* Interactive Search Bar */}
             <form
               onSubmit={handleSearchSubmit}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                background: "var(--surface)",
-                borderRadius: "var(--radius-full)",
-                padding: "6px 8px 6px 20px",
-                border: "1px solid var(--border)",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                maxWidth: 640,
-                margin: "0 auto",
-              }}
+              className="support-search-form"
             >
               <FiSearch
-                size={20}
-                color="var(--text-400)"
-                style={{ flexShrink: 0 }}
+                size={isMobile ? 18 : 20}
+                className="support-search-icon"
               />
               <input
                 type="text"
@@ -252,16 +255,12 @@ export default function HelpSupport() {
                     setOpenFaq(filteredFaqs[0].id);
                   }
                 }}
-                placeholder="Search topics (e.g., price alerts, delivery, refund, security)..."
-                style={{
-                  flex: 1,
-                  border: "none",
-                  outline: "none",
-                  padding: "12px 14px",
-                  fontSize: 15,
-                  background: "transparent",
-                  color: "var(--text-900)",
-                }}
+                placeholder={
+                  isMobile
+                    ? "Search help topics or FAQs..."
+                    : "Search topics (e.g., price alerts, delivery, refund)..."
+                }
+                className="support-search-input"
               />
 
               {searchQuery && (
@@ -269,24 +268,16 @@ export default function HelpSupport() {
                   type="button"
                   onClick={handleClearSearch}
                   title="Clear search"
-                  style={{
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: "6px 10px",
-                    color: "var(--text-400)",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
+                  className="support-clear-btn"
+                  aria-label="Clear search"
                 >
-                  <FiX size={18} />
+                  <FiX size={16} />
                 </button>
               )}
 
               <button
                 type="submit"
-                className="btn btn-primary btn-pill"
-                style={{ padding: "10px 24px", flexShrink: 0 }}
+                className="btn btn-primary support-search-btn"
               >
                 Search
               </button>
@@ -666,6 +657,127 @@ export default function HelpSupport() {
           </div>
         </div>
       </div>
+      <style>{`
+        .support-search-form {
+          display: flex;
+          align-items: center;
+          background: var(--surface);
+          border-radius: var(--radius-full);
+          padding: 5px 6px 5px 18px;
+          border: 1.5px solid var(--border);
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+          max-width: 640px;
+          width: 100%;
+          margin: 0 auto;
+          box-sizing: border-box;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
+          position: relative;
+        }
+
+        .support-search-form:hover {
+          border-color: var(--text-400);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .support-search-form:focus-within {
+          border-color: var(--primary) !important;
+          box-shadow: 0 4px 18px rgba(0, 0, 0, 0.09), 0 0 0 2px var(--primary-light) !important;
+        }
+
+        .support-search-icon {
+          flex-shrink: 0;
+          color: var(--text-400);
+          transition: color 0.2s ease;
+        }
+
+        .support-search-form:focus-within .support-search-icon {
+          color: var(--primary);
+        }
+
+        .support-search-input {
+          flex: 1;
+          min-width: 0 !important;
+          border: none !important;
+          outline: none !important;
+          box-shadow: none !important;
+          padding: 10px 12px;
+          font-size: 15px;
+          background: transparent !important;
+          color: var(--text-900);
+          font-family: inherit;
+          box-sizing: border-box;
+        }
+
+        .support-search-input::placeholder {
+          color: var(--text-400);
+          opacity: 0.85;
+        }
+
+        .support-clear-btn {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 6px;
+          border-radius: 50%;
+          color: var(--text-400);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          transition: var(--transition);
+          margin-right: 4px;
+        }
+
+        .support-clear-btn:hover {
+          background: var(--bg);
+          color: var(--text-700);
+        }
+
+        .support-search-btn {
+          padding: 10px 22px !important;
+          border-radius: var(--radius-full) !important;
+          font-size: 14px !important;
+          font-weight: 600 !important;
+          flex-shrink: 0 !important;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          white-space: nowrap !important;
+          line-height: 1.2 !important;
+        }
+
+        @media (max-width: 640px) {
+          .support-search-form {
+            padding: 4px 4px 4px 14px !important;
+          }
+
+          .support-search-input {
+            padding: 8px 8px !important;
+            font-size: 14px !important;
+          }
+
+          .support-search-btn {
+            padding: 8px 16px !important;
+            font-size: 13px !important;
+          }
+        }
+
+        @media (max-width: 380px) {
+          .support-search-form {
+            padding: 3px 4px 3px 10px !important;
+          }
+
+          .support-search-input {
+            padding: 7px 6px !important;
+            font-size: 13px !important;
+          }
+
+          .support-search-btn {
+            padding: 7px 12px !important;
+            font-size: 12px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

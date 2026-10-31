@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Lock,
@@ -21,22 +21,33 @@ export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const { login } = useAdminAuth();
+  const { login, isAuthenticated } = useAdminAuth();
   const { addToast } = useAdminToast();
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from?.pathname || "/admin/dashboard";
 
-  const handleLogin = (e) => {
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, from]);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMessage("");
     setIsLoading(true);
 
-    login(email, password);
-    addToast("Admin authenticated. Welcome to Comparely Control Center!", "success");
-    navigate(from, { replace: true });
-    setIsLoading(false);
+    try {
+      await login(email, password);
+      addToast("Admin authenticated. Welcome to Comparely Control Center!", "success");
+      navigate(from, { replace: true });
+    } catch (err) {
+      setErrorMessage(err.message || "Invalid administrator credentials.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const fillCredentials = () => {

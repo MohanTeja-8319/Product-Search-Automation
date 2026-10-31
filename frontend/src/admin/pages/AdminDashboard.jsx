@@ -196,7 +196,7 @@ export default function AdminDashboard() {
         {/* Card 5: Active Jobs */}
         <StatCard
           title="Active Jobs"
-          value={String(liveStats?.activeJobs ?? stats.activeJobs?.value ?? 2)}
+          value={String(liveStats?.activeJobs ?? stats.activeJobs?.value ?? 0)}
           status={liveStats?.activeJobsStatus || stats.activeJobs?.status || "Running"}
           icon={Activity}
           iconTheme="indigo"
@@ -207,7 +207,7 @@ export default function AdminDashboard() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(460px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 460px), 1fr))",
           gap: 24,
         }}
       >
@@ -222,7 +222,7 @@ export default function AdminDashboard() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
           gap: 20,
         }}
       >
@@ -327,7 +327,7 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-        <div style={{ overflowX: "auto" }}>
+        <div className="adm-table-container" style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
           <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0 }}>
             <thead>
               <tr>
@@ -396,7 +396,7 @@ export default function AdminDashboard() {
           </button>
         </div>
 
-        <div style={{ overflowX: "auto" }}>
+        <div className="adm-table-container" style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
           <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0 }}>
             <thead>
               <tr>
