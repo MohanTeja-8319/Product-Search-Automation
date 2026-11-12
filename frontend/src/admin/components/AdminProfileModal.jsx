@@ -14,7 +14,7 @@ import { useAdminAuth } from "../context/AdminAuthContext";
 export default function AdminProfileModal({ onClose = () => {} }) {
   const { adminUser, updateProfile } = useAdminAuth();
 
-  const [name, setName] = useState(adminUser?.name || "Mohan Teja");
+  const [name, setName] = useState(adminUser?.name || "Admin");
   const [email, setEmail] = useState(adminUser?.email || "admin@comparely.io");
   const [savedMessage, setSavedMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -156,7 +156,7 @@ export default function AdminProfileModal({ onClose = () => {} }) {
             />
             <div>
               <div style={{ fontSize: 16, fontWeight: 700, color: "#0F172A" }}>
-                {adminUser?.name || "Mohan Teja"}
+                {adminUser?.name || "Admin"}
               </div>
               <div style={{ fontSize: 12.5, color: "#64748B" }}>
                 Lead Systems Administrator

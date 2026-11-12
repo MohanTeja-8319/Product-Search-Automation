@@ -15,8 +15,8 @@ import { useAdminAuth } from "../context/AdminAuthContext";
 import { useAdminToast } from "../context/AdminToastContext";
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState("admin@comparely.io");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -48,12 +48,6 @@ export default function AdminLogin() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const fillCredentials = () => {
-    setEmail("admin@comparely.io");
-    setPassword("admin123");
-    setErrorMessage("");
   };
 
   return (
@@ -156,7 +150,7 @@ export default function AdminLogin() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@comparely.io"
+                  placeholder="Enter admin email"
                   required
                   className="adm-input"
                   style={{ paddingLeft: 40 }}
@@ -189,7 +183,6 @@ export default function AdminLogin() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
                   required
                   className="adm-input"
                   style={{ paddingLeft: 40, paddingRight: 40 }}
@@ -239,39 +232,6 @@ export default function AdminLogin() {
             >
               <span>{isLoading ? "Authenticating..." : "Sign In to Admin Console"}</span>
               <ArrowRight size={16} />
-            </button>
-          </div>
-
-          {/* Pre-fill Demo Admin credentials */}
-          <div
-            style={{
-              marginTop: 24,
-              padding: "12px 14px",
-              borderRadius: 10,
-              backgroundColor: "rgba(255, 255, 255, 0.03)",
-              border: "1px dashed var(--border, #222222)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div style={{ fontSize: 12, color: "var(--text-500, #888888)" }}>
-              Quick Login: <strong style={{ color: "var(--text-900, #f4efe8)" }}>admin@comparely.io</strong>
-            </div>
-            <button
-              type="button"
-              onClick={fillCredentials}
-              style={{
-                background: "none",
-                border: "none",
-                color: "var(--text-900, #f4efe8)",
-                fontWeight: 700,
-                fontSize: 12,
-                cursor: "pointer",
-                textDecoration: "underline",
-              }}
-            >
-              Autofill
             </button>
           </div>
         </form>

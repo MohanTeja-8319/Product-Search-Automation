@@ -8,8 +8,8 @@ export default function ResetPassword() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const email = location.state?.email || "";
-  const resetToken = location.state?.resetToken || "";
+  const email = location.state?.email || sessionStorage.getItem("resetEmail") || "";
+  const resetToken = location.state?.resetToken || sessionStorage.getItem("resetToken") || "";
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -46,6 +46,9 @@ export default function ResetPassword() {
         newPassword: password,
         confirmPassword,
       });
+      sessionStorage.removeItem("resetToken");
+      sessionStorage.removeItem("resetEmail");
+      sessionStorage.removeItem("devOtp");
       setIsSuccess(true);
     } catch (err) {
       setError(err.message || "Could not reset password. Please try again.");

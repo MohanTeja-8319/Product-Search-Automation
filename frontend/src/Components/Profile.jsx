@@ -66,11 +66,11 @@ const Profile = () => {
  navigate("/logout");
  };
 
- const displayName = user?.name || user?.fullName || "Mohan Teja";
- const userEmail = user?.email || "mohan.teja@gmail.com";
+ const displayName = user?.name || user?.fullName || "User";
+ const userEmail = user?.email || "";
  const avatarUrl =
  user?.avatar ||
- "https://api.dicebear.com/7.x/adventurer/svg?seed=Mohan";
+ "https://api.dicebear.com/7.x/adventurer/svg?seed=User";
  const isGoogle = user?.provider === "google";
  const userBadge = user?.badge || "Active Member";
 

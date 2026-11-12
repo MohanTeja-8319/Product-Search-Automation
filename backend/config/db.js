@@ -31,7 +31,9 @@ async function connectDB() {
   if (isConnecting) return false;
 
   isConnecting = true;
-  const uri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/product_search_automation";
+  const uri =
+    process.env.MONGODB_URI ||
+    "mongodb+srv://lahyavennapusa0104_db_user:dnfZIBbg00BfOIDT@cluster0.mrk0k3h.mongodb.net";
   const dbName = process.env.DB_NAME || "product_search_automation";
   const connectOptions = {
     dbName,

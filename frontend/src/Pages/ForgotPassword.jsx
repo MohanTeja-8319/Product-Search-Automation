@@ -21,7 +21,9 @@ export default function ForgotPassword() {
 
     try {
       await requestPasswordReset(email.trim());
-      navigate("/verify-otp", {
+      sessionStorage.setItem("resetEmail", email.trim());
+      sessionStorage.removeItem("devOtp");
+      navigate(`/verify-otp?email=${encodeURIComponent(email.trim())}`, {
         state: { email: email.trim() },
       });
     } catch (err) {

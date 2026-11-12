@@ -48,9 +48,13 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    role: {
+      type: String,
+      default: "user",
+    },
     status: {
       type: String,
-      enum: ["Active", "Suspended"],
+      enum: ["Active", "Suspended", "active", "suspended"],
       default: "Active",
     },
     otpAttempts: {

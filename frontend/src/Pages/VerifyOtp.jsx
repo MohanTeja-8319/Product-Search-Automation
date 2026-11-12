@@ -9,7 +9,11 @@ export default function VerifyOtp() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const emailParam = searchParams.get("email") || location.state?.email || "";
+  const emailParam =
+    searchParams.get("email") ||
+    location.state?.email ||
+    sessionStorage.getItem("resetEmail") ||
+    "";
   const [email] = useState(emailParam);
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -78,6 +82,10 @@ export default function VerifyOtp() {
 
     try {
       const data = await verifyResetOtp({ email: email.trim(), otp: otpValue });
+      if (data?.resetToken) {
+        sessionStorage.setItem("resetToken", data.resetToken);
+        sessionStorage.setItem("resetEmail", email.trim());
+      }
       navigate("/reset-password", {
         state: {
           email: email.trim(),

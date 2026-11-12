@@ -5,6 +5,7 @@ const Alert = require("../models/Alert");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../utils/sendEmail");
+const connectDB = require("../config/db");
 const {
   getJwtSecret,
   getRefreshJwtSecret,
@@ -12,6 +13,14 @@ const {
   getRefreshTokenExpiry,
 } = require("../config/jwt");
 const { isValidObjectId } = require("../utils/mongoHelpers");
+
+async function ensureDbConnected() {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDB();
+    } catch (_) {}
+  }
+}
 
 // Resilient in-memory store when MongoDB is offline / disconnected
 const fallbackUsers = new Map();
@@ -75,10 +84,10 @@ function generateRefreshToken(userId) {
 
 function getRefreshTokenCookieOptions() {
   const isProd = process.env.NODE_ENV === "production";
-  const sameSite = process.env.COOKIE_SAME_SITE || (isProd ? "strict" : "lax");
+  const sameSite = process.env.COOKIE_SAME_SITE || (isProd ? "none" : "lax");
   return {
     httpOnly: true,
-    secure: isProd || sameSite === "none",
+    secure: isProd,
     sameSite,
     path: "/",
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
@@ -91,10 +100,10 @@ function setRefreshTokenCookie(res, token) {
 
 function clearRefreshTokenCookie(res) {
   const isProd = process.env.NODE_ENV === "production";
-  const sameSite = process.env.COOKIE_SAME_SITE || (isProd ? "strict" : "lax");
+  const sameSite = process.env.COOKIE_SAME_SITE || (isProd ? "none" : "lax");
   res.clearCookie("comparely_rf", {
     httpOnly: true,
-    secure: isProd || sameSite === "none",
+    secure: isProd,
     sameSite,
     path: "/",
   });
@@ -545,6 +554,15 @@ exports.getSession = async (req, res) => {
   }
 
   // Attempt session restoration via refresh cookie
+  const rawToken = req.cookies?.comparely_rf || req.body?.refreshToken;
+  if (!rawToken) {
+    return res.status(200).json({
+      authenticated: false,
+      user: null,
+      token: null,
+    });
+  }
+
   return exports.refreshSession(req, res);
 };
 
@@ -556,11 +574,15 @@ exports.forgotPassword = async (req, res) => {
     }
 
     const lowerEmail = email.toLowerCase().trim();
-    let user = null;
+    await ensureDbConnected();
 
-    if (mongoose.connection.readyState === 1) {
-      user = await User.findOne({ email: lowerEmail }).catch(() => null);
+    let user = null;
+    try {
+      user = await User.findOne({ email: lowerEmail });
+    } catch (dbErr) {
+      console.warn("[AUTH] MongoDB query error on forgot-password:", dbErr.message);
     }
+
     if (!user) {
       user = fallbackUsers.get(lowerEmail);
     }
@@ -570,33 +592,60 @@ exports.forgotPassword = async (req, res) => {
     }
 
     const otp = crypto.randomInt(100000, 999999).toString();
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(8);
     const hashedOtp = await bcrypt.hash(otp, salt);
-    const expiry = Date.now() + 10 * 60 * 1000;
+    const expiry = new Date(Date.now() + 10 * 60 * 1000);
 
-    if (user.save) {
-      user.resetOtp = hashedOtp;
-      user.resetOtpExpiry = expiry;
-      user.otpAttempts = 0;
-      await user.save().catch(() => {});
-    } else {
-      user.resetOtp = hashedOtp;
-      user.resetOtpExpiry = expiry;
-      user.otpAttempts = 0;
+    if (user._id) {
+      try {
+        await User.updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              resetOtp: hashedOtp,
+              resetOtpExpiry: expiry,
+              otpAttempts: 0,
+            },
+          }
+        );
+      } catch (saveErr) {
+        console.warn("[AUTH] Failed to save OTP in DB:", saveErr.message);
+      }
     }
 
-    await sendEmail({
-      to: user.email,
-      subject: "Your password reset OTP",
-      html: `
-        <p>Hi ${user.fullName},</p>
-        <p>Your OTP to reset your password is:</p>
-        <h2 style="letter-spacing:4px;">${otp}</h2>
-        <p>This code expires in 10 minutes. If you didn't request this, you can ignore this email.</p>
-      `,
-    }).catch((e) => console.warn("Email send failed:", e.message));
+    user.resetOtp = hashedOtp;
+    user.resetOtpExpiry = expiry;
+    user.otpAttempts = 0;
 
-    return res.status(200).json({ message: "OTP sent to your email." });
+    console.log(`[AUTH] Dispatching password reset OTP to: ${user.email}`);
+
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: "Your Comparely Password Reset OTP",
+        priority: "high",
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 8px;">
+            <h2 style="color: #4F46E5; margin-top: 0;">Comparely Password Reset</h2>
+            <p style="color: #334155; font-size: 15px;">Hi ${user.fullName || "User"},</p>
+            <p style="color: #334155; font-size: 15px;">Your 6-digit verification code to reset your password is:</p>
+            <div style="background: #f1f5f9; padding: 16px; border-radius: 6px; text-align: center; margin: 20px 0;">
+              <span style="font-size: 28px; font-weight: bold; letter-spacing: 6px; color: #1e293b;">${otp}</span>
+            </div>
+            <p style="color: #64748b; font-size: 13px;">This code is valid for 10 minutes. If you did not request a password reset, please ignore this email.</p>
+          </div>
+        `,
+      });
+    } catch (emailErr) {
+      console.error("[AUTH] Email dispatch error:", emailErr.message);
+      return res.status(500).json({
+        message: "Failed to deliver OTP to your email. Please try again in a moment.",
+      });
+    }
+
+    return res.status(200).json({
+      message: "OTP sent to your email.",
+    });
   } catch (err) {
     console.error("Forgot password error:", err);
     return res.status(500).json({ message: "Could not send OTP. Please try again." });
@@ -611,13 +660,16 @@ exports.verifyResetOtp = async (req, res) => {
     }
 
     const lowerEmail = email.toLowerCase().trim();
-    let user = null;
+    await ensureDbConnected();
 
-    if (mongoose.connection.readyState === 1) {
+    let user = null;
+    try {
       user = await User.findOne({ email: lowerEmail })
-        .select("+resetOtp +resetOtpExpiry +otpAttempts +otpLockUntil")
-        .catch(() => null);
+        .select("+resetOtp +resetOtpExpiry +otpAttempts +otpLockUntil");
+    } catch (dbErr) {
+      console.warn("[AUTH] DB query error on verify-otp:", dbErr.message);
     }
+
     if (!user) {
       user = fallbackUsers.get(lowerEmail);
     }
@@ -626,13 +678,13 @@ exports.verifyResetOtp = async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired OTP." });
     }
 
-    if (Date.now() > user.resetOtpExpiry) {
+    if (Date.now() > new Date(user.resetOtpExpiry).getTime()) {
       return res.status(400).json({ message: "OTP has expired. Please request a new one." });
     }
 
-    const isMatch = await bcrypt.compare(otp, user.resetOtp);
+    const isMatch = await bcrypt.compare(String(otp).trim(), user.resetOtp);
     if (!isMatch) {
-      return res.status(400).json({ message: "Invalid OTP." });
+      return res.status(400).json({ message: "Invalid OTP. Please check the code sent to your email." });
     }
 
     const resetToken = jwt.sign(
@@ -668,15 +720,26 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Reset session expired. Please start again." });
     }
 
+    await ensureDbConnected();
+
     let user = null;
-    if (mongoose.connection.readyState === 1 && isValidObjectId(decoded.id)) {
-      user = await User.findById(decoded.id).catch(() => null);
-      if (user) {
-        user.password = newPassword;
-        user.resetOtp = undefined;
-        user.resetOtpExpiry = undefined;
-        await user.save();
-        return res.status(200).json({ message: "Password reset successful. Please sign in." });
+    if (isValidObjectId(decoded.id)) {
+      try {
+        user = await User.findById(decoded.id);
+        if (user) {
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(newPassword, salt);
+          await User.updateOne(
+            { _id: user._id },
+            {
+              $set: { password: hashedPassword },
+              $unset: { resetOtp: "", resetOtpExpiry: "", otpAttempts: "", otpLockUntil: "" },
+            }
+          );
+          return res.status(200).json({ message: "Password reset successful. Please sign in." });
+        }
+      } catch (err) {
+        console.warn("[AUTH] Error updating password in DB:", err.message);
       }
     }
 

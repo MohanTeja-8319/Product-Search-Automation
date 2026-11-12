@@ -12,6 +12,30 @@ export function registerPwaServiceWorker() {
     return;
   }
 
+  // In local development, purge all caches and unregister service workers to prevent offline interception of Vite dev server
+  if (
+    import.meta.env.DEV ||
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname === "0.0.0.0"
+  ) {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (const registration of registrations) {
+          registration.unregister();
+        }
+      }).catch(() => {});
+    }
+    if (typeof window !== "undefined" && "caches" in window) {
+      caches.keys().then((names) => {
+        for (const name of names) {
+          caches.delete(name);
+        }
+      }).catch(() => {});
+    }
+    return;
+  }
+
   window.addEventListener("load", () => {
     navigator.serviceWorker
       .register("/sw.js", { scope: "/" })

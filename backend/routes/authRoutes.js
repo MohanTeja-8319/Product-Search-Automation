@@ -17,8 +17,12 @@ const protect = require("../middleware/authMiddleware");
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
-  max: 10, 
-  message: "Too many authentication attempts from this IP, please try again after 15 minutes",
+  max: 25, 
+  message: {
+    message: "Too many authentication attempts from this IP. Please try again after 15 minutes.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 router.post("/forgot-password", authLimiter, forgotPassword);

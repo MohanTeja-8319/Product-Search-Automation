@@ -29,7 +29,9 @@ async function request(path, options = {}) {
     const error = new Error(
       data?.message ||
         data?.error ||
-        "Something went wrong. Please try again."
+        (res.status >= 502 && res.status <= 504
+          ? "Server is starting up. Please wait a few seconds and try again."
+          : "Something went wrong. Please try again.")
     );
     error.status = res.status;
     error.code = data?.code;
@@ -167,7 +169,7 @@ export async function restoreSession() {
       data = await res.json();
     } catch {}
 
-    if (res.ok && data?.user) {
+    if (res.ok && data?.authenticated && data?.user) {
       const activeToken = data.token || token;
       if (activeToken) {
         saveAuth({ token: activeToken, user: data.user });
@@ -178,29 +180,44 @@ export async function restoreSession() {
         token: activeToken,
       };
     }
+
+    // Clean unauthenticated guest session: no need to trigger failing /refresh
+    if (res.ok && data?.authenticated === false) {
+      clearAuth();
+      return {
+        authenticated: false,
+        user: null,
+        token: null,
+      };
+    }
   } catch (err) {
     console.warn("Session restoration network error:", err.message);
   }
 
-  // If restoring via /session fails, try refresh endpoint explicitly
-  try {
-    const refreshedToken = await refreshAuthSession();
-    const storedUser = localStorage.getItem("user");
-    let parsedUser = null;
-    try { parsedUser = storedUser ? JSON.parse(storedUser) : null; } catch {}
-    return {
-      authenticated: true,
-      user: parsedUser,
-      token: refreshedToken,
-    };
-  } catch {
+  // Only attempt explicit refresh if a previous session/token existed
+  if (token) {
+    try {
+      const refreshedToken = await refreshAuthSession();
+      const storedUser = localStorage.getItem("user");
+      let parsedUser = null;
+      try { parsedUser = storedUser ? JSON.parse(storedUser) : null; } catch {}
+      return {
+        authenticated: true,
+        user: parsedUser,
+        token: refreshedToken,
+      };
+    } catch {
+      clearAuth();
+    }
+  } else {
     clearAuth();
-    return {
-      authenticated: false,
-      user: null,
-      token: null,
-    };
   }
+
+  return {
+    authenticated: false,
+    user: null,
+    token: null,
+  };
 }
 
 export async function logoutUser() {

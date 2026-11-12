@@ -122,7 +122,7 @@ const DEFAULT_REVIEWS = [
   },
   {
     id: "rev-2",
-    author: "Mohan Teja",
+    author: "Verified Shopper",
     product: "Samsung Galaxy S24 5G (Onyx Black)",
     store: "Flipkart",
     rating: 5,

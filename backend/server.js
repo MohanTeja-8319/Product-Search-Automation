@@ -1,10 +1,36 @@
+const path = require("path");
+const fs = require("fs");
+
+try {
+  require("dotenv").config({ path: path.join(__dirname, ".env") });
+  require("dotenv").config({ path: path.join(__dirname, "../.env") });
+} catch (_) {}
 require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const compression = require("compression");
-const cookieParser = require("cookie-parser");
+let cookieParser;
+try {
+  cookieParser = require("cookie-parser");
+} catch (_) {
+  cookieParser = () => (req, res, next) => {
+    if (!req.cookies) {
+      req.cookies = {};
+      const cookieHeader = req.headers?.cookie;
+      if (cookieHeader) {
+        cookieHeader.split(";").forEach((cookie) => {
+          const parts = cookie.split("=");
+          const name = parts[0]?.trim();
+          const value = parts.slice(1).join("=").trim();
+          if (name) req.cookies[name] = decodeURIComponent(value);
+        });
+      }
+    }
+    next();
+  };
+}
 const mongoose = require("mongoose");
 const connectDB = require("./config/db");
 
@@ -18,19 +44,47 @@ const { runAlertCheckCycle } = require("./services/alertMonitor");
 const sendEmail = require("./utils/sendEmail");
 
 const app = express();
+app.set("trust proxy", 1);
 
-const allowedOrigins = new Set([
-  process.env.CLIENT_ORIGIN,
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
-  "http://localhost:5000",
-  "http://127.0.0.1:5000",
-].filter(Boolean));
+function isOriginAllowed(origin) {
+  if (!origin) return true;
+  if (process.env.NODE_ENV !== "production") return true;
+
+  const allowedList = (process.env.CLIENT_ORIGIN || "")
+    .split(",")
+    .map((s) => s.trim().replace(/\/$/, ""))
+    .filter(Boolean);
+
+  const cleanOrigin = origin.replace(/\/$/, "");
+  if (allowedList.includes(cleanOrigin)) return true;
+
+  if (process.env.RENDER_EXTERNAL_URL) {
+    const cleanRenderUrl = process.env.RENDER_EXTERNAL_URL.replace(/\/$/, "");
+    if (cleanOrigin === cleanRenderUrl || cleanOrigin.startsWith(cleanRenderUrl)) {
+      return true;
+    }
+  }
+
+  try {
+    const url = new URL(origin);
+    const hostname = url.hostname.toLowerCase();
+    if (
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname.endsWith(".onrender.com") ||
+      hostname.endsWith(".vercel.app")
+    ) {
+      return true;
+    }
+  } catch (_) {}
+
+  return false;
+}
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.has(origin) || process.env.NODE_ENV !== "production") {
+      if (isOriginAllowed(origin)) {
         return callback(null, true);
       }
       return callback(null, false);
@@ -38,9 +92,6 @@ app.use(
     credentials: true,
   })
 );
-
-const fs = require("fs");
-const path = require("path");
 
 app.use(
   helmet({
@@ -177,7 +228,7 @@ process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 
 function listenOnPort(port) {
   return new Promise((resolve, reject) => {
-    const s = app.listen(port, () => {
+    const s = app.listen(port, "0.0.0.0", () => {
       console.log(`Server running on http://localhost:${port}`);
       resolve(s);
     });

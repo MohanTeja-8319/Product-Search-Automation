@@ -489,11 +489,8 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
                   border: "2px solid var(--primary, #ffffff)",
                 }}
               />
-              <div className="admin-profile-meta" style={{ textAlign: "left", display: "flex", flexDirection: "column" }}>
+              <div className="admin-profile-meta" style={{ textAlign: "left", display: "flex", alignItems: "center" }}>
                 <span style={{ fontSize: 13, fontWeight: 700, color: "var(--text-900, #f4efe8)", lineHeight: 1.2 }}>
-                  {adminUser?.name || "Mohan Teja"}
-                </span>
-                <span style={{ fontSize: 10.5, color: "var(--text-500, #888888)", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em" }}>
                   Admin
                 </span>
               </div>
@@ -518,7 +515,7 @@ export default function AdminNavbar({ onToggleMobile = () => {} }) {
               >
                 <div style={{ padding: "14px 16px", borderBottom: "1px solid var(--border, #222222)" }}>
                   <div style={{ fontSize: 13.5, fontWeight: 700, color: "var(--text-900, #f4efe8)" }}>
-                    {adminUser?.name || "Mohan Teja"}
+                    Admin
                   </div>
                   <div style={{ fontSize: 11.5, color: "var(--text-500, #888888)", marginTop: 2, wordBreak: "break-all" }}>
                     {adminUser?.email || "admin@comparely.io"}
