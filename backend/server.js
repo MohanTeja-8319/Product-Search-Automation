@@ -1,5 +1,9 @@
 const path = require("path");
 const fs = require("fs");
+const dns = require("dns");
+try {
+  dns.setDefaultResultOrder("ipv4first");
+} catch (_) {}
 
 try {
   require("dotenv").config({ path: path.join(__dirname, ".env") });

@@ -1,100 +1,168 @@
+const dns = require("dns");
+try {
+  dns.setDefaultResultOrder("ipv4first");
+} catch (_) {}
+
+const axios = require("axios");
 const nodemailer = require("nodemailer");
 
-// Credentials with cloud deployment fallbacks
-const EMAIL_USER =
-  process.env.EMAIL_USER || "lahyavennapusa0104@gmail.com";
-const EMAIL_PASS =
-  process.env.EMAIL_PASS || "mkivvexzfzinbndm";
-const EMAIL_HOST =
-  process.env.EMAIL_HOST || "smtp.gmail.com";
+// Brevo (Sendinblue) Configuration
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
+const BREVO_SENDER_EMAIL =
+  process.env.BREVO_SENDER_EMAIL || "bussamohanteja@gmail.com";
+const BREVO_SENDER_NAME =
+  process.env.BREVO_SENDER_NAME || "Comparely";
+
+// Fallback SMTP Transporter (in case API is unavailable)
+const EMAIL_USER = process.env.EMAIL_USER;
+const EMAIL_PASS = process.env.EMAIL_PASS;
+const EMAIL_HOST = process.env.EMAIL_HOST || "smtp.gmail.com";
 const EMAIL_FROM =
-  process.env.EMAIL_FROM || `Comparely Support <${EMAIL_USER}>`;
+  process.env.EMAIL_FROM || `${BREVO_SENDER_NAME} <${BREVO_SENDER_EMAIL}>`;
 
-// Primary Transporter: Direct SSL (Port 465) with connection pooling
-const primaryTransporter = nodemailer.createTransport({
-  host: EMAIL_HOST,
-  port: 465,
-  secure: true,
-  pool: true,
-  maxConnections: 5,
-  maxMessages: 100,
-  rateDelta: 1000,
-  rateLimit: 5,
-  connectionTimeout: 8000,
-  greetingTimeout: 8000,
-  socketTimeout: 10000,
-  auth: {
-    user: EMAIL_USER,
-    pass: EMAIL_PASS,
-  },
-});
+let fallbackTransporter = null;
+function getFallbackTransporter() {
+  if (!fallbackTransporter) {
+    fallbackTransporter = nodemailer.createTransport({
+      host: EMAIL_HOST,
+      port: 465,
+      secure: true,
+      pool: true,
+      connectionTimeout: 8000,
+      auth: {
+        user: EMAIL_USER,
+        pass: EMAIL_PASS,
+      },
+    });
+  }
+  return fallbackTransporter;
+}
 
-// Fallback Transporter: STARTTLS (Port 587) in case cloud provider restricts port 465
-const fallbackTransporter = nodemailer.createTransport({
-  host: EMAIL_HOST,
-  port: 587,
-  secure: false,
-  connectionTimeout: 8000,
-  greetingTimeout: 8000,
-  socketTimeout: 10000,
-  auth: {
-    user: EMAIL_USER,
-    pass: EMAIL_PASS,
-  },
-});
-
+/**
+ * Verify Brevo API connection on server boot
+ */
 async function verifyEmailTransporter() {
-  console.log(`[EMAIL] Verifying SMTP connection to ${EMAIL_HOST} as ${EMAIL_USER}...`);
+  console.log(`[EMAIL] Verifying Brevo API connection...`);
   try {
-    await primaryTransporter.verify();
-    console.log("[EMAIL] Primary SMTP connection (SSL 465) verified successfully.");
+    const res = await axios.get("https://api.brevo.com/v3/account", {
+      headers: {
+        "api-key": BREVO_API_KEY,
+        accept: "application/json",
+      },
+      timeout: 8000,
+    });
+
+    const email = res.data?.email || BREVO_SENDER_EMAIL;
+    const plan = res.data?.plan?.[0];
+    const credits = plan?.credits !== undefined ? plan.credits : "active";
+    console.log(
+      `[EMAIL] Brevo API verified successfully (Account: ${email}, Credits: ${credits}).`
+    );
     return true;
   } catch (err) {
-    console.warn("[EMAIL] Primary SMTP connection failed, verifying fallback (587)...", err.message);
-    try {
-      await fallbackTransporter.verify();
-      console.log("[EMAIL] Fallback SMTP connection (587) verified successfully.");
-      return true;
-    } catch (fallbackErr) {
-      console.error("[EMAIL] All SMTP connection verifications failed:", fallbackErr.message);
-      return false;
-    }
+    const errorMsg =
+      err.response?.data?.message || err.message || "Unknown error";
+    console.warn(`[EMAIL] Brevo API verification failed: ${errorMsg}. Fallback SMTP will be used if needed.`);
+    return false;
   }
 }
 
+/**
+ * Send Transactional Email using Brevo REST API over HTTPS
+ * with automatic fallback to SMTP
+ */
 async function sendEmail({ to, subject, html, priority = "high", headers = {} }) {
   if (!to) {
     throw new Error("Recipient email is missing.");
   }
 
-  const mailOptions = {
-    from: EMAIL_FROM,
-    to: to.trim(),
-    subject,
-    html,
-    priority,
-    headers: {
-      "X-Priority": priority === "high" ? "1" : "3",
-      "X-MSMail-Priority": priority === "high" ? "High" : "Normal",
-      Importance: priority === "high" ? "High" : "Normal",
-      ...headers,
-    },
-  };
+  const recipientEmail = String(to).trim();
 
-  try {
-    const info = await primaryTransporter.sendMail(mailOptions);
-    console.log(`[EMAIL] Delivered "${subject}" to ${to} (Message ID: ${info.messageId})`);
-    return info;
-  } catch (primaryErr) {
-    console.warn(`[EMAIL] Primary transport failed (${primaryErr.message}). Retrying via port 587...`);
+  // 1. Primary: Send via Brevo HTTPS REST API (Port 443 - Never blocked on Render/cloud)
+  if (BREVO_API_KEY) {
     try {
-      const info = await fallbackTransporter.sendMail(mailOptions);
-      console.log(`[EMAIL] Delivered via port 587 to ${to} (Message ID: ${info.messageId})`);
-      return info;
-    } catch (fallbackErr) {
-      console.error(`[EMAIL] Delivery failed to ${to}:`, fallbackErr.message);
-      throw fallbackErr;
+      const payload = {
+        sender: {
+          name: BREVO_SENDER_NAME,
+          email: BREVO_SENDER_EMAIL,
+        },
+        to: [
+          {
+            email: recipientEmail,
+          },
+        ],
+        subject,
+        htmlContent: html,
+        headers: {
+          "X-Priority": priority === "high" ? "1" : "3",
+          Importance: priority === "high" ? "High" : "Normal",
+          ...headers,
+        },
+      };
+
+      const response = await axios.post(
+        "https://api.brevo.com/v3/smtp/email",
+        payload,
+        {
+          headers: {
+            "api-key": BREVO_API_KEY,
+            "content-type": "application/json",
+            accept: "application/json",
+          },
+          timeout: 10000,
+        }
+      );
+
+      const messageId = response.data?.messageId || "brevo-" + Date.now();
+      console.log(
+        `[BREVO] Delivered "${subject}" to ${recipientEmail} (Message ID: ${messageId})`
+      );
+
+      return {
+        success: true,
+        messageId,
+        provider: "brevo",
+      };
+    } catch (brevoErr) {
+      const errDetails =
+        brevoErr.response?.data?.message || brevoErr.message;
+      console.warn(
+        `[BREVO] API send failed (${errDetails}). Attempting fallback SMTP...`
+      );
     }
+  }
+
+  // 2. Fallback: Send via Nodemailer SMTP
+  try {
+    const transporter = getFallbackTransporter();
+    const info = await transporter.sendMail({
+      from: EMAIL_FROM,
+      to: recipientEmail,
+      subject,
+      html,
+      priority,
+      headers: {
+        "X-Priority": priority === "high" ? "1" : "3",
+        "X-MSMail-Priority": priority === "high" ? "High" : "Normal",
+        Importance: priority === "high" ? "High" : "Normal",
+        ...headers,
+      },
+    });
+
+    console.log(
+      `[SMTP] Delivered "${subject}" to ${recipientEmail} via fallback (Message ID: ${info.messageId})`
+    );
+    return {
+      success: true,
+      messageId: info.messageId,
+      provider: "smtp",
+    };
+  } catch (smtpErr) {
+    console.error(
+      `[EMAIL] Both Brevo and fallback SMTP failed for ${recipientEmail}:`,
+      smtpErr.message
+    );
+    throw new Error(`Email delivery failed: ${smtpErr.message}`);
   }
 }
 
